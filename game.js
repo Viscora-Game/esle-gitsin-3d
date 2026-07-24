@@ -1,6 +1,9 @@
 /**
  * Tile Club / GamoVation Style Mobile Stack Tile Pairing Game Engine
  * Features:
+ * - AUTO-SAVE PROGRESSION SYSTEM (localStorage persistence):
+ *   - Auto-saves level & score on every level victory and menu navigation.
+ *   - "DEVAM ET" (CONTINUE) & "YENİ OYUN" (NEW GAME) buttons in Main Menu.
  * - Dynamic Dual-Language Game Title (TR: "EŞLE GİTSİN! 3D" | EN: "TILE MATCH 3D").
  * - Cute Playful Game Font ('Fredoka').
  * - INFINITE ENDLESS CAMPAIGN (Level 100+ Endless Mode).
@@ -258,6 +261,7 @@ class TileMatchingGame {
 
         this.level = 1;
         this.score = 0;
+        this.savedProgress = null;
 
         // Settings State
         this.settings = {
@@ -266,11 +270,13 @@ class TileMatchingGame {
             lang: 'tr'
         };
 
-        // i18n Translations (With Dual-Language Game Title Localization!)
+        // i18n Translations
         this.i18n = {
             tr: {
                 gameTitle: 'EŞLE GİTSİN! 3D',
                 play: 'OYNA',
+                continueBtn: 'DEVAM ET (SEVİYE {lvl})',
+                newGameBtn: 'YENİ OYUN',
                 settings: 'AYARLAR',
                 settingsTitle: '⚙️ AYARLAR',
                 volLabel: '🔊 Ses Düzeyi',
@@ -295,6 +301,8 @@ class TileMatchingGame {
             en: {
                 gameTitle: 'TILE MATCH 3D',
                 play: 'PLAY',
+                continueBtn: 'CONTINUE (LEVEL {lvl})',
+                newGameBtn: 'NEW GAME',
                 settings: 'SETTINGS',
                 settingsTitle: '⚙️ SETTINGS',
                 volLabel: '🔊 Sound Volume',
@@ -331,21 +339,74 @@ class TileMatchingGame {
         this.fx = new ParticleFX('fx-canvas');
 
         this.loadSettings();
+        this.loadGameProgress();
         this.initUI();
     }
 
+    loadGameProgress() {
+        try {
+            const saved = localStorage.getItem('tile_game_progress');
+            if (saved) {
+                this.savedProgress = JSON.parse(saved);
+                if (this.savedProgress && this.savedProgress.level) {
+                    this.level = this.savedProgress.level;
+                    this.score = this.savedProgress.score || 0;
+                }
+            }
+        } catch (e) {}
+    }
+
+    saveGameProgress() {
+        try {
+            const data = {
+                level: this.level,
+                score: this.score,
+                timestamp: Date.now()
+            };
+            localStorage.setItem('tile_game_progress', JSON.stringify(data));
+            this.savedProgress = data;
+        } catch (e) {}
+    }
+
+    resetGameProgress() {
+        try {
+            localStorage.removeItem('tile_game_progress');
+        } catch (e) {}
+        this.savedProgress = null;
+        this.level = 1;
+        this.score = 0;
+    }
+
     initUI() {
-        // Main Menu Buttons
-        document.getElementById('btn-menu-play').addEventListener('click', () => {
+        // Main Menu Play & Continue Buttons
+        const btnPlay = document.getElementById('btn-menu-play');
+        this.updateMainMenuButtons();
+
+        btnPlay.addEventListener('click', () => {
             document.getElementById('main-menu').classList.add('hidden');
-            this.startLevel(1);
+            if (this.savedProgress && this.savedProgress.level) {
+                this.startLevel(this.savedProgress.level, false);
+            } else {
+                this.startLevel(1, true);
+            }
         });
+
+        const btnNewGame = document.getElementById('btn-menu-newgame');
+        if (btnNewGame) {
+            btnNewGame.addEventListener('click', () => {
+                this.resetGameProgress();
+                document.getElementById('main-menu').classList.add('hidden');
+                this.startLevel(1, true);
+            });
+        }
 
         document.getElementById('btn-menu-settings').addEventListener('click', () => {
             this.openSettings();
         });
 
         document.getElementById('btn-hud-home').addEventListener('click', () => {
+            this.saveGameProgress();
+            this.updateMainMenuButtons();
             document.getElementById('main-menu').classList.remove('hidden');
         });
 
@@ -394,15 +455,29 @@ class TileMatchingGame {
 
         document.getElementById('btn-next-level').addEventListener('click', () => {
             document.getElementById('modal-victory').classList.add('hidden');
-            this.startLevel(this.level + 1);
+            this.startLevel(this.level + 1, false);
         });
 
         document.getElementById('btn-retry').addEventListener('click', () => {
             document.getElementById('modal-gameover').classList.add('hidden');
-            this.startLevel(this.level);
+            this.startLevel(this.level, false);
         });
 
         this.applyLanguage();
+    }
+
+    updateMainMenuButtons() {
+        const btnPlay = document.getElementById('btn-menu-play');
+        const btnNewGame = document.getElementById('btn-menu-newgame');
+        const dict = this.i18n[this.settings.lang];
+
+        if (this.savedProgress && this.savedProgress.level) {
+            btnPlay.innerHTML = `<span>▶</span> <span>${dict.continueBtn.replace('{lvl}', this.savedProgress.level)}</span>`;
+            if (btnNewGame) btnNewGame.classList.remove('hidden');
+        } else {
+            btnPlay.innerHTML = `<span>▶</span> <span>${dict.play}</span>`;
+            if (btnNewGame) btnNewGame.classList.add('hidden');
+        }
     }
 
     openSettings() {
@@ -431,6 +506,7 @@ class TileMatchingGame {
         document.getElementById('btn-lang-tr').classList.toggle('active', this.settings.lang === 'tr');
         document.getElementById('btn-lang-en').classList.toggle('active', this.settings.lang === 'en');
         this.applyLanguage();
+        this.updateMainMenuButtons();
     }
 
     applyLanguage() {
@@ -468,8 +544,17 @@ class TileMatchingGame {
         }
     }
 
-    startLevel(lvl) {
-        this.level = lvl;
+    startLevel(lvl, isNewGame = false) {
+        if (isNewGame) {
+            this.level = 1;
+            this.score = 0;
+        } else {
+            this.level = lvl;
+        }
+
+        // Auto Save Progress immediately
+        this.saveGameProgress();
+
         document.getElementById('level-num').innerText = this.level;
         document.getElementById('score-val').innerText = this.score;
 
@@ -964,6 +1049,10 @@ class TileMatchingGame {
             if (this.boardTiles.length === 0 && this.slotTiles.length === 0) {
                 this.sound.playVictorySound();
                 this.fx.spawnConfetti();
+
+                // Save next unlocked level
+                this.saveGameProgress();
+
                 document.getElementById('victory-score').innerText = this.score;
                 document.getElementById('modal-victory').classList.remove('hidden');
             } else {
