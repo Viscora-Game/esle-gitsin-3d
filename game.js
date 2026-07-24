@@ -1,15 +1,15 @@
 /**
  * Tile Club / GamoVation Style Mobile Stack Tile Pairing Game Engine
  * Features:
- * - AUTO-SAVE PROGRESSION SYSTEM (localStorage persistence):
- *   - Auto-saves level & score on every level victory and menu navigation.
- *   - "DEVAM ET" (CONTINUE) & "YENİ OYUN" (NEW GAME) buttons in Main Menu.
+ * - EXTRA SLOT BOOSTER POWER-UP (1000 Score Base Price).
+ * - DYNAMIC IN-LEVEL PRICE ESCALATION (%100 Cost Double on each use in same level).
+ * - AUTO-SAVE PROGRESSION SYSTEM (localStorage persistence).
  * - Dynamic Dual-Language Game Title (TR: "EŞLE GİTSİN! 3D" | EN: "TILE MATCH 3D").
  * - Cute Playful Game Font ('Fredoka').
  * - INFINITE ENDLESS CAMPAIGN (Level 100+ Endless Mode).
  * - Geometric 5-Pointed STAR Layout Formation for Level 10, 20, 30...
  * - Settings Controller: Sound Volume, Vibration Toggle, Language Selector (TR/EN).
- * - Smart Hint System (300 Score Cost).
+ * - Smart Hint System (300 Score Base Cost).
  * - Multiplier Combo System (Katlanan Puan).
  */
 
@@ -88,6 +88,28 @@ class SoundSynth {
 
             osc.start(this.ctx.currentTime + idx * 0.05);
             osc.stop(this.ctx.currentTime + idx * 0.05 + 0.2);
+        });
+    }
+
+    playBoosterChime() {
+        this.init();
+        if (!this.ctx || this.masterVolume <= 0) return;
+
+        const notes = [523.25, 659.25, 783.99, 1046.50, 1567.98];
+        notes.forEach((freq, idx) => {
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(freq, this.ctx.currentTime + idx * 0.06);
+
+            gain.gain.setValueAtTime(0.35 * this.masterVolume, this.ctx.currentTime + idx * 0.06);
+            gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + idx * 0.06 + 0.25);
+
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+
+            osc.start(this.ctx.currentTime + idx * 0.06);
+            osc.stop(this.ctx.currentTime + idx * 0.06 + 0.25);
         });
     }
 
@@ -221,6 +243,12 @@ class TileMatchingGame {
         this.cardH = 94;
         this.maxSlotCapacity = 5;
 
+        // Dynamic In-Level Cost System (%100 Cost Increase on each use in same level)
+        this.baseHintCost = 300;
+        this.baseSlotCost = 1000;
+        this.hintCost = 300;
+        this.slotCost = 1000;
+
         // 22 Character Types
         this.types = [
             { id: 'fox', name: '4-Kuyruklu Tilki', bg: '#fff7ed', imgSrc: 'images/fox.jpg' },
@@ -285,6 +313,7 @@ class TileMatchingGame {
                 saveBtn: 'KAYDET VE KAPAT',
                 levelLabel: 'SEVİYE',
                 hintLabel: 'İPUCU',
+                slotBtnLabel: '+1 SLOT',
                 scoreLabel: 'SKOR',
                 victoryTitle: 'TEBRİKLER!',
                 victoryDesc: 'Bölümdeki tüm kartları başarıyla eşleştirdiniz!',
@@ -294,8 +323,10 @@ class TileMatchingGame {
                 retryBtn: 'TEKRAR DENE',
                 vibOn: 'AÇIK',
                 vibOff: 'KAPALI',
-                noScore: 'Yetersiz Skor! (300 Puan Gerekli)',
+                noScoreHint: 'Yetersiz Skor! ({cost} Puan Gerekli)',
+                noScoreSlot: 'Yetersiz Skor! ({cost} Puan Gerekli)',
                 noHint: 'Şu an açık eşleşen kart bulunamadı!',
+                slotAdded: '+1 Ek Slot Alanı Açıldı! 🎉',
                 menuSubtitle: 'Eşleme ve Zeka Macerası'
             },
             en: {
@@ -311,6 +342,7 @@ class TileMatchingGame {
                 saveBtn: 'SAVE & CLOSE',
                 levelLabel: 'LEVEL',
                 hintLabel: 'HINT',
+                slotBtnLabel: '+1 SLOT',
                 scoreLabel: 'SCORE',
                 victoryTitle: 'VICTORY!',
                 victoryDesc: 'You matched all tiles on the board!',
@@ -320,8 +352,10 @@ class TileMatchingGame {
                 retryBtn: 'TRY AGAIN',
                 vibOn: 'ON',
                 vibOff: 'OFF',
-                noScore: 'Not Enough Score! (300 Required)',
+                noScoreHint: 'Not Enough Score! ({cost} Required)',
+                noScoreSlot: 'Not Enough Score! ({cost} Required)',
                 noHint: 'No matching unlocked tiles available!',
+                slotAdded: '+1 Extra Slot Unlocked! 🎉',
                 menuSubtitle: 'Matching & Logic Puzzle Adventure'
             }
         };
@@ -378,7 +412,6 @@ class TileMatchingGame {
     }
 
     initUI() {
-        // Main Menu Play & Continue Buttons
         const btnPlay = document.getElementById('btn-menu-play');
         this.updateMainMenuButtons();
 
@@ -450,8 +483,9 @@ class TileMatchingGame {
             this.updateLanguageUI();
         });
 
-        // Hint & Modals
+        // Hint & Extra Slot Booster Click Handlers
         document.getElementById('btn-hint').addEventListener('click', () => this.useSmartHint());
+        document.getElementById('btn-extra-slot').addEventListener('click', () => this.useExtraSlotBooster());
 
         document.getElementById('btn-next-level').addEventListener('click', () => {
             document.getElementById('modal-victory').classList.add('hidden');
@@ -544,6 +578,11 @@ class TileMatchingGame {
         }
     }
 
+    updateBoosterBadgesUI() {
+        document.getElementById('hint-cost-badge').innerText = this.hintCost;
+        document.getElementById('slot-cost-badge').innerText = this.slotCost;
+    }
+
     startLevel(lvl, isNewGame = false) {
         if (isNewGame) {
             this.level = 1;
@@ -551,6 +590,12 @@ class TileMatchingGame {
         } else {
             this.level = lvl;
         }
+
+        // Reset Level Costs & Capacity to Base
+        this.hintCost = this.baseHintCost;
+        this.slotCost = this.baseSlotCost;
+        this.maxSlotCapacity = 5;
+        this.updateBoosterBadgesUI();
 
         // Auto Save Progress immediately
         this.saveGameProgress();
@@ -576,6 +621,8 @@ class TileMatchingGame {
         const boardEl = document.getElementById('board');
         boardEl.innerHTML = '';
         document.getElementById('slot-tiles-layer').innerHTML = '';
+
+        this.renderSlotTrayBackground();
 
         this.boardTiles = [];
         this.slotTiles = [];
@@ -647,6 +694,17 @@ class TileMatchingGame {
         }
 
         this.updateLockStates();
+    }
+
+    renderSlotTrayBackground() {
+        const trayBg = document.getElementById('slot-tray-bg');
+        trayBg.innerHTML = '';
+
+        for (let i = 0; i < this.maxSlotCapacity; i++) {
+            const marker = document.createElement('div');
+            marker.className = 'slot-marker';
+            trayBg.appendChild(marker);
+        }
     }
 
     generateLayoutPositions(formationType, totalCount, boardW, boardH) {
@@ -845,10 +903,10 @@ class TileMatchingGame {
     useSmartHint() {
         const dict = this.i18n[this.settings.lang];
 
-        if (this.score < 300) {
+        if (this.score < this.hintCost) {
             this.sound.playLockThud();
             this.triggerVibration();
-            this.showToast(dict.noScore);
+            this.showToast(dict.noScoreHint.replace('{cost}', this.hintCost));
             return;
         }
 
@@ -879,8 +937,12 @@ class TileMatchingGame {
         }
 
         if (foundMatchTiles.length > 0) {
-            this.score -= 300;
+            this.score -= this.hintCost;
             document.getElementById('score-val').innerText = this.score;
+
+            // Double the cost for next use in current level (%100 Increase!)
+            this.hintCost *= 2;
+            this.updateBoosterBadgesUI();
 
             this.sound.playHintChime();
             this.triggerVibration();
@@ -896,6 +958,38 @@ class TileMatchingGame {
             this.triggerVibration();
             this.showToast(dict.noHint);
         }
+    }
+
+    useExtraSlotBooster() {
+        const dict = this.i18n[this.settings.lang];
+
+        if (this.score < this.slotCost) {
+            this.sound.playLockThud();
+            this.triggerVibration();
+            this.showToast(dict.noScoreSlot.replace('{cost}', this.slotCost));
+            return;
+        }
+
+        this.score -= this.slotCost;
+        document.getElementById('score-val').innerText = this.score;
+
+        // Double the cost for next use in current level (%100 Increase!)
+        this.slotCost *= 2;
+        this.updateBoosterBadgesUI();
+
+        // Unlock +1 Extra Slot Capacity
+        this.maxSlotCapacity += 1;
+        this.renderSlotTrayBackground();
+        this.rearrangeSlotTiles();
+
+        this.sound.playBoosterChime();
+        this.triggerVibration();
+
+        const trayBg = document.getElementById('slot-tray-bg');
+        const rect = trayBg.getBoundingClientRect();
+        this.fx.spawnBurst(rect.left + rect.width / 2, rect.top + rect.height / 2, 35);
+
+        this.showToast(dict.slotAdded);
     }
 
     clearHintHighlights() {
@@ -914,7 +1008,7 @@ class TileMatchingGame {
 
         setTimeout(() => {
             toast.classList.add('hidden');
-        }, 2000);
+        }, 2200);
     }
 
     onTileClick(tile) {

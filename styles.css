@@ -379,14 +379,12 @@ body {
     transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease, filter 0.2s ease;
 }
 
-/* Hover Glowing & Popping Effect */
 .btn-primary:hover {
     transform: translateY(-4px) scale(1.03);
     box-shadow: 0 14px 32px rgba(245, 158, 11, 0.7), 0 0 24px rgba(251, 191, 36, 0.8);
     filter: brightness(1.1);
 }
 
-/* Shimmer Light Wave on Hover */
 .btn-primary::before {
     content: '';
     position: absolute;
@@ -404,7 +402,6 @@ body {
     left: 130%;
 }
 
-/* Tactile Press Down Effect */
 .btn-primary:active {
     transform: translateY(2px) scale(0.96);
     box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
@@ -601,7 +598,7 @@ body {
 
 /* HUD Header & Icon Buttons (Z-Index 1000) */
 #hud-header {
-    padding: 14px 16px;
+    padding: 12px 14px;
     background: rgba(15, 23, 42, 0.65);
     backdrop-filter: blur(16px);
     display: flex;
@@ -614,7 +611,13 @@ body {
 .hud-left-group, .hud-right-group {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
+}
+
+.hud-center-boosters {
+    display: flex;
+    align-items: center;
+    gap: 6px;
 }
 
 .hud-icon-btn {
@@ -644,15 +647,15 @@ body {
 
 .hud-item {
     background: rgba(255, 255, 255, 0.07);
-    padding: 6px 12px;
-    border-radius: 20px;
+    padding: 5px 10px;
+    border-radius: 18px;
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 5px;
     border: 1.5px solid rgba(255, 255, 255, 0.12);
 }
 
-/* Smart Hint Button */
+/* Smart Hint & Extra Slot Booster Buttons */
 .hint-btn {
     background: linear-gradient(135deg, rgba(245, 158, 11, 0.25) 0%, rgba(217, 119, 6, 0.15) 100%);
     border: 1.5px solid var(--accent-gold);
@@ -661,36 +664,46 @@ body {
 }
 
 .hint-btn:hover {
-    transform: translateY(-3px) scale(1.06);
-    box-shadow: 0 8px 20px rgba(245, 158, 11, 0.6), 0 0 15px rgba(251, 191, 36, 0.7);
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 6px 18px rgba(245, 158, 11, 0.6);
 }
 
-.hint-btn:active {
-    transform: scale(0.92);
+.slot-booster-btn {
+    background: linear-gradient(135deg, rgba(56, 189, 248, 0.25) 0%, rgba(14, 165, 233, 0.15) 100%);
+    border: 1.5px solid var(--accent-cyan);
+    cursor: pointer;
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
 }
 
-.hint-icon {
-    font-size: 16px;
+.slot-booster-btn:hover {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 6px 18px rgba(56, 189, 248, 0.6);
 }
 
-.hint-cost-badge {
+.cost-badge {
     background: var(--accent-gold);
     color: #0f172a;
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 900;
-    padding: 2px 6px;
-    border-radius: 10px;
+    padding: 2px 5px;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.cost-gold {
+    background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%);
+    color: #ffffff;
 }
 
 .hud-label {
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 700;
     color: #94a3b8;
     letter-spacing: 0.5px;
 }
 
 .hud-val {
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 900;
     color: var(--accent-gold);
 }
@@ -857,7 +870,7 @@ body {
     75% { transform: translateX(8px); }
 }
 
-/* Bottom 5-Slot Tray Bar */
+/* Bottom Slot Tray Bar */
 #slot-tray-container {
     padding: 24px 20px 36px 20px;
     display: flex;
@@ -867,7 +880,7 @@ body {
 }
 
 #slot-tray-bg {
-    width: var(--tray-w);
+    min-width: var(--tray-w);
     height: var(--tray-h);
     background: rgba(15, 23, 42, 0.88);
     border: 2px solid rgba(245, 158, 11, 0.45);
@@ -878,6 +891,8 @@ body {
     justify-content: space-around;
     align-items: center;
     padding: 0 10px;
+    gap: 6px;
+    transition: all 0.3s ease;
 }
 
 .slot-marker {
@@ -886,6 +901,7 @@ body {
     border: 2px dashed rgba(255, 255, 255, 0.14);
     border-radius: 14px;
     background: rgba(0, 0, 0, 0.25);
+    transition: all 0.3s ease;
 }
 
 #slot-tiles-layer {

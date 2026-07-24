@@ -131,12 +131,21 @@
                     </div>
                 </div>
                 
-                <!-- Smart Hint Button (300 Score Points) -->
-                <button id="btn-hint" class="hud-item hint-btn" title="Akıllı İpucu (300 Puan)">
-                    <span class="hint-icon">💡</span>
-                    <span class="hud-label" data-i18n="hintLabel">İPUCU</span>
-                    <span class="hint-cost-badge">300</span>
-                </button>
+                <div class="hud-center-boosters">
+                    <!-- Smart Hint Button -->
+                    <button id="btn-hint" class="hud-item hint-btn" title="Akıllı İpucu">
+                        <span class="hint-icon">💡</span>
+                        <span class="hud-label" data-i18n="hintLabel">İPUCU</span>
+                        <span id="hint-cost-badge" class="cost-badge">300</span>
+                    </button>
+
+                    <!-- Extra Slot Booster Button -->
+                    <button id="btn-extra-slot" class="hud-item slot-booster-btn" title="Ek Slot Hakkı">
+                        <span class="hint-icon">➕</span>
+                        <span class="hud-label" data-i18n="slotBtnLabel">+1 SLOT</span>
+                        <span id="slot-cost-badge" class="cost-badge cost-gold">1000</span>
+                    </button>
+                </div>
 
                 <div class="hud-right-group">
                     <div class="hud-item badge-score">
@@ -154,7 +163,7 @@
 
             <!-- Toast Alert Notification -->
             <div id="toast-msg" class="toast-msg hidden">
-                <span id="toast-text">Yetersiz Skor! (300 Puan Gerekli)</span>
+                <span id="toast-text">Yetersiz Skor!</span>
             </div>
 
             <!-- Main Stacked Pyramid Board Area -->
@@ -162,7 +171,7 @@
                 <div id="board"></div>
             </main>
 
-            <!-- Bottom 5-Slot Tray Area -->
+            <!-- Bottom Slot Tray Area -->
             <footer id="slot-tray-container">
                 <div id="slot-tray-bg">
                     <div class="slot-marker"></div>
