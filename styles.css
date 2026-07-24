@@ -297,19 +297,80 @@ body {
     border-radius: 20px;
 }
 
+/* =========================================================
+   PREMIUM BUTTON HOVER GLOW & TACTILE PRESS ANIMATIONS
+   ========================================================= */
+
+.btn-primary {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    color: #ffffff;
+    border: none;
+    border-radius: 20px;
+    padding: 14px 28px;
+    font-size: 17px;
+    font-weight: 900;
+    cursor: pointer;
+    width: 100%;
+    box-shadow: 0 6px 20px rgba(245, 158, 11, 0.45);
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease, filter 0.2s ease;
+}
+
+/* Hover Glowing & Popping Effect */
+.btn-primary:hover {
+    transform: translateY(-4px) scale(1.03);
+    box-shadow: 0 14px 32px rgba(245, 158, 11, 0.7), 0 0 24px rgba(251, 191, 36, 0.8);
+    filter: brightness(1.1);
+}
+
+/* Shimmer Light Wave on Hover */
+.btn-primary::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -60%;
+    width: 50%;
+    height: 200%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+    transform: rotate(25deg);
+    transition: left 0.6s ease;
+    pointer-events: none;
+}
+
+.btn-primary:hover::before {
+    left: 130%;
+}
+
+/* Tactile Press Down Effect */
+.btn-primary:active {
+    transform: translateY(2px) scale(0.96);
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
+}
+
 .btn-secondary {
     background: rgba(30, 41, 59, 0.88);
-    border: 1.5px solid rgba(255, 255, 255, 0.2);
+    border: 1.5px solid rgba(255, 255, 255, 0.25);
     color: #ffffff;
     border-radius: 20px;
     font-size: 16px;
     font-weight: 800;
     cursor: pointer;
-    transition: transform 0.15s ease;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.btn-secondary:hover {
+    transform: translateY(-4px) scale(1.03);
+    background: rgba(51, 65, 85, 0.95);
+    border-color: rgba(255, 255, 255, 0.5);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5), 0 0 18px rgba(255, 255, 255, 0.25);
 }
 
 .btn-secondary:active {
-    transform: scale(0.95);
+    transform: translateY(2px) scale(0.96);
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
 }
 
 /* Modals & Settings Overlay Screen (Z-Index 3000 - Above Main Menu & HUD!) */
@@ -371,6 +432,16 @@ body {
     height: 32px;
     border-radius: 50%;
     cursor: pointer;
+    transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.btn-close-x:hover {
+    transform: scale(1.15) rotate(90deg);
+    background: rgba(239, 68, 68, 0.8);
+}
+
+.btn-close-x:active {
+    transform: scale(0.9);
 }
 
 .setting-row {
@@ -423,6 +494,11 @@ body {
     transition: all 0.2s ease;
 }
 
+.toggle-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
 .toggle-btn.active {
     background: #10b981;
     color: #ffffff;
@@ -445,6 +521,12 @@ body {
     font-size: 12px;
     font-weight: 800;
     cursor: pointer;
+    transition: transform 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.lang-btn:hover {
+    transform: translateY(-2px);
+    background: rgba(51, 65, 85, 0.9);
 }
 
 .lang-btn.active {
@@ -452,6 +534,7 @@ body {
     color: #0f172a;
     border-color: var(--accent-gold);
     font-weight: 900;
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
 }
 
 /* HUD Header & Icon Buttons (Z-Index 1000) */
@@ -484,7 +567,13 @@ body {
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: transform 0.15s ease;
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.2s ease, box-shadow 0.2s ease;
+}
+
+.hud-icon-btn:hover {
+    transform: translateY(-2px) scale(1.12);
+    background: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.3);
 }
 
 .hud-icon-btn:active {
@@ -506,7 +595,12 @@ body {
     background: linear-gradient(135deg, rgba(245, 158, 11, 0.25) 0%, rgba(217, 119, 6, 0.15) 100%);
     border: 1.5px solid var(--accent-gold);
     cursor: pointer;
-    transition: transform 0.15s ease, background 0.2s ease;
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
+}
+
+.hint-btn:hover {
+    transform: translateY(-3px) scale(1.06);
+    box-shadow: 0 8px 20px rgba(245, 158, 11, 0.6), 0 0 15px rgba(251, 191, 36, 0.7);
 }
 
 .hint-btn:active {
@@ -777,22 +871,4 @@ body {
     font-size: 18px;
     font-weight: 800;
     color: var(--accent-gold);
-}
-
-.btn-primary {
-    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-    color: #ffffff;
-    border: none;
-    border-radius: 16px;
-    padding: 14px 28px;
-    font-size: 16px;
-    font-weight: 900;
-    cursor: pointer;
-    width: 100%;
-    box-shadow: 0 6px 20px rgba(245, 158, 11, 0.4);
-    transition: transform 0.15s ease;
-}
-
-.btn-primary:active {
-    transform: scale(0.95);
 }
