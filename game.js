@@ -1,7 +1,8 @@
 /**
  * Tile Club / GamoVation Style Mobile Stack Tile Pairing Game Engine
  * Features:
- * - FLOATING EMERGENCY 6TH SLOT HOLDER ABOVE TRAY (Standard 100% Full Card Size, No Squeezing!).
+ * - FLOATING EMERGENCY 6TH SLOT HOLDER DIRECTLY ABOVE CENTER SLOT (Index 2).
+ * - PERSISTENT LIFECYCLE: Stays open waiting for a tile, disappears ONLY AFTER tile enters & gets matched out!
  * - DYNAMIC IN-LEVEL PRICE ESCALATION (%100 Cost Double on each use in same level).
  * - AUTO-SAVE PROGRESSION SYSTEM (localStorage persistence).
  * - Dynamic Dual-Language Game Title (TR: "EŞLE GİTSİN! 3D" | EN: "TILE MATCH 3D").
@@ -243,6 +244,7 @@ class TileMatchingGame {
         this.cardH = 94;
         this.maxSlotCapacity = 5;
         this.hasTemporaryExtraSlot = false;
+        this.extraSlotWasUsed = false;
 
         // Dynamic In-Level Cost System (%100 Cost Increase on each use in same level)
         this.baseHintCost = 300;
@@ -327,7 +329,7 @@ class TileMatchingGame {
                 noScoreHint: 'Yetersiz Skor! ({cost} Puan Gerekli)',
                 noScoreSlot: 'Yetersiz Skor! ({cost} Puan Gerekli)',
                 noHint: 'Şu an açık eşleşen kart bulunamadı!',
-                slotAdded: 'Üstte Geçici Acil Slot Alanı Açıldı! 🚨',
+                slotAdded: 'Ortadaki Slot Üstüne Acil Yuva Açıldı! 🚨',
                 menuSubtitle: 'Eşleme ve Zeka Macerası'
             },
             en: {
@@ -356,7 +358,7 @@ class TileMatchingGame {
                 noScoreHint: 'Not Enough Score! ({cost} Required)',
                 noScoreSlot: 'Not Enough Score! ({cost} Required)',
                 noHint: 'No matching unlocked tiles available!',
-                slotAdded: 'Top Temporary Emergency Slot Unlocked! 🚨',
+                slotAdded: 'Emergency Slot Opened Above Center Slot! 🚨',
                 menuSubtitle: 'Matching & Logic Puzzle Adventure'
             }
         };
@@ -597,6 +599,7 @@ class TileMatchingGame {
         this.slotCost = this.baseSlotCost;
         this.maxSlotCapacity = 5;
         this.hasTemporaryExtraSlot = false;
+        this.extraSlotWasUsed = false;
         document.getElementById('floating-extra-slot').classList.add('hidden');
         this.updateBoosterBadgesUI();
 
@@ -967,8 +970,9 @@ class TileMatchingGame {
         this.slotCost *= 2;
         this.updateBoosterBadgesUI();
 
-        // Reveal Floating 6th Emergency Slot Holder above tray (Standard Full Size)
+        // Reveal Floating Emergency Slot Holder directly above Center Slot (Index 2)
         this.hasTemporaryExtraSlot = true;
+        this.extraSlotWasUsed = false;
         this.maxSlotCapacity = 6;
         document.getElementById('floating-extra-slot').classList.remove('hidden');
 
@@ -1053,15 +1057,11 @@ class TileMatchingGame {
         const spacing = (trayW - 20) / standard5Capacity;
         const startX = 10 + (spacing - this.cardW) / 2;
 
-        const floatingSlotBox = document.querySelector('.extra-slot-box');
-        const containerRect = document.getElementById('game-container').getBoundingClientRect();
-        const boxRect = floatingSlotBox.getBoundingClientRect();
-
         for (let i = 0; i < total; i++) {
             const tile = this.slotTiles[i];
 
             if (i < 5) {
-                // Standard 5 Bottom Tray Slots (Always 100% Standard Full Size!)
+                // Bottom Tray 5 Standard Slots (Always 100% Standard Full Size!)
                 const targetX = startX + (i * spacing);
                 const targetY = 10;
 
@@ -1070,13 +1070,15 @@ class TileMatchingGame {
                 tile.element.style.top = `${targetY}px`;
                 tile.element.style.zIndex = 200 + i;
             } else {
-                // 6th Emergency Tile fits in Floating Slot Holder above Tray (Standard 100% Full Size!)
-                const floatX = (boxRect.left - containerRect.left);
-                const floatY = (boxRect.top - containerRect.top) - (containerRect.height - 110 - 24);
+                // 6th Emergency Tile positioned EXACTLY CENTERED DIRECTLY ABOVE CENTER SLOT #3 (Index 2)!
+                const centerX = startX + (2 * spacing); // Index 2 center slot
+                const centerY = 10 - 105; // Exactly 105px directly above center slot
+
+                this.extraSlotWasUsed = true; // Mark that a tile has entered the 6th emergency slot!
 
                 tile.element.style.transition = 'all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1)';
-                tile.element.style.left = `${floatX}px`;
-                tile.element.style.top = `${floatY}px`;
+                tile.element.style.left = `${centerX}px`;
+                tile.element.style.top = `${centerY}px`;
                 tile.element.style.zIndex = 600;
             }
         }
@@ -1146,10 +1148,11 @@ class TileMatchingGame {
             if (tileA.element.parentElement) tileA.element.parentElement.removeChild(tileA.element);
             if (tileB.element.parentElement) tileB.element.parentElement.removeChild(tileB.element);
 
-            // SHRINK EXTRA SLOT BACK & HIDE FLOATING HOLDER ONCE MATCH CLEARS!
-            if (this.hasTemporaryExtraSlot && this.slotTiles.length <= 5) {
+            // LIFECYCLE RULE: ONLY DISAPPEAR ONCE A TILE ENTERED SLOT 6 AND HAS BEEN CLEARED!
+            if (this.hasTemporaryExtraSlot && this.extraSlotWasUsed && this.slotTiles.length <= 5) {
                 this.maxSlotCapacity = 5;
                 this.hasTemporaryExtraSlot = false;
+                this.extraSlotWasUsed = false;
                 document.getElementById('floating-extra-slot').classList.add('hidden');
             }
 
