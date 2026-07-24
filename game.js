@@ -1,7 +1,7 @@
 /**
  * Tile Club / GamoVation Style Mobile Stack Tile Pairing Game Engine
  * Features:
- * - EXTRA SLOT BOOSTER POWER-UP (1000 Score Base Price).
+ * - TEMPORARY EMERGENCY EXTRA SLOT BOOSTER (1-Time Use, shrinks back to 5 when cleared!).
  * - DYNAMIC IN-LEVEL PRICE ESCALATION (%100 Cost Double on each use in same level).
  * - AUTO-SAVE PROGRESSION SYSTEM (localStorage persistence).
  * - Dynamic Dual-Language Game Title (TR: "EŞLE GİTSİN! 3D" | EN: "TILE MATCH 3D").
@@ -242,6 +242,7 @@ class TileMatchingGame {
         this.cardW = 74;
         this.cardH = 94;
         this.maxSlotCapacity = 5;
+        this.hasTemporaryExtraSlot = false;
 
         // Dynamic In-Level Cost System (%100 Cost Increase on each use in same level)
         this.baseHintCost = 300;
@@ -326,7 +327,7 @@ class TileMatchingGame {
                 noScoreHint: 'Yetersiz Skor! ({cost} Puan Gerekli)',
                 noScoreSlot: 'Yetersiz Skor! ({cost} Puan Gerekli)',
                 noHint: 'Şu an açık eşleşen kart bulunamadı!',
-                slotAdded: '+1 Ek Slot Alanı Açıldı! 🎉',
+                slotAdded: 'Geçici +1 Acil Slot Alanı Açıldı! 🚨',
                 menuSubtitle: 'Eşleme ve Zeka Macerası'
             },
             en: {
@@ -355,7 +356,7 @@ class TileMatchingGame {
                 noScoreHint: 'Not Enough Score! ({cost} Required)',
                 noScoreSlot: 'Not Enough Score! ({cost} Required)',
                 noHint: 'No matching unlocked tiles available!',
-                slotAdded: '+1 Extra Slot Unlocked! 🎉',
+                slotAdded: 'Temporary +1 Emergency Slot Unlocked! 🚨',
                 menuSubtitle: 'Matching & Logic Puzzle Adventure'
             }
         };
@@ -595,6 +596,7 @@ class TileMatchingGame {
         this.hintCost = this.baseHintCost;
         this.slotCost = this.baseSlotCost;
         this.maxSlotCapacity = 5;
+        this.hasTemporaryExtraSlot = false;
         this.updateBoosterBadgesUI();
 
         // Auto Save Progress immediately
@@ -977,8 +979,9 @@ class TileMatchingGame {
         this.slotCost *= 2;
         this.updateBoosterBadgesUI();
 
-        // Unlock +1 Extra Slot Capacity
-        this.maxSlotCapacity += 1;
+        // Unlock Temporary +1 Extra Slot Capacity (1-Time Emergency Life Saver)
+        this.hasTemporaryExtraSlot = true;
+        this.maxSlotCapacity = 6;
         this.renderSlotTrayBackground();
         this.rearrangeSlotTiles();
 
@@ -1137,6 +1140,13 @@ class TileMatchingGame {
         setTimeout(() => {
             if (tileA.element.parentElement) tileA.element.parentElement.removeChild(tileA.element);
             if (tileB.element.parentElement) tileB.element.parentElement.removeChild(tileB.element);
+
+            // SHRINK EXTRA SLOT BACK TO 5 ONCE MATCH CLEARS AND SLOTS FIT IN 5!
+            if (this.hasTemporaryExtraSlot && this.slotTiles.length <= 5) {
+                this.maxSlotCapacity = 5;
+                this.hasTemporaryExtraSlot = false;
+                this.renderSlotTrayBackground();
+            }
 
             this.rearrangeSlotTiles();
 
