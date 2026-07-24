@@ -870,7 +870,51 @@ body {
     75% { transform: translateX(8px); }
 }
 
-/* Bottom Slot Tray Bar */
+/* Floating Top Emergency 6th Slot Holder (Floating above bottom tray) */
+.floating-extra-slot {
+    position: absolute;
+    bottom: 155px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    z-index: 500;
+    transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.floating-extra-slot.hidden {
+    opacity: 0;
+    transform: translate(-50%, 20px) scale(0.7);
+    pointer-events: none;
+}
+
+.extra-slot-badge {
+    background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%);
+    color: #ffffff;
+    font-size: 10px;
+    font-weight: 900;
+    padding: 3px 8px;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(56, 189, 248, 0.5);
+    letter-spacing: 0.5px;
+}
+
+.extra-slot-box {
+    width: var(--card-w);
+    height: var(--card-h);
+    border: 2.5px dashed #38bdf8;
+    border-radius: 16px;
+    background: rgba(15, 23, 42, 0.85);
+    box-shadow: 0 8px 25px rgba(56, 189, 248, 0.35), inset 0 0 12px rgba(56, 189, 248, 0.2);
+    backdrop-filter: blur(12px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Bottom 5-Slot Fixed Tray Bar */
 #slot-tray-container {
     padding: 24px 20px 36px 20px;
     display: flex;
@@ -880,7 +924,7 @@ body {
 }
 
 #slot-tray-bg {
-    min-width: var(--tray-w);
+    width: var(--tray-w);
     height: var(--tray-h);
     background: rgba(15, 23, 42, 0.88);
     border: 2px solid rgba(245, 158, 11, 0.45);
@@ -891,8 +935,6 @@ body {
     justify-content: space-around;
     align-items: center;
     padding: 0 10px;
-    gap: 6px;
-    transition: all 0.3s ease;
 }
 
 .slot-marker {
@@ -901,7 +943,6 @@ body {
     border: 2px dashed rgba(255, 255, 255, 0.14);
     border-radius: 14px;
     background: rgba(0, 0, 0, 0.25);
-    transition: all 0.3s ease;
 }
 
 #slot-tiles-layer {
