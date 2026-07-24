@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Tile Matching Web App</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="app-wrapper">
+        <!-- Main Game Container (1080x1920 Portrait Aspect Ratio) -->
+        <div id="game-container">
+            <!-- Canvas Overlay for Match Particles & Confetti -->
+            <canvas id="fx-canvas"></canvas>
+
+            <!-- Main Menu Screen (Vibrant Animated Background View) -->
+            <div id="main-menu" class="menu-overlay">
+                <!-- Rich Floating Character Background Layer (16 Character Mini Cards) -->
+                <div class="menu-bg-characters">
+                    <img src="images/fox.jpg" class="bg-char char-1" alt="Fox">
+                    <img src="images/cat.jpg" class="bg-char char-2" alt="Cat">
+                    <img src="images/panda.jpg" class="bg-char char-3" alt="Panda">
+                    <img src="images/dragon.jpg" class="bg-char char-4" alt="Dragon">
+                    <img src="images/shiba.jpg" class="bg-char char-5" alt="Shiba">
+                    <img src="images/unicorn.jpg" class="bg-char char-6" alt="Unicorn">
+                    <img src="images/lion.jpg" class="bg-char char-7" alt="Lion">
+                    <img src="images/bunny.jpg" class="bg-char char-8" alt="Bunny">
+                    <img src="images/owl.jpg" class="bg-char char-9" alt="Owl">
+                    <img src="images/red_panda.jpg" class="bg-char char-10" alt="Red Panda">
+                    <img src="images/frog.jpg" class="bg-char char-11" alt="Frog">
+                    <img src="images/penguin.jpg" class="bg-char char-12" alt="Penguin">
+                    <div class="bg-char char-13 svg-bg-char"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="32" fill="#cbd5e1"/><circle cx="38" cy="48" r="4" fill="#0f172a"/><circle cx="62" cy="48" r="4" fill="#0f172a"/></svg></div>
+                    <div class="bg-char char-14 svg-bg-char"><svg viewBox="0 0 100 100"><ellipse cx="50" cy="52" rx="28" ry="34" fill="#f59e0b"/><circle cx="40" cy="46" r="4" fill="#451a03"/><circle cx="60" cy="46" r="4" fill="#451a03"/></svg></div>
+                    <div class="bg-char char-15 svg-bg-char"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="32" fill="#d97706"/><circle cx="38" cy="44" r="4" fill="#451a03"/><circle cx="62" cy="44" r="4" fill="#451a03"/></svg></div>
+                    <div class="bg-char char-16 svg-bg-char"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="30" fill="#cbd5e1"/><circle cx="38" cy="44" r="4" fill="#0f172a"/><circle cx="62" cy="44" r="4" fill="#0f172a"/></svg></div>
+                </div>
+
+                <!-- Glassmorphic Integrated Menu Card Panel -->
+                <div class="menu-card">
+                    <!-- Charming Heart-Shaped 3D Tile Logo Emblem -->
+                    <div class="menu-logo-frame">
+                        <div class="logo-heart-container">
+                            <img src="images/cat.jpg" class="heart-card card-top-left" alt="Cat">
+                            <img src="images/panda.jpg" class="heart-card card-top-right" alt="Panda">
+                            <img src="images/dragon.jpg" class="heart-card card-bottom-tip" alt="Dragon">
+                            <img src="images/fox.jpg" class="heart-card card-center-hero" alt="Fox">
+                            <div class="badge-3d-star">3D</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Dynamic Dual-Language Game Title -->
+                    <h1 id="menu-game-title" class="menu-title" data-i18n="gameTitle">EŞLE GİTSİN! 3D</h1>
+                    <p id="menu-subtitle" class="menu-subtitle" data-i18n="menuSubtitle">Eşleme ve Zeka Macerası</p>
+                    
+                    <div class="menu-btn-group">
+                        <button id="btn-menu-play" class="btn-primary btn-menu">
+                            <span>▶</span> <span data-i18n="play">OYNA</span>
+                        </button>
+                        <button id="btn-menu-settings" class="btn-secondary btn-menu">
+                            <span>⚙️</span> <span data-i18n="settings">AYARLAR</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Modal Screen -->
+            <div id="modal-settings" class="modal-overlay hidden">
+                <div class="modal-card settings-card">
+                    <div class="modal-header-row">
+                        <h2 class="modal-title" data-i18n="settingsTitle">⚙️ AYARLAR</h2>
+                        <button id="btn-close-settings" class="btn-close-x">✕</button>
+                    </div>
+
+                    <!-- Volume Setting -->
+                    <div class="setting-row">
+                        <div class="setting-info">
+                            <span class="setting-label" data-i18n="volLabel">🔊 Ses Düzeyi</span>
+                            <span id="vol-val-text" class="setting-val">80%</span>
+                        </div>
+                        <input type="range" id="slider-volume" min="0" max="100" value="80" class="setting-slider">
+                    </div>
+
+                    <!-- Vibration Setting -->
+                    <div class="setting-row">
+                        <div class="setting-info">
+                            <span class="setting-label" data-i18n="vibLabel">📳 Titreşim</span>
+                        </div>
+                        <button id="btn-toggle-vib" class="toggle-btn active">
+                            <span id="vib-btn-text">AÇIK</span>
+                        </button>
+                    </div>
+
+                    <!-- Language Setting -->
+                    <div class="setting-row">
+                        <div class="setting-info">
+                            <span class="setting-label" data-i18n="langLabel">🌐 Dil Desteği</span>
+                        </div>
+                        <div class="lang-selector">
+                            <button id="btn-lang-tr" class="lang-btn active">🇹🇷 Türkçe</button>
+                            <button id="btn-lang-en" class="lang-btn">🇬🇧 English</button>
+                        </div>
+                    </div>
+
+                    <button id="btn-save-settings" class="btn-primary" data-i18n="saveBtn">KAYDET VE KAPAT</button>
+                </div>
+            </div>
+
+            <!-- Top Navigation & HUD Bar -->
+            <header id="hud-header">
+                <div class="hud-left-group">
+                    <button id="btn-hud-home" class="hud-icon-btn" title="Ana Menü">🏠</button>
+                    <div class="hud-item badge-level">
+                        <span class="hud-label" data-i18n="levelLabel">SEVİYE</span>
+                        <span id="level-num" class="hud-val">1</span>
+                    </div>
+                </div>
+                
+                <!-- Smart Hint Button (300 Score Points) -->
+                <button id="btn-hint" class="hud-item hint-btn" title="Akıllı İpucu (300 Puan)">
+                    <span class="hint-icon">💡</span>
+                    <span class="hud-label" data-i18n="hintLabel">İPUCU</span>
+                    <span class="hint-cost-badge">300</span>
+                </button>
+
+                <div class="hud-right-group">
+                    <div class="hud-item badge-score">
+                        <span class="hud-label" data-i18n="scoreLabel">SKOR</span>
+                        <span id="score-val" class="hud-val">0</span>
+                    </div>
+                    <button id="btn-hud-settings" class="hud-icon-btn" title="Ayarlar">⚙️</button>
+                </div>
+            </header>
+
+            <!-- Combo Multiplier Floating HUD Badge -->
+            <div id="combo-badge" class="combo-badge hidden">
+                <span id="combo-text">🔥 2x COMBO!</span>
+            </div>
+
+            <!-- Toast Alert Notification -->
+            <div id="toast-msg" class="toast-msg hidden">
+                <span id="toast-text">Yetersiz Skor! (300 Puan Gerekli)</span>
+            </div>
+
+            <!-- Main Stacked Pyramid Board Area -->
+            <main id="board-container">
+                <div id="board"></div>
+            </main>
+
+            <!-- Bottom 5-Slot Tray Area -->
+            <footer id="slot-tray-container">
+                <div id="slot-tray-bg">
+                    <div class="slot-marker"></div>
+                    <div class="slot-marker"></div>
+                    <div class="slot-marker"></div>
+                    <div class="slot-marker"></div>
+                    <div class="slot-marker"></div>
+                </div>
+                <div id="slot-tiles-layer"></div>
+            </footer>
+        </div>
+
+        <!-- Victory Modal Dialog -->
+        <div id="modal-victory" class="modal-overlay hidden">
+            <div class="modal-card">
+                <div class="modal-icon">🏆</div>
+                <h2 class="modal-title" data-i18n="victoryTitle">TEBRİKLER!</h2>
+                <p class="modal-desc" data-i18n="victoryDesc">Bölümdeki tüm kartları başarıyla eşleştirdiniz!</p>
+                <div class="modal-stat"><span data-i18n="scoreLabel">SKOR</span>: <span id="victory-score">0</span></div>
+                <button id="btn-next-level" class="btn-primary" data-i18n="nextLevelBtn">SONRAKİ BÖLÜM</button>
+            </div>
+        </div>
+
+        <!-- Game Over Modal Dialog -->
+        <div id="modal-gameover" class="modal-overlay hidden">
+            <div class="modal-card modal-defeat">
+                <div class="modal-icon">💔</div>
+                <h2 class="modal-title" data-i18n="defeatTitle">SLOT DOLDU!</h2>
+                <p class="modal-desc" data-i18n="defeatDesc">Tepside boş alan kalmadı ve eşleşen kart bulunamadı.</p>
+                <button id="btn-retry" class="btn-primary" data-i18n="retryBtn">TEKRAR DENE</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="game.js"></script>
+</body>
+</html>
