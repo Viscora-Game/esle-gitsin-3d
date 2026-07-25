@@ -1035,7 +1035,7 @@ class TileMatchingGame {
                 const cells = [];
                 for (let r = 0; r < dim.rows; r++) {
                     for (let c = 0; c < dim.cols; c++) {
-                        cells.append({ x: startX + c * stepX, y: startY + r * stepY });
+                        cells.push({ x: startX + c * stepX, y: startY + r * stepY });
                     }
                 }
 
