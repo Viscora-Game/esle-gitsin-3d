@@ -1,4 +1,4 @@
-const CACHE_NAME = 'esle-gitsin-3d-v22';
+const CACHE_NAME = 'esle-gitsin-3d-v25';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
