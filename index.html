@@ -35,7 +35,7 @@
                     <div class="bg-char char-13 svg-bg-char"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="32" fill="#cbd5e1"/><circle cx="38" cy="48" r="4" fill="#0f172a"/><circle cx="62" cy="48" r="4" fill="#0f172a"/></svg></div>
                     <div class="bg-char char-14 svg-bg-char"><svg viewBox="0 0 100 100"><ellipse cx="50" cy="52" rx="28" ry="34" fill="#f59e0b"/><circle cx="40" cy="46" r="4" fill="#451a03"/><circle cx="60" cy="46" r="4" fill="#451a03"/></svg></div>
                     <div class="bg-char char-15 svg-bg-char"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="32" fill="#d97706"/><circle cx="38" cy="44" r="4" fill="#451a03"/><circle cx="62" cy="44" r="4" fill="#451a03"/></svg></div>
-                    <div class="bg-char char-16 svg-bg-char"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="30" fill="#cbd5e1"/><circle cx="38" cy="44" r="4" fill="#0f172a"/><circle cx="62" cy="44" r="4" fill="#0f172a"/></svg></div>
+                    <div class="bg-char char-16 svg-bg-char"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="30" fill="#cbd5e1"/><circle cx="38" cy="44" r="4" fill="#0f172a"/><circle cx="62" cy="44" r="4" fill="#451a03"/></svg></div>
                 </div>
 
                 <!-- Glassmorphic Integrated Menu Card Panel -->
@@ -80,6 +80,39 @@
                 </div>
             </div>
 
+            <!-- Interactive Character Guided Tutorial Modal Screen -->
+            <div id="modal-tutorial" class="modal-overlay hidden">
+                <div class="modal-card tutorial-card">
+                    <button id="btn-close-tutorial" class="btn-close-x tutorial-close-btn">✕</button>
+                    
+                    <!-- Floating Character Avatar Header -->
+                    <div class="tutorial-avatar-wrapper">
+                        <img id="tut-avatar-img" src="images/fox.jpg" alt="Character Host" class="tut-avatar">
+                        <div id="tut-badge-name" class="tut-character-name">FOXİ (Kozmik Tilki)</div>
+                    </div>
+
+                    <!-- Speech Bubble & Content Container -->
+                    <div class="speech-bubble">
+                        <h3 id="tut-title" class="tut-slide-title">EŞLE GİTSİN! 3D'YE HOŞ GELDİN</h3>
+                        <p id="tut-body" class="tut-slide-body">Tahtadaki üstü açık olan 2 aynı kartı tepsine aktararak eşleştir! 5 slotlu tepsi dolmadan tüm kartları temizle!</p>
+                    </div>
+
+                    <!-- Slide Navigation Dots -->
+                    <div class="tut-dots-row">
+                        <span class="tut-dot active" data-step="0"></span>
+                        <span class="tut-dot" data-step="1"></span>
+                        <span class="tut-dot" data-step="2"></span>
+                        <span class="tut-dot" data-step="3"></span>
+                    </div>
+
+                    <!-- Action Navigation Buttons -->
+                    <div class="tut-nav-btns">
+                        <button id="btn-tut-prev" class="btn-secondary tut-btn-prev hidden">⬅️ GERİ</button>
+                        <button id="btn-tut-next" class="btn-primary tut-btn-next">İLERİ ➡️</button>
+                    </div>
+                </div>
+            </div>
+
             <!-- Settings Modal Screen -->
             <div id="modal-settings" class="modal-overlay hidden">
                 <div class="modal-card settings-card">
@@ -117,6 +150,11 @@
                             <button id="btn-lang-en" class="lang-btn">🇬🇧 English</button>
                         </div>
                     </div>
+
+                    <!-- Replay How-to-Play Tutorial Button inside Settings -->
+                    <button id="btn-menu-tutorial" class="btn-secondary settings-full-btn">
+                        <span>📖 NASIL OYNANIR? (REHBER)</span>
+                    </button>
 
                     <!-- Reset & New Game inside Settings -->
                     <button id="btn-menu-newgame" class="btn-danger-reset">

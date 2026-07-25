@@ -1,15 +1,15 @@
 /**
  * Tile Club / GamoVation Style Mobile Stack Tile Pairing Game Engine
  * Features:
- * - ULTRA-COMPACT 100% RESPONSIVE TOP HUD BAR: Guaranteed zero overflow on all screen widths!
+ * - INTERACTIVE CHARACTER-GUIDED TUTORIAL STORYBOOK (4-Step Guided Story with Foxi, Pandi, Unika, Leo!).
+ * - AUTOMATIC FIRST LAUNCH TRIGGER & REPLAYABLE FROM SETTINGS ("📖 NASIL OYNANIR?").
+ * - PRO 2-ROW RICH & SPACIOUS TOP HUD BAR: High readability, large icons and booster pill buttons!
  * - STRICT TIMER CONTROL: Timer badge is 100% HIDDEN in Classic Mode, and clean fitted in Time Trial Mode!
  * - RESPONSIVE MAIN MENU BUTTON LEVEL STRINGS: Scaled text prevents text overflow no matter how high the level number is!
  * - SHUFFLE BOARD BOOSTER (🔀 Karıştır - 5000 Score Base, 2x cost increase on each use!).
  * - MODE-SPECIFIC RESET CONFIRMATION DIALOG: Asks WHICH mode to reset (Classic, Time Trial, or Both!).
  * - 10 ULTRA-AESTHETIC PERFECTLY CENTERED 3D MAHJONG FORMATIONS.
- * - DUAL SEPARATE GAME MODES: KLASİK MOD & ZAMANA KARŞI MOD with separate persistence!
  * - DEFEAT PENALTY MECHANIC: On retry, cancels earned level points & applies -2000 score penalty (Cap at min 0).
- * - FLOATING EMERGENCY 6TH SLOT HOLDER DIRECTLY ABOVE CENTER SLOT (Index 2).
  */
 
 class SoundSynth {
@@ -289,6 +289,35 @@ class TileMatchingGame {
         this.timerInterval = null;
         this.remainingSeconds = 0;
 
+        // Tutorial Slide State
+        this.currentTutStep = 0;
+        this.tutorialSlides = [
+            {
+                avatar: 'images/fox.jpg',
+                name: 'FOXİ (Kozmik Tilki)',
+                title: 'EŞLE GİTSİN! 3D\'YE HOŞ GELDİN 🦊',
+                body: 'Tahtadaki kilitli olmayan (üstü açık) 2 aynı kartı tepsine aktararak eşleştir! 5 slotlu tepsi dolmadan tüm kartları temizle ve bölümleri geç!'
+            },
+            {
+                avatar: 'images/panda.jpg',
+                name: 'PANDİ (Sevimli Panda)',
+                title: '🎮 İKİ FARKLI OYUN MODU',
+                body: '• KLASİK MOD: Süre stresi olmadan rahatça bulmaca çöz.\n• ZAMANA KARŞI MOD: Zamana karşı yarış! Süre dolmadan tüm kartları hızlıca eşleştir!'
+            },
+            {
+                avatar: 'images/unicorn.jpg',
+                name: 'UNİKA (Büyülü Tekboynuz)',
+                title: '💡 GÜÇLÜ JOKER BİRİMLERİ',
+                body: '• İPUCU (300 Puan): Açık 2 eşleşen kartı parlatır.\n• +1 SLOT (1000 Puan): Tepsiye acil 6. slot açar.\n• KARIŞTIR (5000 Puan): Tahtadaki kartları harmanlar!'
+            },
+            {
+                avatar: 'images/lion.jpg',
+                name: 'LEO (Kral Aslan)',
+                title: '⚙️ AYARLAR VE SIFIRLAMA',
+                body: 'Ayarlardan ses, titreşim ve dili değiştirebilir, bu rehberi tekrar açabilir veya istediğin modu baştan sıfırlayabilirsin. Bol şans!'
+            }
+        ];
+
         // 22 Character Types
         this.types = [
             { id: 'fox', name: '4-Kuyruklu Tilki', bg: '#fff7ed', imgSrc: 'images/fox.jpg' },
@@ -310,7 +339,7 @@ class TileMatchingGame {
             { id: 'tiger', name: 'Çizgili Kaplan', bg: '#fff7ed', svg: `<svg viewBox="0 0 100 100" class="svg-icon"><polygon points="20,20 40,40 16,50" fill="#ea580c"/><polygon points="80,20 60,40 84,50" fill="#ea580c"/><circle cx="50" cy="52" r="32" fill="#f97316"/><path d="M 30 52 Q 50 40 70 52 Q 70 76 50 82 Q 30 76 30 52 Z" fill="#ffffff"/><circle cx="38" cy="46" r="4" fill="#451a03"/><circle cx="62" cy="46" r="4" fill="#451a03"/><polygon points="50,56 45,62 55,62" fill="#451a03"/></svg>` },
             { id: 'wolf', name: 'Gümüş Kurt', bg: '#f8fafc', svg: `<svg viewBox="0 0 100 100" class="svg-icon"><polygon points="20,18 42,40 16,50" fill="#64748b"/><polygon points="80,18 58,40 84,50" fill="#64748b"/><circle cx="50" cy="52" r="32" fill="#94a3b8"/><polygon points="50,40 32,70 68,70" fill="#ffffff"/><circle cx="38" cy="46" r="4" fill="#0f172a"/><circle cx="62" cy="46" r="4" fill="#0f172a"/><ellipse cx="50" cy="58" rx="6" ry="4" fill="#0f172a"/></svg>` },
             { id: 'bear', name: 'Boz Ayı', bg: '#fff7ed', svg: `<svg viewBox="0 0 100 100" class="svg-icon"><circle cx="24" cy="24" r="14" fill="#78350f"/><circle cx="76" cy="24" r="14" fill="#78350f"/><circle cx="50" cy="52" r="34" fill="#92400e"/><ellipse cx="50" cy="62" rx="18" ry="14" fill="#fef3c7"/><circle cx="38" cy="46" r="4" fill="#451a03"/><circle cx="62" cy="46" r="4" fill="#451a03"/><ellipse cx="50" cy="58" rx="7" ry="5" fill="#451a03"/></svg>` },
-            { id: 'deer', name: 'Orman Geyiği', bg: '#fefce8', svg: `<svg viewBox="0 0 100 100" class="svg-icon"><path d="M 30 10 L 40 30 M 70 10 L 60 30" stroke="#92400e" stroke-width="4"/><circle cx="50" cy="52" r="30" fill="#b45309"/><ellipse cx="50" cy="64" rx="16" ry="12" fill="#fef3c7"/><circle cx="38" cy="46" r="4" fill="#451a03"/><circle cx="62" cy="46" r="4" fill="#451a03"/><ellipse cx="50" cy="60" rx="5" ry="4" fill="#451a03"/></svg>` },
+            { id: 'deer', name: 'Orman Geyiği', bg: '#fefce8', svg: `<svg viewBox="0 0 100 100" class="svg-icon"><path d="M 30 10 L 40 30 M 70 10 L 60 30" stroke="#92400e" stroke-width="4"/><circle cx="50" cy="52" r="30" fill="#b45309"/><ellipse cx="50" cy="64" rx="16" ry="12" fill="#fef3c7"/><circle cx="38" cy="44" r="4" fill="#451a03"/><circle cx="62" cy="44" r="4" fill="#451a03"/><ellipse cx="50" cy="60" rx="5" ry="4" fill="#451a03"/></svg>` },
             { id: 'hippo', name: 'Tombul Suaygırı', bg: '#fae8ff', svg: `<svg viewBox="0 0 100 100" class="svg-icon"><circle cx="26" cy="28" r="10" fill="#c084fc"/><circle cx="74" cy="28" r="10" fill="#c084fc"/><circle cx="50" cy="50" r="32" fill="#e879f9"/><ellipse cx="50" cy="64" rx="24" ry="18" fill="#f0abfc"/><circle cx="38" cy="44" r="4" fill="#4c1d95"/><circle cx="62" cy="44" r="4" fill="#4c1d95"/><circle cx="42" cy="60" r="3" fill="#4c1d95"/><circle cx="58" cy="60" r="3" fill="#4c1d95"/></svg>` },
             { id: 'parrot', name: 'Renkli Papağan', bg: '#f0fdf4', svg: `<svg viewBox="0 0 100 100" class="svg-icon"><circle cx="50" cy="50" r="32" fill="#22c55e"/><path d="M 48 50 Q 72 58 48 70" fill="#f59e0b"/><circle cx="40" cy="42" r="4" fill="#0f172a"/><circle cx="41" cy="41" r="1.5" fill="#ffffff"/></svg>` }
         ];
@@ -435,6 +464,7 @@ class TileMatchingGame {
         this.loadSettings();
         this.loadGameProgress();
         this.initUI();
+        this.checkFirstTimeTutorial();
     }
 
     loadGameProgress() {
@@ -485,8 +515,96 @@ class TileMatchingGame {
         this.timeTrialProgress = { level: 1, score: 0 };
     }
 
+    checkFirstTimeTutorial() {
+        try {
+            const seen = localStorage.getItem('tile_game_tutorial_seen');
+            if (!seen) {
+                setTimeout(() => this.openTutorial(0), 400);
+            }
+        } catch (e) {}
+    }
+
+    openTutorial(startStep = 0) {
+        this.currentTutStep = startStep;
+        this.renderTutorialStep();
+        document.getElementById('modal-tutorial').classList.remove('hidden');
+    }
+
+    renderTutorialStep() {
+        const slide = this.tutorialSlides[this.currentTutStep];
+        document.getElementById('tut-avatar-img').src = slide.avatar;
+        document.getElementById('tut-badge-name').innerText = slide.name;
+        document.getElementById('tut-title').innerText = slide.title;
+        document.getElementById('tut-body').innerText = slide.body;
+
+        // Render Dots
+        const dots = document.querySelectorAll('.tut-dot');
+        dots.forEach((dot, idx) => {
+            dot.classList.toggle('active', idx === this.currentTutStep);
+        });
+
+        // Navigation Buttons
+        const btnPrev = document.getElementById('btn-tut-prev');
+        const btnNext = document.getElementById('btn-tut-next');
+
+        if (this.currentTutStep === 0) {
+            btnPrev.classList.add('hidden');
+        } else {
+            btnPrev.classList.remove('hidden');
+        }
+
+        if (this.currentTutStep === this.tutorialSlides.length - 1) {
+            btnNext.innerText = 'ANLADIM, BAŞLA! 🎉';
+        } else {
+            btnNext.innerText = 'İLERİ ➡️';
+        }
+    }
+
     initUI() {
         this.updateMainMenuButtons();
+
+        // TUTORIAL EVENTS
+        document.getElementById('btn-close-tutorial').addEventListener('click', () => {
+            document.getElementById('modal-tutorial').classList.add('hidden');
+            try { localStorage.setItem('tile_game_tutorial_seen', 'true'); } catch (e) {}
+        });
+
+        document.getElementById('btn-tut-prev').addEventListener('click', () => {
+            if (this.currentTutStep > 0) {
+                this.currentTutStep--;
+                this.sound.playClick();
+                this.renderTutorialStep();
+            }
+        });
+
+        document.getElementById('btn-tut-next').addEventListener('click', () => {
+            if (this.currentTutStep < this.tutorialSlides.length - 1) {
+                this.currentTutStep++;
+                this.sound.playClick();
+                this.renderTutorialStep();
+            } else {
+                document.getElementById('modal-tutorial').classList.add('hidden');
+                try { localStorage.setItem('tile_game_tutorial_seen', 'true'); } catch (e) {}
+                this.sound.playVictorySound();
+            }
+        });
+
+        document.querySelectorAll('.tut-dot').forEach((dot, idx) => {
+            dot.addEventListener('click', () => {
+                this.currentTutStep = idx;
+                this.sound.playClick();
+                this.renderTutorialStep();
+            });
+        });
+
+        // REPLAY TUTORIAL FROM SETTINGS
+        const btnMenuTut = document.getElementById('btn-menu-tutorial');
+        if (btnMenuTut) {
+            btnMenuTut.addEventListener('click', () => {
+                document.getElementById('modal-settings').classList.add('hidden');
+                this.openTutorial(0);
+            });
+        }
 
         // CLASSIC MODE MAIN MENU BUTTON CLICK
         document.getElementById('btn-mode-classic').addEventListener('click', () => {
