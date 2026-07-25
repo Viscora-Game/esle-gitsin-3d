@@ -883,230 +883,62 @@ class TileMatchingGame {
 
         const safeBoardW = (boardEl && boardEl.clientWidth > 100) ? boardEl.clientWidth : 380;
         const safeBoardH = (boardEl && boardEl.clientHeight > 100) ? boardEl.clientHeight : 520;
-        const positions = this.    generateLayoutPositions(formationType, totalCount, boardW, boardH) {
-        const stepX = this.cardW * 0.72;
-        const stepY = this.cardH * 0.78;
-        const centerX = boardW / 2 - this.cardW / 2;
-        const centerY = boardH / 2 - this.cardH / 2;
+        const positions = this.generateLayoutPositions(formationType, pool.length, safeBoardW, safeBoardH);
 
-        const layerCounts = [
-            Math.ceil(totalCount * 0.52),
-            Math.floor(totalCount * 0.32),
-            totalCount - Math.ceil(totalCount * 0.52) - Math.floor(totalCount * 0.32)
-        ];
+        for (let i = 0; i < pool.length; i++) {
+            const pos = positions[i];
+            const tileData = pool[i];
 
-        const startX_L0 = centerX - (2.5 * stepX);
-        const startY_L0 = centerY - (2.5 * stepY);
-        const positions = [];
+            const tileEl = document.createElement('div');
+            tileEl.className = 'tile';
+            tileEl.style.left = `${pos.x}px`;
+            tileEl.style.top = `${pos.y}px`;
+            tileEl.style.zIndex = (pos.layer * 100) + i + 10;
+            tileEl.style.background = tileData.bg;
 
-        if (formationType === 'STAR') {
-            const angles = [-Math.PI / 2, -Math.PI / 2 + 0.4 * Math.PI, -Math.PI / 2 + 0.8 * Math.PI, -Math.PI / 2 + 1.2 * Math.PI, -Math.PI / 2 + 1.6 * Math.PI];
-            const l0_ray_tiles = [];
-            for (let k = 0; k < angles.length; k++) {
-                const angle = angles[k];
-                for (let dist of [70, 110, 145]) {
-                    l0_ray_tiles.push({
-                        x: centerX + Math.cos(angle) * dist,
-                        y: centerY + Math.sin(angle) * dist,
-                        layer: 0
-                    });
-                }
-            }
-            const l0_core = [];
-            for (let r = -1; r <= 1; r++) {
-                for (let c = -1; c <= 1; c++) {
-                    l0_core.push({ x: centerX + c * stepX, y: centerY + r * stepY, layer: 0 });
-                }
-            }
-            const l1_core = [];
-            for (let r = -1; r <= 1; r++) {
-                for (let c = -1; c <= 1; c++) {
-                    l1_core.push({ x: centerX + (c + 0.5) * stepX, y: centerY + (r + 0.5) * stepY - 6, layer: 1 });
-                }
-            }
-            const l2_core = [];
-            for (let r = -1; r <= 1; r++) {
-                for (let c = -1; c <= 1; c++) {
-                    l2_core.push({ x: centerX + c * stepX, y: centerY + r * stepY - 12, layer: 2 });
-                }
-            }
-            const candidates = l0_ray_tiles.concat(l0_core, l1_core, l2_core);
-            const cnt = Math.min(totalCount, candidates.length);
-            for (let i = 0; i < cnt; i++) {
-                positions.push(candidates[i]);
-            }
-        } else if (formationType === 'HOURGLASS') {
-            const rowPats = [
-                [6, 5, 4, 2, 4, 5, 6],
-                [5, 4, 2, 4, 5],
-                [3, 2, 3]
-            ];
-            for (let layer = 0; layer < 3; layer++) {
-                const pat = rowPats[layer];
-                const startY = centerY - ((pat.length - 1) * stepY * 0.42) - (layer * 6);
-                for (let r = 0; r < pat.length; r++) {
-                    const countInRow = pat[r];
-                    const startX = centerX - ((countInRow - 1) * stepX * 0.5) + (layer * 0.5 * stepX);
-                    for (let c = 0; c < countInRow; c++) {
-                        if (positions.length >= totalCount) break;
-                        positions.push({ x: startX + c * stepX, y: startY + r * stepY * 0.85, layer: layer });
-                    }
-                }
-            }
-        } else if (formationType === 'SHIELD') {
-            const rowPats = [
-                [6, 6, 5, 4, 3, 2, 1],
-                [5, 5, 4, 3, 2],
-                [3, 3, 2]
-            ];
-            for (let layer = 0; layer < 3; layer++) {
-                const pat = rowPats[layer];
-                const startY = centerY - ((pat.length - 1) * stepY * 0.42) - (layer * 6);
-                for (let r = 0; r < pat.length; r++) {
-                    const countInRow = pat[r];
-                    const startX = centerX - ((countInRow - 1) * stepX * 0.5) + (layer * 0.5 * stepX);
-                    for (let c = 0; c < countInRow; c++) {
-                        if (positions.length >= totalCount) break;
-                        positions.push({ x: startX + c * stepX, y: startY + r * stepY * 0.85, layer: layer });
-                    }
-                }
-            }
-        } else if (formationType === 'FLOWER') {
-            for (let layer = 0; layer < 3; layer++) {
-                const radiusX = 135 - (layer * 30);
-                const radiusY = 95 - (layer * 20);
-                const totalPetals = 12 - (layer * 2);
-                for (let i = 0; i < totalPetals; i++) {
-                    if (positions.length >= totalCount) break;
-                    const t = (i / totalPetals) * Math.PI * 2;
-                    positions.push({
-                        x: centerX + Math.cos(t) * radiusX,
-                        y: centerY + Math.sin(t) * radiusY - (layer * 6),
-                        layer: layer
-                    });
-                }
-            }
-        } else if (formationType === 'HEART') {
-            const scales = [9.2, 6.4, 3.8];
-            for (let layer = 0; layer < 3; layer++) {
-                const cntTarget = Math.ceil(totalCount / 3);
-                const scale = scales[layer];
-                for (let i = 0; i < cntTarget; i++) {
-                    if (positions.length >= totalCount) break;
-                    const t = (i / cntTarget) * (Math.PI * 2);
-                    const x = 16 * Math.pow(Math.sin(t), 3);
-                    const y = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
-                    positions.push({
-                        x: centerX + (x * scale),
-                        y: centerY + (y * scale) - (layer * 6),
-                        layer: layer
-                    });
-                }
-            }
-        } else if (formationType === 'DIAMOND') {
-            const rowPats = [
-                [1, 3, 5, 7, 5, 3, 1],
-                [1, 3, 5, 3, 1],
-                [1, 3, 1]
-            ];
-            for (let layer = 0; layer < 3; layer++) {
-                const pat = rowPats[layer];
-                const startY = centerY - ((pat.length - 1) * stepY * 0.45) - (layer * 6);
-                for (let r = 0; r < pat.length; r++) {
-                    const countInRow = pat[r];
-                    const startX = centerX - ((countInRow - 1) * stepX * 0.5);
-                    for (let c = 0; c < countInRow; c++) {
-                        if (positions.length >= totalCount) break;
-                        positions.push({ x: startX + c * stepX, y: startY + r * stepY * 0.9, layer: layer });
-                    }
-                }
-            }
-        } else if (formationType === 'HELIX') {
-            for (let layer = 0; layer < 3; layer++) {
-                const numArm = 16 - (layer * 4);
-                for (let i = 0; i < numArm; i++) {
-                    if (positions.length >= totalCount) break;
-                    const t = (i / numArm) * Math.PI * 2;
-                    const r = 40 + i * 5 - (layer * 10);
-                    positions.push({
-                        x: centerX + Math.cos(t + layer * 0.5) * r,
-                        y: centerY + Math.sin(t + layer * 0.5) * r - (layer * 6),
-                        layer: layer
-                    });
-                }
-            }
-        } else if (formationType === 'TWIN_PEAKS') {
-            const offsetLeftX = centerX - stepX * 1.6;
-            const offsetRightX = centerX + stepX * 1.6;
-            const peakDims = [{ cols: 3, rows: 4 }, { cols: 2, rows: 3 }, { cols: 1, rows: 2 }];
-            for (let layer = 0; layer < 3; layer++) {
-                const dim = peakDims[layer];
-                for (let r = 0; r < dim.rows; r++) {
-                    for (let c = 0; c < dim.cols; c++) {
-                        if (positions.length >= totalCount) break;
-                        // Left peak
-                        positions.push({
-                            x: offsetLeftX + (c - dim.cols / 2) * stepX,
-                            y: centerY + (r - dim.rows / 2) * stepY - (layer * 6),
-                            layer: layer
-                        });
-                        if (positions.length >= totalCount) break;
-                        // Right peak
-                        positions.push({
-                            x: offsetRightX + (c - dim.cols / 2) * stepX,
-                            y: centerY + (r - dim.rows / 2) * stepY - (layer * 6),
-                            layer: layer
-                        });
-                    }
-                }
-            }
-        } else if (formationType === 'CASTLE') {
-            const dims = [{ cols: 6, rows: 6, wall: true }, { cols: 4, rows: 4, wall: false }, { cols: 2, rows: 2, wall: false }];
-            for (let layer = 0; layer < 3; layer++) {
-                const dim = dims[layer];
-                const startX = centerX - ((dim.cols - 1) * stepX * 0.5);
-                const startY = centerY - ((dim.rows - 1) * stepY * 0.5) - (layer * 6);
-                for (let r = 0; r < dim.rows; r++) {
-                    for (let c = 0; c < dim.cols; c++) {
-                        if (dim.wall && r > 0 && r < dim.rows - 1 && c > 0 && c < dim.cols - 1) continue;
-                        if (positions.length >= totalCount) break;
-                        positions.push({ x: startX + c * stepX, y: startY + r * stepY, layer: layer });
-                    }
-                }
-            }
-        } else { // ROYAL_PYRAMID & Default
-            const dims = [{ cols: 6, rows: 6 }, { cols: 4, rows: 4 }, { cols: 2, rows: 2 }];
-            for (let layer = 0; layer < 3; layer++) {
-                const dim = dims[layer];
-                const startX = centerX - ((dim.cols - 1) * stepX * 0.5);
-                const startY = centerY - ((dim.rows - 1) * stepY * 0.5) - (layer * 6);
-                for (let r = 0; r < dim.rows; r++) {
-                    for (let c = 0; c < dim.cols; c++) {
-                        if (positions.length >= totalCount) break;
-                        positions.push({ x: startX + c * stepX, y: startY + r * stepY, layer: layer });
-                    }
-                }
-            }
-        }
+            const iconContainer = document.createElement('div');
+            iconContainer.className = 'tile-icon';
 
-        // INWARD-FILLING CORE FALLBACK (Strictly stacks onto 3D center, NEVER outwards!)
-        const initialCandidateCount = positions.length;
-        while (positions.length < totalCount) {
-            const idx = positions.length - initialCandidateCount;
-            const r = (Math.floor(idx / 3) % 3) - 1;
-            const c = (idx % 3) - 1;
-            const layer = 1 + (Math.floor(idx / 9) % 2);
-            positions.push({
-                x: centerX + c * (this.cardW * 0.65),
-                y: centerY + r * (this.cardH * 0.65) - (layer * 6),
-                layer: layer
+            if (tileData.imgSrc) {
+                const imgEl = document.createElement('img');
+                imgEl.className = 'tile-img';
+                imgEl.src = tileData.imgSrc;
+                imgEl.alt = tileData.name;
+                iconContainer.appendChild(imgEl);
+            } else if (tileData.svg) {
+                iconContainer.innerHTML = tileData.svg;
+            }
+
+            tileEl.appendChild(iconContainer);
+            boardEl.appendChild(tileEl);
+
+            const tileObj = {
+                id: `tile_${i}_${Date.now()}`,
+                type: tileData.id,
+                bg: tileData.bg,
+                imgSrc: tileData.imgSrc,
+                svg: tileData.svg,
+                name: tileData.name,
+                x: pos.x,
+                y: pos.y,
+                layer: pos.layer,
+                index: i,
+                element: tileEl,
+                isLocked: false,
+                isInSlot: false
+            };
+
+            tileEl.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.onTileClick(tileObj);
             });
+            
+            this.boardTiles.push(tileObj);
         }
 
-        return positions;
-    }
+        this.updateLockStates();
 
-    updateLockStates();
+        
 
         // TIMER ONLY IN TIME TRIAL MODE (STRICTLY HIDDEN IN CLASSIC MODE!)
         const timerBadge = document.getElementById('badge-timer');
