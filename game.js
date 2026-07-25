@@ -1222,6 +1222,17 @@ class TileMatchingGame {
             }
         }
 
+        while (positions.length < totalCount) {
+            const idx = positions.length;
+            const r = Math.floor(idx / 6);
+            const c = idx % 6;
+            positions.push({
+                x: startX_L0 + c * stepX,
+                y: startY_L0 + r * stepY,
+                layer: 0
+            });
+        }
+
         return positions;
     }
 
