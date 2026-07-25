@@ -41,25 +41,15 @@ body {
 /* Mobile 1080x1920 Screen Container with Dynamic Background Transition */
 #game-container {
     width: 100%;
-    max-width: 440px;
-    height: 100vh;
-    max-height: 920px;
+    height: 100%;
     background: radial-gradient(circle at 50% 20%, #1e1b4b 0%, #0b0f19 80%, #060913 100%);
     transition: background 0.8s ease;
     position: relative;
     display: flex;
     flex-direction: column;
-    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8), 0 0 40px rgba(99, 102, 241, 0.15);
+    box-shadow: none;
     overflow: hidden;
     border-radius: 0;
-}
-
-@media (min-height: 700px) and (min-width: 450px) {
-    #game-container {
-        border-radius: 28px;
-        border: 2px solid rgba(255, 255, 255, 0.1);
-        height: 94vh;
-    }
 }
 
 /* Canvas Particle & Confetti Layer */
