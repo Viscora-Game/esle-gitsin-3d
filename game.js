@@ -842,6 +842,9 @@ class TileMatchingGame {
 
         // SPECIAL STAR FORMATION ON EVERY 10th LEVEL (10, 20, 30, 40...)
         let formationType = this.formations[(this.level - 1) % this.formations.length];
+        if (this.level % 10 === 0) {
+            formationType = 'STAR';
+        }
 
         // Reset Combo & Hints
         this.comboCount = 1;
@@ -871,8 +874,8 @@ class TileMatchingGame {
 
         this.shuffleArray(pool);
 
-        const safeBoardW = (boardEl && boardEl.clientWidth > 100) ? boardEl.clientWidth : 380;
-        const safeBoardH = (boardEl && boardEl.clientHeight > 100) ? boardEl.clientHeight : 520;
+        const safeBoardW = (boardEl && boardEl.clientWidth > 200) ? boardEl.clientWidth : (window.innerWidth || 380);
+        const safeBoardH = (boardEl && boardEl.clientHeight > 200) ? boardEl.clientHeight : ((window.innerHeight - 160) || 520);
         const positions = this.generateLayoutPositions(formationType, pool.length, safeBoardW, safeBoardH);
 
         for (let i = 0; i < pool.length; i++) {
