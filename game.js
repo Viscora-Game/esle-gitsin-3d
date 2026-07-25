@@ -1007,379 +1007,66 @@ class TileMatchingGame {
         const stepX = 62;
         const stepY = 74;
 
-        // Strict 3-Tier Layer Allocation (L0: ~62% Base, L1: ~26% Mid, L2: ~12% Crown)
-        // Eliminates tall vertical towers/totem poles! Max height is strictly 3 layers.
-        const l0_count = Math.max(6, Math.floor(totalCount * 0.62));
-        const l1_count = Math.max(3, Math.floor(totalCount * 0.26));
+        // Strict 3-Tier Layer Allocation (L0: ~60% Base, L1: ~28% Mid, L2: ~12% Crown)
+        const l0_count = Math.max(6, Math.floor(totalCount * 0.60));
+        const l1_count = Math.max(3, Math.floor(totalCount * 0.28));
         const l2_count = Math.max(0, totalCount - l0_count - l1_count);
         const layerCounts = [l0_count, l1_count, l2_count];
 
-        if (formationType === 'ROYAL_PYRAMID' || formationType === 'DIAMOND') {
-            const dims = [
+        // Base Layer 0 origin
+        const startX_L0 = centerX - (5 * stepX * 0.5);
+        const startY_L0 = centerY - (5 * stepY * 0.5);
+
+        // Pattern Map Dims
+        let dims = [
+            { cols: 6, rows: 6 },
+            { cols: 5, rows: 5 },
+            { cols: 4, rows: 4 }
+        ];
+
+        if (formationType === 'CASTLE') {
+            dims = [
+                { cols: 6, rows: 6, wallOnly: true },
+                { cols: 5, rows: 5 },
+                { cols: 3, rows: 3 }
+            ];
+        } else if (formationType === 'TWIN_PEAKS') {
+            dims = [
                 { cols: 6, rows: 6 },
                 { cols: 5, rows: 5 },
-                { cols: 4, rows: 4 }
+                { cols: 3, rows: 3 }
             ];
+        }
 
-            let placed = 0;
-            for (let layer = 0; layer < 3; layer++) {
-                const cnt = layerCounts[layer];
-                if (cnt <= 0 || placed >= totalCount) break;
+        let placed = 0;
+        for (let layer = 0; layer < 3; layer++) {
+            const cntTarget = layerCounts[layer];
+            if (cntTarget <= 0 || placed >= totalCount) break;
 
-                const dim = dims[layer];
-                const brickX = (layer * 0.45) * stepX;
-                const brickY = (layer * 0.45) * stepY;
-                const startX = centerX - ((dim.cols - 1) * stepX * 0.5) + brickX;
-                const startY = centerY - ((dim.rows - 1) * stepY * 0.5) + brickY - (layer * 8);
+            const dim = dims[layer];
+            // Exact Half-Step Brick Offset relative to Base Layer 0 to GUARANTEE physical overlap!
+            const startX = startX_L0 + (layer * 0.5 * stepX);
+            const startY = startY_L0 + (layer * 0.5 * stepY) - (layer * 6);
 
-                const cells = [];
-                for (let r = 0; r < dim.rows; r++) {
-                    for (let c = 0; c < dim.cols; c++) {
-                        cells.push({ x: startX + c * stepX, y: startY + r * stepY });
-                    }
-                }
-
-                const chosen = (cells.length <= cnt) ? cells.slice(0, cnt) : [];
-                if (cells.length > cnt) {
-                    const step = cells.length / cnt;
-                    for (let i = 0; i < cnt; i++) {
-                        chosen.push(cells[Math.floor(i * step)]);
-                    }
-                }
-
-                for (const pos of chosen) {
-                    positions.push({ x: pos.x, y: pos.y, layer: layer });
-                    placed++;
-                    if (placed >= totalCount) break;
+            const cells = [];
+            for (let r = 0; r < dim.rows; r++) {
+                for (let c = 0; c < dim.cols; c++) {
+                    if (dim.wallOnly && r > 0 && r < dim.rows - 1 && c > 0 && c < dim.cols - 1) continue;
+                    cells.push({ x: startX + c * stepX, y: startY + r * stepY });
                 }
             }
-        } else if (formationType === 'CASTLE') {
-            const dims = [
-                { cols: 6, rows: 6 },
-                { cols: 4, rows: 4 },
-                { cols: 2, rows: 2 }
-            ];
 
-            let placed = 0;
-            for (let layer = 0; layer < 3; layer++) {
-                const cnt = layerCounts[layer];
-                if (cnt <= 0 || placed >= totalCount) break;
-
-                const dim = dims[layer];
-                const brickX = (layer * 0.4) * stepX;
-                const brickY = (layer * 0.4) * stepY;
-                const startX = centerX - ((dim.cols - 1) * stepX * 0.5) + brickX;
-                const startY = centerY - ((dim.rows - 1) * stepY * 0.5) + brickY - (layer * 8);
-
-                const cells = [];
-                for (let r = 0; r < dim.rows; r++) {
-                    for (let c = 0; c < dim.cols; c++) {
-                        if (layer === 0 && r > 0 && r < dim.rows - 1 && c > 0 && c < dim.cols - 1) continue; // Wall outer ring
-                        cells.push({ x: startX + c * stepX, y: startY + r * stepY });
-                    }
-                }
-
-                const chosen = (cells.length <= cnt) ? cells.slice(0, cnt) : [];
-                if (cells.length > cnt) {
-                    const step = cells.length / cnt;
-                    for (let i = 0; i < cnt; i++) {
-                        chosen.push(cells[Math.floor(i * step)]);
-                    }
-                }
-
-                for (const pos of chosen) {
-                    positions.push({ x: pos.x, y: pos.y, layer: layer });
-                    placed++;
-                    if (placed >= totalCount) break;
-                }
-            }
-        } else if (formationType === 'HOURGLASS') {
-            const patterns = [
-                [6, 5, 4, 3, 4, 5, 6],
-                [4, 3, 2, 3, 4],
-                [2, 2]
-            ];
-
-            let placed = 0;
-            for (let layer = 0; layer < 3; layer++) {
-                const cnt = layerCounts[layer];
-                if (cnt <= 0 || placed >= totalCount) break;
-
-                const rowPat = patterns[layer];
-                const brickX = (layer * 0.4) * stepX;
-                const brickY = (layer * 0.4) * stepY;
-
-                const cells = [];
-                for (let r = 0; r < rowPat.length; r++) {
-                    const tilesInRow = rowPat[r];
-                    const startX = centerX - ((tilesInRow - 1) * stepX * 0.5) + brickX;
-                    const rowY = centerY + ((r - rowPat.length / 2) * stepY * 0.45) + brickY - (layer * 8);
-
-                    for (let c = 0; c < tilesInRow; c++) {
-                        cells.push({ x: startX + c * stepX, y: rowY });
-                    }
-                }
-
-                const chosen = (cells.length <= cnt) ? cells.slice(0, cnt) : [];
-                if (cells.length > cnt) {
-                    const step = cells.length / cnt;
-                    for (let i = 0; i < cnt; i++) {
-                        chosen.push(cells[Math.floor(i * step)]);
-                    }
-                }
-
-                for (const pos of chosen) {
-                    positions.push({ x: pos.x, y: pos.y, layer: layer });
-                    placed++;
-                    if (placed >= totalCount) break;
-                }
-            }
-        } else if (formationType === 'SHIELD') {
-            const patterns = [
-                [6, 6, 5, 4, 3, 2],
-                [4, 4, 3, 2],
-                [2, 2]
-            ];
-
-            let placed = 0;
-            for (let layer = 0; layer < 3; layer++) {
-                const cnt = layerCounts[layer];
-                if (cnt <= 0 || placed >= totalCount) break;
-
-                const rowPat = patterns[layer];
-                const brickX = (layer * 0.4) * stepX;
-                const brickY = (layer * 0.4) * stepY;
-
-                const cells = [];
-                for (let r = 0; r < rowPat.length; r++) {
-                    const tilesInRow = rowPat[r];
-                    const startX = centerX - ((tilesInRow - 1) * stepX * 0.5) + brickX;
-                    const rowY = centerY + ((r - 2.5) * stepY * 0.48) + brickY - (layer * 8);
-
-                    for (let c = 0; c < tilesInRow; c++) {
-                        cells.push({ x: startX + c * stepX, y: rowY });
-                    }
-                }
-
-                const chosen = (cells.length <= cnt) ? cells.slice(0, cnt) : [];
-                if (cells.length > cnt) {
-                    const step = cells.length / cnt;
-                    for (let i = 0; i < cnt; i++) {
-                        chosen.push(cells[Math.floor(i * step)]);
-                    }
-                }
-
-                for (const pos of chosen) {
-                    positions.push({ x: pos.x, y: pos.y, layer: layer });
-                    placed++;
-                    if (placed >= totalCount) break;
-                }
-            }
-        } else if (formationType === 'FLOWER') {
-            const dims = [
-                { cols: 6, rows: 6 },
-                { cols: 4, rows: 4 },
-                { cols: 2, rows: 2 }
-            ];
-
-            let placed = 0;
-            for (let layer = 0; layer < 3; layer++) {
-                const cnt = layerCounts[layer];
-                if (cnt <= 0 || placed >= totalCount) break;
-
-                const dim = dims[layer];
-                const brickX = (layer * 0.42) * stepX;
-                const brickY = (layer * 0.42) * stepY;
-                const startX = centerX - ((dim.cols - 1) * stepX * 0.5) + brickX;
-                const startY = centerY - ((dim.rows - 1) * stepY * 0.5) + brickY - (layer * 8);
-
-                const cells = [];
-                for (let r = 0; r < dim.rows; r++) {
-                    for (let c = 0; c < dim.cols; c++) {
-                        cells.push({ x: startX + c * stepX, y: startY + r * stepY });
-                    }
-                }
-
-                const chosen = (cells.length <= cnt) ? cells.slice(0, cnt) : [];
-                if (cells.length > cnt) {
-                    const step = cells.length / cnt;
-                    for (let i = 0; i < cnt; i++) {
-                        chosen.push(cells[Math.floor(i * step)]);
-                    }
-                }
-
-                for (const pos of chosen) {
-                    positions.push({ x: pos.x, y: pos.y, layer: layer });
-                    placed++;
-                    if (placed >= totalCount) break;
-                }
-            }
-        } else if (formationType === 'HELIX') {
-            let placed = 0;
-            for (let layer = 0; layer < 3; layer++) {
-                const cnt = layerCounts[layer];
-                if (cnt <= 0 || placed >= totalCount) break;
-
-                const countInCurve = cnt;
-                for (let i = 0; i < countInCurve; i++) {
-                    if (placed >= totalCount) break;
-                    const t = (i / countInCurve) * Math.PI * 2 + (layer * 0.3);
-                    const hx = Math.sin(t) * (110 - layer * 20);
-                    const hy = Math.sin(t * 2) * (70 - layer * 15);
-
-                    positions.push({
-                        x: centerX + hx + (layer * 12),
-                        y: centerY + hy - (layer * 8),
-                        layer: layer
-                    });
-                    placed++;
-                }
-            }
-        } else if (formationType === 'TWIN_PEAKS') {
-            const peakCenters = [centerX - 68, centerX + 68];
-            let placed = 0;
-
-            for (let layer = 0; layer < 3; layer++) {
-                const cnt = layerCounts[layer];
-                if (cnt <= 0 || placed >= totalCount) break;
-
-                const cols = Math.max(2, 4 - layer);
-                const rows = Math.max(2, 4 - layer);
-                const cntPerPeak = Math.ceil(cnt / 2);
-
-                for (let p = 0; p < 2; p++) {
-                    const peakX = peakCenters[p];
-                    const brickX = (layer * 0.4) * stepX;
-                    const brickY = (layer * 0.4) * stepY;
-
-                    const startX = peakX - ((cols - 1) * stepX * 0.5) + brickX;
-                    const startY = centerY - ((rows - 1) * stepY * 0.5) + brickY - (layer * 8);
-
-                    const cells = [];
-                    for (let r = 0; r < rows; r++) {
-                        for (let c = 0; c < cols; c++) {
-                            cells.push({ x: startX + c * stepX, y: startY + r * stepY });
-                        }
-                    }
-
-                    const chosen = (cells.length <= cntPerPeak) ? cells.slice(0, cntPerPeak) : [];
-                    if (cells.length > cntPerPeak) {
-                        const step = cells.length / cntPerPeak;
-                        for (let i = 0; i < cntPerPeak; i++) {
-                            chosen.push(cells[Math.floor(i * step)]);
-                        }
-                    }
-
-                    for (const pos of chosen) {
-                        positions.push({ x: pos.x, y: pos.y, layer: layer });
-                        placed++;
-                        if (placed >= totalCount) break;
-                    }
-                    if (placed >= totalCount) break;
-                }
-            }
-        } else if (formationType === 'STAR') {
-            const numPoints = 10;
-            const starCoords = [];
-
-            for (let k = 0; k < numPoints; k++) {
-                const angle = -Math.PI / 2 + k * (Math.PI / 5);
-                const r = (k % 2 === 0) ? 130 : 70;
-                starCoords.push({
-                    x: centerX + Math.cos(angle) * r,
-                    y: centerY + Math.sin(angle) * r
-                });
+            const cnt = Math.min(cells.length, cntTarget);
+            const step = cells.length / cnt;
+            const chosen = [];
+            for (let i = 0; i < cnt; i++) {
+                chosen.push(cells[Math.min(cells.length - 1, Math.floor(i * step))]);
             }
 
-            let placed = 0;
-
-            // Layer 0: Star Ring Outline
-            for (let k = 0; k < numPoints; k++) {
-                if (placed >= layerCounts[0] || placed >= totalCount) break;
-                positions.push({ x: starCoords[k].x, y: starCoords[k].y, layer: 0 });
+            for (const pos of chosen) {
+                positions.push({ x: pos.x, y: pos.y, layer: layer });
                 placed++;
-            }
-
-            // Layer 1 & 2: Staggered Center Hub
-            for (let layer = 1; layer < 3; layer++) {
-                const cnt = layerCounts[layer];
-                if (cnt <= 0 || placed >= totalCount) break;
-
-                const dim = (layer === 1) ? 3 : 2;
-                const brickX = (layer * 0.4) * stepX;
-                const brickY = (layer * 0.4) * stepY;
-                const startX = centerX - ((dim - 1) * stepX * 0.5) + brickX;
-                const startY = centerY - ((dim - 1) * stepY * 0.5) + brickY - (layer * 8);
-
-                for (let r = 0; r < dim; r++) {
-                    for (let c = 0; c < dim; c++) {
-                        if (placed >= totalCount) break;
-                        positions.push({ x: startX + c * stepX, y: startY + r * stepY, layer: layer });
-                        placed++;
-                    }
-                    if (placed >= totalCount) break;
-                }
-            }
-        } else if (formationType === 'HEART') {
-            let placed = 0;
-            for (let layer = 0; layer < 3; layer++) {
-                const cnt = layerCounts[layer];
-                if (cnt <= 0 || placed >= totalCount) break;
-
-                const scale = 9.0 - (layer * 2.2);
-                for (let i = 0; i < cnt; i++) {
-                    if (placed >= totalCount) break;
-                    const t = (i / cnt) * (Math.PI * 2);
-                    const hx = 16 * Math.pow(Math.sin(t), 3);
-                    const hy = -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t));
-
-                    positions.push({
-                        x: centerX + hx * scale + (layer * 14),
-                        y: centerY + hy * scale - (layer * 8),
-                        layer: layer
-                    });
-                    placed++;
-                }
-            }
-        } else {
-            // Default 3-Tier Sprawling Pyramid
-            const dims = [
-                { cols: 6, rows: 6 },
-                { cols: 4, rows: 4 },
-                { cols: 2, rows: 2 }
-            ];
-
-            let placed = 0;
-            for (let layer = 0; layer < 3; layer++) {
-                const cnt = layerCounts[layer];
-                if (cnt <= 0 || placed >= totalCount) break;
-
-                const dim = dims[layer];
-                const brickX = (layer * 0.42) * stepX;
-                const brickY = (layer * 0.42) * stepY;
-                const startX = centerX - ((dim.cols - 1) * stepX * 0.5) + brickX;
-                const startY = centerY - ((dim.rows - 1) * stepY * 0.5) + brickY - (layer * 8);
-
-                const cells = [];
-                for (let r = 0; r < dim.rows; r++) {
-                    for (let c = 0; c < dim.cols; c++) {
-                        cells.push({ x: startX + c * stepX, y: startY + r * stepY });
-                    }
-                }
-
-                const chosen = (cells.length <= cnt) ? cells.slice(0, cnt) : [];
-                if (cells.length > cnt) {
-                    const step = cells.length / cnt;
-                    for (let i = 0; i < cnt; i++) {
-                        chosen.push(cells[Math.floor(i * step)]);
-                    }
-                }
-
-                for (const pos of chosen) {
-                    positions.push({ x: pos.x, y: pos.y, layer: layer });
-                    placed++;
-                    if (placed >= totalCount) break;
-                }
+                if (placed >= totalCount) break;
             }
         }
 
@@ -1420,9 +1107,9 @@ class TileMatchingGame {
 
             const coveredRatio = Math.min(1.0, totalCoveredArea / cardArea);
 
-            // Locked IF covered by more than 22% by upper tiles
-            // Exposed top tiles & free edge tiles (coveredRatio <= 0.22) remain UNLOCKED & CLICKABLE!
-            const isLocked = coveredRatio > 0.22;
+            // Locked IF covered by more than 15% by upper tiles
+            // Exposed top tiles & free edge tiles (coveredRatio <= 0.15) remain UNLOCKED & CLICKABLE!
+            const isLocked = coveredRatio > 0.15;
 
             tile.isLocked = isLocked;
             if (isLocked) {
