@@ -943,24 +943,19 @@ class TileMatchingGame {
             
         const activeTypes = this.types.slice(0, activeTypesCount);
 
-        const gridPattern = FORMATION_GRIDS[formationType] || FORMATION_GRIDS['STAR'];
-        let baseGridCount = 0;
-        gridPattern.forEach(row => { for (let ch of row) if (ch === '*') baseGridCount++; });
-        if (baseGridCount % 2 !== 0) baseGridCount++;
+        const safeBoardW = (boardEl && boardEl.clientWidth > 200) ? boardEl.clientWidth : (window.innerWidth || 380);
+        const safeBoardH = (boardEl && boardEl.clientHeight > 200) ? boardEl.clientHeight : ((window.innerHeight - 160) || 520);
+        const positions = this.generateLayoutPositions(formationType, safeBoardW, safeBoardH);
 
-        const totalPairs = Math.max(10, Math.floor(baseGridCount / 2));
+        const totalPairs = Math.floor(positions.length / 2);
         const pool = [];
 
         for (let i = 0; i < totalPairs; i++) {
             const typeObj = activeTypes[i % activeTypes.length];
-            pool.push(typeObj, typeObj); // Pair
+            pool.push(typeObj, typeObj);
         }
 
         this.shuffleArray(pool);
-
-        const safeBoardW = (boardEl && boardEl.clientWidth > 100) ? boardEl.clientWidth : 380;
-        const safeBoardH = (boardEl && boardEl.clientHeight > 100) ? boardEl.clientHeight : 520;
-        const positions = this.generateLayoutPositions(formationType, pool.length, safeBoardW, safeBoardH);
 
         for (let i = 0; i < pool.length; i++) {
             const pos = positions[i];
@@ -1014,301 +1009,161 @@ class TileMatchingGame {
         }
 
         this.updateLockStates();
-
-        
-
-        // TIMER ONLY IN TIME TRIAL MODE (STRICTLY HIDDEN IN CLASSIC MODE!)
-        const timerBadge = document.getElementById('badge-timer');
-        if (this.currentMode === 'timetrial') {
-            const totalTiles = pool.length;
-            this.remainingSeconds = Math.ceil(totalTiles * 0.65) + 5;
-            timerBadge.classList.remove('hidden');
-            this.startTimer();
-        } else {
-            this.stopTimer();
-            timerBadge.classList.add('hidden');
-        }
     }
 
-    startTimer() {
-        this.stopTimer();
-        this.updateTimerDisplay();
+    generateLayoutPositions(formationType, boardW, boardH) {
+        const cx = boardW / 2 - this.cardW / 2;
+        const cy = boardH / 2 - this.cardH / 2 - 15;
+        const stepX = this.cardW * 0.72;
+        const stepY = this.cardH * 0.78;
+        const pos = [];
 
-        this.timerInterval = setInterval(() => {
-            this.remainingSeconds--;
-            this.updateTimerDisplay();
-
-            if (this.remainingSeconds <= 5 && this.remainingSeconds > 0) {
-                this.sound.playTick();
-                this.triggerVibration();
-                document.getElementById('badge-timer').classList.add('timer-warning');
+        if (formationType === 'HOURGLASS') {
+            // KUM SAATI (26 Tiles)
+            for (let c = -2; c <= 2; c++) pos.push({ x: cx + c * stepX, y: cy - 2 * stepY, layer: 0 });
+            for (let c = -1; c <= 1; c++) pos.push({ x: cx + c * stepX, y: cy - 1 * stepY, layer: 0 });
+            pos.push({ x: cx, y: cy, layer: 0 });
+            for (let c = -1; c <= 1; c++) pos.push({ x: cx + c * stepX, y: cy + 1 * stepY, layer: 0 });
+            for (let c = -2; c <= 2; c++) pos.push({ x: cx + c * stepX, y: cy + 2 * stepY, layer: 0 });
+            for (let c = -1; c <= 1; c++) pos.push({ x: cx + c * stepX + 3, y: cy - 1 * stepY - 6, layer: 1 });
+            pos.push({ x: cx + 3, y: cy - 6, layer: 1 });
+            for (let c = -1; c <= 1; c++) pos.push({ x: cx + c * stepX + 3, y: cy + 1 * stepY - 6, layer: 1 });
+            pos.push({ x: cx - stepX * 0.4, y: cy - 12, layer: 2 });
+            pos.push({ x: cx + stepX * 0.4, y: cy - 12, layer: 2 });
+        } else if (formationType === 'HEART') {
+            // KALP (28 Tiles)
+            for (let i = 0; i < 18; i++) {
+                const t = (i / 18) * Math.PI * 2;
+                const x = 16 * Math.pow(Math.sin(t), 3);
+                const y = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
+                pos.push({ x: cx + x * 8.5, y: cy + y * 8.5, layer: 0 });
             }
-
-            if (this.remainingSeconds <= 0) {
-                this.stopTimer();
-                this.onTimeUp();
+            for (let i = 0; i < 8; i++) {
+                const t = (i / 8) * Math.PI * 2;
+                const x = 16 * Math.pow(Math.sin(t), 3);
+                const y = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
+                pos.push({ x: cx + x * 4.5 + 3, y: cy + y * 4.5 - 6, layer: 1 });
             }
-        }, 1000);
-    }
-
-    stopTimer() {
-        if (this.timerInterval) {
-            clearInterval(this.timerInterval);
-            this.timerInterval = null;
-        }
-        document.getElementById('badge-timer').classList.remove('timer-warning');
-    }
-
-    updateTimerDisplay() {
-        const secs = Math.max(0, this.remainingSeconds);
-        const m = Math.floor(secs / 60).toString().padStart(2, '0');
-        const s = (secs % 60).toString().padStart(2, '0');
-        document.getElementById('timer-val').innerText = `${m}:${s}`;
-    }
-
-    onTimeUp() {
-        const dict = this.i18n[this.settings.lang];
-        this.sound.playLockThud();
-        this.triggerVibration();
-
-        document.getElementById('defeat-icon').innerText = '⏱️';
-        document.getElementById('defeat-title').innerText = dict.timeUpTitle;
-        document.getElementById('defeat-desc').innerText = dict.timeUpDesc;
-        document.getElementById('modal-gameover').classList.remove('hidden');
-    }
-
-    generateLayoutPositions(formationType, totalCount, boardW, boardH) {
-        const positions = [];
-        const centerX = boardW / 2 - this.cardW / 2;
-        const centerY = boardH / 2 - this.cardH / 2 - 10;
-
-        const stepX = 62;
-        const stepY = 74;
-
-        // Strict 3-Tier Layer Allocation (L0: ~60% Base, L1: ~28% Mid, L2: ~12% Crown)
-        const l0_count = Math.max(6, Math.floor(totalCount * 0.60));
-        const l1_count = Math.max(3, Math.floor(totalCount * 0.28));
-        const l2_count = Math.max(0, totalCount - l0_count - l1_count);
-        const layerCounts = [l0_count, l1_count, l2_count];
-
-        const startX_L0 = centerX - (5 * stepX * 0.5);
-        const startY_L0 = centerY - (5 * stepY * 0.5);
-
-        let placed = 0;
-
-        if (formationType === 'ROYAL_PYRAMID' || formationType === 'DIAMOND') {
-            const dims = [{ cols: 6, rows: 6 }, { cols: 5, rows: 5 }, { cols: 4, rows: 4 }];
-            for (let layer = 0; layer < 3; layer++) {
-                const cntTarget = layerCounts[layer];
-                if (cntTarget <= 0 || placed >= totalCount) break;
-                const dim = dims[layer];
-                const startX = startX_L0 + (layer * 0.5 * stepX);
-                const startY = startY_L0 + (layer * 0.5 * stepY) - (layer * 6);
-                const cells = [];
-                for (let r = 0; r < dim.rows; r++) {
-                    for (let c = 0; c < dim.cols; c++) {
-                        cells.push({ x: startX + c * stepX, y: startY + r * stepY });
-                    }
-                }
-                const cnt = Math.min(cells.length, cntTarget);
-                const step = cells.length / cnt;
-                for (let i = 0; i < cnt; i++) {
-                    const pos = cells[Math.min(cells.length - 1, Math.floor(i * step))];
-                    positions.push({ x: pos.x, y: pos.y, layer: layer });
-                    placed++;
-                    if (placed >= totalCount) break;
-                }
-            }
+            pos.push({ x: cx - stepX * 0.35, y: cy - 12, layer: 2 });
+            pos.push({ x: cx + stepX * 0.35, y: cy - 12, layer: 2 });
         } else if (formationType === 'CASTLE') {
-            const dims = [{ cols: 6, rows: 6, wall: true }, { cols: 5, rows: 5, wall: false }, { cols: 3, rows: 3, wall: false }];
-            for (let layer = 0; layer < 3; layer++) {
-                const cntTarget = layerCounts[layer];
-                if (cntTarget <= 0 || placed >= totalCount) break;
-                const dim = dims[layer];
-                const startX = startX_L0 + (layer * 0.5 * stepX);
-                const startY = startY_L0 + (layer * 0.5 * stepY) - (layer * 6);
-                const cells = [];
-                for (let r = 0; r < dim.rows; r++) {
-                    for (let c = 0; c < dim.cols; c++) {
-                        if (dim.wall && r > 0 && r < dim.rows - 1 && c > 0 && c < dim.cols - 1) continue;
-                        cells.push({ x: startX + c * stepX, y: startY + r * stepY });
+            // KALE (34 Tiles)
+            const towers = [
+                { x: cx - stepX * 2, y: cy - stepY * 2 },
+                { x: cx + stepX * 2, y: cy - stepY * 2 },
+                { x: cx - stepX * 2, y: cy + stepY * 2 },
+                { x: cx + stepX * 2, y: cy + stepY * 2 }
+            ];
+            for (let t of towers) {
+                for (let r = 0; r < 2; r++) {
+                    for (let c = 0; c < 2; c++) {
+                        pos.push({ x: t.x + c * stepX, y: t.y + r * stepY, layer: 0 });
                     }
-                }
-                const cnt = Math.min(cells.length, cntTarget);
-                const step = cells.length / cnt;
-                for (let i = 0; i < cnt; i++) {
-                    const pos = cells[Math.min(cells.length - 1, Math.floor(i * step))];
-                    positions.push({ x: pos.x, y: pos.y, layer: layer });
-                    placed++;
-                    if (placed >= totalCount) break;
                 }
             }
-        } else if (formationType === 'HOURGLASS') {
-            const pats = [[6, 5, 4, 3, 4, 5, 6], [5, 4, 3, 4, 5], [3, 2, 3]];
-            for (let layer = 0; layer < 3; layer++) {
-                const cntTarget = layerCounts[layer];
-                if (cntTarget <= 0 || placed >= totalCount) break;
-                const rowPat = pats[layer];
-                const startX_base = centerX + (layer * 0.5 * stepX);
-                const startY_base = centerY + (layer * 0.5 * stepY) - (layer * 6);
-                const cells = [];
-                for (let r = 0; r < rowPat.length; r++) {
-                    const tilesInRow = rowPat[r];
-                    const sx = startX_base - ((tilesInRow - 1) * stepX * 0.5);
-                    const sy = startY_base + ((r - rowPat.length / 2) * stepY * 0.42);
-                    for (let c = 0; c < tilesInRow; c++) {
-                        cells.push({ x: sx + c * stepX, y: sy });
-                    }
+            for (let c = -1; c <= 1; c++) pos.push({ x: cx + c * stepX, y: cy - stepY * 2, layer: 0 });
+            for (let c = -1; c <= 1; c++) pos.push({ x: cx + c * stepX, y: cy + stepY * 2, layer: 0 });
+            pos.push({ x: cx - stepX * 2, y: cy, layer: 0 });
+            pos.push({ x: cx + stepX * 2, y: cy, layer: 0 });
+            for (let r = -1; r <= 1; r++) {
+                for (let c = -1; c <= 1; c++) {
+                    pos.push({ x: cx + c * stepX + 3, y: cy + r * stepY - 6, layer: 1 });
                 }
-                const cnt = Math.min(cells.length, cntTarget);
-                const step = cells.length / cnt;
-                for (let i = 0; i < cnt; i++) {
-                    const pos = cells[Math.min(cells.length - 1, Math.floor(i * step))];
-                    positions.push({ x: pos.x, y: pos.y, layer: layer });
-                    placed++;
-                    if (placed >= totalCount) break;
+            }
+            pos.push({ x: cx + 3, y: cy - 12, layer: 2 });
+        } else if (formationType === 'FLOWER') {
+            // ÇİÇEK (20 Tiles)
+            for (let i = 0; i < 8; i++) {
+                const t = (i / 8) * Math.PI * 2;
+                pos.push({ x: cx + Math.cos(t) * 125, y: cy + Math.sin(t) * 90, layer: 0 });
+            }
+            for (let i = 0; i < 8; i++) {
+                const t = (i / 8) * Math.PI * 2 + Math.PI / 8;
+                pos.push({ x: cx + Math.cos(t) * 75 + 3, y: cy + Math.sin(t) * 55 - 6, layer: 1 });
+            }
+            for (let r = 0; r <= 1; r++) {
+                for (let c = 0; c <= 1; c++) {
+                    pos.push({ x: cx + (c - 0.5) * stepX, y: cy + (r - 0.5) * stepY - 12, layer: 2 });
                 }
             }
         } else if (formationType === 'SHIELD') {
-            const pats = [[6, 6, 5, 4, 3, 2], [5, 5, 4, 3, 2], [3, 3, 2]];
-            for (let layer = 0; layer < 3; layer++) {
-                const cntTarget = layerCounts[layer];
-                if (cntTarget <= 0 || placed >= totalCount) break;
-                const rowPat = pats[layer];
-                const startX_base = centerX + (layer * 0.5 * stepX);
-                const startY_base = centerY + (layer * 0.5 * stepY) - (layer * 6);
-                const cells = [];
-                for (let r = 0; r < rowPat.length; r++) {
-                    const tilesInRow = rowPat[r];
-                    const sx = startX_base - ((tilesInRow - 1) * stepX * 0.5);
-                    const sy = startY_base + ((r - 2.5) * stepY * 0.45);
-                    for (let c = 0; c < tilesInRow; c++) {
-                        cells.push({ x: sx + c * stepX, y: sy });
-                    }
-                }
-                const cnt = Math.min(cells.length, cntTarget);
-                const step = cells.length / cnt;
-                for (let i = 0; i < cnt; i++) {
-                    const pos = cells[Math.min(cells.length - 1, Math.floor(i * step))];
-                    positions.push({ x: pos.x, y: pos.y, layer: layer });
-                    placed++;
-                    if (placed >= totalCount) break;
+            // KALKAN (28 Tiles)
+            const rowPats = [[6], [6], [5], [4], [3], [2], [2]];
+            for (let r = 0; r < rowPats.length; r++) {
+                const count = rowPats[r][0];
+                const startX = cx - ((count - 1) * stepX * 0.5);
+                for (let c = 0; c < count; c++) {
+                    pos.push({ x: startX + c * stepX, y: cy + (r - 3) * stepY * 0.85, layer: 0 });
                 }
             }
-        } else if (formationType === 'FLOWER') {
-            for (let layer = 0; layer < 3; layer++) {
-                const cntTarget = layerCounts[layer];
-                if (cntTarget <= 0 || placed >= totalCount) break;
-                const radiusX = 135 - (layer * 25);
-                const radiusY = 85 - (layer * 15);
-                const cells = [];
-                const totalPetals = Math.max(12, cntTarget);
-                for (let i = 0; i < totalPetals; i++) {
-                    const t = (i / totalPetals) * Math.PI * 2;
-                    const px = centerX + Math.cos(t) * radiusX + (layer * 0.5 * stepX);
-                    const py = centerY + Math.sin(t) * radiusY + (layer * 0.5 * stepY) - (layer * 6);
-                    cells.push({ x: px, y: py });
-                }
-                const cnt = Math.min(cells.length, cntTarget);
-                const step = cells.length / cnt;
-                for (let i = 0; i < cnt; i++) {
-                    const pos = cells[Math.min(cells.length - 1, Math.floor(i * step))];
-                    positions.push({ x: pos.x, y: pos.y, layer: layer });
-                    placed++;
-                    if (placed >= totalCount) break;
+        } else if (formationType === 'DIAMOND') {
+            // ELMAS (26 Tiles)
+            const rowPats = [[1], [3], [5], [7], [5], [3], [1]];
+            for (let r = 0; r < rowPats.length; r++) {
+                const count = rowPats[r][0];
+                const startX = cx - ((count - 1) * stepX * 0.5);
+                for (let c = 0; c < count; c++) {
+                    pos.push({ x: startX + c * stepX, y: cy + (r - 3) * stepY * 0.85, layer: 0 });
                 }
             }
-        } else if (formationType === 'STAR') {
-            // PURE 5-POINT STAR WITH RADIATING RAYS & 3D CORE (NO BOTTOM ROW!)
+        } else if (formationType === 'HELIX') {
+            // SARMAL (24 Tiles)
+            for (let layer = 0; layer < 2; layer++) {
+                for (let i = 0; i < 12; i++) {
+                    const t = (i / 12) * Math.PI * 2;
+                    const r = 35 + i * 8 - layer * 10;
+                    pos.push({ x: cx + Math.cos(t + layer * 0.8) * r, y: cy + Math.sin(t + layer * 0.8) * r - layer * 6, layer: layer });
+                }
+            }
+        } else if (formationType === 'TWIN_PEAKS') {
+            // ÇİFT TEPE (28 Tiles)
+            const leftX = cx - stepX * 1.8;
+            const rightX = cx + stepX * 1.8;
+            for (let r = -1; r <= 1; r++) {
+                for (let c = -1; c <= 1; c++) {
+                    pos.push({ x: leftX + c * stepX, y: cy + r * stepY, layer: 0 });
+                    pos.push({ x: rightX + c * stepX, y: cy + r * stepY, layer: 0 });
+                }
+            }
+            for (let r = 0; r <= 1; r++) {
+                for (let c = 0; c <= 1; c++) {
+                    pos.push({ x: leftX + (c - 0.5) * stepX + 3, y: cy + (r - 0.5) * stepY - 6, layer: 1 });
+                    pos.push({ x: rightX + (c - 0.5) * stepX + 3, y: cy + (r - 0.5) * stepY - 6, layer: 1 });
+                }
+            }
+            pos.push({ x: leftX + 3, y: cy - 12, layer: 2 });
+            pos.push({ x: rightX + 3, y: cy - 12, layer: 2 });
+        } else if (formationType === 'ROYAL_PYRAMID') {
+            // 3D PİRAMİT (36 Tiles)
+            for (let r = -2; r <= 2; r++) {
+                for (let c = -2; c <= 2; c++) {
+                    pos.push({ x: cx + c * stepX, y: cy + r * stepY, layer: 0 });
+                }
+            }
+            for (let r = -1; r <= 1; r++) {
+                for (let c = -1; c <= 1; c++) {
+                    pos.push({ x: cx + c * stepX + 3, y: cy + r * stepY - 6, layer: 1 });
+                }
+            }
+            pos.push({ x: cx + 3, y: cy - 12, layer: 2 });
+            pos.push({ x: cx + 3, y: cy - 18, layer: 2 });
+        } else {
+            // YILDIZ (STAR) (18 Tiles)
             const angles = [-Math.PI / 2, -Math.PI / 2 + 0.4 * Math.PI, -Math.PI / 2 + 0.8 * Math.PI, -Math.PI / 2 + 1.2 * Math.PI, -Math.PI / 2 + 1.6 * Math.PI];
-            const l0_ray_tiles = [];
-            for (let k = 0; k < angles.length; k++) {
-                const angle = angles[k];
-                for (let dist of [90, 140]) {
-                    l0_ray_tiles.push({
-                        x: centerX + Math.cos(angle) * dist,
-                        y: centerY + Math.sin(angle) * dist,
-                        layer: 0
-                    });
-                }
+            for (let a of angles) pos.push({ x: cx + Math.cos(a) * 130, y: cy + Math.sin(a) * 130, layer: 0 });
+            for (let a of [angles[0]+0.2*Math.PI, angles[1]+0.2*Math.PI, angles[2]+0.2*Math.PI, angles[3]+0.2*Math.PI, angles[4]+0.2*Math.PI]) {
+                pos.push({ x: cx + Math.cos(a) * 65, y: cy + Math.sin(a) * 65, layer: 0 });
             }
-            const l0_core = [];
-            for (let r = -1; r <= 1; r++) {
-                for (let c = -1; c <= 1; c++) {
-                    l0_core.push({ x: centerX + c * stepX, y: centerY + r * stepY, layer: 0 });
-                }
-            }
-            const l1_core = [];
-            for (let r = -1; r <= 1; r++) {
-                for (let c = -1; c <= 1; c++) {
-                    l1_core.push({ x: centerX + (c + 0.5) * stepX, y: centerY + (r + 0.5) * stepY - 6, layer: 1 });
-                }
-            }
-            const l2_core = [];
-            for (let r of [0, 1]) {
-                for (let c of [0, 1]) {
-                    l2_core.push({ x: centerX + (c - 0.5) * stepX + 0.5 * stepX, y: centerY + (r - 0.5) * stepY + 0.5 * stepY - 12, layer: 2 });
-                }
-            }
-            const candidates = l0_ray_tiles.concat(l0_core, l1_core, l2_core);
-            const cnt = Math.min(totalCount, candidates.length);
-            for (let i = 0; i < cnt; i++) {
-                positions.push(candidates[i]);
-            }
-        } else if (formationType === 'HEART') {
-            const scales = [9.2, 6.4, 3.8];
-            for (let layer = 0; layer < 3; layer++) {
-                const cntTarget = layerCounts[layer];
-                if (cntTarget <= 0 || placed >= totalCount) break;
-                const scale = scales[layer];
-                for (let i = 0; i < cntTarget; i++) {
-                    if (placed >= totalCount) break;
-                    const t = (i / cntTarget) * (Math.PI * 2);
-                    const hx = 16 * Math.pow(Math.sin(t), 3);
-                    const hy = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
-                    const px = centerX + hx * scale + (layer * 0.5 * stepX);
-                    const py = centerY + hy * scale + (layer * 0.5 * stepY) - (layer * 6);
-                    positions.push({ x: px, y: py, layer: layer });
-                    placed++;
-                }
-            }
-        } else { // HELIX & TWIN_PEAKS & default
-            const dims = [{ cols: 6, rows: 6 }, { cols: 5, rows: 5 }, { cols: 4, rows: 4 }];
-            for (let layer = 0; layer < 3; layer++) {
-                const cntTarget = layerCounts[layer];
-                if (cntTarget <= 0 || placed >= totalCount) break;
-                const dim = dims[layer];
-                const startX = startX_L0 + (layer * 0.5 * stepX);
-                const startY = startY_L0 + (layer * 0.5 * stepY) - (layer * 6);
-                const cells = [];
-                for (let r = 0; r < dim.rows; r++) {
-                    for (let c = 0; c < dim.cols; c++) {
-                        cells.push({ x: startX + c * stepX, y: startY + r * stepY });
-                    }
-                }
-                const cnt = Math.min(cells.length, cntTarget);
-                const step = cells.length / cnt;
-                for (let i = 0; i < cnt; i++) {
-                    const pos = cells[Math.min(cells.length - 1, Math.floor(i * step))];
-                    positions.push({ x: pos.x, y: pos.y, layer: layer });
-                    placed++;
-                    if (placed >= totalCount) break;
-                }
-            }
+            pos.push({ x: cx, y: cy - stepY, layer: 1 });
+            pos.push({ x: cx - stepX, y: cy, layer: 1 });
+            pos.push({ x: cx, y: cy, layer: 1 });
+            pos.push({ x: cx + stepX, y: cy, layer: 1 });
+            pos.push({ x: cx, y: cy + stepY, layer: 1 });
+            pos.push({ x: cx + 3, y: cy - 8, layer: 2 });
+            pos.push({ x: cx + 3, y: cy - 14, layer: 2 });
         }
 
-        while (positions.length < totalCount) {
-            const idx = positions.length;
-            const angle = (idx * 0.618033988749895 * Math.PI * 2);
-            const radius = 60 + Math.floor(idx / 5) * 45;
-            positions.push({
-                x: centerX + Math.cos(angle) * radius,
-                y: centerY + Math.sin(angle) * radius,
-                layer: 0
-            });
-        }
-
-        return positions;
+        return pos;
     }
 
     updateLockStates() {
@@ -1747,6 +1602,8 @@ class TileMatchingGame {
         }
     }
 }
+
+
 
 // Initialize Game on DOM Load
 window.addEventListener('DOMContentLoaded', () => {
