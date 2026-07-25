@@ -1,9 +1,9 @@
 /**
  * Tile Club / GamoVation Style Mobile Stack Tile Pairing Game Engine
  * Features:
+ * - ULTRA-AESTHETIC PERFECTLY CENTERED 3D MAHJONG FORMATIONS (Asla Taşan/Bozuk Desensiz Kusursuz Dizilimler!).
  * - DUAL SEPARATE GAME MODES: KLASİK MOD (Classic Campaign) & ZAMANA KARŞI MOD (Time Trial Campaign)!
  * - SEPARATE PROGRESSION PERSISTENCE: Both Classic & Time Trial modes have independent level & score auto-save!
- * - REAL TRIANGULAR STEP PYRAMIDS & MULTI-PEAK MOUNTAIN FORMATIONS (Tekli, İkiz ve Üçlü Piramit Tepeleri!).
  * - TIME TRIAL MODE (Zamana Karşı Mod): Tight achievable timer = Math.ceil(totalTiles * 0.65) + 5 seconds!
  * - NEW GAME RESET BUTTON: Moved cleanly into Settings modal.
  * - DEFEAT PENALTY MECHANIC: On game over retry, cancels earned level points & applies -2000 score penalty (Cap at min 0).
@@ -13,8 +13,6 @@
  * - Dynamic Dual-Language Game Title (TR: "EŞLE GİTSİN! 3D" | EN: "TILE MATCH 3D").
  * - Cute Playful Game Font ('Fredoka').
  * - INFINITE ENDLESS CAMPAIGN (Level 100+ Endless Mode).
- * - Geometric 5-Pointed STAR Layout Formation for Level 10, 20, 30...
- * - Settings Controller: Sound Volume, Vibration Toggle, Language Selector (TR/EN).
  * - Smart Hint System (300 Score Base Cost).
  * - Multiplier Combo System (Katlanan Puan).
  */
@@ -265,8 +263,8 @@ class ParticleFX {
 
 class TileMatchingGame {
     constructor() {
-        this.cardW = 74;
-        this.cardH = 94;
+        this.cardW = 70;
+        this.cardH = 90;
         this.maxSlotCapacity = 5;
         this.hasTemporaryExtraSlot = false;
         this.extraSlotWasUsed = false;
@@ -329,7 +327,7 @@ class TileMatchingGame {
             'radial-gradient(circle at 50% 20%, #7c2d12 0%, #451a03 80%, #060913 100%)'
         ];
 
-        this.formations = ['PYRAMID', 'HEART', 'CIRCLE', 'DIAMOND', 'BUTTERFLY'];
+        this.formations = ['ROYAL_PYRAMID', 'HEART', 'TWIN_PEAKS', 'STAR', 'DIAMOND'];
 
         // Settings State
         this.settings = {
@@ -847,97 +845,75 @@ class TileMatchingGame {
         const centerX = boardW / 2 - this.cardW / 2;
         const centerY = boardH / 2 - this.cardH / 2 - 10;
 
-        const stepX = 76;
-        const stepY = 96;
+        const stepX = 54; // Tight 25% overlap for gorgeous Mahjong stacking!
+        const stepY = 66;
 
-        if (formationType === 'PYRAMID') {
-            // REAL TRIANGULAR STEP PYRAMID & MULTI-PEAK MOUNTAIN RANGES!
-            const peakCount = (this.level >= 20) ? 3 : (this.level >= 8) ? 2 : 1;
+        if (formationType === 'ROYAL_PYRAMID') {
+            // ELEGANT 3D STEPPED ROYAL PYRAMID
+            // Centered concentric 3D layers tapering to a single center apex!
             let placed = 0;
+            let layer = 0;
+            const gridDims = [
+                { cols: 4, rows: 4 }, // Layer 0: Base 4x4
+                { cols: 3, rows: 3 }, // Layer 1: Mid 3x3
+                { cols: 2, rows: 2 }, // Layer 2: Top 2x2
+                { cols: 1, rows: 1 }  // Layer 3: Apex 1x1
+            ];
 
-            if (peakCount === 1) {
-                // SINGLE TRIANGULAR STEP PYRAMID
-                let layer = 0;
-                while (placed < totalCount) {
-                    let rowsInLayer = Math.max(2, 5 - layer);
-                    
-                    for (let r = 0; r < rowsInLayer; r++) {
-                        let tilesInRow = Math.max(1, rowsInLayer - r);
-                        let rowStartX = centerX - ((tilesInRow - 1) * stepX * 0.5) + (layer * -6);
-                        let rowY = centerY + ((r - rowsInLayer / 2) * stepY * 0.42) - (layer * 12);
+            while (placed < totalCount) {
+                const dim = gridDims[layer % gridDims.length];
+                const startX = centerX - ((dim.cols - 1) * stepX * 0.5);
+                const startY = centerY - ((dim.rows - 1) * stepY * 0.5) - (layer * 10);
 
-                        for (let c = 0; c < tilesInRow; c++) {
+                for (let r = 0; r < dim.rows; r++) {
+                    for (let c = 0; c < dim.cols; c++) {
+                        if (placed >= totalCount) break;
+                        let px = startX + (c * stepX);
+                        let py = startY + (r * stepY);
+                        positions.push({ x: px, y: py, layer: layer });
+                        placed++;
+                    }
+                    if (placed >= totalCount) break;
+                }
+                layer++;
+            }
+        } else if (formationType === 'TWIN_PEAKS') {
+            // TWIN PYRAMIDS (Harmonious side-by-side twin peaks within bounds!)
+            let placed = 0;
+            let layer = 0;
+            const peakCenters = [centerX - 46, centerX + 46];
+
+            while (placed < totalCount) {
+                for (let p = 0; p < 2; p++) {
+                    const peakX = peakCenters[p];
+                    const cols = Math.max(1, 3 - layer);
+                    const rows = Math.max(1, 3 - layer);
+
+                    const startX = peakX - ((cols - 1) * stepX * 0.5);
+                    const startY = centerY - ((rows - 1) * stepY * 0.5) - (layer * 10);
+
+                    for (let r = 0; r < rows; r++) {
+                        for (let c = 0; c < cols; c++) {
                             if (placed >= totalCount) break;
-                            let px = rowStartX + (c * stepX);
-                            positions.push({ x: px, y: rowY, layer: layer });
+                            let px = startX + (c * stepX);
+                            let py = startY + (r * stepY);
+                            positions.push({ x: px, y: py, layer: layer });
                             placed++;
                         }
                         if (placed >= totalCount) break;
                     }
-                    layer++;
+                    if (placed >= totalCount) break;
                 }
-            } else if (peakCount === 2) {
-                // TWIN PEAKS TRIANGULAR MOUNTAINS (İkiz Piramit Tepeleri)
-                let layer = 0;
-                const peakCenters = [centerX - 75, centerX + 75];
-
-                while (placed < totalCount) {
-                    for (let p = 0; p < 2; p++) {
-                        const peakX = peakCenters[p];
-                        let rows = Math.max(2, 4 - layer);
-
-                        for (let r = 0; r < rows; r++) {
-                            let tilesInRow = Math.max(1, rows - r);
-                            let rowStartX = peakX - ((tilesInRow - 1) * stepX * 0.45) + (layer * -5);
-                            let rowY = centerY + ((r - rows / 2) * stepY * 0.42) - (layer * 12);
-
-                            for (let c = 0; c < tilesInRow; c++) {
-                                if (placed >= totalCount) break;
-                                let px = rowStartX + (c * stepX);
-                                positions.push({ x: px, y: rowY, layer: layer });
-                                placed++;
-                            }
-                            if (placed >= totalCount) break;
-                        }
-                        if (placed >= totalCount) break;
-                    }
-                    layer++;
-                }
-            } else {
-                // TRIPLE PEAKS TRIANGULAR MOUNTAIN RANGE (Üçlü Piramit Dağ Sırası)
-                let layer = 0;
-                const peakCenters = [centerX - 105, centerX, centerX + 105];
-
-                while (placed < totalCount) {
-                    for (let p = 0; p < 3; p++) {
-                        const peakX = peakCenters[p];
-                        let rows = Math.max(2, 3 - layer);
-
-                        for (let r = 0; r < rows; r++) {
-                            let tilesInRow = Math.max(1, rows - r);
-                            let rowStartX = peakX - ((tilesInRow - 1) * stepX * 0.42) + (layer * -4);
-                            let rowY = centerY + ((r - rows / 2) * stepY * 0.40) - (layer * 12);
-
-                            for (let c = 0; c < tilesInRow; c++) {
-                                if (placed >= totalCount) break;
-                                let px = rowStartX + (c * stepX);
-                                positions.push({ x: px, y: rowY, layer: layer });
-                                placed++;
-                            }
-                            if (placed >= totalCount) break;
-                        }
-                        if (placed >= totalCount) break;
-                    }
-                    layer++;
-                }
+                layer++;
             }
         } else if (formationType === 'STAR') {
+            // SYMMETRICAL 5-POINTED STAR
             const numPoints = 10;
             const starCoords = [];
 
             for (let k = 0; k < numPoints; k++) {
                 const angle = -Math.PI / 2 + k * (Math.PI / 5);
-                const r = (k % 2 === 0) ? 135 : 70;
+                const r = (k % 2 === 0) ? 120 : 62;
                 starCoords.push({
                     x: centerX + Math.cos(angle) * r,
                     y: centerY + Math.sin(angle) * r
@@ -965,12 +941,12 @@ class TileMatchingGame {
 
             let stackLayer = 1;
             while (placed < totalCount) {
-                const layerOffset = stackLayer * -10;
+                const layerOffset = stackLayer * -8;
                 const hubs = [
-                    { x: centerX - 30 + layerOffset, y: centerY - 35 + layerOffset },
-                    { x: centerX + 30 + layerOffset, y: centerY - 35 + layerOffset },
-                    { x: centerX - 30 + layerOffset, y: centerY + 35 + layerOffset },
-                    { x: centerX + 30 + layerOffset, y: centerY + 35 + layerOffset }
+                    { x: centerX - 24 + layerOffset, y: centerY - 28 + layerOffset },
+                    { x: centerX + 24 + layerOffset, y: centerY - 28 + layerOffset },
+                    { x: centerX - 24 + layerOffset, y: centerY + 28 + layerOffset },
+                    { x: centerX + 24 + layerOffset, y: centerY + 28 + layerOffset }
                 ];
 
                 for (const hub of hubs) {
@@ -981,33 +957,23 @@ class TileMatchingGame {
                 stackLayer++;
             }
         } else if (formationType === 'HEART') {
+            // ELEGANT SYMMETRICAL 3D HEART
             const layer0Count = Math.min(totalCount, 16);
             for (let i = 0; i < totalCount; i++) {
                 const layer = Math.floor(i / layer0Count);
                 const t = (i % layer0Count) * (Math.PI * 2 / layer0Count);
                 
-                const scale = (layer === 0) ? 9.2 : 5.5;
+                const scale = (layer === 0) ? 8.2 : 4.8;
                 const hx = 16 * Math.pow(Math.sin(t), 3);
                 const hy = -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t));
 
-                const posX = centerX + hx * scale + (layer * -6);
-                const posY = centerY + hy * scale + (layer * -12);
-
-                positions.push({ x: posX, y: posY, layer: layer });
-            }
-        } else if (formationType === 'CIRCLE') {
-            for (let i = 0; i < totalCount; i++) {
-                const layer = Math.floor(i / 12);
-                const radius = (layer === 0) ? 130 : 65;
-                const countInRing = (layer === 0) ? 12 : 6;
-                const angle = (i % countInRing) * (Math.PI * 2 / countInRing);
-
-                const posX = centerX + Math.cos(angle) * radius + (layer * -6);
-                const posY = centerY + Math.sin(angle) * radius + (layer * -12);
+                const posX = centerX + hx * scale + (layer * -5);
+                const posY = centerY + hy * scale + (layer * -10);
 
                 positions.push({ x: posX, y: posY, layer: layer });
             }
         } else if (formationType === 'DIAMOND') {
+            // SYMMETRIC EMERALD DIAMOND
             let placed = 0;
             let layer = 0;
             const dims = [4, 3, 2];
@@ -1022,8 +988,8 @@ class TileMatchingGame {
                         const rotX = (x - y) * stepX * 0.5;
                         const rotY = (x + y) * stepY * 0.35;
 
-                        const posX = centerX + rotX + (layer * -6);
-                        const posY = centerY + rotY - 45 + (layer * -12);
+                        const posX = centerX + rotX + (layer * -5);
+                        const posY = centerY + rotY - 35 + (layer * -10);
 
                         positions.push({ x: posX, y: posY, layer: layer });
                         placed++;
@@ -1031,17 +997,6 @@ class TileMatchingGame {
                     if (placed >= totalCount) break;
                 }
                 layer++;
-            }
-        } else if (formationType === 'BUTTERFLY') {
-            for (let i = 0; i < totalCount; i++) {
-                const layer = Math.floor(i / 14);
-                const t = (i % 14) * (Math.PI * 2 / 14);
-
-                const radius = 105 * (Math.sin(t) * Math.sin(t) + Math.cos(3 * t) * Math.cos(3 * t));
-                const posX = centerX + Math.cos(t) * radius * 0.95 + (layer * -6);
-                const posY = centerY + Math.sin(t) * radius * 0.95 + (layer * -12);
-
-                positions.push({ x: posX, y: posY, layer: layer });
             }
         } else {
             let layer = 0;
