@@ -1143,39 +1143,38 @@ class TileMatchingGame {
                 }
             }
         } else if (formationType === 'STAR') {
-            // CLASSIC HIGH-CONTRAST 5-POINT STAR GRID MATRIX
-            const star_rows = [
-                [1],
-                [1, 1, 1],
-                [1, 1, 1, 1, 1],
-                [1, 1, 1],
-                [1, 0, 1]
-            ];
-            const l0_cells = [];
-            for (let r = 0; r < star_rows.length; r++) {
-                const row = star_rows[r];
-                const tilesInRow = row.length;
-                const sx = centerX - ((tilesInRow - 1) * stepX * 0.5);
-                const sy = centerY + ((r - 2) * stepY * 0.95);
-                for (let c = 0; c < row.length; c++) {
-                    if (row[c] === 1) {
-                        l0_cells.push({ x: sx + c * stepX, y: sy, layer: 0 });
-                    }
+            // PURE 5-POINT STAR WITH RADIATING RAYS & 3D CORE (NO BOTTOM ROW!)
+            const angles = [-Math.PI / 2, -Math.PI / 2 + 0.4 * Math.PI, -Math.PI / 2 + 0.8 * Math.PI, -Math.PI / 2 + 1.2 * Math.PI, -Math.PI / 2 + 1.6 * Math.PI];
+            const l0_ray_tiles = [];
+            for (let k = 0; k < angles.length; k++) {
+                const angle = angles[k];
+                for (let dist of [90, 140]) {
+                    l0_ray_tiles.push({
+                        x: centerX + Math.cos(angle) * dist,
+                        y: centerY + Math.sin(angle) * dist,
+                        layer: 0
+                    });
                 }
             }
-            const l1_cells = [];
+            const l0_core = [];
             for (let r = -1; r <= 1; r++) {
                 for (let c = -1; c <= 1; c++) {
-                    l1_cells.push({ x: centerX + (c + 0.5) * stepX, y: centerY + (r + 0.5) * stepY - 6, layer: 1 });
+                    l0_core.push({ x: centerX + c * stepX, y: centerY + r * stepY, layer: 0 });
                 }
             }
-            const l2_cells = [];
+            const l1_core = [];
+            for (let r = -1; r <= 1; r++) {
+                for (let c = -1; c <= 1; c++) {
+                    l1_core.push({ x: centerX + (c + 0.5) * stepX, y: centerY + (r + 0.5) * stepY - 6, layer: 1 });
+                }
+            }
+            const l2_core = [];
             for (let r of [0, 1]) {
                 for (let c of [0, 1]) {
-                    l2_cells.push({ x: centerX + (c - 0.5) * stepX + 0.5 * stepX, y: centerY + (r - 0.5) * stepY + 0.5 * stepY - 12, layer: 2 });
+                    l2_core.push({ x: centerX + (c - 0.5) * stepX + 0.5 * stepX, y: centerY + (r - 0.5) * stepY + 0.5 * stepY - 12, layer: 2 });
                 }
             }
-            const candidates = l0_cells.concat(l1_cells, l2_cells);
+            const candidates = l0_ray_tiles.concat(l0_core, l1_core, l2_core);
             const cnt = Math.min(totalCount, candidates.length);
             for (let i = 0; i < cnt; i++) {
                 positions.push(candidates[i]);
@@ -1224,11 +1223,11 @@ class TileMatchingGame {
 
         while (positions.length < totalCount) {
             const idx = positions.length;
-            const r = Math.floor(idx / 6);
-            const c = idx % 6;
+            const angle = (idx * 0.618033988749895 * Math.PI * 2);
+            const radius = 60 + Math.floor(idx / 5) * 45;
             positions.push({
-                x: startX_L0 + c * stepX,
-                y: startY_L0 + r * stepY,
+                x: centerX + Math.cos(angle) * radius,
+                y: centerY + Math.sin(angle) * radius,
                 layer: 0
             });
         }
