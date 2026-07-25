@@ -1,6 +1,7 @@
 /**
  * Tile Club / GamoVation Style Mobile Stack Tile Pairing Game Engine
  * Features:
+ * - REAL TRIANGULAR STEP PYRAMIDS & MULTI-PEAK MOUNTAIN FORMATIONS (Tekli, İkiz ve Üçlü Piramit Tepeleri!).
  * - TIME TRIAL MODE (Zamana Karşı Mod): Tight achievable timer = Math.ceil(totalTiles * 0.65) + 5 seconds!
  * - NEW GAME RESET BUTTON: Moved cleanly into Settings modal.
  * - DEFEAT PENALTY MECHANIC: On game over retry, cancels earned level points & applies -2000 score penalty (Cap at min 0).
@@ -318,7 +319,7 @@ class TileMatchingGame {
             'radial-gradient(circle at 50% 20%, #7c2d12 0%, #451a03 80%, #060913 100%)'
         ];
 
-        this.formations = ['HEART', 'CIRCLE', 'DIAMOND', 'PYRAMID', 'BUTTERFLY'];
+        this.formations = ['PYRAMID', 'HEART', 'CIRCLE', 'DIAMOND', 'BUTTERFLY'];
 
         this.level = 1;
         this.score = 0;
@@ -504,7 +505,6 @@ class TileMatchingGame {
             this.saveSettings();
             document.getElementById('modal-settings').classList.add('hidden');
             
-            // If Time Trial setting changed while playing level, update UI
             if (this.settings.timeTrial) {
                 document.getElementById('badge-timer').classList.remove('hidden');
             } else {
@@ -781,7 +781,6 @@ class TileMatchingGame {
         this.updateLockStates();
 
         // TIME TRIAL COUNTDOWN TIMER MECHANIC:
-        // Calculate duration: Math.ceil(totalTiles * 0.65) + 5 seconds (Half of total tiles + a little bit extra!)
         if (this.settings.timeTrial) {
             const totalTiles = pool.length;
             this.remainingSeconds = Math.ceil(totalTiles * 0.65) + 5;
@@ -848,7 +847,90 @@ class TileMatchingGame {
         const stepX = 76;
         const stepY = 96;
 
-        if (formationType === 'STAR') {
+        if (formationType === 'PYRAMID') {
+            // REAL TRIANGULAR STEP PYRAMID & MULTI-PEAK MOUNTAIN RANGES!
+            // As level advances, create 1, 2, or 3 Triangular Peaks!
+            const peakCount = (this.level >= 20) ? 3 : (this.level >= 8) ? 2 : 1;
+            let placed = 0;
+
+            if (peakCount === 1) {
+                // SINGLE TRIANGULAR STEP PYRAMID
+                // Rows taper upwards: Base Row 5 -> 4 -> 3 -> 2 -> Peak Row 1!
+                let layer = 0;
+                while (placed < totalCount) {
+                    let rowsInLayer = Math.max(2, 5 - layer);
+                    
+                    for (let r = 0; r < rowsInLayer; r++) {
+                        let tilesInRow = Math.max(1, rowsInLayer - r); // Tapering triangle row!
+                        let rowStartX = centerX - ((tilesInRow - 1) * stepX * 0.5) + (layer * -6);
+                        let rowY = centerY + ((r - rowsInLayer / 2) * stepY * 0.42) - (layer * 12);
+
+                        for (let c = 0; c < tilesInRow; c++) {
+                            if (placed >= totalCount) break;
+                            let px = rowStartX + (c * stepX);
+                            positions.push({ x: px, y: rowY, layer: layer });
+                            placed++;
+                        }
+                        if (placed >= totalCount) break;
+                    }
+                    layer++;
+                }
+            } else if (peakCount === 2) {
+                // TWIN PEAKS TRIANGULAR MOUNTAINS (İkiz Piramit Tepeleri)
+                let layer = 0;
+                const peakCenters = [centerX - 75, centerX + 75];
+
+                while (placed < totalCount) {
+                    for (let p = 0; p < 2; p++) {
+                        const peakX = peakCenters[p];
+                        let rows = Math.max(2, 4 - layer);
+
+                        for (let r = 0; r < rows; r++) {
+                            let tilesInRow = Math.max(1, rows - r);
+                            let rowStartX = peakX - ((tilesInRow - 1) * stepX * 0.45) + (layer * -5);
+                            let rowY = centerY + ((r - rows / 2) * stepY * 0.42) - (layer * 12);
+
+                            for (let c = 0; c < tilesInRow; c++) {
+                                if (placed >= totalCount) break;
+                                let px = rowStartX + (c * stepX);
+                                positions.push({ x: px, y: rowY, layer: layer });
+                                placed++;
+                            }
+                            if (placed >= totalCount) break;
+                        }
+                        if (placed >= totalCount) break;
+                    }
+                    layer++;
+                }
+            } else {
+                // TRIPLE PEAKS TRIANGULAR MOUNTAIN RANGE (Üçlü Piramit Dağ Sırası)
+                let layer = 0;
+                const peakCenters = [centerX - 105, centerX, centerX + 105];
+
+                while (placed < totalCount) {
+                    for (let p = 0; p < 3; p++) {
+                        const peakX = peakCenters[p];
+                        let rows = Math.max(2, 3 - layer);
+
+                        for (let r = 0; r < rows; r++) {
+                            let tilesInRow = Math.max(1, rows - r);
+                            let rowStartX = peakX - ((tilesInRow - 1) * stepX * 0.42) + (layer * -4);
+                            let rowY = centerY + ((r - rows / 2) * stepY * 0.40) - (layer * 12);
+
+                            for (let c = 0; c < tilesInRow; c++) {
+                                if (placed >= totalCount) break;
+                                let px = rowStartX + (c * stepX);
+                                positions.push({ x: px, y: rowY, layer: layer });
+                                placed++;
+                            }
+                            if (placed >= totalCount) break;
+                        }
+                        if (placed >= totalCount) break;
+                    }
+                    layer++;
+                }
+            }
+        } else if (formationType === 'STAR') {
             const numPoints = 10;
             const starCoords = [];
 
