@@ -151,45 +151,56 @@
                 </div>
             </div>
 
-            <!-- Top Navigation & HUD Bar (ULTRA COMPACT 100% FITTED LAYOUT FOR ALL MOBILES) -->
+            <!-- Top Navigation & HUD Bar (PRO 2-ROW RICH & SPACIOUS MOBILE LAYOUT) -->
             <header id="hud-header">
-                <button id="btn-hud-home" class="hud-icon-btn" title="Ana Menü">🏠</button>
-                
-                <div class="hud-item badge-level">
-                    <span class="hud-label">SEV.</span>
-                    <span id="level-num" class="hud-val">1</span>
+                <!-- Top Row 1: Home, Level, Timer (Time Trial only), Score, Settings -->
+                <div class="hud-top-row">
+                    <button id="btn-hud-home" class="hud-icon-btn" title="Ana Menü">🏠</button>
+                    
+                    <div class="hud-info-group">
+                        <div class="hud-item badge-level">
+                            <span class="hud-label">SEVİYE</span>
+                            <span id="level-num" class="hud-val">1</span>
+                        </div>
+
+                        <!-- Timer Badge (ONLY Visible in Time Trial Mode!) -->
+                        <div id="badge-timer" class="hud-item badge-timer hidden">
+                            <span class="timer-icon">⏱️</span>
+                            <span id="timer-val" class="hud-val">00:30</span>
+                        </div>
+
+                        <div class="hud-item badge-score">
+                            <span class="hud-label">SKOR</span>
+                            <span id="score-val" class="hud-val">0</span>
+                        </div>
+                    </div>
+
+                    <button id="btn-hud-settings" class="hud-icon-btn" title="Ayarlar">⚙️</button>
                 </div>
 
-                <!-- Timer Badge (ONLY Visible in Time Trial Mode!) -->
-                <div id="badge-timer" class="hud-item badge-timer hidden">
-                    <span class="timer-icon">⏱️</span>
-                    <span id="timer-val" class="hud-val">00:30</span>
+                <!-- Bottom Row 2: Spacious & Bold Booster Buttons Bar -->
+                <div class="hud-bottom-boosters">
+                    <!-- Smart Hint Button (300 Score Base) -->
+                    <button id="btn-hint" class="booster-pill hint-pill" title="Akıllı İpucu">
+                        <span class="booster-icon">💡</span>
+                        <span class="booster-text">İPUCU</span>
+                        <span id="hint-cost-badge" class="cost-badge">300</span>
+                    </button>
+
+                    <!-- Extra Slot Booster Button (1000 Score Base) -->
+                    <button id="btn-extra-slot" class="booster-pill slot-pill" title="Ek Slot Hakkı">
+                        <span class="booster-icon">➕</span>
+                        <span class="booster-text">+1 SLOT</span>
+                        <span id="slot-cost-badge" class="cost-badge cost-gold">1000</span>
+                    </button>
+
+                    <!-- Shuffle Board Booster Button (5000 Score Base) -->
+                    <button id="btn-shuffle" class="booster-pill shuffle-pill" title="Kartları Karıştır">
+                        <span class="booster-icon">🔀</span>
+                        <span class="booster-text">KARIŞTIR</span>
+                        <span id="shuffle-cost-badge" class="cost-badge cost-purple">5000</span>
+                    </button>
                 </div>
-
-                <!-- Smart Hint Button (300 Score Base) -->
-                <button id="btn-hint" class="hud-item hint-btn" title="Akıllı İpucu">
-                    <span class="hint-icon">💡</span>
-                    <span id="hint-cost-badge" class="cost-badge">300</span>
-                </button>
-
-                <!-- Extra Slot Booster Button (1000 Score Base) -->
-                <button id="btn-extra-slot" class="hud-item slot-booster-btn" title="Ek Slot Hakkı">
-                    <span class="hint-icon">➕</span>
-                    <span id="slot-cost-badge" class="cost-badge cost-gold">1000</span>
-                </button>
-
-                <!-- Shuffle Board Booster Button (5000 Score Base) -->
-                <button id="btn-shuffle" class="hud-item shuffle-booster-btn" title="Kartları Karıştır">
-                    <span class="hint-icon">🔀</span>
-                    <span id="shuffle-cost-badge" class="cost-badge cost-purple">5000</span>
-                </button>
-
-                <div class="hud-item badge-score">
-                    <span class="hud-label">SKOR</span>
-                    <span id="score-val" class="hud-val">0</span>
-                </div>
-                
-                <button id="btn-hud-settings" class="hud-icon-btn" title="Ayarlar">⚙️</button>
             </header>
 
             <!-- Combo Multiplier Floating HUD Badge -->

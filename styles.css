@@ -679,43 +679,55 @@ body {
 }
 
 /* =========================================================
-   RELAXED & SPACIOUS TOP HUD HEADER (Single Row, Relaxed Height!)
+   PRO 2-ROW TOP HUD HEADER (Spacious, Rich & Highly Legible!)
    ========================================================= */
 
 #hud-header {
-    padding: 12px 6px;
-    min-height: 56px;
-    background: rgba(15, 23, 42, 0.88);
-    backdrop-filter: blur(16px);
+    padding: 10px 12px 10px 12px;
+    background: rgba(15, 23, 42, 0.90);
+    backdrop-filter: blur(18px);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 1000;
+    border-bottom: 1.5px solid rgba(255, 255, 255, 0.1);
+    width: 100%;
+}
+
+/* Row 1: Home, Level, Timer, Score, Settings */
+.hud-top-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    z-index: 1000;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     width: 100%;
-    gap: 2px;
+}
+
+.hud-info-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .hud-icon-btn {
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.14);
+    background: rgba(255, 255, 255, 0.1);
+    border: 1.5px solid rgba(255, 255, 255, 0.2);
     color: #ffffff;
-    width: 30px;
-    height: 30px;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
-    font-size: 12px;
+    font-size: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     flex-shrink: 0;
-    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.2s ease;
 }
 
 .hud-icon-btn:hover {
-    transform: translateY(-2px) scale(1.12);
-    background: rgba(255, 255, 255, 0.2);
-    box-shadow: 0 4px 12px rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px) scale(1.1);
+    background: rgba(255, 255, 255, 0.25);
 }
 
 .hud-icon-btn:active {
@@ -723,21 +735,18 @@ body {
 }
 
 .hud-item {
-    background: rgba(255, 255, 255, 0.07);
-    padding: 4px 5px;
-    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.08);
+    padding: 5px 10px;
+    border-radius: 12px;
     display: flex;
     align-items: center;
-    gap: 2px;
-    border: 1.2px solid rgba(255, 255, 255, 0.12);
-    flex-shrink: 0;
+    gap: 4px;
+    border: 1.5px solid rgba(255, 255, 255, 0.15);
 }
 
-/* Time Trial Countdown Timer Badge (STRICTLY HIDDEN IN CLASSIC MODE!) */
 .badge-timer {
-    background: linear-gradient(135deg, rgba(239, 68, 68, 0.3) 0%, rgba(220, 38, 38, 0.2) 100%);
-    border: 1.2px solid #ef4444;
-    transition: all 0.2s ease;
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.35) 0%, rgba(220, 38, 38, 0.25) 100%);
+    border: 1.5px solid #ef4444;
 }
 
 .badge-timer.hidden {
@@ -756,53 +765,92 @@ body {
 }
 
 .timer-icon {
+    font-size: 13px;
+}
+
+.hud-label {
     font-size: 10px;
+    font-weight: 800;
+    color: #cbd5e1;
+    letter-spacing: 0.3px;
 }
 
-/* Smart Hint, Extra Slot & Shuffle Booster Buttons */
-.hint-btn {
-    background: linear-gradient(135deg, rgba(245, 158, 11, 0.25) 0%, rgba(217, 119, 6, 0.15) 100%);
-    border: 1.2px solid var(--accent-gold);
+.hud-val {
+    font-size: 14px;
+    font-weight: 900;
+    color: var(--accent-gold);
+}
+
+/* Row 2: Spacious & Bold Booster Buttons Bar */
+.hud-bottom-boosters {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+}
+
+.booster-pill {
+    flex: 1;
+    max-width: 120px;
+    padding: 6px 8px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    font-size: 12px;
+    font-weight: 900;
     cursor: pointer;
-    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
+    border: 1.5px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease, filter 0.2s ease;
 }
 
-.hint-btn:hover {
+.booster-pill:hover {
     transform: translateY(-2px) scale(1.05);
-    box-shadow: 0 6px 18px rgba(245, 158, 11, 0.6);
+    filter: brightness(1.15);
 }
 
-.slot-booster-btn {
-    background: linear-gradient(135deg, rgba(56, 189, 248, 0.25) 0%, rgba(14, 165, 233, 0.15) 100%);
-    border: 1.2px solid var(--accent-cyan);
-    cursor: pointer;
-    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
+.booster-pill:active {
+    transform: scale(0.95);
 }
 
-.slot-booster-btn:hover {
-    transform: translateY(-2px) scale(1.05);
-    box-shadow: 0 6px 18px rgba(56, 189, 248, 0.6);
+.booster-icon {
+    font-size: 13px;
 }
 
-.shuffle-booster-btn {
-    background: linear-gradient(135deg, rgba(192, 132, 252, 0.25) 0%, rgba(147, 51, 234, 0.15) 100%);
-    border: 1.2px solid var(--accent-purple);
-    cursor: pointer;
-    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
+.booster-text {
+    font-size: 11px;
+    font-weight: 900;
+    letter-spacing: 0.2px;
 }
 
-.shuffle-booster-btn:hover {
-    transform: translateY(-2px) scale(1.05);
-    box-shadow: 0 6px 18px rgba(192, 132, 252, 0.6);
+.hint-pill {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.35) 0%, rgba(217, 119, 6, 0.2) 100%);
+    border-color: var(--accent-gold);
+    color: #ffffff;
+}
+
+.slot-pill {
+    background: linear-gradient(135deg, rgba(56, 189, 248, 0.35) 0%, rgba(14, 165, 233, 0.2) 100%);
+    border-color: var(--accent-cyan);
+    color: #ffffff;
+}
+
+.shuffle-pill {
+    background: linear-gradient(135deg, rgba(192, 132, 252, 0.35) 0%, rgba(147, 51, 234, 0.2) 100%);
+    border-color: var(--accent-purple);
+    color: #ffffff;
 }
 
 .cost-badge {
     background: var(--accent-gold);
     color: #0f172a;
-    font-size: 8.5px;
+    font-size: 10px;
     font-weight: 900;
-    padding: 1px 3px;
-    border-radius: 4px;
+    padding: 2px 5px;
+    border-radius: 6px;
     transition: all 0.2s ease;
 }
 
@@ -816,23 +864,10 @@ body {
     color: #ffffff;
 }
 
-.hud-label {
-    font-size: 8px;
-    font-weight: 800;
-    color: #94a3b8;
-    letter-spacing: 0.1px;
-}
-
-.hud-val {
-    font-size: 11px;
-    font-weight: 900;
-    color: var(--accent-gold);
-}
-
 /* Toast Alert Notification (Z-Index 1500) */
 .toast-msg {
     position: absolute;
-    top: 76px;
+    top: 105px;
     left: 50%;
     transform: translateX(-50%);
     background: rgba(239, 68, 68, 0.92);
@@ -881,7 +916,7 @@ body {
 /* Combo Multiplier Floating HUD Badge (Z-Index 1500) */
 .combo-badge {
     position: absolute;
-    top: 76px;
+    top: 105px;
     right: 16px;
     background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
     color: #ffffff;
