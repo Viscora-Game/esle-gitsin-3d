@@ -1,7 +1,17 @@
 /**
  * Tile Club / GamoVation Style Mobile Stack Tile Pairing Game Engine
  * Features:
- * - ULTRA-AESTHETIC PERFECTLY CENTERED 3D MAHJONG FORMATIONS (Asla Taşan/Bozuk Desensiz Kusursuz Dizilimler!).
+ * - 10 ULTRA-AESTHETIC PERFECTLY CENTERED 3D MAHJONG FORMATIONS:
+ *   1. ROYAL_PYRAMID (Kraliyet Piramidi)
+ *   2. CASTLE (Kale / Sur Mimarisi)
+ *   3. HOURGLASS (Kum Saati)
+ *   4. SHIELD (Kraliyet Arması / Kalkan)
+ *   5. FLOWER (Sakura / Çiçek)
+ *   6. HELIX (Yin-Yang S-Dalgası)
+ *   7. HEART (Büyülü Kalp)
+ *   8. TWIN_PEAKS (İkiz Piramit Zirveleri)
+ *   9. STAR (5-Köşeli Yıldız)
+ *  10. DIAMOND (Zümrüt Elmas)
  * - DUAL SEPARATE GAME MODES: KLASİK MOD (Classic Campaign) & ZAMANA KARŞI MOD (Time Trial Campaign)!
  * - SEPARATE PROGRESSION PERSISTENCE: Both Classic & Time Trial modes have independent level & score auto-save!
  * - TIME TRIAL MODE (Zamana Karşı Mod): Tight achievable timer = Math.ceil(totalTiles * 0.65) + 5 seconds!
@@ -327,7 +337,19 @@ class TileMatchingGame {
             'radial-gradient(circle at 50% 20%, #7c2d12 0%, #451a03 80%, #060913 100%)'
         ];
 
-        this.formations = ['ROYAL_PYRAMID', 'HEART', 'TWIN_PEAKS', 'STAR', 'DIAMOND'];
+        // 10 Rich Symmetrical Mahjong Formations Pool!
+        this.formations = [
+            'ROYAL_PYRAMID', 
+            'CASTLE', 
+            'HOURGLASS', 
+            'SHIELD', 
+            'FLOWER', 
+            'HELIX', 
+            'HEART', 
+            'TWIN_PEAKS', 
+            'STAR', 
+            'DIAMOND'
+        ];
 
         // Settings State
         this.settings = {
@@ -850,14 +872,13 @@ class TileMatchingGame {
 
         if (formationType === 'ROYAL_PYRAMID') {
             // ELEGANT 3D STEPPED ROYAL PYRAMID
-            // Centered concentric 3D layers tapering to a single center apex!
             let placed = 0;
             let layer = 0;
             const gridDims = [
-                { cols: 4, rows: 4 }, // Layer 0: Base 4x4
-                { cols: 3, rows: 3 }, // Layer 1: Mid 3x3
-                { cols: 2, rows: 2 }, // Layer 2: Top 2x2
-                { cols: 1, rows: 1 }  // Layer 3: Apex 1x1
+                { cols: 4, rows: 4 },
+                { cols: 3, rows: 3 },
+                { cols: 2, rows: 2 },
+                { cols: 1, rows: 1 }
             ];
 
             while (placed < totalCount) {
@@ -874,6 +895,150 @@ class TileMatchingGame {
                         placed++;
                     }
                     if (placed >= totalCount) break;
+                }
+                layer++;
+            }
+        } else if (formationType === 'CASTLE') {
+            // 🏰 CASTLE FORTRESS WALL & TOWER APEX
+            let placed = 0;
+            let layer = 0;
+
+            // Outer Fortress Wall (Layer 0)
+            const wallCoords = [];
+            const outerW = 4, outerH = 4;
+            const wallStartX = centerX - ((outerW - 1) * stepX * 0.5);
+            const wallStartY = centerY - ((outerH - 1) * stepY * 0.5);
+
+            for (let r = 0; r < outerH; r++) {
+                for (let c = 0; c < outerW; c++) {
+                    if (r === 0 || r === outerH - 1 || c === 0 || c === outerW - 1) {
+                        wallCoords.push({ x: wallStartX + c * stepX, y: wallStartY + r * stepY, layer: 0 });
+                    }
+                }
+            }
+
+            for (const pos of wallCoords) {
+                if (placed >= totalCount) break;
+                positions.push(pos);
+                placed++;
+            }
+
+            // Inner Tower Keep (Layer 1 & Layer 2)
+            layer = 1;
+            while (placed < totalCount) {
+                const dim = (layer === 1) ? 2 : 1;
+                const startX = centerX - ((dim - 1) * stepX * 0.5);
+                const startY = centerY - ((dim - 1) * stepY * 0.5) - (layer * 10);
+
+                for (let r = 0; r < dim; r++) {
+                    for (let c = 0; c < dim; c++) {
+                        if (placed >= totalCount) break;
+                        positions.push({ x: startX + c * stepX, y: startY + r * stepY, layer: layer });
+                        placed++;
+                    }
+                    if (placed >= totalCount) break;
+                }
+                layer++;
+            }
+        } else if (formationType === 'HOURGLASS') {
+            // ⌛ HOURGLASS (Wide Top & Bottom, Tapered Waist Center)
+            let placed = 0;
+            let layer = 0;
+
+            const rowPattern = [4, 3, 2, 1, 2, 3, 4];
+
+            while (placed < totalCount) {
+                for (let r = 0; r < rowPattern.length; r++) {
+                    const tilesInRow = Math.max(1, rowPattern[r] - layer);
+                    const startX = centerX - ((tilesInRow - 1) * stepX * 0.5);
+                    const rowY = centerY + ((r - 3) * stepY * 0.45) - (layer * 10);
+
+                    for (let c = 0; c < tilesInRow; c++) {
+                        if (placed >= totalCount) break;
+                        positions.push({ x: startX + c * stepX, y: rowY, layer: layer });
+                        placed++;
+                    }
+                    if (placed >= totalCount) break;
+                }
+                layer++;
+            }
+        } else if (formationType === 'SHIELD') {
+            // 🛡️ ROYAL SHIELD BADGE
+            let placed = 0;
+            let layer = 0;
+            const shieldRows = [4, 4, 3, 2, 1];
+
+            while (placed < totalCount) {
+                for (let r = 0; r < shieldRows.length; r++) {
+                    const tilesInRow = Math.max(1, shieldRows[r] - layer);
+                    const startX = centerX - ((tilesInRow - 1) * stepX * 0.5);
+                    const rowY = centerY + ((r - 2) * stepY * 0.48) - (layer * 10);
+
+                    for (let c = 0; c < tilesInRow; c++) {
+                        if (placed >= totalCount) break;
+                        positions.push({ x: startX + c * stepX, y: rowY, layer: layer });
+                        placed++;
+                    }
+                    if (placed >= totalCount) break;
+                }
+                layer++;
+            }
+        } else if (formationType === 'FLOWER') {
+            // 🌸 SAKURA FLOWER BLOSSOM (4 Petals surrounding center stamen)
+            let placed = 0;
+            const centerCore = [
+                { x: centerX - stepX * 0.4, y: centerY - stepY * 0.4, layer: 0 },
+                { x: centerX + stepX * 0.4, y: centerY - stepY * 0.4, layer: 0 },
+                { x: centerX - stepX * 0.4, y: centerY + stepY * 0.4, layer: 0 },
+                { x: centerX + stepX * 0.4, y: centerY + stepY * 0.4, layer: 0 }
+            ];
+
+            for (const pos of centerCore) {
+                if (placed >= totalCount) break;
+                positions.push(pos);
+                placed++;
+            }
+
+            // 4 Surrounding Petals
+            const petalOffsets = [
+                { x: 0, y: -stepY * 1.1 }, // Top Petal
+                { x: 0, y: stepY * 1.1 },  // Bottom Petal
+                { x: -stepX * 1.1, y: 0 }, // Left Petal
+                { x: stepX * 1.1, y: 0 }   // Right Petal
+            ];
+
+            let layer = 0;
+            while (placed < totalCount) {
+                for (const pOff of petalOffsets) {
+                    if (placed >= totalCount) break;
+                    positions.push({
+                        x: centerX + pOff.x + (layer * -4),
+                        y: centerY + pOff.y + (layer * -8),
+                        layer: layer
+                    });
+                    placed++;
+                }
+                layer++;
+            }
+        } else if (formationType === 'HELIX') {
+            // ☯️ HELIX S-WAVE FORMATION
+            let placed = 0;
+            let layer = 0;
+
+            while (placed < totalCount) {
+                const countInCurve = 12;
+                for (let i = 0; i < countInCurve; i++) {
+                    if (placed >= totalCount) break;
+                    const t = (i / countInCurve) * Math.PI * 2;
+                    const hx = Math.sin(t) * 90;
+                    const hy = Math.sin(t * 2) * 55;
+
+                    positions.push({
+                        x: centerX + hx + (layer * -5),
+                        y: centerY + hy + (layer * -10),
+                        layer: layer
+                    });
+                    placed++;
                 }
                 layer++;
             }
