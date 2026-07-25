@@ -1337,38 +1337,41 @@ class TileMatchingGame {
     }
 
     updateLockStates() {
-        // Dynamic 60% Visibility Rule:
-        // A tile is UNLOCKED & CLICKABLE if at least 60% of its surface is visible (covered <= 40%).
+        // STRICT 60% VISIBILITY CLICKABILITY RULE:
+        // A tile is UNLOCKED & CLICKABLE if at least 60% of its surface is visible (coveredRatio <= 0.40).
+        // It is locked ONLY if covered by more than 40% (coveredRatio > 0.40).
         const cardArea = this.cardW * this.cardH;
 
         for (let i = 0; i < this.boardTiles.length; i++) {
             const tile = this.boardTiles[i];
             if (tile.isInSlot) continue;
 
-            let maxCoveredRatio = 0;
+            let totalCoveredArea = 0;
 
             for (let j = 0; j < this.boardTiles.length; j++) {
                 if (i === j) continue;
                 const candidateAbove = this.boardTiles[j];
                 if (candidateAbove.isInSlot) continue;
 
-                // Tiles on a strictly HIGHER layer can cover this tile from above
-                if (candidateAbove.layer > tile.layer) {
+                // candidateAbove is visually ON TOP if it is on a higher layer OR higher z-index (index) on same layer
+                const isAbove = (candidateAbove.layer > tile.layer) ||
+                                (candidateAbove.layer === tile.layer && candidateAbove.index > tile.index);
+
+                if (isAbove) {
                     const overlapW = Math.max(0, this.cardW - Math.abs(tile.x - candidateAbove.x));
                     const overlapH = Math.max(0, this.cardH - Math.abs(tile.y - candidateAbove.y));
 
                     if (overlapW > 0 && overlapH > 0) {
                         const overlapArea = overlapW * overlapH;
-                        const ratio = overlapArea / cardArea;
-                        if (ratio > maxCoveredRatio) {
-                            maxCoveredRatio = ratio;
-                        }
+                        totalCoveredArea += overlapArea;
                     }
                 }
             }
 
+            const coveredRatio = Math.min(1.0, totalCoveredArea / cardArea);
+
             // Locked ONLY if covered by more than 40% (meaning less than 60% is visible)
-            const isLocked = maxCoveredRatio > 0.40;
+            const isLocked = coveredRatio > 0.40;
 
             tile.isLocked = isLocked;
             if (isLocked) {
