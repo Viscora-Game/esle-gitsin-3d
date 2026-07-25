@@ -1143,12 +1143,12 @@ class TileMatchingGame {
                 }
             }
         } else if (formationType === 'STAR') {
-            // PURE 5-POINT STAR WITH RADIATING RAYS & 3D CORE (NO BOTTOM ROW!)
+            // PURE 5-POINT STAR WITH RADIATING RAYS & 3D CORE
             const angles = [-Math.PI / 2, -Math.PI / 2 + 0.4 * Math.PI, -Math.PI / 2 + 0.8 * Math.PI, -Math.PI / 2 + 1.2 * Math.PI, -Math.PI / 2 + 1.6 * Math.PI];
             const l0_ray_tiles = [];
             for (let k = 0; k < angles.length; k++) {
                 const angle = angles[k];
-                for (let dist of [90, 140]) {
+                for (let dist of [75, 115, 150]) {
                     l0_ray_tiles.push({
                         x: centerX + Math.cos(angle) * dist,
                         y: centerY + Math.sin(angle) * dist,
@@ -1169,9 +1169,9 @@ class TileMatchingGame {
                 }
             }
             const l2_core = [];
-            for (let r of [0, 1]) {
-                for (let c of [0, 1]) {
-                    l2_core.push({ x: centerX + (c - 0.5) * stepX + 0.5 * stepX, y: centerY + (r - 0.5) * stepY + 0.5 * stepY - 12, layer: 2 });
+            for (let r = -1; r <= 1; r++) {
+                for (let c = -1; c <= 1; c++) {
+                    l2_core.push({ x: centerX + c * stepX, y: centerY + r * stepY - 12, layer: 2 });
                 }
             }
             const candidates = l0_ray_tiles.concat(l0_core, l1_core, l2_core);
@@ -1188,16 +1188,18 @@ class TileMatchingGame {
                 for (let i = 0; i < cntTarget; i++) {
                     if (placed >= totalCount) break;
                     const t = (i / cntTarget) * (Math.PI * 2);
-                    const hx = 16 * Math.pow(Math.sin(t), 3);
-                    const hy = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
-                    const px = centerX + hx * scale + (layer * 0.5 * stepX);
-                    const py = centerY + hy * scale + (layer * 0.5 * stepY) - (layer * 6);
-                    positions.push({ x: px, y: py, layer: layer });
+                    const x = 16 * Math.pow(Math.sin(t), 3);
+                    const y = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t));
+                    positions.push({
+                        x: centerX + (x * scale) + (layer * 0.5 * stepX),
+                        y: centerY + (y * scale) + (layer * 0.5 * stepY) - (layer * 6),
+                        layer: layer
+                    });
                     placed++;
                 }
             }
         } else { // HELIX & TWIN_PEAKS & default
-            const dims = [{ cols: 6, rows: 6 }, { cols: 5, rows: 5 }, { cols: 4, rows: 4 }];
+            const dims = [{ cols: 6, rows: 6 }, { cols: 4, rows: 4 }, { cols: 2, rows: 2 }];
             for (let layer = 0; layer < 3; layer++) {
                 const cntTarget = layerCounts[layer];
                 if (cntTarget <= 0 || placed >= totalCount) break;
@@ -1224,11 +1226,11 @@ class TileMatchingGame {
         while (positions.length < totalCount) {
             const idx = positions.length;
             const angle = (idx * 0.618033988749895 * Math.PI * 2);
-            const radius = 60 + Math.floor(idx / 5) * 45;
+            const radius = Math.min(100, 35 + (idx % 4) * 20);
             positions.push({
                 x: centerX + Math.cos(angle) * radius,
                 y: centerY + Math.sin(angle) * radius,
-                layer: 0
+                layer: Math.floor(idx / 12) % 3
             });
         }
 
