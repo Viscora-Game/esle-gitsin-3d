@@ -884,7 +884,9 @@ class TileMatchingGame {
 
         this.shuffleArray(pool);
 
-        const positions = this.generateLayoutPositions(formationType, pool.length, boardEl.clientWidth, boardEl.clientHeight);
+        const safeBoardW = (boardEl && boardEl.clientWidth > 100) ? boardEl.clientWidth : 380;
+        const safeBoardH = (boardEl && boardEl.clientHeight > 100) ? boardEl.clientHeight : 520;
+        const positions = this.generateLayoutPositions(formationType, pool.length, safeBoardW, safeBoardH);
 
         for (let i = 0; i < pool.length; i++) {
             const pos = positions[i];
@@ -1107,9 +1109,10 @@ class TileMatchingGame {
 
             const coveredRatio = Math.min(1.0, totalCoveredArea / cardArea);
 
-            // Locked IF covered by more than 15% by upper tiles
-            // Exposed top tiles & free edge tiles (coveredRatio <= 0.15) remain UNLOCKED & CLICKABLE!
-            const isLocked = coveredRatio > 0.15;
+            // STRICT 60% VISIBILITY RULE:
+            // If at least 60% of tile surface is visible (coveredRatio <= 0.40), it is UNLOCKED & CLICKABLE!
+            // It is locked ONLY if covered by more than 40% by upper tiles (coveredRatio > 0.40).
+            const isLocked = coveredRatio > 0.40;
 
             tile.isLocked = isLocked;
             if (isLocked) {
