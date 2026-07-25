@@ -1,15 +1,15 @@
 /**
  * Tile Club / GamoVation Style Mobile Stack Tile Pairing Game Engine
  * Features:
+ * - ULTRA-COMPACT 100% RESPONSIVE TOP HUD BAR: Guaranteed zero overflow on all screen widths!
+ * - STRICT TIMER CONTROL: Timer badge is 100% HIDDEN in Classic Mode, and clean fitted in Time Trial Mode!
+ * - RESPONSIVE MAIN MENU BUTTON LEVEL STRINGS: Scaled text prevents text overflow no matter how high the level number is!
  * - SHUFFLE BOARD BOOSTER (🔀 Karıştır - 5000 Score Base, 2x cost increase on each use!).
  * - MODE-SPECIFIC RESET CONFIRMATION DIALOG: Asks WHICH mode to reset (Classic, Time Trial, or Both!).
- * - CLEAN SINGLE-EMOJI MENU BUTTONS WITH LIVE LEVEL NUMBERS FOR BOTH MODES!
- * - DYNAMIC TOP HUD TIMER: Hidden in Classic Mode, cleanly fitted in Time Trial Mode!
  * - 10 ULTRA-AESTHETIC PERFECTLY CENTERED 3D MAHJONG FORMATIONS.
  * - DUAL SEPARATE GAME MODES: KLASİK MOD & ZAMANA KARŞI MOD with separate persistence!
  * - DEFEAT PENALTY MECHANIC: On retry, cancels earned level points & applies -2000 score penalty (Cap at min 0).
  * - FLOATING EMERGENCY 6TH SLOT HOLDER DIRECTLY ABOVE CENTER SLOT (Index 2).
- * - DYNAMIC IN-LEVEL PRICE ESCALATION (%100 Cost Double on each use in same level).
  */
 
 class SoundSynth {
@@ -821,15 +821,16 @@ class TileMatchingGame {
 
         this.updateLockStates();
 
-        // TIMER ONLY IN TIME TRIAL MODE (Hidden in Classic Mode!)
+        // TIMER ONLY IN TIME TRIAL MODE (STRICTLY HIDDEN IN CLASSIC MODE!)
+        const timerBadge = document.getElementById('badge-timer');
         if (this.currentMode === 'timetrial') {
             const totalTiles = pool.length;
             this.remainingSeconds = Math.ceil(totalTiles * 0.65) + 5;
-            document.getElementById('badge-timer').classList.remove('hidden');
+            timerBadge.classList.remove('hidden');
             this.startTimer();
         } else {
             this.stopTimer();
-            document.getElementById('badge-timer').classList.add('hidden');
+            timerBadge.classList.add('hidden');
         }
     }
 
