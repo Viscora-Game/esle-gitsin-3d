@@ -1420,8 +1420,9 @@ class TileMatchingGame {
 
             const coveredRatio = Math.min(1.0, totalCoveredArea / cardArea);
 
-            // Locked ONLY if covered by more than 40% (meaning less than 60% is visible)
-            const isLocked = coveredRatio > 0.40;
+            // Locked IF covered by more than 22% by upper tiles
+            // Exposed top tiles & free edge tiles (coveredRatio <= 0.22) remain UNLOCKED & CLICKABLE!
+            const isLocked = coveredRatio > 0.22;
 
             tile.isLocked = isLocked;
             if (isLocked) {
