@@ -1143,38 +1143,42 @@ class TileMatchingGame {
                 }
             }
         } else if (formationType === 'STAR') {
-            const numPoints = 10;
-            const starCoords = [];
-            for (let k = 0; k < numPoints; k++) {
-                const angle = -Math.PI / 2 + k * (Math.PI / 5);
-                const r = (k % 2 === 0) ? 135 : 70;
-                starCoords.push({ x: centerX + Math.cos(angle) * r, y: centerY + Math.sin(angle) * r });
-            }
-            const l0Cnt = Math.min(numPoints, layerCounts[0]);
-            for (let k = 0; k < l0Cnt; k++) {
-                if (placed >= totalCount) break;
-                positions.push({ x: starCoords[k].x, y: starCoords[k].y, layer: 0 });
-                placed++;
-            }
-            const hubs = [{ cols: 4, rows: 4 }, { cols: 2, rows: 2 }];
-            for (let layer = 1; layer < 3; layer++) {
-                const cntTarget = layerCounts[layer];
-                if (cntTarget <= 0 || placed >= totalCount) break;
-                const dim = hubs[layer - 1];
-                const startX = centerX - ((dim.cols - 1) * stepX * 0.5) + (layer * 0.5 * stepX);
-                const startY = centerY - ((dim.rows - 1) * stepY * 0.5) + (layer * 0.5 * stepY) - (layer * 6);
-                const cells = [];
-                for (let r = 0; r < dim.rows; r++) {
-                    for (let c = 0; c < dim.cols; c++) {
-                        cells.push({ x: startX + c * stepX, y: startY + r * stepY });
-                    }
+            // MAGNIFICENT SYMMETRICAL 5-POINT STAR FORMATION
+            const angles = [-Math.PI / 2, -Math.PI / 2 + 0.4 * Math.PI, -Math.PI / 2 + 0.8 * Math.PI, -Math.PI / 2 + 1.2 * Math.PI, -Math.PI / 2 + 1.6 * Math.PI];
+            const l0_ray_tiles = [];
+            for (let k = 0; k < angles.length; k++) {
+                const angle = angles[k];
+                for (let dist of [95, 145]) {
+                    l0_ray_tiles.push({
+                        x: centerX + Math.cos(angle) * dist,
+                        y: centerY + Math.sin(angle) * dist,
+                        layer: 0
+                    });
                 }
-                const cnt = Math.min(cells.length, cntTarget);
-                for (let i = 0; i < cnt; i++) {
-                    if (placed >= totalCount) break;
-                    positions.push({ x: cells[i].x, y: cells[i].y, layer: layer });
-                    placed++;
+            }
+            const l0_core_tiles = [];
+            for (let r = -1; r <= 1; r++) {
+                for (let c = -1; c <= 1; c++) {
+                    l0_core_tiles.push({ x: centerX + c * stepX, y: centerY + r * stepY, layer: 0 });
                 }
+            }
+            const l0_all = l0_ray_tiles.concat(l0_core_tiles);
+            const l1_all = [];
+            for (let r = -1; r <= 1; r++) {
+                for (let c = -1; c <= 1; c++) {
+                    l1_all.push({ x: centerX + c * stepX + 0.5 * stepX, y: centerY + r * stepY + 0.5 * stepY - 6, layer: 1 });
+                }
+            }
+            const l2_all = [];
+            for (let r of [0, 1]) {
+                for (let c of [0, 1]) {
+                    l2_all.push({ x: centerX + (c - 0.5) * stepX + 0.5 * stepX, y: centerY + (r - 0.5) * stepY + 0.5 * stepY - 12, layer: 2 });
+                }
+            }
+            const candidates = l0_all.concat(l1_all, l2_all);
+            const totalToPlace = Math.min(totalCount, candidates.length);
+            for (let i = 0; i < totalToPlace; i++) {
+                positions.push(candidates[i]);
             }
         } else if (formationType === 'HEART') {
             const scales = [9.2, 6.4, 3.8];
