@@ -1011,7 +1011,37 @@ class TileMatchingGame {
         this.updateLockStates();
     }
 
-    generateLayoutPositions(formationType, boardW, boardH) {
+    stopTimer() {
+        if (this.timerInterval) {
+            clearInterval(this.timerInterval);
+            this.timerInterval = null;
+        }
+    }
+
+    startTimer() {
+        this.stopTimer();
+        if (this.currentMode !== 'timetrial') return;
+
+        const timerVal = document.getElementById('timer-val');
+        if (timerVal) timerVal.innerText = `${this.remainingSeconds}s`;
+
+        this.timerInterval = setInterval(() => {
+            this.remainingSeconds--;
+            if (timerVal) timerVal.innerText = `${this.remainingSeconds}s`;
+
+            if (this.remainingSeconds <= 0) {
+                this.stopTimer();
+                const dict = this.i18n[this.settings.lang];
+                document.getElementById('defeat-icon').innerText = '⏰';
+                document.getElementById('defeat-title').innerText = dict.defeatTitle;
+                document.getElementById('defeat-desc').innerText = dict.defeatDesc;
+                document.getElementById('modal-gameover').classList.remove('hidden');
+            }
+        }, 1000);
+    }
+
+
+        generateLayoutPositions(formationType, boardW, boardH) {
         const cx = boardW / 2 - this.cardW / 2;
         const cy = boardH / 2 - this.cardH / 2 - 15;
         const stepX = this.cardW * 0.72;
@@ -1562,7 +1592,10 @@ class TileMatchingGame {
 
             this.rearrangeSlotTiles();
 
-            if (this.boardTiles.length === 0 && this.slotTiles.length === 0) {
+            const remainingBoardTiles = this.boardTiles.filter(t => !t.isInSlot);
+            const activeDomTiles = document.querySelectorAll('#board .tile');
+
+            if ((this.boardTiles.length === 0 || remainingBoardTiles.length === 0 || activeDomTiles.length === 0) && this.slotTiles.length === 0) {
                 this.stopTimer();
                 this.sound.playVictorySound();
                 this.fx.spawnConfetti();
