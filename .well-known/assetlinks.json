@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "com.viscoragame.eslegitsin3d",
+        "sha256_cert_fingerprints": ["CB:39:96:05:DF:53:6B:F8:00:60:B7:5E:B2:51:67:3A:07:EA:17:33:B4:52:20:49:D4:F7:BA:8C:7C:03:32:DA"]
+      }
+    }]

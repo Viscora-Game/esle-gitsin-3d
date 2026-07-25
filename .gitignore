@@ -1,17 +1,10 @@
-# Unity junk folders
-[Ll]ibrary/
-[Tt]emp/
-[Oo]bj/
-[Bb]uild/
-[Bb]uilds/
-[Ll]ogs/
-[Uu]ser[Ss]ettings/
-[Pp]roject[Ss]ettings/
-[Aa]ssets/
-[Pp]ackages/
-
-# System & Temp files
+# OS & IDE Files
 .DS_Store
 Thumbs.db
 *.log
-.gemini/
+
+# PWABuilder Packages & Local Releases
+pwabuilder_package/
+*.keystore
+*.aab
+*.apk
