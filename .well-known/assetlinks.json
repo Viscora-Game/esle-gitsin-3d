@@ -1,12 +1,17 @@
-[{
-  "relation": ["delegate_permission/common.handle_all_urls"],
-  "target": {
-    "namespace": "android_app",
-    "package_name": "com.viscoragame.eslegitsin3d",
-    "sha256_cert_fingerprints": [
-      "8E:08:85:2A:97:6B:ED:9F:E0:97:77:D8:81:CF:D7:9E:DF:6E:41:D0:ED:29:D9:E5:D3:CC:7E:D5:74:E3:55:85",
-      "CB:39:96:05:DF:53:6B:F8:00:60:B7:5E:B2:51:67:3A:07:EA:17:33:B4:52:20:49:D4:F7:BA:8C:7C:03:32:DA",
-      "C9:A7:1A:84:6F:B0:65:01:B0:44:8F:71:6A:87:7C:29:8B:48:CF:0C:5F:F6:8D:59:73:3C:88:10:9C:6D:D4:9E"
-    ]
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls",
+      "delegate_permission/common.get_login_creds"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.viscoragame.eslegitsin3d",
+      "sha256_cert_fingerprints": [
+        "C9:A7:1A:84:6F:B0:65:01:B0:44:8F:71:6A:87:7C:29:8B:48:CF:0C:5F:F6:8D:59:73:3C:88:10:9C:6D:D4:9E",
+        "8E:08:85:2A:97:6B:ED:9F:E0:97:77:D8:81:CF:D7:9E:DF:6E:41:D0:ED:29:D9:E5:D3:CC:7E:D5:74:E3:55:85",
+        "CB:39:96:05:DF:53:6B:F8:00:60:B7:5E:B2:51:67:3A:07:EA:17:33:B4:52:20:49:D4:F7:BA:8C:7C:03:32:DA"
+      ]
+    }
   }
-}]
+]
