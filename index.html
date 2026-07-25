@@ -65,16 +65,16 @@
                     <h1 id="menu-game-title" class="menu-title" data-i18n="gameTitle">EŞLE GİTSİN! 3D</h1>
                     <p id="menu-subtitle" class="menu-subtitle" data-i18n="menuSubtitle">Eşleme ve Zeka Macerası</p>
                     
-                    <!-- Dual-Mode Main Menu Button Selection -->
+                    <!-- Dual-Mode Main Menu Button Selection (Single Clean Emoji & Level Indicator) -->
                     <div class="menu-btn-group">
                         <button id="btn-mode-classic" class="btn-primary btn-menu">
-                            <span>🎮</span> <span id="txt-classic-btn" data-i18n="classicModeBtn">KLASİK MOD</span>
+                            <span id="txt-classic-btn">🎮 KLASİK MOD (SEVİYE 1)</span>
                         </button>
                         <button id="btn-mode-timetrial" class="btn-timetrial btn-menu">
-                            <span>⏱️</span> <span id="txt-timetrial-btn" data-i18n="timetrialModeBtn">ZAMANA KARŞI MOD</span>
+                            <span id="txt-timetrial-btn">⏱️ ZAMANA KARŞI MOD (SEVİYE 1)</span>
                         </button>
                         <button id="btn-menu-settings" class="btn-secondary btn-menu">
-                            <span>⚙️</span> <span data-i18n="settings">AYARLAR</span>
+                            <span>⚙️ AYARLAR</span>
                         </button>
                     </div>
                 </div>
@@ -120,14 +120,38 @@
 
                     <!-- Reset & New Game inside Settings -->
                     <button id="btn-menu-newgame" class="btn-danger-reset">
-                        <span>🔄</span> <span data-i18n="newGameBtn">SIFIRLA VE YENİ OYUN BAŞLAT</span>
+                        <span>🔄 SIFIRLA VE YENİ OYUN BAŞLAT</span>
                     </button>
 
                     <button id="btn-save-settings" class="btn-primary" data-i18n="saveBtn">KAYDET VE KAPAT</button>
                 </div>
             </div>
 
-            <!-- Top Navigation & HUD Bar -->
+            <!-- Reset Choice Modal Confirmation Dialog (Asks WHICH mode to reset!) -->
+            <div id="modal-reset-confirm" class="modal-overlay hidden">
+                <div class="modal-card reset-choice-card">
+                    <div class="modal-header-row">
+                        <h2 class="modal-title">🔄 HANGİ MOD SIFIRLANSIN?</h2>
+                        <button id="btn-close-reset-confirm" class="btn-close-x">✕</button>
+                    </div>
+
+                    <p class="reset-desc">Sıfırlamak istediğiniz oyun modunu seçin:</p>
+
+                    <div class="reset-btn-stack">
+                        <button id="btn-reset-classic" class="btn-secondary reset-option-btn">
+                            <span>🎮 KLASİK MODU SIFIRLA</span>
+                        </button>
+                        <button id="btn-reset-timetrial" class="btn-timetrial reset-option-btn">
+                            <span>⏱️ ZAMANA KARŞI MODU SIFIRLA</span>
+                        </button>
+                        <button id="btn-reset-both" class="btn-danger-reset reset-option-btn">
+                            <span>💥 HER İKİ MODU DA SIFIRLA</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top Navigation & HUD Bar (Squeezed & Clean Fitted Layout) -->
             <header id="hud-header">
                 <div class="hud-left-group">
                     <button id="btn-hud-home" class="hud-icon-btn" title="Ana Menü">🏠</button>
@@ -136,7 +160,7 @@
                         <span id="level-num" class="hud-val">1</span>
                     </div>
 
-                    <!-- Mode Indicator / Time Trial Countdown Timer Badge -->
+                    <!-- Timer Badge (ONLY Visible in Time Trial Mode!) -->
                     <div id="badge-timer" class="hud-item badge-timer hidden">
                         <span class="timer-icon">⏱️</span>
                         <span id="timer-val" class="hud-val">00:30</span>
@@ -144,18 +168,25 @@
                 </div>
                 
                 <div class="hud-center-boosters">
-                    <!-- Smart Hint Button -->
+                    <!-- Smart Hint Button (300 Score Base) -->
                     <button id="btn-hint" class="hud-item hint-btn" title="Akıllı İpucu">
                         <span class="hint-icon">💡</span>
                         <span class="hud-label" data-i18n="hintLabel">İPUCU</span>
                         <span id="hint-cost-badge" class="cost-badge">300</span>
                     </button>
 
-                    <!-- Extra Slot Booster Button -->
+                    <!-- Extra Slot Booster Button (1000 Score Base) -->
                     <button id="btn-extra-slot" class="hud-item slot-booster-btn" title="Ek Slot Hakkı">
                         <span class="hint-icon">➕</span>
                         <span class="hud-label" data-i18n="slotBtnLabel">+1 SLOT</span>
                         <span id="slot-cost-badge" class="cost-badge cost-gold">1000</span>
+                    </button>
+
+                    <!-- Shuffle Board Booster Button (5000 Score Base, 2x cost double!) -->
+                    <button id="btn-shuffle" class="hud-item shuffle-booster-btn" title="Kartları Karıştır">
+                        <span class="hint-icon">🔀</span>
+                        <span class="hud-label">KARIŞTIR</span>
+                        <span id="shuffle-cost-badge" class="cost-badge cost-purple">5000</span>
                     </button>
                 </div>
 

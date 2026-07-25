@@ -1,30 +1,15 @@
 /**
  * Tile Club / GamoVation Style Mobile Stack Tile Pairing Game Engine
  * Features:
- * - 10 ULTRA-AESTHETIC PERFECTLY CENTERED 3D MAHJONG FORMATIONS:
- *   1. ROYAL_PYRAMID (Kraliyet Piramidi)
- *   2. CASTLE (Kale / Sur Mimarisi)
- *   3. HOURGLASS (Kum Saati)
- *   4. SHIELD (Kraliyet Arması / Kalkan)
- *   5. FLOWER (Sakura / Çiçek)
- *   6. HELIX (Yin-Yang S-Dalgası)
- *   7. HEART (Büyülü Kalp)
- *   8. TWIN_PEAKS (İkiz Piramit Zirveleri)
- *   9. STAR (5-Köşeli Yıldız)
- *  10. DIAMOND (Zümrüt Elmas)
- * - DUAL SEPARATE GAME MODES: KLASİK MOD (Classic Campaign) & ZAMANA KARŞI MOD (Time Trial Campaign)!
- * - SEPARATE PROGRESSION PERSISTENCE: Both Classic & Time Trial modes have independent level & score auto-save!
- * - TIME TRIAL MODE (Zamana Karşı Mod): Tight achievable timer = Math.ceil(totalTiles * 0.65) + 5 seconds!
- * - NEW GAME RESET BUTTON: Moved cleanly into Settings modal.
- * - DEFEAT PENALTY MECHANIC: On game over retry, cancels earned level points & applies -2000 score penalty (Cap at min 0).
+ * - SHUFFLE BOARD BOOSTER (🔀 Karıştır - 5000 Score Base, 2x cost increase on each use!).
+ * - MODE-SPECIFIC RESET CONFIRMATION DIALOG: Asks WHICH mode to reset (Classic, Time Trial, or Both!).
+ * - CLEAN SINGLE-EMOJI MENU BUTTONS WITH LIVE LEVEL NUMBERS FOR BOTH MODES!
+ * - DYNAMIC TOP HUD TIMER: Hidden in Classic Mode, cleanly fitted in Time Trial Mode!
+ * - 10 ULTRA-AESTHETIC PERFECTLY CENTERED 3D MAHJONG FORMATIONS.
+ * - DUAL SEPARATE GAME MODES: KLASİK MOD & ZAMANA KARŞI MOD with separate persistence!
+ * - DEFEAT PENALTY MECHANIC: On retry, cancels earned level points & applies -2000 score penalty (Cap at min 0).
  * - FLOATING EMERGENCY 6TH SLOT HOLDER DIRECTLY ABOVE CENTER SLOT (Index 2).
- * - PERSISTENT LIFECYCLE: Stays open waiting for a tile, disappears ONLY AFTER tile enters & gets matched out!
  * - DYNAMIC IN-LEVEL PRICE ESCALATION (%100 Cost Double on each use in same level).
- * - Dynamic Dual-Language Game Title (TR: "EŞLE GİTSİN! 3D" | EN: "TILE MATCH 3D").
- * - Cute Playful Game Font ('Fredoka').
- * - INFINITE ENDLESS CAMPAIGN (Level 100+ Endless Mode).
- * - Smart Hint System (300 Score Base Cost).
- * - Multiplier Combo System (Katlanan Puan).
  */
 
 class SoundSynth {
@@ -282,8 +267,11 @@ class TileMatchingGame {
         // Dynamic In-Level Cost System (%100 Cost Increase on each use in same level)
         this.baseHintCost = 300;
         this.baseSlotCost = 1000;
+        this.baseShuffleCost = 5000;
+
         this.hintCost = 300;
         this.slotCost = 1000;
+        this.shuffleCost = 5000;
 
         // Active Game Mode State: 'classic' vs 'timetrial'
         this.currentMode = 'classic';
@@ -363,11 +351,9 @@ class TileMatchingGame {
             tr: {
                 gameTitle: 'EŞLE GİTSİN! 3D',
                 play: 'OYNA',
-                classicModeBtn: '🎮 KLASİK MOD',
-                classicContinueBtn: '🎮 KLASİK (SEVİYE {lvl})',
-                timetrialModeBtn: '⏱️ ZAMANA KARŞI MOD',
-                timetrialContinueBtn: '⏱️ ZAMANA KARŞI (SEVİYE {lvl})',
-                newGameBtn: 'SIFIRLA VE YENİ OYUN BAŞLAT',
+                classicBtnText: '🎮 KLASİK MOD (SEVİYE {lvl})',
+                timetrialBtnText: '⏱️ ZAMANA KARŞI MOD (SEVİYE {lvl})',
+                newGameBtn: '🔄 SIFIRLA VE YENİ OYUN BAŞLAT',
                 settings: 'AYARLAR',
                 settingsTitle: '⚙️ AYARLAR',
                 volLabel: '🔊 Ses Düzeyi',
@@ -391,17 +377,17 @@ class TileMatchingGame {
                 vibOff: 'KAPALI',
                 noScoreHint: 'Yetersiz Skor! ({cost} Puan Gerekli)',
                 noScoreSlot: 'Yetersiz Skor! ({cost} Puan Gerekli)',
+                noScoreShuffle: 'Yetersiz Skor! ({cost} Puan Gerekli)',
                 noHint: 'Şu an açık eşleşen kart bulunamadı!',
                 slotAdded: 'Ortadaki Slot Üstüne Acil Yuva Açıldı! 🚨',
+                shuffledMsg: 'Tahtadaki Kartlar Karıştırıldı! 🔀',
                 menuSubtitle: 'Eşleme ve Zeka Macerası'
             },
             en: {
                 gameTitle: 'TILE MATCH 3D',
                 play: 'PLAY',
-                classicModeBtn: '🎮 CLASSIC MODE',
-                classicContinueBtn: '🎮 CLASSIC (LEVEL {lvl})',
-                timetrialModeBtn: '⏱️ TIME TRIAL MODE',
-                timetrialContinueBtn: '⏱️ TIME TRIAL (LEVEL {lvl})',
+                classicBtnText: '🎮 CLASSIC MODE (LEVEL {lvl})',
+                timetrialBtnText: '⏱️ TIME TRIAL MODE (LEVEL {lvl})',
                 newGameBtn: 'RESET & START NEW GAME',
                 settings: 'SETTINGS',
                 settingsTitle: 'SETTINGS',
@@ -426,8 +412,10 @@ class TileMatchingGame {
                 vibOff: 'OFF',
                 noScoreHint: 'Not Enough Score! ({cost} Required)',
                 noScoreSlot: 'Not Enough Score! ({cost} Required)',
+                noScoreShuffle: 'Not Enough Score! ({cost} Required)',
                 noHint: 'No matching unlocked tiles available!',
                 slotAdded: 'Emergency Slot Opened Above Center Slot! 🚨',
+                shuffledMsg: 'Board Tiles Reshuffled! 🔀',
                 menuSubtitle: 'Matching & Logic Puzzle Adventure'
             }
         };
@@ -483,15 +471,18 @@ class TileMatchingGame {
         } catch (e) {}
     }
 
-    resetGameProgress() {
+    resetClassicProgress() {
         try {
             localStorage.removeItem('tile_game_classic');
-            localStorage.removeItem('tile_game_timetrial');
         } catch (e) {}
         this.classicProgress = { level: 1, score: 0 };
+    }
+
+    resetTimeTrialProgress() {
+        try {
+            localStorage.removeItem('tile_game_timetrial');
+        } catch (e) {}
         this.timeTrialProgress = { level: 1, score: 0 };
-        this.level = 1;
-        this.score = 0;
     }
 
     initUI() {
@@ -511,16 +502,42 @@ class TileMatchingGame {
             this.startLevel(targetLvl, false, 'timetrial');
         });
 
-        // Reset & Start New Game inside Settings Modal
+        // RESET CONFIRMATION MODAL CHOICES
         const btnNewGame = document.getElementById('btn-menu-newgame');
         if (btnNewGame) {
             btnNewGame.addEventListener('click', () => {
-                this.resetGameProgress();
-                document.getElementById('modal-settings').classList.add('hidden');
-                document.getElementById('main-menu').classList.add('hidden');
-                this.startLevel(1, true, this.currentMode);
+                document.getElementById('modal-reset-confirm').classList.remove('hidden');
             });
         }
+
+        document.getElementById('btn-close-reset-confirm').addEventListener('click', () => {
+            document.getElementById('modal-reset-confirm').classList.add('hidden');
+        });
+
+        document.getElementById('btn-reset-classic').addEventListener('click', () => {
+            this.resetClassicProgress();
+            document.getElementById('modal-reset-confirm').classList.add('hidden');
+            document.getElementById('modal-settings').classList.add('hidden');
+            document.getElementById('main-menu').classList.add('hidden');
+            this.startLevel(1, true, 'classic');
+        });
+
+        document.getElementById('btn-reset-timetrial').addEventListener('click', () => {
+            this.resetTimeTrialProgress();
+            document.getElementById('modal-reset-confirm').classList.add('hidden');
+            document.getElementById('modal-settings').classList.add('hidden');
+            document.getElementById('main-menu').classList.add('hidden');
+            this.startLevel(1, true, 'timetrial');
+        });
+
+        document.getElementById('btn-reset-both').addEventListener('click', () => {
+            this.resetClassicProgress();
+            this.resetTimeTrialProgress();
+            document.getElementById('modal-reset-confirm').classList.add('hidden');
+            document.getElementById('modal-settings').classList.add('hidden');
+            document.getElementById('main-menu').classList.add('hidden');
+            this.startLevel(1, true, this.currentMode);
+        });
 
         document.getElementById('btn-menu-settings').addEventListener('click', () => {
             this.openSettings();
@@ -573,9 +590,10 @@ class TileMatchingGame {
             this.updateLanguageUI();
         });
 
-        // Hint & Extra Slot Booster Click Handlers
+        // Boosters Click Handlers
         document.getElementById('btn-hint').addEventListener('click', () => this.useSmartHint());
         document.getElementById('btn-extra-slot').addEventListener('click', () => this.useExtraSlotBooster());
+        document.getElementById('btn-shuffle').addEventListener('click', () => this.useShuffleBooster());
 
         document.getElementById('btn-next-level').addEventListener('click', () => {
             document.getElementById('modal-victory').classList.add('hidden');
@@ -601,17 +619,11 @@ class TileMatchingGame {
         const txtTimeTrial = document.getElementById('txt-timetrial-btn');
         const dict = this.i18n[this.settings.lang];
 
-        if (this.classicProgress && this.classicProgress.level > 1) {
-            txtClassic.innerText = dict.classicContinueBtn.replace('{lvl}', this.classicProgress.level);
-        } else {
-            txtClassic.innerText = dict.classicModeBtn;
-        }
+        const classicLvl = (this.classicProgress && this.classicProgress.level) ? this.classicProgress.level : 1;
+        const timeTrialLvl = (this.timeTrialProgress && this.timeTrialProgress.level) ? this.timeTrialProgress.level : 1;
 
-        if (this.timeTrialProgress && this.timeTrialProgress.level > 1) {
-            txtTimeTrial.innerText = dict.timetrialContinueBtn.replace('{lvl}', this.timeTrialProgress.level);
-        } else {
-            txtTimeTrial.innerText = dict.timetrialModeBtn;
-        }
+        txtClassic.innerText = dict.classicBtnText.replace('{lvl}', classicLvl);
+        txtTimeTrial.innerText = dict.timetrialBtnText.replace('{lvl}', timeTrialLvl);
     }
 
     openSettings() {
@@ -681,6 +693,7 @@ class TileMatchingGame {
     updateBoosterBadgesUI() {
         document.getElementById('hint-cost-badge').innerText = this.hintCost;
         document.getElementById('slot-cost-badge').innerText = this.slotCost;
+        document.getElementById('shuffle-cost-badge').innerText = this.shuffleCost;
     }
 
     startLevel(lvl, isNewGame = false, mode = 'classic') {
@@ -701,6 +714,8 @@ class TileMatchingGame {
         // Reset Level Costs & Capacity to Base
         this.hintCost = this.baseHintCost;
         this.slotCost = this.baseSlotCost;
+        this.shuffleCost = this.baseShuffleCost;
+
         this.maxSlotCapacity = 5;
         this.hasTemporaryExtraSlot = false;
         this.extraSlotWasUsed = false;
@@ -784,6 +799,9 @@ class TileMatchingGame {
                 id: `tile_${i}_${Date.now()}`,
                 type: tileData.id,
                 bg: tileData.bg,
+                imgSrc: tileData.imgSrc,
+                svg: tileData.svg,
+                name: tileData.name,
                 x: pos.x,
                 y: pos.y,
                 layer: pos.layer,
@@ -803,7 +821,7 @@ class TileMatchingGame {
 
         this.updateLockStates();
 
-        // TIME TRIAL COUNTDOWN TIMER MECHANIC FOR ZAMANA KARŞI MOD:
+        // TIMER ONLY IN TIME TRIAL MODE (Hidden in Classic Mode!)
         if (this.currentMode === 'timetrial') {
             const totalTiles = pool.length;
             this.remainingSeconds = Math.ceil(totalTiles * 0.65) + 5;
@@ -867,11 +885,10 @@ class TileMatchingGame {
         const centerX = boardW / 2 - this.cardW / 2;
         const centerY = boardH / 2 - this.cardH / 2 - 10;
 
-        const stepX = 54; // Tight 25% overlap for gorgeous Mahjong stacking!
+        const stepX = 54;
         const stepY = 66;
 
         if (formationType === 'ROYAL_PYRAMID') {
-            // ELEGANT 3D STEPPED ROYAL PYRAMID
             let placed = 0;
             let layer = 0;
             const gridDims = [
@@ -899,11 +916,9 @@ class TileMatchingGame {
                 layer++;
             }
         } else if (formationType === 'CASTLE') {
-            // 🏰 CASTLE FORTRESS WALL & TOWER APEX
             let placed = 0;
             let layer = 0;
 
-            // Outer Fortress Wall (Layer 0)
             const wallCoords = [];
             const outerW = 4, outerH = 4;
             const wallStartX = centerX - ((outerW - 1) * stepX * 0.5);
@@ -923,7 +938,6 @@ class TileMatchingGame {
                 placed++;
             }
 
-            // Inner Tower Keep (Layer 1 & Layer 2)
             layer = 1;
             while (placed < totalCount) {
                 const dim = (layer === 1) ? 2 : 1;
@@ -941,10 +955,8 @@ class TileMatchingGame {
                 layer++;
             }
         } else if (formationType === 'HOURGLASS') {
-            // ⌛ HOURGLASS (Wide Top & Bottom, Tapered Waist Center)
             let placed = 0;
             let layer = 0;
-
             const rowPattern = [4, 3, 2, 1, 2, 3, 4];
 
             while (placed < totalCount) {
@@ -963,7 +975,6 @@ class TileMatchingGame {
                 layer++;
             }
         } else if (formationType === 'SHIELD') {
-            // 🛡️ ROYAL SHIELD BADGE
             let placed = 0;
             let layer = 0;
             const shieldRows = [4, 4, 3, 2, 1];
@@ -984,7 +995,6 @@ class TileMatchingGame {
                 layer++;
             }
         } else if (formationType === 'FLOWER') {
-            // 🌸 SAKURA FLOWER BLOSSOM (4 Petals surrounding center stamen)
             let placed = 0;
             const centerCore = [
                 { x: centerX - stepX * 0.4, y: centerY - stepY * 0.4, layer: 0 },
@@ -999,12 +1009,11 @@ class TileMatchingGame {
                 placed++;
             }
 
-            // 4 Surrounding Petals
             const petalOffsets = [
-                { x: 0, y: -stepY * 1.1 }, // Top Petal
-                { x: 0, y: stepY * 1.1 },  // Bottom Petal
-                { x: -stepX * 1.1, y: 0 }, // Left Petal
-                { x: stepX * 1.1, y: 0 }   // Right Petal
+                { x: 0, y: -stepY * 1.1 },
+                { x: 0, y: stepY * 1.1 },
+                { x: -stepX * 1.1, y: 0 },
+                { x: stepX * 1.1, y: 0 }
             ];
 
             let layer = 0;
@@ -1021,7 +1030,6 @@ class TileMatchingGame {
                 layer++;
             }
         } else if (formationType === 'HELIX') {
-            // ☯️ HELIX S-WAVE FORMATION
             let placed = 0;
             let layer = 0;
 
@@ -1043,7 +1051,6 @@ class TileMatchingGame {
                 layer++;
             }
         } else if (formationType === 'TWIN_PEAKS') {
-            // TWIN PYRAMIDS (Harmonious side-by-side twin peaks within bounds!)
             let placed = 0;
             let layer = 0;
             const peakCenters = [centerX - 46, centerX + 46];
@@ -1072,7 +1079,6 @@ class TileMatchingGame {
                 layer++;
             }
         } else if (formationType === 'STAR') {
-            // SYMMETRICAL 5-POINTED STAR
             const numPoints = 10;
             const starCoords = [];
 
@@ -1122,7 +1128,6 @@ class TileMatchingGame {
                 stackLayer++;
             }
         } else if (formationType === 'HEART') {
-            // ELEGANT SYMMETRICAL 3D HEART
             const layer0Count = Math.min(totalCount, 16);
             for (let i = 0; i < totalCount; i++) {
                 const layer = Math.floor(i / layer0Count);
@@ -1138,7 +1143,6 @@ class TileMatchingGame {
                 positions.push({ x: posX, y: posY, layer: layer });
             }
         } else if (formationType === 'DIAMOND') {
-            // SYMMETRIC EMERALD DIAMOND
             let placed = 0;
             let layer = 0;
             const dims = [4, 3, 2];
@@ -1327,6 +1331,84 @@ class TileMatchingGame {
         this.fx.spawnBurst(rect.left + rect.width / 2, rect.top + rect.height / 2, 35);
 
         this.showToast(dict.slotAdded);
+    }
+
+    // SHUFFLE BOARD BOOSTER (5000 Base Score, 2x Double Cost on Each Use)
+    useShuffleBooster() {
+        const dict = this.i18n[this.settings.lang];
+
+        if (this.score < this.shuffleCost) {
+            this.sound.playLockThud();
+            this.triggerVibration();
+            this.showToast(dict.noScoreShuffle.replace('{cost}', this.shuffleCost));
+            return;
+        }
+
+        this.score -= this.shuffleCost;
+        document.getElementById('score-val').innerText = this.score;
+
+        // Double the cost for next use in current level (5000 -> 10000 -> 20000...)
+        this.shuffleCost *= 2;
+        this.updateBoosterBadgesUI();
+
+        this.sound.playBoosterChime();
+        this.triggerVibration();
+
+        // Collect all remaining active board tiles
+        const remainingTiles = this.boardTiles.filter(t => !t.isInSlot);
+        if (remainingTiles.length === 0) return;
+
+        // Extract type data & shuffle
+        const tileTypesData = remainingTiles.map(t => ({
+            type: t.type,
+            bg: t.bg,
+            imgSrc: t.imgSrc,
+            svg: t.svg,
+            name: t.name
+        }));
+
+        this.shuffleArray(tileTypesData);
+
+        // Re-assign shuffled types to existing tile elements with spin animation
+        for (let i = 0; i < remainingTiles.length; i++) {
+            const tile = remainingTiles[i];
+            const newTypeData = tileTypesData[i];
+
+            tile.type = newTypeData.type;
+            tile.bg = newTypeData.bg;
+            tile.imgSrc = newTypeData.imgSrc;
+            tile.svg = newTypeData.svg;
+            tile.name = newTypeData.name;
+
+            tile.element.style.background = tile.bg;
+            const iconContainer = tile.element.querySelector('.tile-icon');
+            iconContainer.innerHTML = '';
+
+            if (tile.imgSrc) {
+                const imgEl = document.createElement('img');
+                imgEl.className = 'tile-img';
+                imgEl.src = tile.imgSrc;
+                imgEl.alt = tile.name;
+                iconContainer.appendChild(imgEl);
+            } else if (tile.svg) {
+                iconContainer.innerHTML = tile.svg;
+            }
+
+            // Spin animation effect
+            tile.element.style.transition = 'transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)';
+            tile.element.style.transform = 'scale(1.2) rotate(360deg)';
+            setTimeout(() => {
+                tile.element.style.transform = '';
+            }, 320);
+        }
+
+        this.updateLockStates();
+
+        const boardEl = document.getElementById('board');
+        const rect = boardEl.getBoundingClientRect();
+        this.fx.spawnBurst(rect.left + rect.width / 2, rect.top + rect.height / 2, 45);
+
+        this.showToast(dict.shuffledMsg);
     }
 
     clearHintHighlights() {
