@@ -1020,8 +1020,10 @@ class TileMatchingGame {
 
             while (placed < totalCount) {
                 const dim = gridDims[layer % gridDims.length];
-                const startX = centerX - ((dim.cols - 1) * stepX * 0.5);
-                const startY = centerY - ((dim.rows - 1) * stepY * 0.5) - (layer * 10);
+                const brickX = (layer * 0.4) * stepX;
+                const brickY = (layer * 0.4) * stepY;
+                const startX = centerX - ((dim.cols - 1) * stepX * 0.5) + brickX;
+                const startY = centerY - ((dim.rows - 1) * stepY * 0.5) + brickY - (layer * 6);
 
                 for (let r = 0; r < dim.rows; r++) {
                     for (let c = 0; c < dim.cols; c++) {
@@ -1061,8 +1063,10 @@ class TileMatchingGame {
             layer = 1;
             while (placed < totalCount) {
                 const dim = (layer === 1) ? 2 : 1;
-                const startX = centerX - ((dim - 1) * stepX * 0.5);
-                const startY = centerY - ((dim - 1) * stepY * 0.5) - (layer * 10);
+                const brickX = (layer * 0.4) * stepX;
+                const brickY = (layer * 0.4) * stepY;
+                const startX = centerX - ((dim - 1) * stepX * 0.5) + brickX;
+                const startY = centerY - ((dim - 1) * stepY * 0.5) + brickY - (layer * 6);
 
                 for (let r = 0; r < dim; r++) {
                     for (let c = 0; c < dim; c++) {
@@ -1082,8 +1086,10 @@ class TileMatchingGame {
             while (placed < totalCount) {
                 for (let r = 0; r < rowPattern.length; r++) {
                     const tilesInRow = Math.max(1, rowPattern[r] - layer);
-                    const startX = centerX - ((tilesInRow - 1) * stepX * 0.5);
-                    const rowY = centerY + ((r - 3) * stepY * 0.45) - (layer * 10);
+                    const brickX = (layer * 0.35) * stepX;
+                    const brickY = (layer * 0.35) * stepY;
+                    const startX = centerX - ((tilesInRow - 1) * stepX * 0.5) + brickX;
+                    const rowY = centerY + ((r - 3) * stepY * 0.45) + brickY - (layer * 6);
 
                     for (let c = 0; c < tilesInRow; c++) {
                         if (placed >= totalCount) break;
@@ -1102,8 +1108,10 @@ class TileMatchingGame {
             while (placed < totalCount) {
                 for (let r = 0; r < shieldRows.length; r++) {
                     const tilesInRow = Math.max(1, shieldRows[r] - layer);
-                    const startX = centerX - ((tilesInRow - 1) * stepX * 0.5);
-                    const rowY = centerY + ((r - 2) * stepY * 0.48) - (layer * 10);
+                    const brickX = (layer * 0.35) * stepX;
+                    const brickY = (layer * 0.35) * stepY;
+                    const startX = centerX - ((tilesInRow - 1) * stepX * 0.5) + brickX;
+                    const rowY = centerY + ((r - 2) * stepY * 0.48) + brickY - (layer * 6);
 
                     for (let c = 0; c < tilesInRow; c++) {
                         if (placed >= totalCount) break;
@@ -1181,8 +1189,10 @@ class TileMatchingGame {
                     const cols = Math.max(1, 4 - layer);
                     const rows = Math.max(1, 4 - layer);
 
-                    const startX = peakX - ((cols - 1) * stepX * 0.5);
-                    const startY = centerY - ((rows - 1) * stepY * 0.5) - (layer * 10);
+                    const brickX = (layer * 0.35) * stepX;
+                    const brickY = (layer * 0.35) * stepY;
+                    const startX = peakX - ((cols - 1) * stepX * 0.5) + brickX;
+                    const startY = centerY - ((rows - 1) * stepY * 0.5) + brickY - (layer * 6);
 
                     for (let r = 0; r < rows; r++) {
                         for (let c = 0; c < cols; c++) {
@@ -1257,8 +1267,10 @@ class TileMatchingGame {
                 const hx = 16 * Math.pow(Math.sin(t), 3);
                 const hy = -(13 * Math.cos(t) - 5 * Math.cos(2*t) - 2 * Math.cos(3*t) - Math.cos(4*t));
 
-                const posX = centerX + hx * scale + (layer * -5);
-                const posY = centerY + hy * scale + (layer * -10);
+                const brickX = (layer * 0.35) * stepX;
+                const brickY = (layer * 0.35) * stepY;
+                const posX = centerX + hx * scale + brickX;
+                const posY = centerY + hy * scale + brickY - (layer * 6);
 
                 positions.push({ x: posX, y: posY, layer: layer });
             }
@@ -1277,8 +1289,10 @@ class TileMatchingGame {
                         const rotX = (x - y) * stepX * 0.5;
                         const rotY = (x + y) * stepY * 0.35;
 
-                        const posX = centerX + rotX + (layer * -5);
-                        const posY = centerY + rotY - 35 + (layer * -10);
+                        const brickX = (layer * 0.35) * stepX;
+                        const brickY = (layer * 0.35) * stepY;
+                        const posX = centerX + rotX + brickX;
+                        const posY = centerY + rotY - 35 + brickY - (layer * 6);
 
                         positions.push({ x: posX, y: posY, layer: layer });
                         placed++;
