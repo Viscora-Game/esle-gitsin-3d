@@ -1004,8 +1004,8 @@ class TileMatchingGame {
         const centerX = boardW / 2 - this.cardW / 2;
         const centerY = boardH / 2 - this.cardH / 2 - 10;
 
-        const stepX = 52;
-        const stepY = 62;
+        const stepX = 64;
+        const stepY = 76;
 
         if (formationType === 'ROYAL_PYRAMID') {
             let placed = 0;
