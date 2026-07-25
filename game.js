@@ -320,9 +320,9 @@ class TileMatchingGame {
 
         // 22 Character Types
         this.types = [
-            { id: 'fox', name: '4-Kuyruklu Tilki', bg: '#fff7ed', imgSrc: 'images/fox.jpg' },
-            { id: 'cat', name: 'Kozmik Kedi', bg: '#faf5ff', imgSrc: 'images/cat.jpg' },
-            { id: 'panda', name: 'Sevimli Panda', bg: '#f0fdf4', imgSrc: 'images/panda.jpg' },
+            { id: 'fox', name: 'Sevimli Tilki', bg: '#fff7ed', imgSrc: 'images/fox.jpg' },
+            { id: 'cat', name: 'Pamuk Kedi', bg: '#fbf7ff', imgSrc: 'images/cat.jpg' },
+            { id: 'panda', name: 'Tombul Panda', bg: '#f8fafc', imgSrc: 'images/panda.jpg' },
             { id: 'dragon', name: 'Deniz Ejderhası', bg: '#f0f9ff', imgSrc: 'images/dragon.jpg' },
             { id: 'shiba', name: 'Shiba Inu', bg: '#fefce8', imgSrc: 'images/shiba.jpg' },
             { id: 'unicorn', name: 'Büyülü Tekboynuz', bg: '#fae8ff', imgSrc: 'images/unicorn.jpg' },
@@ -331,17 +331,7 @@ class TileMatchingGame {
             { id: 'owl', name: 'Bilge Baykuş', bg: '#f1f5f9', imgSrc: 'images/owl.jpg' },
             { id: 'red_panda', name: 'Kızıl Panda', bg: '#fff2e6', imgSrc: 'images/red_panda.jpg' },
             { id: 'frog', name: 'Prens Kurbağa', bg: '#ecfdf5', imgSrc: 'images/frog.jpg' },
-            { id: 'penguin', name: 'Kutup Pengueni', bg: '#f0f9ff', imgSrc: 'images/penguin.jpg' },
-            { id: 'koala', name: 'Okaliptüs Koala', bg: '#f8fafc', svg: `<svg viewBox="0 0 100 100" class="svg-icon"><circle cx="20" cy="30" r="16" fill="#94a3b8"/><circle cx="80" cy="30" r="16" fill="#94a3b8"/><circle cx="50" cy="55" r="32" fill="#cbd5e1"/><circle cx="38" cy="48" r="4" fill="#0f172a"/><circle cx="62" cy="48" r="4" fill="#0f172a"/><ellipse cx="50" cy="62" rx="9" ry="12" fill="#1e293b"/></svg>` },
-            { id: 'giraffe', name: 'Benekli Zürafa', bg: '#fefce8', svg: `<svg viewBox="0 0 100 100" class="svg-icon"><path d="M42 12 L46 32 M58 12 L54 32" stroke="#d97706" stroke-width="4"/><circle cx="42" cy="12" r="5" fill="#d97706"/><circle cx="58" cy="12" r="5" fill="#d97706"/><ellipse cx="50" cy="52" rx="28" ry="34" fill="#f59e0b"/><ellipse cx="50" cy="64" rx="18" ry="14" fill="#fef08a"/><circle cx="40" cy="46" r="4" fill="#451a03"/><circle cx="60" cy="46" r="4" fill="#451a03"/><ellipse cx="50" cy="60" rx="6" ry="4" fill="#78350f"/></svg>` },
-            { id: 'monkey', name: 'Neşeli Maymun', bg: '#fff7ed', svg: `<svg viewBox="0 0 100 100" class="svg-icon"><circle cx="18" cy="50" r="14" fill="#b45309"/><circle cx="82" cy="50" r="14" fill="#b45309"/><circle cx="50" cy="50" r="32" fill="#d97706"/><ellipse cx="50" cy="56" rx="22" ry="18" fill="#ffedd5"/><circle cx="38" cy="44" r="4" fill="#451a03"/><circle cx="62" cy="44" r="4" fill="#451a03"/><path d="M 42 62 Q 50 68 58 62" stroke="#78350f" stroke-width="3" fill="none"/></svg>` },
-            { id: 'elephant', name: 'Minik Fil', bg: '#f1f5f9', svg: `<svg viewBox="0 0 100 100" class="svg-icon"><circle cx="18" cy="46" r="18" fill="#94a3b8"/><circle cx="82" cy="46" r="18" fill="#94a3b8"/><circle cx="50" cy="50" r="30" fill="#cbd5e1"/><path d="M 46 54 Q 50 78 56 70" stroke="#94a3b8" stroke-width="8" stroke-linecap="round" fill="none"/><circle cx="38" cy="44" r="4" fill="#0f172a"/><circle cx="62" cy="44" r="4" fill="#0f172a"/></svg>` },
-            { id: 'tiger', name: 'Çizgili Kaplan', bg: '#fff7ed', svg: `<svg viewBox="0 0 100 100" class="svg-icon"><polygon points="20,20 40,40 16,50" fill="#ea580c"/><polygon points="80,20 60,40 84,50" fill="#ea580c"/><circle cx="50" cy="52" r="32" fill="#f97316"/><path d="M 30 52 Q 50 40 70 52 Q 70 76 50 82 Q 30 76 30 52 Z" fill="#ffffff"/><circle cx="38" cy="46" r="4" fill="#451a03"/><circle cx="62" cy="46" r="4" fill="#451a03"/><polygon points="50,56 45,62 55,62" fill="#451a03"/></svg>` },
-            { id: 'wolf', name: 'Gümüş Kurt', bg: '#f8fafc', svg: `<svg viewBox="0 0 100 100" class="svg-icon"><polygon points="20,18 42,40 16,50" fill="#64748b"/><polygon points="80,18 58,40 84,50" fill="#64748b"/><circle cx="50" cy="52" r="32" fill="#94a3b8"/><polygon points="50,40 32,70 68,70" fill="#ffffff"/><circle cx="38" cy="46" r="4" fill="#0f172a"/><circle cx="62" cy="46" r="4" fill="#0f172a"/><ellipse cx="50" cy="58" rx="6" ry="4" fill="#0f172a"/></svg>` },
-            { id: 'bear', name: 'Boz Ayı', bg: '#fff7ed', svg: `<svg viewBox="0 0 100 100" class="svg-icon"><circle cx="24" cy="24" r="14" fill="#78350f"/><circle cx="76" cy="24" r="14" fill="#78350f"/><circle cx="50" cy="52" r="34" fill="#92400e"/><ellipse cx="50" cy="62" rx="18" ry="14" fill="#fef3c7"/><circle cx="38" cy="46" r="4" fill="#451a03"/><circle cx="62" cy="46" r="4" fill="#451a03"/><ellipse cx="50" cy="58" rx="7" ry="5" fill="#451a03"/></svg>` },
-            { id: 'deer', name: 'Orman Geyiği', bg: '#fefce8', svg: `<svg viewBox="0 0 100 100" class="svg-icon"><path d="M 30 10 L 40 30 M 70 10 L 60 30" stroke="#92400e" stroke-width="4"/><circle cx="50" cy="52" r="30" fill="#b45309"/><ellipse cx="50" cy="64" rx="16" ry="12" fill="#fef3c7"/><circle cx="38" cy="44" r="4" fill="#451a03"/><circle cx="62" cy="44" r="4" fill="#451a03"/><ellipse cx="50" cy="60" rx="5" ry="4" fill="#451a03"/></svg>` },
-            { id: 'hippo', name: 'Tombul Suaygırı', bg: '#fae8ff', svg: `<svg viewBox="0 0 100 100" class="svg-icon"><circle cx="26" cy="28" r="10" fill="#c084fc"/><circle cx="74" cy="28" r="10" fill="#c084fc"/><circle cx="50" cy="50" r="32" fill="#e879f9"/><ellipse cx="50" cy="64" rx="24" ry="18" fill="#f0abfc"/><circle cx="38" cy="44" r="4" fill="#4c1d95"/><circle cx="62" cy="44" r="4" fill="#4c1d95"/><circle cx="42" cy="60" r="3" fill="#4c1d95"/><circle cx="58" cy="60" r="3" fill="#4c1d95"/></svg>` },
-            { id: 'parrot', name: 'Renkli Papağan', bg: '#f0fdf4', svg: `<svg viewBox="0 0 100 100" class="svg-icon"><circle cx="50" cy="50" r="32" fill="#22c55e"/><path d="M 48 50 Q 72 58 48 70" fill="#f59e0b"/><circle cx="40" cy="42" r="4" fill="#0f172a"/><circle cx="41" cy="41" r="1.5" fill="#ffffff"/></svg>` }
+            { id: 'penguin', name: 'Kutup Pengueni', bg: '#f0f9ff', imgSrc: 'images/penguin.jpg' }
         ];
 
         // Background Themes
@@ -1259,9 +1249,9 @@ class TileMatchingGame {
 
         // 22 Character Types
         this.types = [
-            { id: 'fox', name: '4-Kuyruklu Tilki', bg: '#fff7ed', imgSrc: 'images/fox.jpg' },
-            { id: 'cat', name: 'Kozmik Kedi', bg: '#faf5ff', imgSrc: 'images/cat.jpg' },
-            { id: 'panda', name: 'Sevimli Panda', bg: '#f0fdf4', imgSrc: 'images/panda.jpg' },
+            { id: 'fox', name: 'Sevimli Tilki', bg: '#fff7ed', imgSrc: 'images/fox.jpg' },
+            { id: 'cat', name: 'Pamuk Kedi', bg: '#fbf7ff', imgSrc: 'images/cat.jpg' },
+            { id: 'panda', name: 'Tombul Panda', bg: '#f8fafc', imgSrc: 'images/panda.jpg' },
             { id: 'dragon', name: 'Deniz Ejderhası', bg: '#f0f9ff', imgSrc: 'images/dragon.jpg' },
             { id: 'shiba', name: 'Shiba Inu', bg: '#fefce8', imgSrc: 'images/shiba.jpg' },
             { id: 'unicorn', name: 'Büyülü Tekboynuz', bg: '#fae8ff', imgSrc: 'images/unicorn.jpg' },
@@ -1270,17 +1260,7 @@ class TileMatchingGame {
             { id: 'owl', name: 'Bilge Baykuş', bg: '#f1f5f9', imgSrc: 'images/owl.jpg' },
             { id: 'red_panda', name: 'Kızıl Panda', bg: '#fff2e6', imgSrc: 'images/red_panda.jpg' },
             { id: 'frog', name: 'Prens Kurbağa', bg: '#ecfdf5', imgSrc: 'images/frog.jpg' },
-            { id: 'penguin', name: 'Kutup Pengueni', bg: '#f0f9ff', imgSrc: 'images/penguin.jpg' },
-            { id: 'koala', name: 'Okaliptüs Koala', bg: '#f8fafc', svg: `<svg viewBox="0 0 100 100" class="svg-icon"><circle cx="20" cy="30" r="16" fill="#94a3b8"/><circle cx="80" cy="30" r="16" fill="#94a3b8"/><circle cx="50" cy="55" r="32" fill="#cbd5e1"/><circle cx="38" cy="48" r="4" fill="#0f172a"/><circle cx="62" cy="48" r="4" fill="#0f172a"/><ellipse cx="50" cy="62" rx="9" ry="12" fill="#1e293b"/></svg>` },
-            { id: 'giraffe', name: 'Benekli Zürafa', bg: '#fefce8', svg: `<svg viewBox="0 0 100 100" class="svg-icon"><path d="M42 12 L46 32 M58 12 L54 32" stroke="#d97706" stroke-width="4"/><circle cx="42" cy="12" r="5" fill="#d97706"/><circle cx="58" cy="12" r="5" fill="#d97706"/><ellipse cx="50" cy="52" rx="28" ry="34" fill="#f59e0b"/><ellipse cx="50" cy="64" rx="18" ry="14" fill="#fef08a"/><circle cx="40" cy="46" r="4" fill="#451a03"/><circle cx="60" cy="46" r="4" fill="#451a03"/><ellipse cx="50" cy="60" rx="6" ry="4" fill="#78350f"/></svg>` },
-            { id: 'monkey', name: 'Neşeli Maymun', bg: '#fff7ed', svg: `<svg viewBox="0 0 100 100" class="svg-icon"><circle cx="18" cy="50" r="14" fill="#b45309"/><circle cx="82" cy="50" r="14" fill="#b45309"/><circle cx="50" cy="50" r="32" fill="#d97706"/><ellipse cx="50" cy="56" rx="22" ry="18" fill="#ffedd5"/><circle cx="38" cy="44" r="4" fill="#451a03"/><circle cx="62" cy="44" r="4" fill="#451a03"/><path d="M 42 62 Q 50 68 58 62" stroke="#78350f" stroke-width="3" fill="none"/></svg>` },
-            { id: 'elephant', name: 'Minik Fil', bg: '#f1f5f9', svg: `<svg viewBox="0 0 100 100" class="svg-icon"><circle cx="18" cy="46" r="18" fill="#94a3b8"/><circle cx="82" cy="46" r="18" fill="#94a3b8"/><circle cx="50" cy="50" r="30" fill="#cbd5e1"/><path d="M 46 54 Q 50 78 56 70" stroke="#94a3b8" stroke-width="8" stroke-linecap="round" fill="none"/><circle cx="38" cy="44" r="4" fill="#0f172a"/><circle cx="62" cy="44" r="4" fill="#0f172a"/></svg>` },
-            { id: 'tiger', name: 'Çizgili Kaplan', bg: '#fff7ed', svg: `<svg viewBox="0 0 100 100" class="svg-icon"><polygon points="20,20 40,40 16,50" fill="#ea580c"/><polygon points="80,20 60,40 84,50" fill="#ea580c"/><circle cx="50" cy="52" r="32" fill="#f97316"/><path d="M 30 52 Q 50 40 70 52 Q 70 76 50 82 Q 30 76 30 52 Z" fill="#ffffff"/><circle cx="38" cy="46" r="4" fill="#451a03"/><circle cx="62" cy="46" r="4" fill="#451a03"/><polygon points="50,56 45,62 55,62" fill="#451a03"/></svg>` },
-            { id: 'wolf', name: 'Gümüş Kurt', bg: '#f8fafc', svg: `<svg viewBox="0 0 100 100" class="svg-icon"><polygon points="20,18 42,40 16,50" fill="#64748b"/><polygon points="80,18 58,40 84,50" fill="#64748b"/><circle cx="50" cy="52" r="32" fill="#94a3b8"/><polygon points="50,40 32,70 68,70" fill="#ffffff"/><circle cx="38" cy="46" r="4" fill="#0f172a"/><circle cx="62" cy="46" r="4" fill="#0f172a"/><ellipse cx="50" cy="58" rx="6" ry="4" fill="#0f172a"/></svg>` },
-            { id: 'bear', name: 'Boz Ayı', bg: '#fff7ed', svg: `<svg viewBox="0 0 100 100" class="svg-icon"><circle cx="24" cy="24" r="14" fill="#78350f"/><circle cx="76" cy="24" r="14" fill="#78350f"/><circle cx="50" cy="52" r="34" fill="#92400e"/><ellipse cx="50" cy="62" rx="18" ry="14" fill="#fef3c7"/><circle cx="38" cy="46" r="4" fill="#451a03"/><circle cx="62" cy="46" r="4" fill="#451a03"/><ellipse cx="50" cy="58" rx="7" ry="5" fill="#451a03"/></svg>` },
-            { id: 'deer', name: 'Orman Geyiği', bg: '#fefce8', svg: `<svg viewBox="0 0 100 100" class="svg-icon"><path d="M 30 10 L 40 30 M 70 10 L 60 30" stroke="#92400e" stroke-width="4"/><circle cx="50" cy="52" r="30" fill="#b45309"/><ellipse cx="50" cy="64" rx="16" ry="12" fill="#fef3c7"/><circle cx="38" cy="44" r="4" fill="#451a03"/><circle cx="62" cy="44" r="4" fill="#451a03"/><ellipse cx="50" cy="60" rx="5" ry="4" fill="#451a03"/></svg>` },
-            { id: 'hippo', name: 'Tombul Suaygırı', bg: '#fae8ff', svg: `<svg viewBox="0 0 100 100" class="svg-icon"><circle cx="26" cy="28" r="10" fill="#c084fc"/><circle cx="74" cy="28" r="10" fill="#c084fc"/><circle cx="50" cy="50" r="32" fill="#e879f9"/><ellipse cx="50" cy="64" rx="24" ry="18" fill="#f0abfc"/><circle cx="38" cy="44" r="4" fill="#4c1d95"/><circle cx="62" cy="44" r="4" fill="#4c1d95"/><circle cx="42" cy="60" r="3" fill="#4c1d95"/><circle cx="58" cy="60" r="3" fill="#4c1d95"/></svg>` },
-            { id: 'parrot', name: 'Renkli Papağan', bg: '#f0fdf4', svg: `<svg viewBox="0 0 100 100" class="svg-icon"><circle cx="50" cy="50" r="32" fill="#22c55e"/><path d="M 48 50 Q 72 58 48 70" fill="#f59e0b"/><circle cx="40" cy="42" r="4" fill="#0f172a"/><circle cx="41" cy="41" r="1.5" fill="#ffffff"/></svg>` }
+            { id: 'penguin', name: 'Kutup Pengueni', bg: '#f0f9ff', imgSrc: 'images/penguin.jpg' }
         ];
 
         // Background Themes
