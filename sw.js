@@ -1,13 +1,17 @@
-const CACHE_NAME = 'esle-gitsin-3d-v1';
+const CACHE_NAME = 'esle-gitsin-3d-v2';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
   './styles.css',
   './game.js',
   './manifest.json',
+  './favicon.ico',
+  './favicon.png',
   './icons/icon-192.png',
   './icons/icon-512.png',
-  './icons/maskable-512.png'
+  './icons/maskable-512.png',
+  './icons/apple-touch-icon.png',
+  './images/app_hero_icon.png'
 ];
 
 self.addEventListener('install', (event) => {

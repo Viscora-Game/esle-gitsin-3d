@@ -184,7 +184,7 @@ body {
 
 /* Charming Heart-Shaped 3D Tile Logo Emblem Frame with Sunburst Aura & Crown */
 .menu-logo-frame {
-    width: 114px;
+    width: 124px;
     height: 124px;
     background: linear-gradient(180deg, #ffffff 0%, #f8fafc 85%, #cbd5e1 100%);
     border-radius: 28px;
@@ -268,39 +268,11 @@ body {
     justify-content: center;
 }
 
-.heart-card {
-    position: absolute;
-    width: 44px;
-    height: 54px;
-    border-radius: 10px;
-    background: #ffffff;
-    padding: 2px;
-    box-shadow: 0 6px 14px rgba(0, 0, 0, 0.3), inset 0 0 0 1.5px #ffffff;
+.menu-hero-icon {
+    width: 100%;
+    height: 100%;
     object-fit: cover;
-}
-
-/* Heart Geometry Positioning for 4 Mini Cards */
-.card-top-left {
-    transform: translate(-16px, -14px) rotate(-18deg);
-    z-index: 1;
-    filter: brightness(0.92);
-}
-
-.card-top-right {
-    transform: translate(16px, -14px) rotate(18deg);
-    z-index: 2;
-    filter: brightness(0.94);
-}
-
-.card-bottom-tip {
-    transform: translate(0, 16px) rotate(0deg);
-    z-index: 3;
-    filter: brightness(0.96);
-}
-
-.card-center-hero {
-    transform: translate(0, -2px) scale(1.15);
-    z-index: 4;
+    border-radius: 24px;
     box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45);
 }
 
