@@ -432,6 +432,33 @@ body {
     box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
 }
 
+.btn-danger-reset {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    color: #ffffff;
+    padding: 12px 18px;
+    font-size: 13px;
+    font-weight: 900;
+    border-radius: 16px;
+    border: none;
+    cursor: pointer;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 4px 14px rgba(239, 68, 68, 0.4);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-danger-reset:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 8px 20px rgba(239, 68, 68, 0.6);
+}
+
+.btn-danger-reset:active {
+    transform: scale(0.96);
+}
+
 /* Modals & Settings Overlay Screen (Z-Index 3000 - Above Main Menu & HUD!) */
 .modal-overlay {
     position: absolute;
@@ -470,8 +497,8 @@ body {
 
 .settings-card {
     max-width: 370px;
-    gap: 20px;
-    padding: 28px 24px;
+    gap: 16px;
+    padding: 24px 20px;
 }
 
 .modal-header-row {
@@ -510,7 +537,7 @@ body {
     align-items: flex-start;
     gap: 8px;
     background: rgba(255, 255, 255, 0.05);
-    padding: 12px 16px;
+    padding: 10px 14px;
     border-radius: 18px;
     border: 1px solid rgba(255, 255, 255, 0.08);
 }
@@ -523,13 +550,13 @@ body {
 }
 
 .setting-label {
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 700;
     color: #e2e8f0;
 }
 
 .setting-val {
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 900;
     color: var(--accent-gold);
 }
@@ -544,9 +571,9 @@ body {
     background: #334155;
     border: 1px solid rgba(255, 255, 255, 0.15);
     color: #94a3b8;
-    padding: 6px 16px;
+    padding: 6px 14px;
     border-radius: 14px;
-    font-size: 13px;
+    font-size: 12px;
     font-weight: 900;
     cursor: pointer;
     align-self: flex-end;
@@ -662,6 +689,28 @@ body {
     gap: 3px;
     border: 1.5px solid rgba(255, 255, 255, 0.12);
     flex-shrink: 0;
+}
+
+/* Time Trial Countdown Timer Badge */
+.badge-timer {
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.3) 0%, rgba(220, 38, 38, 0.2) 100%);
+    border: 1.5px solid #ef4444;
+    transition: all 0.2s ease;
+}
+
+.badge-timer.timer-warning {
+    animation: timerPulse 0.5s infinite alternate;
+    background: #dc2626;
+    border-color: #ffffff;
+}
+
+@keyframes timerPulse {
+    0% { transform: scale(1); box-shadow: 0 0 8px #ef4444; }
+    100% { transform: scale(1.12); box-shadow: 0 0 20px #ef4444, 0 0 30px #dc2626; }
+}
+
+.timer-icon {
+    font-size: 11px;
 }
 
 /* Smart Hint & Extra Slot Booster Buttons */

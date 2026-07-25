@@ -69,9 +69,6 @@
                         <button id="btn-menu-play" class="btn-primary btn-menu">
                             <span>▶</span> <span data-i18n="play">OYNA</span>
                         </button>
-                        <button id="btn-menu-newgame" class="btn-secondary btn-menu hidden">
-                            <span>🔄</span> <span data-i18n="newGameBtn">YENİ OYUN</span>
-                        </button>
                         <button id="btn-menu-settings" class="btn-secondary btn-menu">
                             <span>⚙️</span> <span data-i18n="settings">AYARLAR</span>
                         </button>
@@ -79,12 +76,22 @@
                 </div>
             </div>
 
-            <!-- Settings Modal Screen -->
+            <!-- Settings Modal Screen (Contains Time Trial & New Game Reset) -->
             <div id="modal-settings" class="modal-overlay hidden">
                 <div class="modal-card settings-card">
                     <div class="modal-header-row">
                         <h2 class="modal-title" data-i18n="settingsTitle">⚙️ AYARLAR</h2>
                         <button id="btn-close-settings" class="btn-close-x">✕</button>
+                    </div>
+
+                    <!-- Time Trial Mode Setting Row -->
+                    <div class="setting-row">
+                        <div class="setting-info">
+                            <span class="setting-label" data-i18n="timeTrialLabel">⏱️ Zamana Karşı Mod</span>
+                        </div>
+                        <button id="btn-toggle-timetrial" class="toggle-btn">
+                            <span id="timetrial-btn-text">KAPALI</span>
+                        </button>
                     </div>
 
                     <!-- Volume Setting -->
@@ -117,6 +124,11 @@
                         </div>
                     </div>
 
+                    <!-- Reset & New Game inside Settings -->
+                    <button id="btn-menu-newgame" class="btn-danger-reset">
+                        <span>🔄</span> <span data-i18n="newGameBtn">SIFIRLA VE YENİ OYUN BAŞLAT</span>
+                    </button>
+
                     <button id="btn-save-settings" class="btn-primary" data-i18n="saveBtn">KAYDET VE KAPAT</button>
                 </div>
             </div>
@@ -128,6 +140,12 @@
                     <div class="hud-item badge-level">
                         <span class="hud-label" data-i18n="levelLabel">SEVİYE</span>
                         <span id="level-num" class="hud-val">1</span>
+                    </div>
+
+                    <!-- Time Trial Countdown Timer Badge (Hidden by default, shown when time trial is ON) -->
+                    <div id="badge-timer" class="hud-item badge-timer hidden">
+                        <span class="timer-icon">⏱️</span>
+                        <span id="timer-val" class="hud-val">00:30</span>
                     </div>
                 </div>
                 
@@ -204,9 +222,9 @@
         <!-- Game Over Modal Dialog with Penalty Alert -->
         <div id="modal-gameover" class="modal-overlay hidden">
             <div class="modal-card modal-defeat">
-                <div class="modal-icon">💔</div>
-                <h2 class="modal-title" data-i18n="defeatTitle">SLOT DOLDU!</h2>
-                <p class="modal-desc" data-i18n="defeatDesc">Tepside boş alan kalmadı ve eşleşen kart bulunamadı.</p>
+                <div class="modal-icon" id="defeat-icon">💔</div>
+                <h2 class="modal-title" id="defeat-title" data-i18n="defeatTitle">SLOT DOLDU!</h2>
+                <p class="modal-desc" id="defeat-desc" data-i18n="defeatDesc">Tepside boş alan kalmadı ve eşleşen kart bulunamadı.</p>
                 
                 <!-- Defeat Penalty Info Badge -->
                 <div class="penalty-badge">

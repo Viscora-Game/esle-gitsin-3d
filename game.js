@@ -1,6 +1,8 @@
 /**
  * Tile Club / GamoVation Style Mobile Stack Tile Pairing Game Engine
  * Features:
+ * - TIME TRIAL MODE (Zamana Karşı Mod): Tight achievable timer = Math.ceil(totalTiles * 0.65) + 5 seconds!
+ * - NEW GAME RESET BUTTON: Moved cleanly into Settings modal.
  * - DEFEAT PENALTY MECHANIC: On game over retry, cancels earned level points & applies -2000 score penalty (Cap at min 0).
  * - FLOATING EMERGENCY 6TH SLOT HOLDER DIRECTLY ABOVE CENTER SLOT (Index 2).
  * - PERSISTENT LIFECYCLE: Stays open waiting for a tile, disappears ONLY AFTER tile enters & gets matched out!
@@ -10,7 +12,7 @@
  * - Cute Playful Game Font ('Fredoka').
  * - INFINITE ENDLESS CAMPAIGN (Level 100+ Endless Mode).
  * - Geometric 5-Pointed STAR Layout Formation for Level 10, 20, 30...
- * - Settings Controller: Sound Volume, Vibration Toggle, Language Selector (TR/EN).
+ * - Settings Controller: Sound Volume, Vibration Toggle, Language Selector (TR/EN), Time Trial Mode.
  * - Smart Hint System (300 Score Base Cost).
  * - Multiplier Combo System (Katlanan Puan).
  */
@@ -49,6 +51,26 @@ class SoundSynth {
 
         osc.start();
         osc.stop(this.ctx.currentTime + 0.08);
+    }
+
+    playTick() {
+        this.init();
+        if (!this.ctx || this.masterVolume <= 0) return;
+
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = 'square';
+        osc.frequency.setValueAtTime(880, this.ctx.currentTime);
+        osc.frequency.exponentialRampToValueAtTime(440, this.ctx.currentTime + 0.05);
+
+        gain.gain.setValueAtTime(0.25 * this.masterVolume, this.ctx.currentTime);
+        gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.05);
+
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+
+        osc.start();
+        osc.stop(this.ctx.currentTime + 0.05);
     }
 
     playLockThud() {
@@ -256,6 +278,10 @@ class TileMatchingGame {
         // Level Start Score tracking for Defeat Penalty calculation
         this.levelStartScore = 0;
 
+        // Time Trial Countdown Timer State
+        this.timerInterval = null;
+        this.remainingSeconds = 0;
+
         // 22 Character Types
         this.types = [
             { id: 'fox', name: '4-Kuyruklu Tilki', bg: '#fff7ed', imgSrc: 'images/fox.jpg' },
@@ -302,7 +328,8 @@ class TileMatchingGame {
         this.settings = {
             volume: 80,
             vibration: true,
-            lang: 'tr'
+            lang: 'tr',
+            timeTrial: false
         };
 
         // i18n Translations
@@ -311,9 +338,10 @@ class TileMatchingGame {
                 gameTitle: 'EŞLE GİTSİN! 3D',
                 play: 'OYNA',
                 continueBtn: 'DEVAM ET (SEVİYE {lvl})',
-                newGameBtn: 'YENİ OYUN',
+                newGameBtn: 'SIFIRLA VE YENİ OYUN BAŞLAT',
                 settings: 'AYARLAR',
                 settingsTitle: '⚙️ AYARLAR',
+                timeTrialLabel: '⏱️ Zamana Karşı Mod',
                 volLabel: '🔊 Ses Düzeyi',
                 vibLabel: '📳 Titreşim',
                 langLabel: '🌐 Dil Desteği',
@@ -327,10 +355,14 @@ class TileMatchingGame {
                 nextLevelBtn: 'SONRAKİ BÖLÜM',
                 defeatTitle: 'SLOT DOLDU!',
                 defeatDesc: 'Tepside boş alan kalmadı ve eşleşen kart bulunamadı.',
+                timeUpTitle: 'SÜRE BİTTİ!',
+                timeUpDesc: 'Zamana karşı yarışta süre doldu!',
                 penaltyText: 'CEZA: -2000 Puan (Kazanılan puanlar silindi)',
                 retryBtn: 'TEKRAR DENE (-2000 PUAN)',
                 vibOn: 'AÇIK',
                 vibOff: 'KAPALI',
+                timeTrialOn: 'SÜRELİ (AÇIK)',
+                timeTrialOff: 'KLASİK (KAPALI)',
                 noScoreHint: 'Yetersiz Skor! ({cost} Puan Gerekli)',
                 noScoreSlot: 'Yetersiz Skor! ({cost} Puan Gerekli)',
                 noHint: 'Şu an açık eşleşen kart bulunamadı!',
@@ -341,9 +373,10 @@ class TileMatchingGame {
                 gameTitle: 'TILE MATCH 3D',
                 play: 'PLAY',
                 continueBtn: 'CONTINUE (LEVEL {lvl})',
-                newGameBtn: 'NEW GAME',
+                newGameBtn: 'RESET & START NEW GAME',
                 settings: 'SETTINGS',
                 settingsTitle: 'SETTINGS',
+                timeTrialLabel: '⏱️ Time Trial Mode',
                 volLabel: '🔊 Sound Volume',
                 vibLabel: '📳 Vibration',
                 langLabel: '🌐 Language',
@@ -357,10 +390,14 @@ class TileMatchingGame {
                 nextLevelBtn: 'NEXT LEVEL',
                 defeatTitle: 'SLOT FULL!',
                 defeatDesc: 'No empty slot available and no pairs found.',
+                timeUpTitle: 'TIME\'S UP!',
+                timeUpDesc: 'Time ran out in Time Trial mode!',
                 penaltyText: 'PENALTY: -2000 Points (Earned points reset)',
                 retryBtn: 'RETRY (-2000 PTS)',
                 vibOn: 'ON',
                 vibOff: 'OFF',
+                timeTrialOn: 'TIMED (ON)',
+                timeTrialOff: 'CLASSIC (OFF)',
                 noScoreHint: 'Not Enough Score! ({cost} Required)',
                 noScoreSlot: 'Not Enough Score! ({cost} Required)',
                 noHint: 'No matching unlocked tiles available!',
@@ -433,10 +470,12 @@ class TileMatchingGame {
             }
         });
 
+        // Reset & Start New Game inside Settings Modal
         const btnNewGame = document.getElementById('btn-menu-newgame');
         if (btnNewGame) {
             btnNewGame.addEventListener('click', () => {
                 this.resetGameProgress();
+                document.getElementById('modal-settings').classList.add('hidden');
                 document.getElementById('main-menu').classList.add('hidden');
                 this.startLevel(1, true);
             });
@@ -447,6 +486,7 @@ class TileMatchingGame {
         });
 
         document.getElementById('btn-hud-home').addEventListener('click', () => {
+            this.stopTimer();
             this.saveGameProgress();
             this.updateMainMenuButtons();
             document.getElementById('main-menu').classList.remove('hidden');
@@ -463,6 +503,14 @@ class TileMatchingGame {
         document.getElementById('btn-save-settings').addEventListener('click', () => {
             this.saveSettings();
             document.getElementById('modal-settings').classList.add('hidden');
+            
+            // If Time Trial setting changed while playing level, update UI
+            if (this.settings.timeTrial) {
+                document.getElementById('badge-timer').classList.remove('hidden');
+            } else {
+                this.stopTimer();
+                document.getElementById('badge-timer').classList.add('hidden');
+            }
         });
 
         // Settings Controls
@@ -480,6 +528,12 @@ class TileMatchingGame {
             if (this.settings.vibration && navigator.vibrate) {
                 navigator.vibrate(40);
             }
+        });
+
+        const btnTimeTrial = document.getElementById('btn-toggle-timetrial');
+        btnTimeTrial.addEventListener('click', () => {
+            this.settings.timeTrial = !this.settings.timeTrial;
+            this.updateTimeTrialBtnUI();
         });
 
         document.getElementById('btn-lang-tr').addEventListener('click', () => {
@@ -505,8 +559,6 @@ class TileMatchingGame {
         document.getElementById('btn-retry').addEventListener('click', () => {
             document.getElementById('modal-gameover').classList.add('hidden');
 
-            // 1. Revert to score at start of this level (cancel points earned in failed run)
-            // 2. Apply -2000 points penalty (capped at minimum 0)
             this.score = Math.max(0, this.levelStartScore - 2000);
             document.getElementById('score-val').innerText = this.score;
             this.saveGameProgress();
@@ -519,15 +571,12 @@ class TileMatchingGame {
 
     updateMainMenuButtons() {
         const btnPlay = document.getElementById('btn-menu-play');
-        const btnNewGame = document.getElementById('btn-menu-newgame');
         const dict = this.i18n[this.settings.lang];
 
         if (this.savedProgress && this.savedProgress.level) {
             btnPlay.innerHTML = `<span>▶</span> <span>${dict.continueBtn.replace('{lvl}', this.savedProgress.level)}</span>`;
-            if (btnNewGame) btnNewGame.classList.remove('hidden');
         } else {
             btnPlay.innerHTML = `<span>▶</span> <span>${dict.play}</span>`;
-            if (btnNewGame) btnNewGame.classList.add('hidden');
         }
     }
 
@@ -535,6 +584,7 @@ class TileMatchingGame {
         document.getElementById('slider-volume').value = this.settings.volume;
         document.getElementById('vol-val-text').innerText = `${this.settings.volume}%`;
         this.updateVibBtnUI();
+        this.updateTimeTrialBtnUI();
         this.updateLanguageUI();
         document.getElementById('modal-settings').classList.remove('hidden');
     }
@@ -550,6 +600,20 @@ class TileMatchingGame {
         } else {
             btn.classList.remove('active');
             txt.innerText = dict.vibOff;
+        }
+    }
+
+    updateTimeTrialBtnUI() {
+        const btn = document.getElementById('btn-toggle-timetrial');
+        const txt = document.getElementById('timetrial-btn-text');
+        const dict = this.i18n[this.settings.lang];
+
+        if (this.settings.timeTrial) {
+            btn.classList.add('active');
+            txt.innerText = dict.timeTrialOn;
+        } else {
+            btn.classList.remove('active');
+            txt.innerText = dict.timeTrialOff;
         }
     }
 
@@ -715,6 +779,65 @@ class TileMatchingGame {
         }
 
         this.updateLockStates();
+
+        // TIME TRIAL COUNTDOWN TIMER MECHANIC:
+        // Calculate duration: Math.ceil(totalTiles * 0.65) + 5 seconds (Half of total tiles + a little bit extra!)
+        if (this.settings.timeTrial) {
+            const totalTiles = pool.length;
+            this.remainingSeconds = Math.ceil(totalTiles * 0.65) + 5;
+            document.getElementById('badge-timer').classList.remove('hidden');
+            this.startTimer();
+        } else {
+            this.stopTimer();
+            document.getElementById('badge-timer').classList.add('hidden');
+        }
+    }
+
+    startTimer() {
+        this.stopTimer();
+        this.updateTimerDisplay();
+
+        this.timerInterval = setInterval(() => {
+            this.remainingSeconds--;
+            this.updateTimerDisplay();
+
+            if (this.remainingSeconds <= 5 && this.remainingSeconds > 0) {
+                this.sound.playTick();
+                this.triggerVibration();
+                document.getElementById('badge-timer').classList.add('timer-warning');
+            }
+
+            if (this.remainingSeconds <= 0) {
+                this.stopTimer();
+                this.onTimeUp();
+            }
+        }, 1000);
+    }
+
+    stopTimer() {
+        if (this.timerInterval) {
+            clearInterval(this.timerInterval);
+            this.timerInterval = null;
+        }
+        document.getElementById('badge-timer').classList.remove('timer-warning');
+    }
+
+    updateTimerDisplay() {
+        const secs = Math.max(0, this.remainingSeconds);
+        const m = Math.floor(secs / 60).toString().padStart(2, '0');
+        const s = (secs % 60).toString().padStart(2, '0');
+        document.getElementById('timer-val').innerText = `${m}:${s}`;
+    }
+
+    onTimeUp() {
+        const dict = this.i18n[this.settings.lang];
+        this.sound.playLockThud();
+        this.triggerVibration();
+
+        document.getElementById('defeat-icon').innerText = '⏱️';
+        document.getElementById('defeat-title').innerText = dict.timeUpTitle;
+        document.getElementById('defeat-desc').innerText = dict.timeUpDesc;
+        document.getElementById('modal-gameover').classList.remove('hidden');
     }
 
     generateLayoutPositions(formationType, totalCount, boardW, boardH) {
@@ -1119,6 +1242,11 @@ class TileMatchingGame {
         if (this.slotTiles.length >= this.maxSlotCapacity) {
             setTimeout(() => {
                 if (this.slotTiles.length >= this.maxSlotCapacity) {
+                    const dict = this.i18n[this.settings.lang];
+                    this.stopTimer();
+                    document.getElementById('defeat-icon').innerText = '💔';
+                    document.getElementById('defeat-title').innerText = dict.defeatTitle;
+                    document.getElementById('defeat-desc').innerText = dict.defeatDesc;
                     document.getElementById('modal-gameover').classList.remove('hidden');
                 }
             }, 250);
@@ -1176,6 +1304,7 @@ class TileMatchingGame {
             this.rearrangeSlotTiles();
 
             if (this.boardTiles.length === 0 && this.slotTiles.length === 0) {
+                this.stopTimer();
                 this.sound.playVictorySound();
                 this.fx.spawnConfetti();
 
