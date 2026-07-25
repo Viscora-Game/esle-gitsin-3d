@@ -1,3 +1,82 @@
+const FORMATION_GRIDS = {
+    HEART: [
+        '  **   **  ',
+        ' **** **** ',
+        '********** ',
+        ' ********* ',
+        '  *******  ',
+        '   *****   ',
+        '    ***    ',
+        '     **    '
+    ],
+    HOURGLASS: [
+        '******',
+        ' **** ',
+        '  **  ',
+        '  **  ',
+        ' **** ',
+        '******'
+    ],
+    STAR: [
+        '    **   ',
+        '   ****  ',
+        '******** ',
+        ' ******  ',
+        ' **  **  ',
+        '**    ** '
+    ],
+    CASTLE: [
+        '***   ***',
+        '***   ***',
+        '*********',
+        '*********',
+        '***   ***'
+    ],
+    FLOWER: [
+        '  ****  ',
+        ' ****** ',
+        '********',
+        ' ****** ',
+        '  ****  '
+    ],
+    SHIELD: [
+        '******',
+        '******',
+        '******',
+        ' **** ',
+        ' **** ',
+        '  **  '
+    ],
+    DIAMOND: [
+        '   **   ',
+        '  ****  ',
+        ' ****** ',
+        '********',
+        ' ****** ',
+        '  ****  ',
+        '   **   '
+    ],
+    HELIX: [
+        '***   ',
+        ' ***  ',
+        '  *** ',
+        '  *** ',
+        ' ***  ',
+        '***   '
+    ],
+    TWIN_PEAKS: [
+        '  *     *  ',
+        ' ***   *** ',
+        '****   ****'
+    ],
+    ROYAL_PYRAMID: [
+        '  **  ',
+        ' **** ',
+        '******',
+        '******'
+    ]
+};
+
 /**
  * Tile Club / GamoVation Style Mobile Stack Tile Pairing Game Engine
  * Features:
@@ -864,7 +943,12 @@ class TileMatchingGame {
             
         const activeTypes = this.types.slice(0, activeTypesCount);
 
-        const totalPairs = Math.min(26, 8 + Math.floor((this.level - 1) / 5) * 2);
+        const gridPattern = FORMATION_GRIDS[formationType] || FORMATION_GRIDS['STAR'];
+        let baseGridCount = 0;
+        gridPattern.forEach(row => { for (let ch of row) if (ch === '*') baseGridCount++; });
+        if (baseGridCount % 2 !== 0) baseGridCount++;
+
+        const totalPairs = Math.max(10, Math.floor(baseGridCount / 2));
         const pool = [];
 
         for (let i = 0; i < totalPairs; i++) {
@@ -874,8 +958,8 @@ class TileMatchingGame {
 
         this.shuffleArray(pool);
 
-        const safeBoardW = (boardEl && boardEl.clientWidth > 200) ? boardEl.clientWidth : (window.innerWidth || 380);
-        const safeBoardH = (boardEl && boardEl.clientHeight > 200) ? boardEl.clientHeight : ((window.innerHeight - 160) || 520);
+        const safeBoardW = (boardEl && boardEl.clientWidth > 100) ? boardEl.clientWidth : 380;
+        const safeBoardH = (boardEl && boardEl.clientHeight > 100) ? boardEl.clientHeight : 520;
         const positions = this.generateLayoutPositions(formationType, pool.length, safeBoardW, safeBoardH);
 
         for (let i = 0; i < pool.length; i++) {
