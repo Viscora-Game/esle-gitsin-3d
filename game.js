@@ -1004,8 +1004,8 @@ class TileMatchingGame {
         const centerX = boardW / 2 - this.cardW / 2;
         const centerY = boardH / 2 - this.cardH / 2 - 10;
 
-        const stepX = 54;
-        const stepY = 66;
+        const stepX = 46;
+        const stepY = 56;
 
         if (formationType === 'ROYAL_PYRAMID') {
             let placed = 0;
@@ -1322,8 +1322,9 @@ class TileMatchingGame {
     }
 
     updateLockStates() {
-        const thresholdX = this.cardW * 0.85;
-        const thresholdY = this.cardH * 0.85;
+        // A tile is locked ONLY if covered from above by a tile on a strictly HIGHER layer
+        const thresholdX = this.cardW * 0.52;
+        const thresholdY = this.cardH * 0.52;
 
         for (let i = 0; i < this.boardTiles.length; i++) {
             const tile = this.boardTiles[i];
@@ -1336,10 +1337,8 @@ class TileMatchingGame {
                 const candidateAbove = this.boardTiles[j];
                 if (candidateAbove.isInSlot) continue;
 
-                const isAbove = (candidateAbove.layer > tile.layer) ||
-                                (candidateAbove.layer === tile.layer && j > i);
-
-                if (isAbove) {
+                // Locked ONLY by tiles on a strictly HIGHER layer that physically overlap from above
+                if (candidateAbove.layer > tile.layer) {
                     const distX = Math.abs(tile.x - candidateAbove.x);
                     const distY = Math.abs(tile.y - candidateAbove.y);
 
