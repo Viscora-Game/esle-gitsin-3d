@@ -16,7 +16,7 @@
             <!-- Canvas Overlay for Match Particles & Confetti -->
             <canvas id="fx-canvas"></canvas>
 
-            <!-- Main Menu Screen (Vibrant Animated Background View) -->
+            <!-- Main Menu Screen (Dual-Mode Choice View: Classic vs Time Trial) -->
             <div id="main-menu" class="menu-overlay">
                 <!-- Rich Floating Character Background Layer (16 Character Mini Cards) -->
                 <div class="menu-bg-characters">
@@ -65,9 +65,13 @@
                     <h1 id="menu-game-title" class="menu-title" data-i18n="gameTitle">EŞLE GİTSİN! 3D</h1>
                     <p id="menu-subtitle" class="menu-subtitle" data-i18n="menuSubtitle">Eşleme ve Zeka Macerası</p>
                     
+                    <!-- Dual-Mode Main Menu Button Selection -->
                     <div class="menu-btn-group">
-                        <button id="btn-menu-play" class="btn-primary btn-menu">
-                            <span>▶</span> <span data-i18n="play">OYNA</span>
+                        <button id="btn-mode-classic" class="btn-primary btn-menu">
+                            <span>🎮</span> <span id="txt-classic-btn" data-i18n="classicModeBtn">KLASİK MOD</span>
+                        </button>
+                        <button id="btn-mode-timetrial" class="btn-timetrial btn-menu">
+                            <span>⏱️</span> <span id="txt-timetrial-btn" data-i18n="timetrialModeBtn">ZAMANA KARŞI MOD</span>
                         </button>
                         <button id="btn-menu-settings" class="btn-secondary btn-menu">
                             <span>⚙️</span> <span data-i18n="settings">AYARLAR</span>
@@ -76,22 +80,12 @@
                 </div>
             </div>
 
-            <!-- Settings Modal Screen (Contains Time Trial & New Game Reset) -->
+            <!-- Settings Modal Screen -->
             <div id="modal-settings" class="modal-overlay hidden">
                 <div class="modal-card settings-card">
                     <div class="modal-header-row">
                         <h2 class="modal-title" data-i18n="settingsTitle">⚙️ AYARLAR</h2>
                         <button id="btn-close-settings" class="btn-close-x">✕</button>
-                    </div>
-
-                    <!-- Time Trial Mode Setting Row -->
-                    <div class="setting-row">
-                        <div class="setting-info">
-                            <span class="setting-label" data-i18n="timeTrialLabel">⏱️ Zamana Karşı Mod</span>
-                        </div>
-                        <button id="btn-toggle-timetrial" class="toggle-btn">
-                            <span id="timetrial-btn-text">KAPALI</span>
-                        </button>
                     </div>
 
                     <!-- Volume Setting -->
@@ -142,7 +136,7 @@
                         <span id="level-num" class="hud-val">1</span>
                     </div>
 
-                    <!-- Time Trial Countdown Timer Badge (Hidden by default, shown when time trial is ON) -->
+                    <!-- Mode Indicator / Time Trial Countdown Timer Badge -->
                     <div id="badge-timer" class="hud-item badge-timer hidden">
                         <span class="timer-icon">⏱️</span>
                         <span id="timer-val" class="hud-val">00:30</span>
