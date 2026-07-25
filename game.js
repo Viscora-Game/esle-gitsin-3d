@@ -1,6 +1,7 @@
 /**
  * Tile Club / GamoVation Style Mobile Stack Tile Pairing Game Engine
  * Features:
+ * - DEFEAT PENALTY MECHANIC: On game over retry, cancels earned level points & applies -2000 score penalty (Cap at min 0).
  * - FLOATING EMERGENCY 6TH SLOT HOLDER DIRECTLY ABOVE CENTER SLOT (Index 2).
  * - PERSISTENT LIFECYCLE: Stays open waiting for a tile, disappears ONLY AFTER tile enters & gets matched out!
  * - DYNAMIC IN-LEVEL PRICE ESCALATION (%100 Cost Double on each use in same level).
@@ -252,6 +253,9 @@ class TileMatchingGame {
         this.hintCost = 300;
         this.slotCost = 1000;
 
+        // Level Start Score tracking for Defeat Penalty calculation
+        this.levelStartScore = 0;
+
         // 22 Character Types
         this.types = [
             { id: 'fox', name: '4-Kuyruklu Tilki', bg: '#fff7ed', imgSrc: 'images/fox.jpg' },
@@ -323,7 +327,8 @@ class TileMatchingGame {
                 nextLevelBtn: 'SONRAKİ BÖLÜM',
                 defeatTitle: 'SLOT DOLDU!',
                 defeatDesc: 'Tepside boş alan kalmadı ve eşleşen kart bulunamadı.',
-                retryBtn: 'TEKRAR DENE',
+                penaltyText: 'CEZA: -2000 Puan (Kazanılan puanlar silindi)',
+                retryBtn: 'TEKRAR DENE (-2000 PUAN)',
                 vibOn: 'AÇIK',
                 vibOff: 'KAPALI',
                 noScoreHint: 'Yetersiz Skor! ({cost} Puan Gerekli)',
@@ -338,7 +343,7 @@ class TileMatchingGame {
                 continueBtn: 'CONTINUE (LEVEL {lvl})',
                 newGameBtn: 'NEW GAME',
                 settings: 'SETTINGS',
-                settingsTitle: '⚙️ SETTINGS',
+                settingsTitle: 'SETTINGS',
                 volLabel: '🔊 Sound Volume',
                 vibLabel: '📳 Vibration',
                 langLabel: '🌐 Language',
@@ -352,7 +357,8 @@ class TileMatchingGame {
                 nextLevelBtn: 'NEXT LEVEL',
                 defeatTitle: 'SLOT FULL!',
                 defeatDesc: 'No empty slot available and no pairs found.',
-                retryBtn: 'TRY AGAIN',
+                penaltyText: 'PENALTY: -2000 Points (Earned points reset)',
+                retryBtn: 'RETRY (-2000 PTS)',
                 vibOn: 'ON',
                 vibOff: 'OFF',
                 noScoreHint: 'Not Enough Score! ({cost} Required)',
@@ -495,8 +501,16 @@ class TileMatchingGame {
             this.startLevel(this.level + 1, false);
         });
 
+        // RETRY BUTTON DEFEAT PENALTY LOGIC (-2000 SCORE & CANCEL EARNED LEVEL POINTS)
         document.getElementById('btn-retry').addEventListener('click', () => {
             document.getElementById('modal-gameover').classList.add('hidden');
+
+            // 1. Revert to score at start of this level (cancel points earned in failed run)
+            // 2. Apply -2000 points penalty (capped at minimum 0)
+            this.score = Math.max(0, this.levelStartScore - 2000);
+            document.getElementById('score-val').innerText = this.score;
+            this.saveGameProgress();
+
             this.startLevel(this.level, false);
         });
 
@@ -593,6 +607,9 @@ class TileMatchingGame {
         } else {
             this.level = lvl;
         }
+
+        // Store level starting score for penalty calculation
+        this.levelStartScore = this.score;
 
         // Reset Level Costs & Capacity to Base
         this.hintCost = this.baseHintCost;

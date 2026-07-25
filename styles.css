@@ -732,6 +732,31 @@ body {
     pointer-events: none;
 }
 
+/* Defeat Penalty Info Badge in Modal Defeat */
+.penalty-badge {
+    background: rgba(239, 68, 68, 0.18);
+    border: 1.5px solid #ef4444;
+    border-radius: 16px;
+    padding: 10px 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    box-shadow: 0 4px 14px rgba(239, 68, 68, 0.3);
+}
+
+.penalty-icon {
+    font-size: 16px;
+}
+
+#penalty-text {
+    font-size: 12px;
+    font-weight: 800;
+    color: #fca5a5;
+    line-height: 1.3;
+}
+
 /* Combo Multiplier Floating HUD Badge (Z-Index 1500) */
 .combo-badge {
     position: absolute;

@@ -171,7 +171,7 @@
                 <div id="board"></div>
             </main>
 
-            <!-- Floating Top Emergency 6th Slot Holder (Appears above bottom tray) -->
+            <!-- Floating Top Emergency 6th Slot Holder (Appears above center slot) -->
             <div id="floating-extra-slot" class="floating-extra-slot hidden">
                 <div class="extra-slot-badge">🚨 ACİL SLOT</div>
                 <div class="extra-slot-box"></div>
@@ -201,13 +201,20 @@
             </div>
         </div>
 
-        <!-- Game Over Modal Dialog -->
+        <!-- Game Over Modal Dialog with Penalty Alert -->
         <div id="modal-gameover" class="modal-overlay hidden">
             <div class="modal-card modal-defeat">
                 <div class="modal-icon">💔</div>
                 <h2 class="modal-title" data-i18n="defeatTitle">SLOT DOLDU!</h2>
                 <p class="modal-desc" data-i18n="defeatDesc">Tepside boş alan kalmadı ve eşleşen kart bulunamadı.</p>
-                <button id="btn-retry" class="btn-primary" data-i18n="retryBtn">TEKRAR DENE</button>
+                
+                <!-- Defeat Penalty Info Badge -->
+                <div class="penalty-badge">
+                    <span class="penalty-icon">⚠️</span>
+                    <span id="penalty-text" data-i18n="penaltyText">CEZA: -2000 Puan (Kazanılan puanlar silindi)</span>
+                </div>
+
+                <button id="btn-retry" class="btn-primary" data-i18n="retryBtn">TEKRAR DENE (-2000 PUAN)</button>
             </div>
         </div>
     </div>
