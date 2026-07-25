@@ -1004,13 +1004,14 @@ class TileMatchingGame {
         const centerX = boardW / 2 - this.cardW / 2;
         const centerY = boardH / 2 - this.cardH / 2 - 10;
 
-        const stepX = 46;
-        const stepY = 56;
+        const stepX = 52;
+        const stepY = 62;
 
         if (formationType === 'ROYAL_PYRAMID') {
             let placed = 0;
             let layer = 0;
             const gridDims = [
+                { cols: 5, rows: 5 },
                 { cols: 4, rows: 4 },
                 { cols: 3, rows: 3 },
                 { cols: 2, rows: 2 },
@@ -1039,7 +1040,7 @@ class TileMatchingGame {
             let layer = 0;
 
             const wallCoords = [];
-            const outerW = 4, outerH = 4;
+            const outerW = 5, outerH = 5;
             const wallStartX = centerX - ((outerW - 1) * stepX * 0.5);
             const wallStartY = centerY - ((outerH - 1) * stepY * 0.5);
 
@@ -1076,7 +1077,7 @@ class TileMatchingGame {
         } else if (formationType === 'HOURGLASS') {
             let placed = 0;
             let layer = 0;
-            const rowPattern = [4, 3, 2, 1, 2, 3, 4];
+            const rowPattern = [5, 4, 3, 2, 3, 4, 5];
 
             while (placed < totalCount) {
                 for (let r = 0; r < rowPattern.length; r++) {
@@ -1096,7 +1097,7 @@ class TileMatchingGame {
         } else if (formationType === 'SHIELD') {
             let placed = 0;
             let layer = 0;
-            const shieldRows = [4, 4, 3, 2, 1];
+            const shieldRows = [5, 5, 4, 3, 2, 1];
 
             while (placed < totalCount) {
                 for (let r = 0; r < shieldRows.length; r++) {
@@ -1177,8 +1178,8 @@ class TileMatchingGame {
             while (placed < totalCount) {
                 for (let p = 0; p < 2; p++) {
                     const peakX = peakCenters[p];
-                    const cols = Math.max(1, 3 - layer);
-                    const rows = Math.max(1, 3 - layer);
+                    const cols = Math.max(1, 4 - layer);
+                    const rows = Math.max(1, 4 - layer);
 
                     const startX = peakX - ((cols - 1) * stepX * 0.5);
                     const startY = centerY - ((rows - 1) * stepY * 0.5) - (layer * 10);
