@@ -1,4 +1,4 @@
-const CACHE_NAME = 'esle-gitsin-3d-v2';
+const CACHE_NAME = 'esle-gitsin-3d-v3';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -7,10 +7,10 @@ const ASSETS_TO_CACHE = [
   './manifest.json',
   './favicon.ico',
   './favicon.png',
-  './icons/icon-192.png',
-  './icons/icon-512.png',
-  './icons/maskable-512.png',
-  './icons/apple-touch-icon.png',
+  './icons/app-icon-192.png',
+  './icons/app-icon-512.png',
+  './icons/app-maskable-512.png',
+  './icons/app-apple-icon.png',
   './images/app_hero_icon.png'
 ];
 
