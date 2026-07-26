@@ -1398,14 +1398,14 @@ class TileMatchingGame {
     updateVibBtnUI() {
         const btn = document.getElementById('btn-toggle-vib');
         const txt = document.getElementById('vib-btn-text');
-        const dict = this.i18n[this.settings.lang];
+        const dict = this.i18n[this.settings.lang] || this.i18n.tr;
 
         if (this.settings.vibration) {
-            btn.classList.add('active');
-            txt.innerText = dict.vibOn;
+            if (btn) btn.classList.add('active');
+            if (txt) txt.innerText = dict.vibOn || 'AÇIK';
         } else {
-            btn.classList.remove('active');
-            txt.innerText = dict.vibOff;
+            if (btn) btn.classList.remove('active');
+            if (txt) txt.innerText = dict.vibOff || 'KAPALI';
         }
     }
 
@@ -1427,6 +1427,9 @@ class TileMatchingGame {
                 el.innerText = dict[key];
             }
         });
+
+        // Re-render vibration button text in active language
+        this.updateVibBtnUI();
 
         // Re-render main menu buttons with localized level labels
         this.updateMainMenuButtons();
