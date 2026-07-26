@@ -411,7 +411,7 @@
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./sw.js?v=200').then((reg) => {
+          navigator.serviceWorker.register('./sw.js?v=1.4.0').then((reg) => {
             reg.update();
 
             reg.addEventListener('updatefound', () => {
@@ -436,6 +436,6 @@
         });
       }
     </script>
-    <script src="game.js?v=400" defer></script>
+    <script src="game.js?v=1.4.0" defer></script>
 </body>
 </html>

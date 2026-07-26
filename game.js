@@ -1021,6 +1021,14 @@ class TileMatchingGame {
         const slotLayerEl = document.getElementById('slot-tiles-layer');
         if (slotLayerEl) slotLayerEl.innerHTML = '';
 
+        // Reset & Clear Chest Reward Modal State completely on start of every level
+        const rewardListEl = document.getElementById('chest-reward-list');
+        if (rewardListEl) rewardListEl.innerHTML = '';
+        const modalChest = document.getElementById('modal-chest');
+        if (modalChest) modalChest.classList.add('hidden');
+        const rewardContent = document.getElementById('chest-reward-content');
+        if (rewardContent) rewardContent.classList.add('hidden');
+
         this.currentMode = mode;
 
         if (isNewGame) {
@@ -1935,6 +1943,8 @@ class TileMatchingGame {
     }
 
     triggerChestRewardModal(starLevel, isBonus) {
+        this.hasOpenedChestThisLevel = false;
+
         const starsText = '⭐️'.repeat(starLevel);
         const starDisp = document.getElementById('chest-star-display');
         if (starDisp) starDisp.innerText = starsText;
@@ -1951,18 +1961,53 @@ class TileMatchingGame {
         const descEl = document.getElementById('chest-modal-desc');
         if (descEl) descEl.innerText = 'Bölüm Başarısı! Ödüllerinizi görmek için aşağıdaki ÖDÜLLERİ AL butonuna basın!';
 
+        const chestCard = document.querySelector('.chest-card');
         const chestBox = document.getElementById('chest-box');
+
+        // Dynamic Chest Appearance based on Star Level (1⭐ to 5⭐)
+        let chestIcon = '📦';
+        let chestClass = 'chest-star-1';
+
+        if (starLevel === 1) {
+            chestIcon = '📦';
+            chestClass = 'chest-star-1';
+        } else if (starLevel === 2) {
+            chestIcon = '🧰';
+            chestClass = 'chest-star-2';
+        } else if (starLevel === 3) {
+            chestIcon = '🪙';
+            chestClass = 'chest-star-3';
+        } else if (starLevel === 4) {
+            chestIcon = '💎';
+            chestClass = 'chest-star-4';
+        } else if (starLevel >= 5) {
+            chestIcon = isBonus ? '🏆' : '👑';
+            chestClass = 'chest-star-5';
+        }
+
         if (chestBox) {
-            chestBox.innerText = isBonus ? '🎁' : '📦';
+            chestBox.innerText = chestIcon;
+            chestBox.className = `chest-box ${chestClass}`;
             chestBox.style.display = 'inline-block';
         }
 
-        // Show Stage 1 Button, Hide Stage 2 Content completely!
+        if (chestCard) {
+            chestCard.className = `modal-card chest-card card-star-${starLevel}`;
+        }
+
+        // Reset Stage 1 Button: Visible, Enabled, Clickable!
         const btnOpenChest = document.getElementById('btn-open-chest');
-        if (btnOpenChest) btnOpenChest.classList.remove('hidden');
+        if (btnOpenChest) {
+            btnOpenChest.style.display = 'inline-block';
+            btnOpenChest.classList.remove('hidden');
+            btnOpenChest.disabled = false;
+            btnOpenChest.style.pointerEvents = 'auto';
+        }
 
         const rewardContent = document.getElementById('chest-reward-content');
         if (rewardContent) rewardContent.classList.add('hidden');
+        const rewardListEl = document.getElementById('chest-reward-list');
+        if (rewardListEl) rewardListEl.innerHTML = '';
 
         const modalChest = document.getElementById('modal-chest');
         if (modalChest) modalChest.classList.remove('hidden');
@@ -1971,7 +2016,19 @@ class TileMatchingGame {
     }
 
     openChestBox() {
+        if (this.hasOpenedChestThisLevel) return;
         if (!this.pendingChestReward) return;
+
+        this.hasOpenedChestThisLevel = true;
+
+        // Immediately disable and vanish Stage 1 "ÖDÜLLERİ AL" Button completely!
+        const btnOpenChest = document.getElementById('btn-open-chest');
+        if (btnOpenChest) {
+            btnOpenChest.disabled = true;
+            btnOpenChest.style.pointerEvents = 'none';
+            btnOpenChest.style.display = 'none';
+            btnOpenChest.classList.add('hidden');
+        }
 
         const reward = this.pendingChestReward;
         const rewardListEl = document.getElementById('chest-reward-list');
@@ -2019,10 +2076,6 @@ class TileMatchingGame {
 
         const descEl = document.getElementById('chest-modal-desc');
         if (descEl) descEl.innerText = '🏆 Sandıktan Çıkan Ödülleriniz:';
-
-        // Hide Stage 1 Button, Unhide Stage 2 Content!
-        const btnOpenChest = document.getElementById('btn-open-chest');
-        if (btnOpenChest) btnOpenChest.classList.add('hidden');
 
         const rewardContent = document.getElementById('chest-reward-content');
         if (rewardContent) rewardContent.classList.remove('hidden');

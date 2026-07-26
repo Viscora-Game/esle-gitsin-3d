@@ -1330,7 +1330,52 @@ body {
     width: 90%;
     text-align: center;
     position: relative;
+    transition: all 0.3s ease;
 }
+
+/* Star-Based Dynamic Chest Visuals */
+.chest-card.card-star-1 {
+    background: linear-gradient(145deg, #1e1b4b 0%, #0f172a 100%);
+    border: 2px solid #d97706;
+    box-shadow: 0 0 25px rgba(217, 119, 6, 0.4);
+}
+
+.chest-card.card-star-2 {
+    background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
+    border: 2px solid #cbd5e1;
+    box-shadow: 0 0 30px rgba(203, 213, 225, 0.5);
+}
+
+.chest-card.card-star-3 {
+    background: linear-gradient(145deg, #312e81 0%, #1e1b4b 100%);
+    border: 2.5px solid #fbbf24;
+    box-shadow: 0 0 35px rgba(251, 191, 36, 0.6);
+}
+
+.chest-card.card-star-4 {
+    background: linear-gradient(145deg, #4c1d95 0%, #1e1b4b 100%);
+    border: 2.5px solid #c084fc;
+    box-shadow: 0 0 45px rgba(192, 132, 252, 0.7);
+}
+
+.chest-card.card-star-5 {
+    background: linear-gradient(145deg, #581c87 0%, #311b92 50%, #0f172a 100%);
+    border: 3px solid #f43f5e;
+    box-shadow: 0 0 55px rgba(244, 63, 94, 0.8), 0 0 30px rgba(251, 191, 36, 0.7);
+    animation: mythicPulse 2s infinite alternate;
+}
+
+@keyframes mythicPulse {
+    0% { border-color: #f43f5e; box-shadow: 0 0 40px rgba(244, 63, 94, 0.8); }
+    50% { border-color: #fbbf24; box-shadow: 0 0 55px rgba(251, 191, 36, 0.9); }
+    100% { border-color: #a855f7; box-shadow: 0 0 65px rgba(168, 85, 247, 0.9); }
+}
+
+.chest-box.chest-star-1 { font-size: 80px; }
+.chest-box.chest-star-2 { font-size: 84px; filter: drop-shadow(0 0 10px #cbd5e1); }
+.chest-box.chest-star-3 { font-size: 88px; filter: drop-shadow(0 0 15px #fbbf24); }
+.chest-box.chest-star-4 { font-size: 92px; filter: drop-shadow(0 0 20px #c084fc); }
+.chest-box.chest-star-5 { font-size: 96px; filter: drop-shadow(0 0 25px #f43f5e) drop-shadow(0 0 15px #fbbf24); animation: chestBounce 1s infinite ease-in-out alternate; }
 
 .chest-star-rating {
     font-size: 22px;
