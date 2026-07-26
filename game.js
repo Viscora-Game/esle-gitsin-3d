@@ -1250,6 +1250,39 @@ class TileMatchingGame {
             this.openSettings();
         });
 
+        // REWARDED AD MAIN MENU FLOATING CHEST WIDGET CLICK
+        const btnAdChest = document.getElementById('btn-menu-ad-chest');
+        if (btnAdChest) {
+            btnAdChest.addEventListener('click', () => {
+                this.sound.playClick();
+                this.showRewardedAd(() => {
+                    this.showToast('🎁 Reklam Ödülü: Görev Başarılı! Sandık Açılıyor...');
+                    const stars = this.rollChestStarRating(false);
+                    this.triggerChestRewardModal(stars, false);
+                });
+            });
+        }
+
+        // REWARDED AD DEFEAT REVIVE CLICK (+1 Slot & Remove Defeat)
+        const btnAdRevive = document.getElementById('btn-ad-revive');
+        if (btnAdRevive) {
+            btnAdRevive.addEventListener('click', () => {
+                this.sound.playClick();
+                this.showRewardedAd(() => {
+                    this.sound.playBoosterChime();
+                    document.getElementById('modal-gameover').classList.add('hidden');
+                    
+                    // Unlock emergency 6th slot and give +1 slot capacity
+                    this.maxSlotCapacity = 6;
+                    const floatSlot = document.getElementById('floating-extra-slot');
+                    if (floatSlot) floatSlot.classList.remove('hidden');
+
+                    this.showToast('🚨 Canlı Hak Kullanıldı! +1 Acil Slot Açıldı!');
+                    this.checkDeadlockAndMatch();
+                });
+            });
+        }
+
         document.getElementById('btn-hud-home').addEventListener('click', () => {
             this.stopTimer();
             this.saveGameProgress();
