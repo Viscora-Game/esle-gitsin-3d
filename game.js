@@ -1782,6 +1782,9 @@ class TileMatchingGame {
                 // Save next unlocked level for active mode
                 this.saveGameProgress();
 
+                const vicModal = document.getElementById('modal-victory');
+                if (vicModal) vicModal.classList.add('hidden');
+
                 if (this.level % 10 === 0) {
                     const starRating = this.rollBonusChestStarRating();
                     this.triggerChestRewardModal(starRating, true);
@@ -2152,7 +2155,14 @@ class TileMatchingGame {
         if (pieceIndex !== targetSlotIndex) {
             this.sound.playLockThud();
             this.triggerVibration();
-            this.showToast(`Bu parça #${pieceIndex + 1} numaralı yuvaya aittir!`);
+
+            const targetSlot = document.querySelector ? document.querySelector(`[data-slot-index="${targetSlotIndex}"]`) : null;
+            if (targetSlot) {
+                targetSlot.classList.add('shake-reject');
+                setTimeout(() => targetSlot.classList.remove('shake-reject'), 450);
+            }
+
+            this.showToast(`❌ Yanlış Yuva! Bu parça #${pieceIndex + 1} numaralı yuvaya aittir. Envantere geri döndü.`);
             return;
         }
 
@@ -2190,3 +2200,7 @@ class TileMatchingGame {
 window.addEventListener('DOMContentLoaded', () => {
     window.gameInstance = new TileMatchingGame();
 });
+
+// Prevent native context menu & long-press menus globally for Play Store / Native App mode
+window.addEventListener('contextmenu', (e) => e.preventDefault());
+document.addEventListener('contextmenu', (e) => e.preventDefault());

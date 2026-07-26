@@ -11,11 +11,34 @@
 
 * {
     box-sizing: border-box;
-    user-select: none;
-    -webkit-user-select: none;
+    user-select: none !important;
+    -webkit-user-select: none !important;
+    -khtml-user-select: none !important;
+    -moz-user-select: none !important;
+    -ms-user-select: none !important;
+    -webkit-touch-callout: none !important;
+    -webkit-tap-highlight-color: transparent !important;
     margin: 0;
     padding: 0;
     touch-action: manipulation;
+}
+
+img, canvas, svg {
+    -webkit-user-drag: none !important;
+    user-drag: none !important;
+    -webkit-touch-callout: none !important;
+}
+
+@keyframes shakeReject {
+    0%, 100% { transform: translateX(0) scale(1); }
+    20%, 60% { transform: translateX(-8px) rotate(-5deg) scale(1.05); }
+    40%, 80% { transform: translateX(8px) rotate(5deg) scale(1.05); }
+}
+
+.shake-reject {
+    animation: shakeReject 0.4s ease-in-out !important;
+    border-color: #ef4444 !important;
+    box-shadow: 0 0 20px rgba(239, 68, 68, 0.9) !important;
 }
 
 body {
