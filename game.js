@@ -855,6 +855,24 @@ class TileMatchingGame {
 
         const btnCollectChest = document.getElementById('btn-collect-chest');
         if (btnCollectChest) btnCollectChest.addEventListener('click', () => {
+            if (this.pendingChestReward) {
+                const reward = this.pendingChestReward;
+                if (reward.gold > 0) {
+                    this.goldCoins += reward.gold;
+                }
+                if (reward.pieces > 0) {
+                    for (let i = 0; i < reward.pieces; i++) {
+                        this.awardRandomMissingPuzzlePiece();
+                    }
+                }
+                const goldEl = document.getElementById('gold-val');
+                if (goldEl) goldEl.innerText = this.goldCoins;
+
+                this.pendingChestReward = null;
+                this.saveGameProgress();
+            }
+
+            this.sound.playClick();
             document.getElementById('modal-chest').classList.add('hidden');
             this.startLevel(this.level + 1, false, this.currentMode);
         });
@@ -1599,27 +1617,44 @@ class TileMatchingGame {
         const total = this.slotTiles.length;
         if (total === 0) return;
 
-        const trayW = 410;
-        const standard5Capacity = 5;
-        const spacing = 82;
-        const startX = 7;
+        const trayBg = document.getElementById('slot-tray-bg');
+        const markers = document.querySelectorAll('.slot-marker');
+        let trayRect = null;
+        if (trayBg && trayBg.getBoundingClientRect) {
+            trayRect = trayBg.getBoundingClientRect();
+        }
+
+        const fallbackSpacing = 82;
+        const fallbackStartX = 7;
 
         for (let i = 0; i < total; i++) {
             const tile = this.slotTiles[i];
 
             if (i < 5) {
-                // Bottom Tray 5 Standard Slots (100% Centered inside Slot Marker Frames!)
-                const targetX = startX + (i * spacing);
-                const targetY = 10;
+                let targetX, targetY;
+                if (trayRect && markers[i] && markers[i].getBoundingClientRect) {
+                    const mRect = markers[i].getBoundingClientRect();
+                    targetX = mRect.left - trayRect.left;
+                    targetY = mRect.top - trayRect.top;
+                } else {
+                    targetX = fallbackStartX + (i * fallbackSpacing);
+                    targetY = 10;
+                }
 
                 tile.element.style.transition = 'all 0.18s cubic-bezier(0.34, 1.56, 0.64, 1)';
                 tile.element.style.left = `${targetX}px`;
                 tile.element.style.top = `${targetY}px`;
                 tile.element.style.zIndex = 200 + i;
             } else {
-                // 6th Emergency Tile positioned EXACTLY CENTERED DIRECTLY ABOVE CENTER SLOT #3 (Index 2)!
-                const centerX = startX + (2 * spacing);
-                const centerY = 10 - 105;
+                let centerX, centerY;
+                if (trayRect && markers[2] && markers[2].getBoundingClientRect) {
+                    const mRect = markers[2].getBoundingClientRect();
+                    centerX = mRect.left - trayRect.left;
+                    centerY = (mRect.top - trayRect.top) - 105;
+                } else {
+                    centerX = fallbackStartX + (2 * fallbackSpacing);
+                    centerY = 10 - 105;
+                }
 
                 this.extraSlotWasUsed = true;
 
