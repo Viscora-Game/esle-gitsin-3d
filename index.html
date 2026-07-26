@@ -330,15 +330,23 @@
                     <span id="chest-star-display">⭐️⭐️⭐️⭐️⭐️</span>
                 </div>
                 <h2 id="chest-modal-title" class="modal-title">ÖDÜL SANDIĞI! 🎁</h2>
-                <p id="chest-modal-desc" class="modal-desc">Bölüm Tamamlandı! Sandığı açmak için dokun!</p>
+                <p id="chest-modal-desc" class="modal-desc">Bölüm Başarısı! Sandığınızı açmak için aşağıdaki butona basın!</p>
                 
                 <div id="chest-box-container" class="chest-box-container">
                     <div id="chest-box" class="chest-box">📦</div>
                 </div>
 
+                <!-- Stage 1 Button: ÖDÜLLERİ AL 🎁 -->
+                <button id="btn-open-chest" class="btn-primary chest-open-btn">
+                    <span>🎁 ÖDÜLLERİ AL</span>
+                </button>
+
+                <!-- Stage 2 Content: Revealed Rewards List & Envantere Ekle Button -->
                 <div id="chest-reward-content" class="chest-reward-content hidden">
                     <div id="chest-reward-list" class="chest-reward-list"></div>
-                    <button id="btn-collect-chest" class="btn-primary collect-btn hidden">ENVANTERE EKLE VE DEVAM ET ▶</button>
+                    <button id="btn-collect-chest" class="btn-primary collect-btn">
+                        <span>▶ ENVANTERE EKLE VE DEVAM ET</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -428,6 +436,6 @@
         });
       }
     </script>
-    <script src="game.js?v=210" defer></script>
+    <script src="game.js?v=250" defer></script>
 </body>
 </html>

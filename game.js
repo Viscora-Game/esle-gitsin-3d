@@ -867,6 +867,9 @@ class TileMatchingGame {
         const btnBuyPiece = document.getElementById('btn-buy-puzzle-piece');
         if (btnBuyPiece) btnBuyPiece.addEventListener('click', () => this.buyPuzzlePieceWithGold());
 
+        const btnOpenChest = document.getElementById('btn-open-chest');
+        if (btnOpenChest) btnOpenChest.addEventListener('click', () => this.openChestBox());
+
         const chestBoxContainer = document.getElementById('chest-box-container');
         if (chestBoxContainer) chestBoxContainer.addEventListener('click', () => this.openChestBox());
         const chestBox = document.getElementById('chest-box');
@@ -876,6 +879,25 @@ class TileMatchingGame {
         if (btnCollectChest) {
             btnCollectChest.onclick = () => {
                 try { this.sound.playClick(); } catch (e) {}
+                
+                // Claim rewards when clicking Envantere Ekle ve Devam Et!
+                if (this.pendingChestReward) {
+                    const reward = this.pendingChestReward;
+                    if (reward.gold > 0) {
+                        this.goldCoins += reward.gold;
+                    }
+                    if (reward.pieces > 0) {
+                        for (let i = 0; i < reward.pieces; i++) {
+                            this.awardRandomMissingPuzzlePiece();
+                        }
+                    }
+                    const goldEl = document.getElementById('gold-val');
+                    if (goldEl) goldEl.innerText = this.goldCoins;
+
+                    this.pendingChestReward = null;
+                    this.saveGameProgress();
+                }
+
                 const modalChest = document.getElementById('modal-chest');
                 if (modalChest) modalChest.classList.add('hidden');
                 this.startLevel(this.level + 1, false, this.currentMode);
@@ -1932,6 +1954,9 @@ class TileMatchingGame {
             chestBox.style.display = 'inline-block';
         }
 
+        const btnOpenChest = document.getElementById('btn-open-chest');
+        if (btnOpenChest) btnOpenChest.classList.remove('hidden');
+
         const rewardContent = document.getElementById('chest-reward-content');
         if (rewardContent) rewardContent.classList.add('hidden');
 
@@ -1948,8 +1973,6 @@ class TileMatchingGame {
         if (!this.pendingChestReward) return;
 
         const reward = this.pendingChestReward;
-        this.pendingChestReward = null; // Clear so it only opens once
-
         const rewardListEl = document.getElementById('chest-reward-list');
         if (rewardListEl) rewardListEl.innerHTML = '';
 
@@ -1957,7 +1980,6 @@ class TileMatchingGame {
         this.fx.spawnConfetti();
 
         if (reward.gold > 0) {
-            this.goldCoins += reward.gold;
             const item = document.createElement('div');
             item.className = 'chest-reward-item';
             item.innerHTML = `<span class="reward-icon">🪙</span><span class="reward-val">+${reward.gold} ALTIN</span>`;
@@ -1965,36 +1987,43 @@ class TileMatchingGame {
         }
 
         if (reward.pieces > 0) {
-            for (let i = 0; i < reward.pieces; i++) {
-                const addedPiece = this.awardRandomMissingPuzzlePiece();
-                if (addedPiece && rewardListEl) {
-                    const item = document.createElement('div');
-                    item.className = 'chest-reward-item';
-                    item.innerHTML = `<span class="reward-icon">🧩</span><span class="reward-val">${addedPiece.puzzleName} (#${addedPiece.pieceIndex + 1})</span>`;
-                    rewardListEl.appendChild(item);
-                }
+            const samplePieces = this.getPreviewMissingPieces(reward.pieces);
+            for (const p of samplePieces) {
+                const item = document.createElement('div');
+                item.className = 'chest-reward-item';
+                item.innerHTML = `<span class="reward-icon">🧩</span><span class="reward-val">${p.puzzleName} (#${p.pieceIndex + 1})</span>`;
+                if (rewardListEl) rewardListEl.appendChild(item);
             }
         }
-
-        const goldEl = document.getElementById('gold-val');
-        if (goldEl) goldEl.innerText = this.goldCoins;
 
         const chestBox = document.getElementById('chest-box');
         if (chestBox) chestBox.innerText = '✨';
 
         const descEl = document.getElementById('chest-modal-desc');
-        if (descEl) descEl.innerText = '🏆 Ödülleriniz Kazandı! Envantere eklemek için aşağıdaki butona basın:';
+        if (descEl) descEl.innerText = '🏆 Sandıktan Çıkan Ödülleriniz:';
+
+        const btnOpenChest = document.getElementById('btn-open-chest');
+        if (btnOpenChest) btnOpenChest.classList.add('hidden');
 
         const rewardContent = document.getElementById('chest-reward-content');
         if (rewardContent) rewardContent.classList.remove('hidden');
+    }
 
-        // Delay unhiding collect button by 700ms to eliminate touch-through click skips!
-        setTimeout(() => {
-            const btnCollectChest = document.getElementById('btn-collect-chest');
-            if (btnCollectChest) btnCollectChest.classList.remove('hidden');
-        }, 700);
-
-        this.saveGameProgress();
+    getPreviewMissingPieces(count) {
+        const list = [];
+        for (const puzzle of this.puzzlesCatalog) {
+            const placed = this.placedPuzzlePieces[puzzle.id] || [];
+            for (let i = 0; i < 12; i++) {
+                if (!placed.includes(i)) {
+                    const inInv = this.puzzleInventory.some(p => p.puzzleId === puzzle.id && p.pieceIndex === i);
+                    if (!inInv) {
+                        list.push({ puzzleId: puzzle.id, puzzleName: puzzle.name, pieceIndex: i });
+                        if (list.length >= count) return list;
+                    }
+                }
+            }
+        }
+        return list;
     }
 
     awardRandomMissingPuzzlePiece() {
