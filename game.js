@@ -880,21 +880,27 @@ class TileMatchingGame {
             btnCollectChest.onclick = () => {
                 try { this.sound.playClick(); } catch (e) {}
                 
-                // Claim rewards when clicking Envantere Ekle ve Devam Et!
+                // Claim exact displayed rewards when clicking Envantere Ekle ve Devam Et!
                 if (this.pendingChestReward) {
                     const reward = this.pendingChestReward;
                     if (reward.gold > 0) {
                         this.goldCoins += reward.gold;
                     }
-                    if (reward.pieces > 0) {
-                        for (let i = 0; i < reward.pieces; i++) {
-                            this.awardRandomMissingPuzzlePiece();
+                    if (this.pendingAwardedPieces && this.pendingAwardedPieces.length > 0) {
+                        for (const piece of this.pendingAwardedPieces) {
+                            this.puzzleInventory.push({
+                                id: `piece_${Date.now()}_${Math.random()}`,
+                                puzzleId: piece.puzzleId,
+                                puzzleName: piece.puzzleName,
+                                pieceIndex: piece.pieceIndex
+                            });
                         }
                     }
                     const goldEl = document.getElementById('gold-val');
                     if (goldEl) goldEl.innerText = this.goldCoins;
 
                     this.pendingChestReward = null;
+                    this.pendingAwardedPieces = null;
                     this.saveGameProgress();
                 }
 
@@ -1943,25 +1949,20 @@ class TileMatchingGame {
         }
 
         const descEl = document.getElementById('chest-modal-desc');
-        if (descEl) descEl.innerText = 'Sandığı açmak için kutuya dokunun!';
+        if (descEl) descEl.innerText = 'Bölüm Başarısı! Ödüllerinizi görmek için aşağıdaki ÖDÜLLERİ AL butonuna basın!';
 
-        const chestBoxContainer = document.getElementById('chest-box-container');
-        if (chestBoxContainer) chestBoxContainer.onclick = () => this.openChestBox();
         const chestBox = document.getElementById('chest-box');
         if (chestBox) {
-            chestBox.onclick = () => this.openChestBox();
             chestBox.innerText = isBonus ? '🎁' : '📦';
             chestBox.style.display = 'inline-block';
         }
 
+        // Show Stage 1 Button, Hide Stage 2 Content completely!
         const btnOpenChest = document.getElementById('btn-open-chest');
         if (btnOpenChest) btnOpenChest.classList.remove('hidden');
 
         const rewardContent = document.getElementById('chest-reward-content');
         if (rewardContent) rewardContent.classList.add('hidden');
-
-        const btnCollectChest = document.getElementById('btn-collect-chest');
-        if (btnCollectChest) btnCollectChest.classList.add('hidden');
 
         const modalChest = document.getElementById('modal-chest');
         if (modalChest) modalChest.classList.remove('hidden');
@@ -1979,6 +1980,8 @@ class TileMatchingGame {
         this.sound.playVictorySound();
         this.fx.spawnConfetti();
 
+        this.pendingAwardedPieces = [];
+
         if (reward.gold > 0) {
             const item = document.createElement('div');
             item.className = 'chest-reward-item';
@@ -1987,12 +1990,15 @@ class TileMatchingGame {
         }
 
         if (reward.pieces > 0) {
-            const samplePieces = this.getPreviewMissingPieces(reward.pieces);
-            for (const p of samplePieces) {
-                const item = document.createElement('div');
-                item.className = 'chest-reward-item';
-                item.innerHTML = `<span class="reward-icon">🧩</span><span class="reward-val">${p.puzzleName} (#${p.pieceIndex + 1})</span>`;
-                if (rewardListEl) rewardListEl.appendChild(item);
+            for (let i = 0; i < reward.pieces; i++) {
+                const piece = this.getRandomMissingPieceData();
+                if (piece) {
+                    this.pendingAwardedPieces.push(piece);
+                    const item = document.createElement('div');
+                    item.className = 'chest-reward-item';
+                    item.innerHTML = `<span class="reward-icon">🧩</span><span class="reward-val">${piece.puzzleName} (#${piece.pieceIndex + 1})</span>`;
+                    if (rewardListEl) rewardListEl.appendChild(item);
+                }
             }
         }
 
@@ -2002,11 +2008,33 @@ class TileMatchingGame {
         const descEl = document.getElementById('chest-modal-desc');
         if (descEl) descEl.innerText = '🏆 Sandıktan Çıkan Ödülleriniz:';
 
+        // Hide Stage 1 Button, Unhide Stage 2 Content!
         const btnOpenChest = document.getElementById('btn-open-chest');
         if (btnOpenChest) btnOpenChest.classList.add('hidden');
 
         const rewardContent = document.getElementById('chest-reward-content');
         if (rewardContent) rewardContent.classList.remove('hidden');
+    }
+
+    getRandomMissingPieceData() {
+        const missing = [];
+        for (const puzzle of this.puzzlesCatalog) {
+            const placed = this.placedPuzzlePieces[puzzle.id] || [];
+            for (let i = 0; i < 12; i++) {
+                if (!placed.includes(i)) {
+                    // Check if already in inventory or already pending in current chest reveal
+                    const inInv = this.puzzleInventory.some(p => p.puzzleId === puzzle.id && p.pieceIndex === i);
+                    const inPending = this.pendingAwardedPieces && this.pendingAwardedPieces.some(p => p.puzzleId === puzzle.id && p.pieceIndex === i);
+                    if (!inInv && !inPending) {
+                        missing.push({ puzzleId: puzzle.id, puzzleName: puzzle.name, pieceIndex: i });
+                    }
+                }
+            }
+        }
+
+        if (missing.length === 0) return null;
+        const rIdx = Math.floor(Math.random() * missing.length);
+        return missing[rIdx];
     }
 
     getPreviewMissingPieces(count) {
