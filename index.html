@@ -166,14 +166,19 @@
                         </button>
                     </div>
 
-                    <!-- Language Setting -->
+                    <!-- Language Setting (7 Languages) -->
                     <div class="setting-row">
                         <div class="setting-info">
                             <span class="setting-label" data-i18n="langLabel">🌐 Dil Desteği</span>
                         </div>
-                        <div class="lang-selector">
-                            <button id="btn-lang-tr" class="lang-btn active">🇹🇷 Türkçe</button>
-                            <button id="btn-lang-en" class="lang-btn">🇬🇧 English</button>
+                        <div class="lang-grid-selector">
+                            <button id="btn-lang-tr" class="lang-btn active">🇹🇷 TR</button>
+                            <button id="btn-lang-en" class="lang-btn">🇬🇧 EN</button>
+                            <button id="btn-lang-de" class="lang-btn">🇩🇪 DE</button>
+                            <button id="btn-lang-fr" class="lang-btn">🇫🇷 FR</button>
+                            <button id="btn-lang-it" class="lang-btn">🇮🇹 IT</button>
+                            <button id="btn-lang-es" class="lang-btn">🇪🇸 ES</button>
+                            <button id="btn-lang-pt" class="lang-btn">🇵🇹 PT</button>
                         </div>
                     </div>
 
@@ -411,7 +416,7 @@
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./sw.js?v=1.5.0').then((reg) => {
+          navigator.serviceWorker.register('./sw.js?v=1.6.0').then((reg) => {
             reg.update();
 
             reg.addEventListener('updatefound', () => {
@@ -436,6 +441,6 @@
         });
       }
     </script>
-    <script src="game.js?v=1.5.0" defer></script>
+    <script src="game.js?v=1.6.0" defer></script>
 </body>
 </html>
