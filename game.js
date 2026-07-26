@@ -987,6 +987,12 @@ class TileMatchingGame {
         this.boardTiles = [];
         this.slotTiles = [];
 
+        const boardEl = document.getElementById('board');
+        if (boardEl) boardEl.innerHTML = '';
+
+        const slotLayerEl = document.getElementById('slot-tiles-layer');
+        if (slotLayerEl) slotLayerEl.innerHTML = '';
+
         this.currentMode = mode;
 
         if (isNewGame) {
@@ -1037,7 +1043,6 @@ class TileMatchingGame {
             formationType = nonStarPool[idx >= 0 ? idx : (idx + nonStarPool.length)];
         }
 
-        const boardEl = document.getElementById('board');
         const safeBoardW = (boardEl && boardEl.clientWidth > 200) ? boardEl.clientWidth : (window.innerWidth || 380);
         const safeBoardH = (boardEl && boardEl.clientHeight > 200) ? boardEl.clientHeight : ((window.innerHeight - 160) || 520);
         const positions = this.generateLayoutPositions(formationType, safeBoardW, safeBoardH);
