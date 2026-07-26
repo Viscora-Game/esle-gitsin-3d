@@ -1438,24 +1438,32 @@ body {
     color: #fbbf24;
 }
 
-/* 7-Language Grid Selector in Settings */
+/* 7-Language Single Row Selector in Settings */
 .lang-grid-selector {
     display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    justify-content: flex-end;
-    max-width: 240px;
+    flex-wrap: nowrap;
+    gap: 4px;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 100%;
+    padding: 4px 0;
+    overflow-x: auto;
 }
 
 .lang-btn {
-    padding: 6px 10px;
-    border-radius: 12px;
+    flex: 1 1 0;
+    min-width: 0;
+    padding: 8px 2px;
+    border-radius: 10px;
     border: 1.5px solid rgba(255, 255, 255, 0.15);
     background: rgba(15, 23, 42, 0.6);
     color: #cbd5e1;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 800;
     cursor: pointer;
+    text-align: center;
+    white-space: nowrap;
     transition: all 0.2s ease;
 }
 

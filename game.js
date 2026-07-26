@@ -1001,21 +1001,24 @@ class TileMatchingGame {
 
         const btnForceUpdate = document.getElementById('btn-force-update');
         if (btnForceUpdate) {
-            btnForceUpdate.addEventListener('click', async () => {
-                if ('serviceWorker' in navigator) {
-                    try {
-                        const regs = await navigator.serviceWorker.getRegistrations();
-                        for (let reg of regs) { await reg.unregister(); }
-                    } catch (e) {}
-                }
-                if ('caches' in window) {
-                    try {
-                        const keys = await caches.keys();
-                        for (let key of keys) { await caches.delete(key); }
-                    } catch (e) {}
-                }
-                window.location.reload(true);
-            });
+            btnForceUpdate.onclick = () => {
+                try {
+                    if ('serviceWorker' in navigator) {
+                        navigator.serviceWorker.getRegistrations().then(regs => {
+                            for (let reg of regs) reg.unregister();
+                        });
+                    }
+                    if ('caches' in window) {
+                        caches.keys().then(keys => {
+                            for (let key of keys) caches.delete(key);
+                        });
+                    }
+                } catch (e) {}
+
+                // Instant hard cache reload using location bypass
+                const targetUrl = window.location.origin + window.location.pathname + '?v=' + Date.now();
+                window.location.href = targetUrl;
+            };
         }
 
         document.getElementById('btn-close-reset-confirm').addEventListener('click', () => {
