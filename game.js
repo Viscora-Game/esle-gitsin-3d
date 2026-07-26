@@ -426,16 +426,7 @@ class TileMatchingGame {
 
         // 10 Rich Symmetrical Mahjong Formations Pool!
         this.formations = [
-            'ROYAL_PYRAMID', 
-            'CASTLE', 
-            'HOURGLASS', 
-            'SHIELD', 
-            'FLOWER', 
-            'HELIX', 
-            'HEART', 
-            'TWIN_PEAKS', 
-            'STAR', 
-            'DIAMOND'
+            'HOURGLASS', 'H_LETTER', 'HEART', 'CIRCLE', 'TRIANGLE', 'FLOWER', 'DIAMOND', 'HELIX', 'TWIN_PEAKS', 'S_LETTER', 'ROYAL_PYRAMID', 'STAR'
         ];
 
         // Settings State
@@ -885,6 +876,9 @@ class TileMatchingGame {
     }
 
     startLevel(lvl, isNewGame = false, mode = 'classic') {
+        this.boardTiles = [];
+        this.slotTiles = [];
+
         this.currentMode = mode;
 
         if (isNewGame) {
@@ -922,43 +916,20 @@ class TileMatchingGame {
 
         // SPECIAL STAR FORMATION ON EVERY 10th LEVEL (10, 20, 30, 40...)
         let formationType;
-        if (this.level % 10 === 0) {
+        if (this.level === 2) {
+            formationType = 'H_LETTER';
+        } else if (this.level === 28) {
+            formationType = 'S_LETTER';
+        } else if (this.level % 10 === 0) {
             formationType = 'STAR';
         } else {
-            const nonStarFormations = ['HOURGLASS', 'HEART', 'CASTLE', 'FLOWER', 'SHIELD', 'DIAMOND', 'HELIX', 'TWIN_PEAKS', 'ROYAL_PYRAMID'];
-            const nonStarIndex = (this.level - 1 - Math.floor(this.level / 10)) % nonStarFormations.length;
-            formationType = nonStarFormations[nonStarIndex];
+            const nonStarPool = ['HOURGLASS', 'HEART', 'CIRCLE', 'TRIANGLE', 'FLOWER', 'DIAMOND', 'HELIX', 'TWIN_PEAKS', 'ROYAL_PYRAMID'];
+            const specialCount = Math.floor(this.level / 10) + (this.level > 2 ? 1 : 0) + (this.level > 28 ? 1 : 0);
+            const idx = (this.level - 1 - specialCount) % nonStarPool.length;
+            formationType = nonStarPool[idx >= 0 ? idx : (idx + nonStarPool.length)];
         }
-        if (this.level % 10 === 0) {
-            formationType = 'STAR';
-        }
-
-        // Reset Combo & Hints
-        this.comboCount = 1;
-        this.hideComboBadge();
-        this.clearHintHighlights();
 
         const boardEl = document.getElementById('board');
-        boardEl.innerHTML = '';
-        document.getElementById('slot-tiles-layer').innerHTML = '';
-
-        this.boardTiles = [];
-        this.slotTiles = [];
-
-        // PROGRESSIVE CHARACTER UNLOCKING SYSTEM:
-        // Starts with 4 simple character types (Levels 1-10) and unlocks +2 new character types every 10 levels!
-        const activeTypesCount = Math.min(this.types.length, 4 + Math.floor((this.level - 1) / 10) * 2);
-        const activeTypes = this.types.slice(0, activeTypesCount);
-
-        if (this.level > 1 && (this.level - 1) % 10 === 0 && activeTypesCount <= this.types.length) {
-            const newlyUnlocked = activeTypes[activeTypesCount - 1];
-            if (newlyUnlocked) {
-                setTimeout(() => {
-                    this.showToast(`🎉 YENİ KARAKTER KATILDI: ${newlyUnlocked.name}! 🌟`);
-                }, 600);
-            }
-        }
-
         const safeBoardW = (boardEl && boardEl.clientWidth > 200) ? boardEl.clientWidth : (window.innerWidth || 380);
         const safeBoardH = (boardEl && boardEl.clientHeight > 200) ? boardEl.clientHeight : ((window.innerHeight - 160) || 520);
         const positions = this.generateLayoutPositions(formationType, safeBoardW, safeBoardH);
@@ -995,7 +966,9 @@ class TileMatchingGame {
         const pool = [];
 
         for (let i = 0; i < totalPairs; i++) {
-            const typeObj = activeTypes[i % activeTypes.length];
+            const activeTypesCount = Math.min(this.types.length, 4 + Math.floor((this.level - 1) / 10) * 2);
+        const activeTypes = this.types.slice(0, activeTypesCount);
+        const typeObj = activeTypes[i % activeTypes.length];
             pool.push(typeObj, typeObj);
         }
 
@@ -1120,56 +1093,67 @@ class TileMatchingGame {
             }
             pos.push({ x: cx - stepX * 0.35, y: cy - 12, layer: 2 });
             pos.push({ x: cx + stepX * 0.35, y: cy - 12, layer: 2 });
-        } else if (formationType === 'CASTLE') {
-            // KALE (34 Tiles)
-            const towers = [
-                { x: cx - stepX * 2, y: cy - stepY * 2 },
-                { x: cx + stepX * 2, y: cy - stepY * 2 },
-                { x: cx - stepX * 2, y: cy + stepY * 2 },
-                { x: cx + stepX * 2, y: cy + stepY * 2 }
-            ];
-            for (let t of towers) {
-                for (let r = 0; r < 2; r++) {
-                    for (let c = 0; c < 2; c++) {
-                        pos.push({ x: t.x + c * stepX, y: t.y + r * stepY, layer: 0 });
-                    }
-                }
-            }
-            for (let c = -1; c <= 1; c++) pos.push({ x: cx + c * stepX, y: cy - stepY * 2, layer: 0 });
-            for (let c = -1; c <= 1; c++) pos.push({ x: cx + c * stepX, y: cy + stepY * 2, layer: 0 });
-            pos.push({ x: cx - stepX * 2, y: cy, layer: 0 });
-            pos.push({ x: cx + stepX * 2, y: cy, layer: 0 });
-            for (let r = -1; r <= 1; r++) {
-                for (let c = -1; c <= 1; c++) {
-                    pos.push({ x: cx + c * stepX + 3, y: cy + r * stepY - 6, layer: 1 });
-                }
-            }
-            pos.push({ x: cx + 3, y: cy - 12, layer: 2 });
-        } else if (formationType === 'FLOWER') {
-            // ÇİÇEK (20 Tiles)
-            for (let i = 0; i < 8; i++) {
-                const t = (i / 8) * Math.PI * 2;
-                pos.push({ x: cx + Math.cos(t) * 125, y: cy + Math.sin(t) * 90, layer: 0 });
+        } else if (formationType === 'CIRCLE') {
+            // YUVARLAK / DAIRE (28 Tiles)
+            for (let i = 0; i < 16; i++) {
+                const a = (i / 16) * Math.PI * 2;
+                pos.push({ x: cx + Math.cos(a) * 115, y: cy + Math.sin(a) * 85, layer: 0 });
             }
             for (let i = 0; i < 8; i++) {
-                const t = (i / 8) * Math.PI * 2 + Math.PI / 8;
-                pos.push({ x: cx + Math.cos(t) * 75 + 3, y: cy + Math.sin(t) * 55 - 6, layer: 1 });
+                const a = (i / 8) * Math.PI * 2;
+                pos.push({ x: cx + Math.cos(a) * 60 + 3, y: cy + Math.sin(a) * 45 - 6, layer: 1 });
             }
-            for (let r = 0; r <= 1; r++) {
-                for (let c = 0; c <= 1; c++) {
-                    pos.push({ x: cx + (c - 0.5) * stepX, y: cy + (r - 0.5) * stepY - 12, layer: 2 });
-                }
-            }
-        } else if (formationType === 'SHIELD') {
-            // KALKAN (28 Tiles)
-            const rowPats = [[6], [6], [5], [4], [3], [2], [2]];
-            for (let r = 0; r < rowPats.length; r++) {
-                const count = rowPats[r][0];
+            pos.push({ x: cx - stepX * 0.4, y: cy - stepY * 0.4 - 12, layer: 2 });
+            pos.push({ x: cx + stepX * 0.4, y: cy - stepY * 0.4 - 12, layer: 2 });
+            pos.push({ x: cx - stepX * 0.4, y: cy + stepY * 0.4 - 12, layer: 2 });
+            pos.push({ x: cx + stepX * 0.4, y: cy + stepY * 0.4 - 12, layer: 2 });
+        } else if (formationType === 'TRIANGLE') {
+            // ÜÇGEN (24 Tiles)
+            const rows = [7, 5, 3, 1];
+            for (let r = 0; r < rows.length; r++) {
+                const count = rows[r];
                 const startX = cx - ((count - 1) * stepX * 0.5);
                 for (let c = 0; c < count; c++) {
-                    pos.push({ x: startX + c * stepX, y: cy + (r - 3) * stepY * 0.85, layer: 0 });
+                    pos.push({ x: startX + c * stepX, y: cy + (r - 1.5) * stepY, layer: 0 });
                 }
             }
+            for (let c = -1; c <= 1; c++) pos.push({ x: cx + c * stepX + 3, y: cy + 0.5 * stepY - 6, layer: 1 });
+            for (let c = 0; c <= 1; c++) pos.push({ x: cx + (c - 0.5) * stepX + 3, y: cy - 0.5 * stepY - 6, layer: 1 });
+            pos.push({ x: cx + 3, y: cy - 1.5 * stepY - 6, layer: 1 });
+            pos.push({ x: cx + 3, y: cy - 12, layer: 2 });
+            pos.push({ x: cx + 3, y: cy - 18, layer: 2 });
+        } else if (formationType === 'H_LETTER') {
+            // H HARFİ (24 Tiles)
+            const leftX = cx - stepX * 1.6;
+            const rightX = cx + stepX * 1.6;
+            for (let r = -2; r <= 2; r++) {
+                pos.push({ x: leftX, y: cy + r * stepY, layer: 0 });
+                pos.push({ x: rightX, y: cy + r * stepY, layer: 0 });
+            }
+            for (let c = -1; c <= 1; c++) {
+                pos.push({ x: cx + c * stepX * 0.9, y: cy, layer: 0 });
+            }
+            for (let r of [-1, 0, 1]) {
+                pos.push({ x: leftX + stepX * 0.5, y: cy + r * stepY - 6, layer: 1 });
+                pos.push({ x: rightX - stepX * 0.5, y: cy + r * stepY - 6, layer: 1 });
+                pos.push({ x: cx + (r * 0.6) * stepX, y: cy - 6, layer: 1 });
+            }
+            pos.push({ x: cx - stepX * 0.3, y: cy - 12, layer: 2 });
+            pos.push({ x: cx + stepX * 0.3, y: cy - 12, layer: 2 });
+        } else if (formationType === 'S_LETTER') {
+            // S HARFİ (24 Tiles)
+            for (let c = -1; c <= 2; c++) pos.push({ x: cx + c * stepX, y: cy - 2 * stepY, layer: 0 });
+            pos.push({ x: cx - 1 * stepX, y: cy - 1 * stepY, layer: 0 });
+            for (let c = -1; c <= 2; c++) pos.push({ x: cx + c * stepX, y: cy, layer: 0 });
+            pos.push({ x: cx + 2 * stepX, y: cy + 1 * stepY, layer: 0 });
+            for (let c = -1; c <= 2; c++) pos.push({ x: cx + c * stepX, y: cy + 2 * stepY, layer: 0 });
+            for (let c = 0; c <= 1; c++) pos.push({ x: cx + c * stepX + 3, y: cy - 2 * stepY - 6, layer: 1 });
+            for (let c = 0; c <= 1; c++) pos.push({ x: cx + c * stepX + 3, y: cy - 6, layer: 1 });
+            for (let c = 0; c <= 1; c++) pos.push({ x: cx + c * stepX + 3, y: cy + 2 * stepY - 6, layer: 1 });
+            pos.push({ x: cx - 1 * stepX + 3, y: cy - 1 * stepY - 6, layer: 1 });
+            pos.push({ x: cx + 2 * stepX + 3, y: cy + 1 * stepY - 6, layer: 1 });
+            pos.push({ x: cx, y: cy - 12, layer: 2 });
+            pos.push({ x: cx + stepX, y: cy - 12, layer: 2 });
         } else if (formationType === 'DIAMOND') {
             // ELMAS (26 Tiles)
             const rowPats = [[1], [3], [5], [7], [5], [3], [1]];
