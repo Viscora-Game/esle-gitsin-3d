@@ -1367,6 +1367,98 @@ body {
     color: #fbbf24;
 }
 
+/* Journal Book & Jigsaw Styling */
+.btn-journal {
+    background: linear-gradient(135deg, #b45309 0%, #78350f 100%) !important;
+    border: 1.5px solid #f59e0b !important;
+    box-shadow: 0 4px 14px rgba(180, 83, 9, 0.4) !important;
+    color: #fef3c7 !important;
+}
+
+.journal-book-card {
+    background: linear-gradient(145deg, #2e1065 0%, #1e1b4b 100%) !important;
+    border: 3px solid #f59e0b !important;
+    box-shadow: 0 0 40px rgba(245, 158, 11, 0.4), inset 0 0 15px rgba(0, 0, 0, 0.6) !important;
+}
+
+.journal-book-header {
+    text-align: center;
+    margin-bottom: 8px;
+}
+
+.journal-ribbon {
+    display: inline-block;
+    background: linear-gradient(135deg, #d97706 0%, #92400e 100%);
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 900;
+    padding: 3px 12px;
+    border-radius: 12px;
+    border: 1px solid #fbbf24;
+    letter-spacing: 1px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+}
+
+.journal-page-nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 6px 10px;
+    border-radius: 14px;
+    margin-bottom: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.journal-nav-btn {
+    background: rgba(255, 255, 255, 0.12);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #f1f5f9;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 4px 10px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.journal-nav-btn:hover {
+    background: #f59e0b;
+    color: #ffffff;
+}
+
+.journal-page-badge {
+    font-size: 12px;
+    font-weight: 900;
+    color: #fbbf24;
+}
+
+/* Jigsaw Puzzle Piece Shapes */
+.puzzle-slot {
+    border: 1.5px dashed rgba(255, 255, 255, 0.25);
+    transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+.puzzle-slot.jigsaw-shaped,
+.puzzle-piece-item.jigsaw-shaped {
+    box-shadow: none !important;
+    filter: drop-shadow(0px 3px 5px rgba(0, 0, 0, 0.6));
+}
+
+.puzzle-slot.filled.jigsaw-shaped {
+    border: none !important;
+    filter: drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.7));
+}
+
+.puzzle-piece-item {
+    transition: transform 0.15s ease, filter 0.15s ease;
+}
+
+.puzzle-piece-item:hover {
+    transform: scale(1.12);
+    filter: drop-shadow(0px 5px 10px rgba(251, 191, 36, 0.8));
+}
+
 /* Puzzle Gallery Modal */
 .gallery-modal-card {
     max-width: 440px;

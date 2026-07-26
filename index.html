@@ -22,6 +22,24 @@
     <div id="app-wrapper">
         <!-- Main Game Container (1080x1920 Portrait Aspect Ratio) -->
         <div id="game-container">
+            <!-- SVG Jigsaw Piece ClipPath Definitions -->
+            <svg width="0" height="0" style="position:absolute; pointer-events:none;">
+                <defs>
+                    <clipPath id="jigsaw-clip-0" clipPathUnits="objectBoundingBox"><path d="M 0 0 L 1 0 L 1 0.38 C 1.18 0.38, 1.18 0.62, 1 0.62 L 1 1 L 0.62 1 C 0.62 0.82, 0.38 0.82, 0.38 1 L 0 1 L 0 0 Z"/></clipPath>
+                    <clipPath id="jigsaw-clip-1" clipPathUnits="objectBoundingBox"><path d="M 0 0 L 1 0 L 1 0.38 C 0.82 0.38, 0.82 0.62, 1 0.62 L 1 1 L 0.62 1 C 0.62 1.18, 0.38 1.18, 0.38 1 L 0 1 L 0 0.62 C 0.18 0.62, 0.18 0.38, 0 0.38 L 0 0 Z"/></clipPath>
+                    <clipPath id="jigsaw-clip-2" clipPathUnits="objectBoundingBox"><path d="M 0 0 L 1 0 L 1 1 L 0.62 1 C 0.62 0.82, 0.38 0.82, 0.38 1 L 0 1 L 0 0.62 C -0.18 0.62, -0.18 0.38, 0 0.38 L 0 0 Z"/></clipPath>
+                    <clipPath id="jigsaw-clip-3" clipPathUnits="objectBoundingBox"><path d="M 0 0 L 0.38 0 C 0.38 -0.18, 0.62 -0.18, 0.62 0 L 1 0 L 1 0.38 C 0.82 0.38, 0.82 0.62, 1 0.62 L 1 1 L 0.62 1 C 0.62 1.18, 0.38 1.18, 0.38 1 L 0 1 L 0 0 Z"/></clipPath>
+                    <clipPath id="jigsaw-clip-4" clipPathUnits="objectBoundingBox"><path d="M 0 0 L 0.38 0 C 0.38 0.18, 0.62 0.18, 0.62 0 L 1 0 L 1 0.38 C 1.18 0.38, 1.18 0.62, 1 0.62 L 1 1 L 0.62 1 C 0.62 0.82, 0.38 0.82, 0.38 1 L 0 1 L 0 0.62 C -0.18 0.62, -0.18 0.38, 0 0.38 L 0 0 Z"/></clipPath>
+                    <clipPath id="jigsaw-clip-5" clipPathUnits="objectBoundingBox"><path d="M 0 0 L 0.38 0 C 0.38 -0.18, 0.62 -0.18, 0.62 0 L 1 0 L 1 1 L 0.62 1 C 0.62 1.18, 0.38 1.18, 0.38 1 L 0 1 L 0 0.62 C 0.18 0.62, 0.18 0.38, 0 0.38 L 0 0 Z"/></clipPath>
+                    <clipPath id="jigsaw-clip-6" clipPathUnits="objectBoundingBox"><path d="M 0 0 L 0.38 0 C 0.38 0.18, 0.62 0.18, 0.62 0 L 1 0 L 1 0.38 C 1.18 0.38, 1.18 0.62, 1 0.62 L 1 1 L 0.62 1 C 0.62 0.82, 0.38 0.82, 0.38 1 L 0 1 L 0 0 Z"/></clipPath>
+                    <clipPath id="jigsaw-clip-7" clipPathUnits="objectBoundingBox"><path d="M 0 0 L 0.38 0 C 0.38 -0.18, 0.62 -0.18, 0.62 0 L 1 0 L 1 0.38 C 0.82 0.38, 0.82 0.62, 1 0.62 L 1 1 L 0.62 1 C 0.62 1.18, 0.38 1.18, 0.38 1 L 0 1 L 0 0.62 C 0.18 0.62, 0.18 0.38, 0 0.38 L 0 0 Z"/></clipPath>
+                    <clipPath id="jigsaw-clip-8" clipPathUnits="objectBoundingBox"><path d="M 0 0 L 0.38 0 C 0.38 0.18, 0.62 0.18, 0.62 0 L 1 0 L 1 1 L 0.62 1 C 0.62 0.82, 0.38 0.82, 0.38 1 L 0 1 L 0 0.62 C -0.18 0.62, -0.18 0.38, 0 0.38 L 0 0 Z"/></clipPath>
+                    <clipPath id="jigsaw-clip-9" clipPathUnits="objectBoundingBox"><path d="M 0 0 L 0.38 0 C 0.38 -0.18, 0.62 -0.18, 0.62 0 L 1 0 L 1 0.38 C 0.82 0.38, 0.82 0.62, 1 0.62 L 1 1 L 0 1 L 0 0 Z"/></clipPath>
+                    <clipPath id="jigsaw-clip-10" clipPathUnits="objectBoundingBox"><path d="M 0 0 L 0.38 0 C 0.38 0.18, 0.62 0.18, 0.62 0 L 1 0 L 1 0.38 C 1.18 0.38, 1.18 0.62, 1 0.62 L 1 1 L 0 1 L 0 0.62 C 0.18 0.62, 0.18 0.38, 0 0.38 L 0 0 Z"/></clipPath>
+                    <clipPath id="jigsaw-clip-11" clipPathUnits="objectBoundingBox"><path d="M 0 0 L 0.38 0 C 0.38 -0.18, 0.62 -0.18, 0.62 0 L 1 0 L 1 1 L 0 1 L 0 0.62 C -0.18 0.62, -0.18 0.38, 0 0.38 L 0 0 Z"/></clipPath>
+                </defs>
+            </svg>
+
             <!-- Canvas Overlay for Match Particles & Confetti -->
             <canvas id="fx-canvas"></canvas>
 
@@ -78,6 +96,9 @@
                         </button>
                         <button id="btn-mode-timetrial" class="btn-timetrial btn-menu">
                             <span id="txt-timetrial-btn">⏱️ ZAMANA KARŞI MOD (SEVİYE 1)</span>
+                        </button>
+                        <button id="btn-menu-journal" class="btn-secondary btn-menu btn-journal">
+                            <span>📖 YAPBOZ GÜNLÜĞÜ</span>
                         </button>
                         <button id="btn-menu-settings" class="btn-secondary btn-menu">
                             <span>⚙️ AYARLAR</span>
@@ -318,18 +339,27 @@
             </div>
         </div>
 
-        <!-- 12-PIECE DRAG & DROP PUZZLE GALLERY & INVENTORY MODAL -->
+        <!-- 12-PIECE DRAG & DROP PUZZLE GALLERY & JOURNAL MODAL -->
         <div id="modal-puzzle-gallery" class="modal-overlay hidden">
-            <div class="modal-card gallery-modal-card">
+            <div class="modal-card gallery-modal-card journal-book-card">
                 <button id="btn-close-gallery" class="btn-close-x">✕</button>
-                <h2 class="modal-title">🧩 BULMACA GALERİSİ</h2>
-                <p class="modal-desc">Topladığınız 12 parçalık resimleri tamamlayın!</p>
+                <div class="journal-book-header">
+                    <span class="journal-ribbon">📖 YAPBOZ GÜNLÜĞÜ</span>
+                    <h2 id="journal-picture-title" class="modal-title">Pamuk Kedi 🐱</h2>
+                </div>
+
+                <!-- Journal Page Navigation Controls -->
+                <div class="journal-page-nav">
+                    <button id="btn-prev-page" class="journal-nav-btn">◀ ÖNCEKİ SAYFA</button>
+                    <span id="journal-page-num" class="journal-page-badge">Sayfa 1 / 12</span>
+                    <button id="btn-next-page" class="journal-nav-btn">SONRAKİ SAYFA ▶</button>
+                </div>
 
                 <!-- Puzzle Picture Selector Carousel Tabs -->
                 <div id="puzzle-selector-tabs" class="puzzle-tabs-scroll"></div>
 
-                <!-- Main 3x4 Puzzle Placement Board (12 Grid Slots) -->
-                <div class="puzzle-board-wrapper">
+                <!-- Main 3x4 Puzzle Placement Board (12 Jigsaw Grid Slots) -->
+                <div class="puzzle-board-wrapper journal-page-paper">
                     <div id="puzzle-board-grid" class="puzzle-grid-3x4"></div>
                     <div id="puzzle-completed-badge" class="completed-badge hidden">🏆 TAMAMLANDI!</div>
                 </div>
@@ -344,7 +374,7 @@
 
                 <!-- Unplaced Pieces Inventory Drag & Drop Tray -->
                 <div class="inventory-section">
-                    <h3 class="inventory-title">📦 ENVANTER (Parçaları Tahtaya Sürükleyin):</h3>
+                    <h3 class="inventory-title">📦 ENVANTER (Parçaları Tahtaya Sürükleyin veya Dokunun):</h3>
                     <div id="puzzle-inventory-tray" class="inventory-tray"></div>
                 </div>
             </div>
@@ -376,6 +406,6 @@
         });
       }
     </script>
-    <script src="game.js?v=90" defer></script>
+    <script src="game.js?v=95" defer></script>
 </body>
 </html>

@@ -818,6 +818,27 @@ class TileMatchingGame {
         document.getElementById('btn-extra-slot').addEventListener('click', () => this.useExtraSlotBooster());
         document.getElementById('btn-shuffle').addEventListener('click', () => this.useShuffleBooster());
 
+        const btnMenuJournal = document.getElementById('btn-menu-journal');
+        if (btnMenuJournal) btnMenuJournal.addEventListener('click', () => this.openPuzzleGalleryModal());
+
+        const btnPrevPage = document.getElementById('btn-prev-page');
+        if (btnPrevPage) btnPrevPage.addEventListener('click', () => {
+            const currentIdx = this.puzzlesCatalog.findIndex(p => p.id === this.activePuzzleId);
+            const newIdx = (currentIdx - 1 + this.puzzlesCatalog.length) % this.puzzlesCatalog.length;
+            this.activePuzzleId = this.puzzlesCatalog[newIdx].id;
+            this.sound.playClick();
+            this.renderPuzzleGalleryModal();
+        });
+
+        const btnNextPage = document.getElementById('btn-next-page');
+        if (btnNextPage) btnNextPage.addEventListener('click', () => {
+            const currentIdx = this.puzzlesCatalog.findIndex(p => p.id === this.activePuzzleId);
+            const newIdx = (currentIdx + 1) % this.puzzlesCatalog.length;
+            this.activePuzzleId = this.puzzlesCatalog[newIdx].id;
+            this.sound.playClick();
+            this.renderPuzzleGalleryModal();
+        });
+
         const btnGallery = document.getElementById('btn-open-gallery');
         if (btnGallery) btnGallery.addEventListener('click', () => this.openPuzzleGalleryModal());
 
@@ -1923,7 +1944,14 @@ class TileMatchingGame {
             }
         }
 
-        const activePuzzle = this.puzzlesCatalog.find(p => p.id === this.activePuzzleId) || this.puzzlesCatalog[0];
+        const activeIdx = this.puzzlesCatalog.findIndex(p => p.id === this.activePuzzleId);
+        const activePuzzle = this.puzzlesCatalog[activeIdx >= 0 ? activeIdx : 0] || this.puzzlesCatalog[0];
+        
+        const titleEl = document.getElementById('journal-picture-title');
+        if (titleEl) titleEl.innerText = activePuzzle.name;
+
+        const pageNumEl = document.getElementById('journal-page-num');
+        if (pageNumEl) pageNumEl.innerText = `Sayfa ${activeIdx + 1} / ${this.puzzlesCatalog.length}`;
         const placedPieces = this.placedPuzzlePieces[activePuzzle.id] || [];
         const isCompleted = placedPieces.length === 12;
 
@@ -1941,7 +1969,9 @@ class TileMatchingGame {
                 const row = Math.floor(i / 3);
 
                 const slot = document.createElement('div');
-                slot.className = `puzzle-slot ${placedPieces.includes(i) ? 'filled' : ''}`;
+                slot.className = `puzzle-slot jigsaw-shaped ${placedPieces.includes(i) ? 'filled' : ''}`;
+                slot.style.clipPath = `url(#jigsaw-clip-${i})`;
+                slot.style.webkitClipPath = `url(#jigsaw-clip-${i})`;
                 slot.setAttribute('data-slot-index', i);
 
                 if (placedPieces.includes(i)) {
@@ -1998,7 +2028,9 @@ class TileMatchingGame {
                     const row = Math.floor(pItem.pieceIndex / 3);
 
                     const pieceEl = document.createElement('div');
-                    pieceEl.className = 'puzzle-piece-item';
+                    pieceEl.className = 'puzzle-piece-item jigsaw-shaped';
+                    pieceEl.style.clipPath = `url(#jigsaw-clip-${pItem.pieceIndex})`;
+                    pieceEl.style.webkitClipPath = `url(#jigsaw-clip-${pItem.pieceIndex})`;
                     pieceEl.draggable = true;
                     pieceEl.style.backgroundImage = `url(${puzzleDef.imgSrc})`;
                     pieceEl.style.backgroundSize = '300% 400%';
