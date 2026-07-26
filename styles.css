@@ -2,8 +2,8 @@
     --bg-main: #060913;
     --card-w: 68px;
     --card-h: 88px;
-    --tray-w: 390px;
-    --tray-h: 104px;
+    --tray-w: 410px;
+    --tray-h: 108px;
     --accent-gold: #fbbf24;
     --accent-cyan: #38bdf8;
     --accent-purple: #c084fc;
@@ -1240,27 +1240,30 @@ body {
     width: var(--tray-w);
     height: var(--tray-h);
     background: rgba(15, 23, 42, 0.88);
-    border: 2px solid rgba(245, 158, 11, 0.45);
-    border-radius: 22px;
+    border: 2.5px solid rgba(245, 158, 11, 0.5);
+    border-radius: 24px;
     box-shadow: 0 12px 36px rgba(0, 0, 0, 0.7), inset 0 2px 10px rgba(255, 255, 255, 0.08);
     backdrop-filter: blur(16px);
     display: flex;
-    justify-content: space-around;
+    justify-content: flex-start;
     align-items: center;
-    padding: 0 8px;
+    padding: 0 7px;
+    gap: 14px;
 }
 
 .slot-marker {
     width: var(--card-w);
     height: var(--card-h);
-    border: 2px dashed rgba(255, 255, 255, 0.14);
+    border: 2px dashed rgba(255, 255, 255, 0.22);
     border-radius: 12px;
-    background: rgba(0, 0, 0, 0.25);
+    background: rgba(0, 0, 0, 0.35);
+    box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.6);
+    flex-shrink: 0;
 }
 
 #slot-tiles-layer {
     position: absolute;
-    top: 16px;
+    top: 0;
     left: 50%;
     transform: translateX(-50%);
     width: var(--tray-w);

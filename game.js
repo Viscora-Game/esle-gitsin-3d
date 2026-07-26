@@ -856,8 +856,7 @@ class TileMatchingGame {
         const btnCollectChest = document.getElementById('btn-collect-chest');
         if (btnCollectChest) btnCollectChest.addEventListener('click', () => {
             document.getElementById('modal-chest').classList.add('hidden');
-            document.getElementById('victory-score').innerText = this.score;
-            document.getElementById('modal-victory').classList.remove('hidden');
+            this.startLevel(this.level + 1, false, this.currentMode);
         });
 
         document.getElementById('btn-next-level').addEventListener('click', () => {
@@ -1600,16 +1599,16 @@ class TileMatchingGame {
         const total = this.slotTiles.length;
         if (total === 0) return;
 
-        const trayW = 390;
+        const trayW = 410;
         const standard5Capacity = 5;
-        const spacing = (trayW - 20) / standard5Capacity;
-        const startX = 10 + (spacing - this.cardW) / 2;
+        const spacing = 82;
+        const startX = 7;
 
         for (let i = 0; i < total; i++) {
             const tile = this.slotTiles[i];
 
             if (i < 5) {
-                // Bottom Tray 5 Standard Slots (Always 100% Standard Full Size!)
+                // Bottom Tray 5 Standard Slots (100% Centered inside Slot Marker Frames!)
                 const targetX = startX + (i * spacing);
                 const targetY = 10;
 
@@ -1887,6 +1886,9 @@ class TileMatchingGame {
         const rewardContent = document.getElementById('chest-reward-content');
         if (rewardContent) rewardContent.classList.add('hidden');
 
+        const btnCollectChest = document.getElementById('btn-collect-chest');
+        if (btnCollectChest) btnCollectChest.style.pointerEvents = 'none';
+
         const modalChest = document.getElementById('modal-chest');
         if (modalChest) modalChest.classList.remove('hidden');
 
@@ -1933,6 +1935,12 @@ class TileMatchingGame {
 
         const rewardContent = document.getElementById('chest-reward-content');
         if (rewardContent) rewardContent.classList.remove('hidden');
+
+        const btnCollectChest = document.getElementById('btn-collect-chest');
+        if (btnCollectChest) {
+            btnCollectChest.style.pointerEvents = 'none';
+            setTimeout(() => { btnCollectChest.style.pointerEvents = 'auto'; }, 450);
+        }
 
         this.saveGameProgress();
     }
