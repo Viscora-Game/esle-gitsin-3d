@@ -1886,8 +1886,7 @@ class TileMatchingGame {
         const rewardContent = document.getElementById('chest-reward-content');
         if (rewardContent) rewardContent.classList.add('hidden');
 
-        const btnCollectChest = document.getElementById('btn-collect-chest');
-        if (btnCollectChest) btnCollectChest.style.pointerEvents = 'none';
+
 
         const modalChest = document.getElementById('modal-chest');
         if (modalChest) modalChest.classList.remove('hidden');
@@ -1936,11 +1935,7 @@ class TileMatchingGame {
         const rewardContent = document.getElementById('chest-reward-content');
         if (rewardContent) rewardContent.classList.remove('hidden');
 
-        const btnCollectChest = document.getElementById('btn-collect-chest');
-        if (btnCollectChest) {
-            btnCollectChest.style.pointerEvents = 'none';
-            setTimeout(() => { btnCollectChest.style.pointerEvents = 'auto'; }, 450);
-        }
+
 
         this.saveGameProgress();
     }
