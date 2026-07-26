@@ -1476,10 +1476,37 @@ body {
 }
 
 .lang-btn.active {
-    background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%);
-    border-color: #38bdf8;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    border-color: #34d399;
+    box-shadow: 0 4px 14px rgba(16, 185, 129, 0.5);
+}
+
+/* Rewarded Ad Chest Main Menu Button */
+.btn-ad-chest {
+    background: linear-gradient(135deg, #a855f7 0%, #7e22ce 100%);
+    border: 2px solid #c084fc;
     color: #ffffff;
-    box-shadow: 0 4px 10px rgba(56, 189, 248, 0.4);
+    font-weight: 900;
+    box-shadow: 0 6px 20px rgba(168, 85, 247, 0.4), 0 0 15px rgba(192, 132, 252, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.btn-ad-chest::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: linear-gradient(60deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+    transform: rotate(30deg);
+    animation: shineRibbon 3s infinite;
+}
+
+@keyframes shineRibbon {
+    0% { transform: translateX(-100%) rotate(30deg); }
+    100% { transform: translateX(100%) rotate(30deg); }
 }
 
 /* Journal Book & Jigsaw Styling */

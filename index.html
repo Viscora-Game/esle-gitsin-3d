@@ -96,6 +96,9 @@
                         <button id="btn-mode-timetrial" class="btn-timetrial btn-menu">
                             <span id="txt-timetrial-btn">⏱️ ZAMANA KARŞI MOD (SEVİYE 1)</span>
                         </button>
+                        <button id="btn-menu-ad-chest" class="btn-ad-chest btn-menu">
+                            <span data-i18n="adChestBtn">📺 REKLAM İZLE & SANDIK KAZAN! 🎁</span>
+                        </button>
                         <button id="btn-menu-journal" class="btn-secondary btn-menu btn-journal">
                             <span data-i18n="journalBtnText">📖 YAPBOZ GÜNLÜĞÜ</span>
                         </button>
@@ -194,7 +197,7 @@
 
                     <!-- Force Update & Clear Cache Button -->
                     <button id="btn-force-update" class="btn-secondary settings-full-btn" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff; font-weight: 700; margin-top: 8px;">
-                        <span data-i18n="forceUpdateBtn">⚡ CANLI GÜNCELLEMEYİ YÜKLE (v2.1.0)</span>
+                        <span data-i18n="forceUpdateBtn">⚡ CANLI GÜNCELLEMEYİ YÜKLE (v2.2.0)</span>
                     </button>
 
                     <button id="btn-save-settings" class="btn-primary" data-i18n="saveBtn">KAYDET VE KAPAT</button>
@@ -407,7 +410,24 @@
                     <span id="penalty-text" data-i18n="penaltyText">CEZA: -2000 Puan (Kazanılan puanlar silindi)</span>
                 </div>
 
+                <button id="btn-ad-revive" class="btn-primary btn-ad-revive" style="background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); border-color: #a78bfa; margin-bottom: 10px;">
+                    <span data-i18n="adReviveBtn">📺 REKLAM İZLE & +1 SLOT İLE DEVAM ET</span>
+                </button>
+
                 <button id="btn-retry" class="btn-primary" data-i18n="retryBtn">TEKRAR DENE (-2000 PUAN)</button>
+            </div>
+        </div>
+
+        <!-- REWARDED VIDEO AD PLAYER MODAL DEMO -->
+        <div id="modal-ad-player" class="modal-overlay hidden" style="z-index: 99999; background: rgba(0,0,0,0.95);">
+            <div class="modal-card ad-player-card" style="text-align: center; border-color: #8b5cf6; padding: 24px;">
+                <div class="ad-spinner-icon" style="font-size: 48px; animation: pulse 1s infinite alternate;">📺</div>
+                <h2 style="color: #a78bfa; font-size: 20px; font-weight: 900; margin: 12px 0 6px 0;">ÖDÜLLÜ REKLAM OYNATILIYOR...</h2>
+                <p style="color: #cbd5e1; font-size: 13px; margin-bottom: 16px;">Ödülünüzü almak için lütfen tamamlanmasını bekleyin!</p>
+                <div class="ad-progress-bar" style="width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; margin-bottom: 12px;">
+                    <div id="ad-progress-fill" style="width: 0%; height: 100%; background: linear-gradient(90deg, #8b5cf6, #ec4899); transition: width 0.1s linear;"></div>
+                </div>
+                <span id="ad-timer-countdown" style="font-size: 14px; font-weight: 800; color: #fbbf24;">Kalan Süre: 3 sn</span>
             </div>
         </div>
     </div>
@@ -416,7 +436,7 @@
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./sw.js?v=2.1.0').then((reg) => {
+          navigator.serviceWorker.register('./sw.js?v=2.2.0').then((reg) => {
             reg.update();
 
             reg.addEventListener('updatefound', () => {
@@ -441,6 +461,6 @@
         });
       }
     </script>
-    <script src="game.js?v=2.1.0" defer></script>
+    <script src="game.js?v=2.2.0" defer></script>
 </body>
 </html>

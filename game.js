@@ -463,6 +463,8 @@ class TileMatchingGame {
         // Full 7-Language Global Localization Engine (TR, EN, DE, FR, IT, ES, PT)
         this.i18n = {
             tr: {
+                adChestBtn: "📺 REKLAM İZLE & SANDIK KAZAN! 🎁",
+                adReviveBtn: "📺 REKLAM İZLE & +1 SLOT İLE DEVAM ET",
                 gameTitle: "EŞLE GİTSİN! 3D",
                 menuSubtitle: "Eşleme ve Zeka Macerası",
                 play: "OYNA",
@@ -528,6 +530,8 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 TEBRİKLER! {name} BULMACASI TAMAMLANDI!"
             },
             en: {
+                adChestBtn: "📺 WATCH AD & WIN CHEST! 🎁",
+                adReviveBtn: "📺 WATCH AD & CONTINUE WITH +1 SLOT",
                 gameTitle: "MATCH & GO! 3D",
                 menuSubtitle: "Tile Matching & Logic Adventure",
                 play: "PLAY",
@@ -593,6 +597,8 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 CONGRATS! {name} PUZZLE COMPLETED!"
             },
             de: {
+                adChestBtn: "📺 WERBUNG SEHEN & TRUHE GEWINNEN! 🎁",
+                adReviveBtn: "📺 WERBUNG SEHEN & MIT +1 SLOT FORTFAHREN",
                 gameTitle: "MATCH & GO! 3D",
                 menuSubtitle: "Kachel-Matching & Logikabenteuer",
                 play: "SPIELEN",
@@ -658,6 +664,8 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 GLÜCKWUNSCH! {name} PUZZLE VOLLSTÄNDIG!"
             },
             fr: {
+                adChestBtn: "📺 REGARDER PUB & GAGNER COFFRE! 🎁",
+                adReviveBtn: "📺 REGARDER PUB & CONTINUER AVEC +1 EMPLACEMENT",
                 gameTitle: "MATCH & GO! 3D",
                 menuSubtitle: "Aventure de Réflexion & Cartes",
                 play: "JOUER",
@@ -723,6 +731,8 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 BRAVO! PUZZLE {name} COMPLÉTÉ!"
             },
             it: {
+                adChestBtn: "📺 GUARDA PUBBLICITÀ & VINCI BAULE! 🎁",
+                adReviveBtn: "📺 GUARDA PUBBLICITÀ & CONTINUA CON +1 SLOT",
                 gameTitle: "MATCH & GO! 3D",
                 menuSubtitle: "Avventura di Abbinamento & Logica",
                 play: "GIOCA",
@@ -788,6 +798,8 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 COMPLIMENTI! PUZZLE {name} COMPLETATO!"
             },
             es: {
+                adChestBtn: "📺 ¡VER ANUNCIO Y GANAR COFRE! 🎁",
+                adReviveBtn: "📺 VER ANUNCIO Y CONTINUAR CON +1 CASILLA",
                 gameTitle: "MATCH & GO! 3D",
                 menuSubtitle: "Aventura de Emparejamiento y Lógica",
                 play: "JUGAR",
@@ -853,6 +865,8 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 ¡ENHORABUENA! ¡PUZZLE {name} COMPLETADO!"
             },
             pt: {
+                adChestBtn: "📺 VER ANÚNCIO E GANHAR BAÚ! 🎁",
+                adReviveBtn: "📺 VER ANÚNCIO E CONTINUAR COM +1 ESPAÇO",
                 gameTitle: "MATCH & GO! 3D",
                 menuSubtitle: "Aventura de Combinação e Lógica",
                 play: "JOGAR",
@@ -2862,13 +2876,60 @@ class TileMatchingGame {
         this.renderPuzzleGalleryModal();
     }
 
+    // =========================================================
+    // GOOGLE ADMOB REWARDED VIDEO & INTERSTITIAL AD ENGINE
+    // =========================================================
+    showRewardedAd(onSuccess, onFailure) {
+        // Production Check for Google AdMob H5 / Native Android Bridge
+        if (window.AndroidAdMob && typeof window.AndroidAdMob.showRewardedAd === 'function') {
+            window.AndroidAdMob.showRewardedAd();
+            window.onAdMobRewardSuccess = () => { if (onSuccess) onSuccess(); };
+            return;
+        }
+
+        if (window.google && window.google.afg && typeof window.google.afg.showAd === 'function') {
+            window.google.afg.showAd({
+                adSlot: 'rewarded',
+                onAdDismissed: () => { if (onSuccess) onSuccess(); }
+            });
+            return;
+        }
+
+        // Web Preview / Browser Testing Simulated Rewarded Ad Player (3-Second Interactive Demo)
+        const adModal = document.getElementById('modal-ad-player');
+        const progressBar = document.getElementById('ad-progress-fill');
+        const timerText = document.getElementById('ad-timer-countdown');
+
+        if (!adModal) {
+            if (onSuccess) onSuccess();
+            return;
+        }
+
+        adModal.classList.remove('hidden');
+        if (progressBar) progressBar.style.width = '0%';
+
+        let secondsLeft = 3;
+        if (timerText) timerText.innerText = `Kalan Süre: ${secondsLeft} sn`;
+
+        const interval = setInterval(() => {
+            secondsLeft--;
+            const pct = Math.round(((3 - secondsLeft) / 3) * 100);
+            if (progressBar) progressBar.style.width = `${pct}%`;
+            if (timerText) timerText.innerText = `Kalan Süre: ${secondsLeft} sn`;
+
+            if (secondsLeft <= 0) {
+                clearInterval(interval);
+                setTimeout(() => {
+                    adModal.classList.add('hidden');
+                    if (onSuccess) onSuccess();
+                }, 300);
+            }
+        }, 1000);
+    }
 }
+
 
 // Initialize Game on DOM Load
 window.addEventListener('DOMContentLoaded', () => {
     window.gameInstance = new TileMatchingGame();
 });
-
-// Prevent native context menu & long-press menus globally for Play Store / Native App mode
-window.addEventListener('contextmenu', (e) => e.preventDefault());
-document.addEventListener('contextmenu', (e) => e.preventDefault());
