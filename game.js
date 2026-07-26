@@ -2439,13 +2439,18 @@ class TileMatchingGame {
     buyPuzzlePieceWithGold() {
         if (this.goldCoins < 100) {
             this.sound.playLockThud();
-            this.showToast('Yetersiz Altın! (100 Altın Gerekli 🪙)');
+            this.showToast('⚠️ Yetersiz Altın! (100 Altın Gerekli 🪙)');
+            const buyBtn = document.getElementById('btn-buy-puzzle-piece');
+            if (buyBtn) {
+                buyBtn.classList.add('shaking');
+                setTimeout(() => buyBtn.classList.remove('shaking'), 250);
+            }
             return;
         }
 
         const added = this.awardRandomMissingPuzzlePiece();
         if (!added) {
-            this.showToast('Tüm Bulmaca Parçaları Zaten Toplandı! 🏆');
+            this.showToast('🏆 Tüm Bulmaca Parçaları Zaten Toplandı!');
             return;
         }
 

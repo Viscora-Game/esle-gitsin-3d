@@ -989,27 +989,30 @@ body {
     color: #ffffff;
 }
 
-/* Toast Alert Notification (Z-Index 1500) */
+/* Toast Alert Notification (Z-Index 9999 - Above ALL Modals & Overlays!) */
 .toast-msg {
-    position: absolute;
-    top: 105px;
+    position: fixed;
+    top: 24px;
     left: 50%;
     transform: translateX(-50%);
-    background: rgba(239, 68, 68, 0.92);
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    border: 2px solid #f87171;
     color: #ffffff;
-    padding: 8px 18px;
-    border-radius: 20px;
-    font-size: 13px;
-    font-weight: 800;
-    box-shadow: 0 6px 20px rgba(239, 68, 68, 0.5);
-    z-index: 1500;
+    padding: 10px 22px;
+    border-radius: 24px;
+    font-size: 14px;
+    font-weight: 900;
+    box-shadow: 0 8px 30px rgba(239, 68, 68, 0.7), 0 0 15px rgba(0, 0, 0, 0.5);
+    z-index: 9999 !important;
     pointer-events: none;
-    transition: opacity 0.3s ease, transform 0.3s ease;
+    transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    white-space: nowrap;
+    text-align: center;
 }
 
 .toast-msg.hidden {
     opacity: 0;
-    transform: translate(-50%, -10px);
+    transform: translate(-50%, -20px) scale(0.9);
     pointer-events: none;
 }
 
