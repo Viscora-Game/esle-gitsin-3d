@@ -214,9 +214,15 @@
                         </div>
 
                         <div class="hud-item badge-score">
-                            <span class="hud-label">SKOR</span>
+                            <span class="hud-label" data-i18n="score">SKOR</span>
                             <span id="score-val" class="hud-val">0</span>
                         </div>
+                        <div class="hud-item badge-gold">
+                            <span class="hud-label">ALTIN</span>
+                            <span class="gold-icon">🪙</span>
+                            <span id="gold-val" class="hud-val">0</span>
+                        </div>
+                        <button id="btn-open-gallery" class="hud-icon-btn" title="Bulmaca Galerisi">🧩</button>
                     </div>
 
                     <button id="btn-hud-settings" class="hud-icon-btn" title="Ayarlar">⚙️</button>
@@ -292,6 +298,58 @@
             </div>
         </div>
 
+        <!-- CHEST OPENING REWARD MODAL (Every 10 Levels) -->
+        <div id="modal-chest" class="modal-overlay hidden">
+            <div class="modal-card chest-card">
+                <div class="chest-star-rating">
+                    <span id="chest-star-display">⭐️⭐️⭐️⭐️⭐️</span>
+                </div>
+                <h2 id="chest-modal-title" class="modal-title">ÖDÜL SANDIĞI! 🎁</h2>
+                <p class="modal-desc">10 Bölüm Başarısı Ödülü! Sandığı açmak için dokun!</p>
+                
+                <div id="chest-box-container" class="chest-box-container">
+                    <div id="chest-box" class="chest-box">📦</div>
+                </div>
+
+                <div id="chest-reward-content" class="chest-reward-content hidden">
+                    <div id="chest-reward-list" class="chest-reward-list"></div>
+                    <button id="btn-collect-chest" class="btn-primary">ÖDÜLLERİ AL</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 12-PIECE DRAG & DROP PUZZLE GALLERY & INVENTORY MODAL -->
+        <div id="modal-puzzle-gallery" class="modal-overlay hidden">
+            <div class="modal-card gallery-modal-card">
+                <button id="btn-close-gallery" class="btn-close-x">✕</button>
+                <h2 class="modal-title">🧩 BULMACA GALERİSİ</h2>
+                <p class="modal-desc">Topladığınız 12 parçalık resimleri tamamlayın!</p>
+
+                <!-- Puzzle Picture Selector Carousel Tabs -->
+                <div id="puzzle-selector-tabs" class="puzzle-tabs-scroll"></div>
+
+                <!-- Main 3x4 Puzzle Placement Board (12 Grid Slots) -->
+                <div class="puzzle-board-wrapper">
+                    <div id="puzzle-board-grid" class="puzzle-grid-3x4"></div>
+                    <div id="puzzle-completed-badge" class="completed-badge hidden">🏆 TAMAMLANDI!</div>
+                </div>
+
+                <!-- Gold Economy: Buy Missing Piece Button -->
+                <div class="gallery-action-bar">
+                    <button id="btn-buy-puzzle-piece" class="btn-secondary buy-piece-btn">
+                        <span>🧩 1 Parça Al</span>
+                        <span class="buy-cost-tag">🪙 100 Altın</span>
+                    </button>
+                </div>
+
+                <!-- Unplaced Pieces Inventory Drag & Drop Tray -->
+                <div class="inventory-section">
+                    <h3 class="inventory-title">📦 ENVANTER (Parçaları Tahtaya Sürükleyin):</h3>
+                    <div id="puzzle-inventory-tray" class="inventory-tray"></div>
+                </div>
+            </div>
+        </div>
+
         <!-- Game Over Modal Dialog with Penalty Alert -->
         <div id="modal-gameover" class="modal-overlay hidden">
             <div class="modal-card modal-defeat">
@@ -318,6 +376,6 @@
         });
       }
     </script>
-    <script src="game.js?v=80" defer></script>
+    <script src="game.js?v=90" defer></script>
 </body>
 </html>
