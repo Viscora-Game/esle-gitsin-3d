@@ -187,6 +187,11 @@
                         <span>🔄 SIFIRLA VE YENİ OYUN BAŞLAT</span>
                     </button>
 
+                    <!-- Force Update & Clear Cache Button -->
+                    <button id="btn-force-update" class="btn-secondary settings-full-btn" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff; font-weight: 700; margin-top: 8px;">
+                        <span>⚡ CANLI GÜNCELLEMEYİ YÜKLE (v200)</span>
+                    </button>
+
                     <button id="btn-save-settings" class="btn-primary" data-i18n="saveBtn">KAYDET VE KAPAT</button>
                 </div>
             </div>
@@ -398,8 +403,7 @@
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./sw.js').then((reg) => {
-            // Force immediate check for live updates on GitHub Pages
+          navigator.serviceWorker.register('./sw.js?v=200').then((reg) => {
             reg.update();
 
             reg.addEventListener('updatefound', () => {
@@ -407,8 +411,7 @@
               if (installingWorker) {
                 installingWorker.addEventListener('statechange', () => {
                   if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                    // New version installed -> Auto-reload immediately to show latest version!
-                    window.location.reload();
+                    window.location.reload(true);
                   }
                 });
               }
@@ -419,12 +422,12 @@
           navigator.serviceWorker.addEventListener('controllerchange', () => {
             if (!refreshing) {
               refreshing = true;
-              window.location.reload();
+              window.location.reload(true);
             }
           });
         });
       }
     </script>
-    <script src="game.js?v=170" defer></script>
+    <script src="game.js?v=200" defer></script>
 </body>
 </html>

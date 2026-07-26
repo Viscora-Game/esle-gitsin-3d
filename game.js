@@ -733,6 +733,25 @@ class TileMatchingGame {
             });
         }
 
+        const btnForceUpdate = document.getElementById('btn-force-update');
+        if (btnForceUpdate) {
+            btnForceUpdate.addEventListener('click', async () => {
+                if ('serviceWorker' in navigator) {
+                    try {
+                        const regs = await navigator.serviceWorker.getRegistrations();
+                        for (let reg of regs) { await reg.unregister(); }
+                    } catch (e) {}
+                }
+                if ('caches' in window) {
+                    try {
+                        const keys = await caches.keys();
+                        for (let key of keys) { await caches.delete(key); }
+                    } catch (e) {}
+                }
+                window.location.reload(true);
+            });
+        }
+
         document.getElementById('btn-close-reset-confirm').addEventListener('click', () => {
             document.getElementById('modal-reset-confirm').classList.add('hidden');
         });

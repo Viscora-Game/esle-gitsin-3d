@@ -1,4 +1,4 @@
-const CACHE_NAME = 'esle-gitsin-3d-v170';
+const CACHE_NAME = 'esle-gitsin-3d-v200';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -6,12 +6,7 @@ const ASSETS_TO_CACHE = [
   './game.js',
   './manifest.json',
   './favicon.ico',
-  './favicon.png',
-  './icons/app-icon-192.png',
-  './icons/app-icon-512.png',
-  './icons/app-maskable-512.png',
-  './icons/app-apple-icon.png',
-  './images/app_hero_icon.png'
+  './favicon.png'
 ];
 
 // Install Event - Pre-cache core files & activate immediately
@@ -40,16 +35,14 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// Fetch Event - NETWORK FIRST with Cache Fallback for instant live updates!
+// Fetch Event - NETWORK FIRST for live updates
 self.addEventListener('fetch', (event) => {
-  // Only handle GET requests for same origin or GitHub Pages assets
   if (event.request.method !== 'GET') return;
 
   event.respondWith(
     fetch(event.request)
       .then((networkResponse) => {
-        // If network fetch succeeds, update cache in background & return fresh response
-        if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
+        if (networkResponse && networkResponse.status === 200) {
           const responseToCache = networkResponse.clone();
           caches.open(CACHE_NAME).then((cache) => {
             cache.put(event.request, responseToCache);
@@ -58,6 +51,10 @@ self.addEventListener('fetch', (event) => {
         return networkResponse;
       })
       .catch(() => {
+        return caches.match(event.request);
+      })
+  );
+});
         // If offline or network fails, fall back to cached version
         return caches.match(event.request);
       })
