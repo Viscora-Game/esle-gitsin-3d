@@ -854,12 +854,14 @@ class TileMatchingGame {
         if (chestBox) chestBox.addEventListener('click', () => this.openChestBox());
 
         const btnCollectChest = document.getElementById('btn-collect-chest');
-        if (btnCollectChest) btnCollectChest.onclick = () => {
-            if (!this.canCollectRewards) return;
-            this.sound.playClick();
-            document.getElementById('modal-chest').classList.add('hidden');
-            this.startLevel(this.level + 1, false, this.currentMode);
-        };
+        if (btnCollectChest) {
+            btnCollectChest.onclick = () => {
+                try { this.sound.playClick(); } catch (e) {}
+                const modalChest = document.getElementById('modal-chest');
+                if (modalChest) modalChest.classList.add('hidden');
+                this.startLevel(this.level + 1, false, this.currentMode);
+            };
+        }
 
         document.getElementById('btn-next-level').addEventListener('click', () => {
             document.getElementById('modal-victory').classList.add('hidden');
@@ -1881,8 +1883,6 @@ class TileMatchingGame {
     }
 
     triggerChestRewardModal(starLevel, isBonus) {
-        this.canClickChest = false;
-        setTimeout(() => { this.canClickChest = true; }, 600);
 
         const starsText = '⭐️'.repeat(starLevel);
         const starDisp = document.getElementById('chest-star-display');
@@ -1916,11 +1916,7 @@ class TileMatchingGame {
     }
 
     openChestBox() {
-        if (!this.canClickChest) return;
         if (!this.pendingChestReward) return;
-
-        this.canCollectRewards = false;
-        setTimeout(() => { this.canCollectRewards = true; }, 500);
 
         const reward = this.pendingChestReward;
         this.pendingChestReward = null; // Clear so it only opens once
