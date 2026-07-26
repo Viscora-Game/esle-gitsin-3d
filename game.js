@@ -954,7 +954,32 @@ class TileMatchingGame {
         const safeBoardH = (boardEl && boardEl.clientHeight > 200) ? boardEl.clientHeight : ((window.innerHeight - 160) || 520);
         const positions = this.generateLayoutPositions(formationType, safeBoardW, safeBoardH);
 
-        const totalPairs = Math.floor(positions.length / 2);
+        // PROGRESSIVE LEVEL PAIR SCALING (Smooth growth without extreme clutter!)
+        // Every 10 levels adds +2 extra pairs (+4 tiles), strictly capped at 27 pairs (54 tiles max).
+        const extraPairs = Math.min(15, Math.floor((this.level - 1) / 10) * 2);
+        const totalPairs = Math.min(27, Math.floor(positions.length / 2) + extraPairs);
+        const totalTilesNeeded = totalPairs * 2;
+
+        const cardW = this.cardW || 48;
+        const cardH = this.cardH || 60;
+        const stepX = cardW * 0.72;
+        const stepY = cardH * 0.78;
+        const cx = safeBoardW / 2 - cardW / 2;
+        const cy = safeBoardH / 2 - cardH / 2 - 15;
+
+        const initialCount = positions.length;
+        while (positions.length < totalTilesNeeded) {
+            const idx = positions.length - initialCount;
+            const r = (Math.floor(idx / 3) % 3) - 1;
+            const c = (idx % 3) - 1;
+            const layer = 1 + (Math.floor(idx / 9) % 2);
+            positions.push({
+                x: Math.round(cx + c * stepX * 0.65),
+                y: Math.round(cy + r * stepY * 0.65 - (layer * 6)),
+                layer: layer
+            });
+        }
+
         const pool = [];
 
         for (let i = 0; i < totalPairs; i++) {
