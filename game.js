@@ -882,9 +882,8 @@ class TileMatchingGame {
                 
                 // Claim exact displayed rewards when clicking Envantere Ekle ve Devam Et!
                 if (this.pendingChestReward) {
-                    const reward = this.pendingChestReward;
-                    if (reward.gold > 0) {
-                        this.goldCoins += reward.gold;
+                    if (this.pendingTotalGoldReward > 0) {
+                        this.goldCoins += this.pendingTotalGoldReward;
                     }
                     if (this.pendingAwardedPieces && this.pendingAwardedPieces.length > 0) {
                         for (const piece of this.pendingAwardedPieces) {
@@ -901,6 +900,7 @@ class TileMatchingGame {
 
                     this.pendingChestReward = null;
                     this.pendingAwardedPieces = null;
+                    this.pendingTotalGoldReward = 0;
                     this.saveGameProgress();
                 }
 
@@ -1981,6 +1981,29 @@ class TileMatchingGame {
         this.fx.spawnConfetti();
 
         this.pendingAwardedPieces = [];
+        let totalGold = reward.gold || 0;
+
+        if (reward.pieces > 0) {
+            for (let i = 0; i < reward.pieces; i++) {
+                const pieceData = this.rollAnyPuzzlePiece();
+                const isOwned = this.checkIfPieceOwned(pieceData.puzzleId, pieceData.pieceIndex);
+
+                if (isOwned) {
+                    // AUTOMATIC 50 GOLD CONVERSION FOR DUPLICATE PUZZLE PIECES!
+                    totalGold += 50;
+                    const item = document.createElement('div');
+                    item.className = 'chest-reward-item';
+                    item.innerHTML = `<span class="reward-icon">🪙</span><span class="reward-val">+50 ALTIN <br><small style="font-size:10px; color:#fbbf24;">(Varolan ${pieceData.puzzleName} #${pieceData.pieceIndex + 1} Dönüştü!)</small></span>`;
+                    if (rewardListEl) rewardListEl.appendChild(item);
+                } else {
+                    this.pendingAwardedPieces.push(pieceData);
+                    const item = document.createElement('div');
+                    item.className = 'chest-reward-item';
+                    item.innerHTML = `<span class="reward-icon">🧩</span><span class="reward-val">${pieceData.puzzleName} (#${pieceData.pieceIndex + 1})</span>`;
+                    if (rewardListEl) rewardListEl.appendChild(item);
+                }
+            }
+        }
 
         if (reward.gold > 0) {
             const item = document.createElement('div');
@@ -1989,18 +2012,7 @@ class TileMatchingGame {
             if (rewardListEl) rewardListEl.appendChild(item);
         }
 
-        if (reward.pieces > 0) {
-            for (let i = 0; i < reward.pieces; i++) {
-                const piece = this.getRandomMissingPieceData();
-                if (piece) {
-                    this.pendingAwardedPieces.push(piece);
-                    const item = document.createElement('div');
-                    item.className = 'chest-reward-item';
-                    item.innerHTML = `<span class="reward-icon">🧩</span><span class="reward-val">${piece.puzzleName} (#${piece.pieceIndex + 1})</span>`;
-                    if (rewardListEl) rewardListEl.appendChild(item);
-                }
-            }
-        }
+        this.pendingTotalGoldReward = totalGold;
 
         const chestBox = document.getElementById('chest-box');
         if (chestBox) chestBox.innerText = '✨';
@@ -2014,6 +2026,22 @@ class TileMatchingGame {
 
         const rewardContent = document.getElementById('chest-reward-content');
         if (rewardContent) rewardContent.classList.remove('hidden');
+    }
+
+    rollAnyPuzzlePiece() {
+        const puzzle = this.puzzlesCatalog[Math.floor(Math.random() * this.puzzlesCatalog.length)];
+        const pieceIdx = Math.floor(Math.random() * 12);
+        return { puzzleId: puzzle.id, puzzleName: puzzle.name, pieceIndex: pieceIdx };
+    }
+
+    checkIfPieceOwned(puzzleId, pieceIdx) {
+        const placed = this.placedPuzzlePieces[puzzleId] || [];
+        if (placed.includes(pieceIdx)) return true;
+        const inInv = this.puzzleInventory.some(p => p.puzzleId === puzzleId && p.pieceIndex === pieceIdx);
+        if (inInv) return true;
+        const inPending = this.pendingAwardedPieces && this.pendingAwardedPieces.some(p => p.puzzleId === puzzleId && p.pieceIndex === pieceIdx);
+        if (inPending) return true;
+        return false;
     }
 
     getRandomMissingPieceData() {
