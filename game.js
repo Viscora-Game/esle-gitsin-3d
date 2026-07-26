@@ -954,10 +954,13 @@ class TileMatchingGame {
         const safeBoardH = (boardEl && boardEl.clientHeight > 200) ? boardEl.clientHeight : ((window.innerHeight - 160) || 520);
         const positions = this.generateLayoutPositions(formationType, safeBoardW, safeBoardH);
 
-        // PROGRESSIVE LEVEL PAIR SCALING (Smooth growth without extreme clutter!)
-        // Every 10 levels adds +2 extra pairs (+4 tiles), strictly capped at 27 pairs (54 tiles max).
-        const extraPairs = Math.min(15, Math.floor((this.level - 1) / 10) * 2);
-        const totalPairs = Math.min(27, Math.floor(positions.length / 2) + extraPairs);
+        // EXACT USER PROGRESSION RULE:
+        // Level 1 starts at EXACTLY 14 pairs (28 tiles).
+        // Every 10 levels adds +2 pairs (+4 tiles), capping strictly at 32 pairs (64 tiles) at Level 90+.
+        // Unlimited / Endless Levels!
+        const basePairs = 14;
+        const extraPairs = Math.floor((this.level - 1) / 10) * 2;
+        const totalPairs = Math.min(32, basePairs + extraPairs);
         const totalTilesNeeded = totalPairs * 2;
 
         const cardW = this.cardW || 48;
