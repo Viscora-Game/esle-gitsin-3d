@@ -394,14 +394,37 @@
         </div>
     </div>
 
-    <!-- Register PWA Service Worker for PWABuilder -->
+    <!-- Register PWA Service Worker for PWABuilder with Instant Auto-Update Listener -->
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./sw.js?v=3').catch(err => console.log('SW Registration error:', err));
+          navigator.serviceWorker.register('./sw.js').then((reg) => {
+            // Force immediate check for live updates on GitHub Pages
+            reg.update();
+
+            reg.addEventListener('updatefound', () => {
+              const installingWorker = reg.installing;
+              if (installingWorker) {
+                installingWorker.addEventListener('statechange', () => {
+                  if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                    // New version installed -> Auto-reload immediately to show latest version!
+                    window.location.reload();
+                  }
+                });
+              }
+            });
+          }).catch(err => console.log('SW Registration error:', err));
+
+          let refreshing = false;
+          navigator.serviceWorker.addEventListener('controllerchange', () => {
+            if (!refreshing) {
+              refreshing = true;
+              window.location.reload();
+            }
+          });
         });
       }
     </script>
-    <script src="game.js?v=110" defer></script>
+    <script src="game.js?v=120" defer></script>
 </body>
 </html>
