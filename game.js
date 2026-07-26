@@ -2031,6 +2031,13 @@ class TileMatchingGame {
             }
         }
 
+        const wrapperEl = (document.querySelector && document.querySelector('.puzzle-board-wrapper')) || document.getElementById('puzzle-board-grid');
+        if (wrapperEl) {
+            wrapperEl.style.backgroundImage = `url(${activePuzzle.imgSrc})`;
+            wrapperEl.style.backgroundSize = 'cover';
+            wrapperEl.style.backgroundPosition = 'center';
+        }
+
         const gridEl = document.getElementById('puzzle-board-grid');
         if (gridEl) {
             gridEl.innerHTML = '';
@@ -2039,20 +2046,19 @@ class TileMatchingGame {
                 const row = Math.floor(i / 3);
 
                 const slot = document.createElement('div');
-                slot.className = `puzzle-slot jigsaw-shaped ${placedPieces.includes(i) ? 'filled' : ''}`;
-                slot.style.clipPath = `url(#jigsaw-clip-${i})`;
-                slot.style.webkitClipPath = `url(#jigsaw-clip-${i})`;
                 slot.setAttribute('data-slot-index', i);
 
-                slot.style.backgroundImage = `url(${activePuzzle.imgSrc})`;
-                slot.style.backgroundSize = '300% 400%';
-                slot.style.backgroundPosition = `${col * 50}% ${row * 33.333}%`;
-
                 if (placedPieces.includes(i)) {
-                    slot.classList.remove('watermark');
+                    slot.className = 'puzzle-slot jigsaw-shaped filled';
+                    slot.style.backgroundImage = `url(${activePuzzle.imgSrc})`;
+                    slot.style.backgroundSize = '300% 400%';
+                    slot.style.backgroundPosition = `${col * 50}% ${row * 33.333}%`;
+                    slot.style.clipPath = `url(#jigsaw-clip-${i})`;
+                    slot.style.webkitClipPath = `url(#jigsaw-clip-${i})`;
                     slot.innerText = '';
                 } else {
-                    slot.classList.add('watermark');
+                    slot.className = 'puzzle-slot jigsaw-shaped empty';
+                    slot.style.backgroundImage = 'none';
                     slot.innerText = `#${i + 1}`;
                 }
 
