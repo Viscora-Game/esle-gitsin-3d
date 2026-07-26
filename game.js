@@ -1699,11 +1699,11 @@ class TileMatchingGame {
                 this.saveGameProgress();
 
                 if (this.level % 10 === 0) {
-                    const starRating = Math.min(5, Math.ceil(this.level / 10));
-                    this.triggerChestRewardModal(starRating);
+                    const starRating = this.rollBonusChestStarRating();
+                    this.triggerChestRewardModal(starRating, true);
                 } else {
-                    document.getElementById('victory-score').innerText = this.score;
-                    document.getElementById('modal-victory').classList.remove('hidden');
+                    const starRating = this.rollChestStarRating();
+                    this.triggerChestRewardModal(starRating, false);
                 }
             } else {
                 this.checkForMatches();
@@ -1737,8 +1737,25 @@ class TileMatchingGame {
 
 
     // =========================================================
-    // CHEST REWARD SYSTEM (EVERY 10 LEVELS)
+    // CHEST REWARD SYSTEM (EVERY LEVEL + BONUS EVERY 10 LEVELS)
     // =========================================================
+
+    rollChestStarRating() {
+        // Normal Sandık Yıldız Oranları: %55 1⭐, %30 2⭐, %10 3⭐, %7 4⭐, %3 5⭐
+        const r = Math.random() * 105;
+        if (r < 55) return 1;
+        if (r < 85) return 2;
+        if (r < 95) return 3;
+        if (r < 102) return 4;
+        return 5;
+    }
+
+    rollBonusChestStarRating() {
+        const r = Math.random() * 100;
+        if (r < 50) return 3;       // 50% -> 3⭐
+        if (r < 85) return 4;       // 35% -> 4⭐
+        return 5;                    // 15% -> 5⭐
+    }
 
     rollChestReward(starLevel) {
         const r = Math.random() * 100;
@@ -1758,17 +1775,23 @@ class TileMatchingGame {
         }
     }
 
-    triggerChestRewardModal(starLevel) {
+    triggerChestRewardModal(starLevel, isBonus) {
         const starsText = '⭐️'.repeat(starLevel);
         const starDisp = document.getElementById('chest-star-display');
         if (starDisp) starDisp.innerText = starsText;
 
         const titleEl = document.getElementById('chest-modal-title');
-        if (titleEl) titleEl.innerText = `${starLevel} YILDIZLI SEVİYE SANDIĞI! 🎁`;
+        if (titleEl) {
+            if (isBonus) {
+                titleEl.innerText = `🏆 BONUS ${starLevel} YILDIZLI SANDIK! 🎁`;
+            } else {
+                titleEl.innerText = `${starLevel} YILDIZLI SANDIK! 🎁`;
+            }
+        }
 
         const chestBox = document.getElementById('chest-box');
         if (chestBox) {
-            chestBox.innerText = '📦';
+            chestBox.innerText = isBonus ? '🎁' : '📦';
             chestBox.style.display = 'inline-block';
         }
 
