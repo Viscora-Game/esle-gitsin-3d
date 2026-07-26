@@ -854,28 +854,12 @@ class TileMatchingGame {
         if (chestBox) chestBox.addEventListener('click', () => this.openChestBox());
 
         const btnCollectChest = document.getElementById('btn-collect-chest');
-        if (btnCollectChest) btnCollectChest.addEventListener('click', () => {
-            if (this.pendingChestReward) {
-                const reward = this.pendingChestReward;
-                if (reward.gold > 0) {
-                    this.goldCoins += reward.gold;
-                }
-                if (reward.pieces > 0) {
-                    for (let i = 0; i < reward.pieces; i++) {
-                        this.awardRandomMissingPuzzlePiece();
-                    }
-                }
-                const goldEl = document.getElementById('gold-val');
-                if (goldEl) goldEl.innerText = this.goldCoins;
-
-                this.pendingChestReward = null;
-                this.saveGameProgress();
-            }
-
+        if (btnCollectChest) btnCollectChest.onclick = () => {
+            if (!this.canCollectRewards) return;
             this.sound.playClick();
             document.getElementById('modal-chest').classList.add('hidden');
             this.startLevel(this.level + 1, false, this.currentMode);
-        });
+        };
 
         document.getElementById('btn-next-level').addEventListener('click', () => {
             document.getElementById('modal-victory').classList.add('hidden');
@@ -1897,6 +1881,9 @@ class TileMatchingGame {
     }
 
     triggerChestRewardModal(starLevel, isBonus) {
+        this.canClickChest = false;
+        setTimeout(() => { this.canClickChest = true; }, 600);
+
         const starsText = '⭐️'.repeat(starLevel);
         const starDisp = document.getElementById('chest-star-display');
         if (starDisp) starDisp.innerText = starsText;
@@ -1911,17 +1898,16 @@ class TileMatchingGame {
         }
 
         const chestBoxContainer = document.getElementById('chest-box-container');
-        if (chestBoxContainer) chestBoxContainer.addEventListener('click', () => this.openChestBox());
+        if (chestBoxContainer) chestBoxContainer.onclick = () => this.openChestBox();
         const chestBox = document.getElementById('chest-box');
         if (chestBox) {
+            chestBox.onclick = () => this.openChestBox();
             chestBox.innerText = isBonus ? '🎁' : '📦';
             chestBox.style.display = 'inline-block';
         }
 
         const rewardContent = document.getElementById('chest-reward-content');
         if (rewardContent) rewardContent.classList.add('hidden');
-
-
 
         const modalChest = document.getElementById('modal-chest');
         if (modalChest) modalChest.classList.remove('hidden');
@@ -1930,9 +1916,15 @@ class TileMatchingGame {
     }
 
     openChestBox() {
+        if (!this.canClickChest) return;
         if (!this.pendingChestReward) return;
 
+        this.canCollectRewards = false;
+        setTimeout(() => { this.canCollectRewards = true; }, 500);
+
         const reward = this.pendingChestReward;
+        this.pendingChestReward = null; // Clear so it only opens once
+
         const rewardListEl = document.getElementById('chest-reward-list');
         if (rewardListEl) rewardListEl.innerHTML = '';
 
@@ -1962,15 +1954,11 @@ class TileMatchingGame {
         const goldEl = document.getElementById('gold-val');
         if (goldEl) goldEl.innerText = this.goldCoins;
 
-        const chestBoxContainer = document.getElementById('chest-box-container');
-        if (chestBoxContainer) chestBoxContainer.addEventListener('click', () => this.openChestBox());
         const chestBox = document.getElementById('chest-box');
-        if (chestBox) chestBox.innerText = '🎁';
+        if (chestBox) chestBox.innerText = '✨';
 
         const rewardContent = document.getElementById('chest-reward-content');
         if (rewardContent) rewardContent.classList.remove('hidden');
-
-
 
         this.saveGameProgress();
     }

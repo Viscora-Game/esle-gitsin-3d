@@ -1263,7 +1263,7 @@ body {
 
 #slot-tiles-layer {
     position: absolute;
-    top: 0;
+    top: 16px;
     left: 50%;
     transform: translateX(-50%);
     width: var(--tray-w);
