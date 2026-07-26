@@ -920,7 +920,14 @@ class TileMatchingGame {
         document.getElementById('game-container').style.background = this.bgThemes[themeIndex];
 
         // SPECIAL STAR FORMATION ON EVERY 10th LEVEL (10, 20, 30, 40...)
-        let formationType = this.formations[(this.level - 1) % this.formations.length];
+        let formationType;
+        if (this.level % 10 === 0) {
+            formationType = 'STAR';
+        } else {
+            const nonStarFormations = ['HOURGLASS', 'HEART', 'CASTLE', 'FLOWER', 'SHIELD', 'DIAMOND', 'HELIX', 'TWIN_PEAKS', 'ROYAL_PYRAMID'];
+            const nonStarIndex = (this.level - 1 - Math.floor(this.level / 10)) % nonStarFormations.length;
+            formationType = nonStarFormations[nonStarIndex];
+        }
         if (this.level % 10 === 0) {
             formationType = 'STAR';
         }
@@ -1193,7 +1200,11 @@ class TileMatchingGame {
             pos.push({ x: cx + 3, y: cy - 14, layer: 2 });
         }
 
-        return pos;
+        return pos.map(p => ({
+            x: Math.round(p.x),
+            y: Math.round(p.y),
+            layer: p.layer
+        }));
     }
 
     updateLockStates() {
