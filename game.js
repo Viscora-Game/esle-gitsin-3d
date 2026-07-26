@@ -1908,20 +1908,21 @@ class TileMatchingGame {
     // =========================================================
 
     rollChestStarRating() {
-        // Normal Sandık Yıldız Oranları: %55 1⭐, %30 2⭐, %10 3⭐, %7 4⭐, %3 5⭐
-        const r = Math.random() * 105;
-        if (r < 55) return 1;
-        if (r < 85) return 2;
-        if (r < 95) return 3;
-        if (r < 102) return 4;
+        // Yeni Nadir Yıldız Oranları: %60 1⭐, %28 2⭐, %8 3⭐, %3.5 4⭐, %0.5 5⭐
+        const r = Math.random() * 100;
+        if (r < 60) return 1;
+        if (r < 88) return 2;
+        if (r < 96) return 3;
+        if (r < 99.5) return 4;
         return 5;
     }
 
     rollBonusChestStarRating() {
+        // Her 10 Bölümde Bir Bonus Sandık Oranları: %65 3⭐, %30 4⭐, %5 5⭐
         const r = Math.random() * 100;
-        if (r < 50) return 3;       // 50% -> 3⭐
-        if (r < 85) return 4;       // 35% -> 4⭐
-        return 5;                    // 15% -> 5⭐
+        if (r < 65) return 3;       // 65% -> 3⭐
+        if (r < 95) return 4;       // 30% -> 4⭐
+        return 5;                    // 5% -> 5⭐
     }
 
     rollChestReward(starLevel) {
