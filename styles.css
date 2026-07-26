@@ -1565,6 +1565,15 @@ body {
     z-index: 10;
 }
 
+.completed-badge.hidden {
+    display: none !important;
+}
+
+.puzzle-slot.watermark {
+    opacity: 0.25;
+    filter: grayscale(90%) brightness(0.6);
+}
+
 .gallery-action-bar {
     margin: 12px 0;
     display: flex;

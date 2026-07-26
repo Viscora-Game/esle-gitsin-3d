@@ -848,6 +848,8 @@ class TileMatchingGame {
         const btnBuyPiece = document.getElementById('btn-buy-puzzle-piece');
         if (btnBuyPiece) btnBuyPiece.addEventListener('click', () => this.buyPuzzlePieceWithGold());
 
+        const chestBoxContainer = document.getElementById('chest-box-container');
+        if (chestBoxContainer) chestBoxContainer.addEventListener('click', () => this.openChestBox());
         const chestBox = document.getElementById('chest-box');
         if (chestBox) chestBox.addEventListener('click', () => this.openChestBox());
 
@@ -1591,6 +1593,7 @@ class TileMatchingGame {
         this.updateLockStates();
         this.rearrangeSlotTiles();
         this.checkForMatches();
+        setTimeout(() => this.checkDeadlockAndAutoShuffle(), 300);
     }
 
     rearrangeSlotTiles() {
@@ -1657,6 +1660,66 @@ class TileMatchingGame {
             }, 250);
         }
     }
+
+    
+    // =========================================================
+    // DEADLOCK DETECTION & AUTO-SHUFFLE SYSTEM
+    // =========================================================
+
+    checkDeadlockAndAutoShuffle() {
+        if (this.boardTiles.length === 0) return false;
+
+        const clickableTiles = this.boardTiles.filter(t => !t.isLocked && !t.isInSlot);
+
+        // Check if any 2 clickable tiles match each other
+        for (let i = 0; i < clickableTiles.length; i++) {
+            for (let j = i + 1; j < clickableTiles.length; j++) {
+                if (clickableTiles[i].type.id === clickableTiles[j].type.id) {
+                    return false; // Valid move exists!
+                }
+            }
+        }
+
+        // Check if any clickable tile matches a tile in slot tray
+        for (const bTile of clickableTiles) {
+            for (const sTile of this.slotTiles) {
+                if (bTile.type.id === sTile.type.id) {
+                    return false; // Valid move exists!
+                }
+            }
+        }
+
+        // DEADLOCK DETECTED!
+        this.showToast('⚡ HAMLE KALMADI! Tahta Otomatik Karıştırılıyor...');
+        this.sound.playBoosterChime();
+        this.fx.spawnBurst(window.innerWidth / 2, window.innerHeight / 2, 40);
+
+        this.autoShuffleBoard();
+        return true;
+    }
+
+    autoShuffleBoard() {
+        if (this.boardTiles.length <= 1) return;
+
+        const types = this.boardTiles.map(t => t.type);
+        for (let i = types.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            const temp = types[i];
+            types[i] = types[j];
+            types[j] = temp;
+        }
+
+        this.boardTiles.forEach((tile, idx) => {
+            tile.type = types[idx];
+            const img = tile.element.querySelector('.tile-character');
+            if (img) img.src = tile.type.imgSrc;
+            const bg = tile.element.querySelector('.tile-face');
+            if (bg) bg.style.background = tile.type.bg || '#ffffff';
+        });
+
+        this.updateBoardTileStates();
+    }
+
 
     processPairMatch(tileA, tileB) {
         tileA.isMatching = true;
@@ -1810,6 +1873,8 @@ class TileMatchingGame {
             }
         }
 
+        const chestBoxContainer = document.getElementById('chest-box-container');
+        if (chestBoxContainer) chestBoxContainer.addEventListener('click', () => this.openChestBox());
         const chestBox = document.getElementById('chest-box');
         if (chestBox) {
             chestBox.innerText = isBonus ? '🎁' : '📦';
@@ -1858,6 +1923,8 @@ class TileMatchingGame {
         const goldEl = document.getElementById('gold-val');
         if (goldEl) goldEl.innerText = this.goldCoins;
 
+        const chestBoxContainer = document.getElementById('chest-box-container');
+        if (chestBoxContainer) chestBoxContainer.addEventListener('click', () => this.openChestBox());
         const chestBox = document.getElementById('chest-box');
         if (chestBox) chestBox.innerText = '🎁';
 
@@ -1957,8 +2024,11 @@ class TileMatchingGame {
 
         const badge = document.getElementById('puzzle-completed-badge');
         if (badge) {
-            if (isCompleted) badge.classList.remove('hidden');
-            else badge.classList.add('hidden');
+            if (placedPieces.length === 12) {
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
         }
 
         const gridEl = document.getElementById('puzzle-board-grid');
@@ -1974,11 +2044,15 @@ class TileMatchingGame {
                 slot.style.webkitClipPath = `url(#jigsaw-clip-${i})`;
                 slot.setAttribute('data-slot-index', i);
 
+                slot.style.backgroundImage = `url(${activePuzzle.imgSrc})`;
+                slot.style.backgroundSize = '300% 400%';
+                slot.style.backgroundPosition = `${col * 50}% ${row * 33.333}%`;
+
                 if (placedPieces.includes(i)) {
-                    slot.style.backgroundImage = `url(${activePuzzle.imgSrc})`;
-                    slot.style.backgroundSize = '300% 400%';
-                    slot.style.backgroundPosition = `${col * 50}% ${row * 33.333}%`;
+                    slot.classList.remove('watermark');
+                    slot.innerText = '';
                 } else {
+                    slot.classList.add('watermark');
                     slot.innerText = `#${i + 1}`;
                 }
 
