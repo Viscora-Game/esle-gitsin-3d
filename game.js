@@ -415,12 +415,13 @@ class TileMatchingGame {
 
         // Background Themes
         this.bgThemes = [
-            'radial-gradient(circle at 50% 20%, #1e1b4b 0%, #0b0f19 80%, #060913 100%)',
-            'radial-gradient(circle at 50% 20%, #064e3b 0%, #022c22 80%, #060913 100%)',
-            'radial-gradient(circle at 50% 20%, #4c1d95 0%, #2e1065 80%, #060913 100%)',
-            'radial-gradient(circle at 50% 20%, #831843 0%, #500724 80%, #060913 100%)',
-            'radial-gradient(circle at 50% 20%, #134e4a 0%, #042f2e 80%, #060913 100%)',
-            'radial-gradient(circle at 50% 20%, #7c2d12 0%, #451a03 80%, #060913 100%)'
+            'radial-gradient(circle at 50% 38%, rgba(52, 211, 153, 0.22) 0%, transparent 65%), repeating-radial-gradient(circle at 50% 50%, rgba(255,255,255,0.03) 0, rgba(255,255,255,0.03) 1px, transparent 1px, transparent 10px), radial-gradient(circle at center, #064e3b 0%, #022c22 75%, #01140e 100%)',
+            'radial-gradient(circle at 50% 38%, rgba(251, 191, 36, 0.20) 0%, transparent 65%), repeating-linear-gradient(45deg, rgba(255,255,255,0.025) 0px, rgba(255,255,255,0.025) 2px, transparent 2px, transparent 14px), radial-gradient(circle at center, #5c2418 0%, #3a150e 75%, #170704 100%)',
+            'radial-gradient(circle at 50% 38%, rgba(56, 189, 248, 0.22) 0%, transparent 65%), repeating-linear-gradient(60deg, rgba(255,255,255,0.025) 0px, rgba(255,255,255,0.025) 1px, transparent 1px, transparent 8px), radial-gradient(circle at center, #1e3a8a 0%, #172554 75%, #060913 100%)',
+            'radial-gradient(circle at 50% 38%, rgba(192, 132, 252, 0.22) 0%, transparent 65%), repeating-linear-gradient(-45deg, rgba(255,255,255,0.03) 0px, rgba(255,255,255,0.03) 1px, transparent 1px, transparent 10px), radial-gradient(circle at center, #581c87 0%, #3b0764 75%, #140326 100%)',
+            'radial-gradient(circle at 50% 38%, rgba(245, 158, 11, 0.22) 0%, transparent 65%), repeating-linear-gradient(90deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 2px, transparent 2px, transparent 16px), radial-gradient(circle at center, #7c2d12 0%, #451a03 75%, #0f0401 100%)',
+            'radial-gradient(circle at 50% 38%, rgba(244, 63, 94, 0.22) 0%, transparent 65%), repeating-radial-gradient(circle at 50% 50%, rgba(255,255,255,0.03) 0, rgba(255,255,255,0.03) 1px, transparent 1px, transparent 12px), radial-gradient(circle at center, #831843 0%, #500724 75%, #1f020c 100%)',
+            'radial-gradient(circle at 50% 38%, rgba(129, 140, 248, 0.22) 0%, transparent 65%), repeating-linear-gradient(30deg, rgba(255,255,255,0.025) 0px, rgba(255,255,255,0.025) 1px, transparent 1px, transparent 9px), radial-gradient(circle at center, #312e81 0%, #1e1b4b 75%, #060913 100%)'
         ];
 
         // 10 Rich Symmetrical Mahjong Formations Pool!
