@@ -945,11 +945,19 @@ class TileMatchingGame {
         this.boardTiles = [];
         this.slotTiles = [];
 
-        const activeTypesCount = (this.level <= 100) 
-            ? Math.min(this.types.length, 4 + Math.floor((this.level - 1) / 10) * 2)
-            : this.types.length;
-            
+        // PROGRESSIVE CHARACTER UNLOCKING SYSTEM:
+        // Starts with 4 simple character types (Levels 1-10) and unlocks +2 new character types every 10 levels!
+        const activeTypesCount = Math.min(this.types.length, 4 + Math.floor((this.level - 1) / 10) * 2);
         const activeTypes = this.types.slice(0, activeTypesCount);
+
+        if (this.level > 1 && (this.level - 1) % 10 === 0 && activeTypesCount <= this.types.length) {
+            const newlyUnlocked = activeTypes[activeTypesCount - 1];
+            if (newlyUnlocked) {
+                setTimeout(() => {
+                    this.showToast(`🎉 YENİ KARAKTER KATILDI: ${newlyUnlocked.name}! 🌟`);
+                }, 600);
+            }
+        }
 
         const safeBoardW = (boardEl && boardEl.clientWidth > 200) ? boardEl.clientWidth : (window.innerWidth || 380);
         const safeBoardH = (boardEl && boardEl.clientHeight > 200) ? boardEl.clientHeight : ((window.innerHeight - 160) || 520);
