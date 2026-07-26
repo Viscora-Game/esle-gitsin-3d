@@ -1883,7 +1883,6 @@ class TileMatchingGame {
     }
 
     triggerChestRewardModal(starLevel, isBonus) {
-
         const starsText = '⭐️'.repeat(starLevel);
         const starDisp = document.getElementById('chest-star-display');
         if (starDisp) starDisp.innerText = starsText;
@@ -1897,6 +1896,9 @@ class TileMatchingGame {
             }
         }
 
+        const descEl = document.getElementById('chest-modal-desc');
+        if (descEl) descEl.innerText = 'Sandığı açmak için kutuya dokunun!';
+
         const chestBoxContainer = document.getElementById('chest-box-container');
         if (chestBoxContainer) chestBoxContainer.onclick = () => this.openChestBox();
         const chestBox = document.getElementById('chest-box');
@@ -1908,6 +1910,9 @@ class TileMatchingGame {
 
         const rewardContent = document.getElementById('chest-reward-content');
         if (rewardContent) rewardContent.classList.add('hidden');
+
+        const btnCollectChest = document.getElementById('btn-collect-chest');
+        if (btnCollectChest) btnCollectChest.classList.add('hidden');
 
         const modalChest = document.getElementById('modal-chest');
         if (modalChest) modalChest.classList.remove('hidden');
@@ -1953,8 +1958,17 @@ class TileMatchingGame {
         const chestBox = document.getElementById('chest-box');
         if (chestBox) chestBox.innerText = '✨';
 
+        const descEl = document.getElementById('chest-modal-desc');
+        if (descEl) descEl.innerText = '🏆 Ödülleriniz Kazandı! Envantere eklemek için aşağıdaki butona basın:';
+
         const rewardContent = document.getElementById('chest-reward-content');
         if (rewardContent) rewardContent.classList.remove('hidden');
+
+        // Delay unhiding collect button by 700ms to eliminate touch-through click skips!
+        setTimeout(() => {
+            const btnCollectChest = document.getElementById('btn-collect-chest');
+            if (btnCollectChest) btnCollectChest.classList.remove('hidden');
+        }, 700);
 
         this.saveGameProgress();
     }

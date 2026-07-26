@@ -318,14 +318,14 @@
             </div>
         </div>
 
-        <!-- CHEST OPENING REWARD MODAL (Every 10 Levels) -->
+        <!-- CHEST OPENING REWARD MODAL -->
         <div id="modal-chest" class="modal-overlay hidden">
             <div class="modal-card chest-card">
                 <div class="chest-star-rating">
                     <span id="chest-star-display">⭐️⭐️⭐️⭐️⭐️</span>
                 </div>
                 <h2 id="chest-modal-title" class="modal-title">ÖDÜL SANDIĞI! 🎁</h2>
-                <p class="modal-desc">10 Bölüm Başarısı Ödülü! Sandığı açmak için dokun!</p>
+                <p id="chest-modal-desc" class="modal-desc">Bölüm Tamamlandı! Sandığı açmak için dokun!</p>
                 
                 <div id="chest-box-container" class="chest-box-container">
                     <div id="chest-box" class="chest-box">📦</div>
@@ -333,7 +333,7 @@
 
                 <div id="chest-reward-content" class="chest-reward-content hidden">
                     <div id="chest-reward-list" class="chest-reward-list"></div>
-                    <button id="btn-collect-chest" class="btn-primary">ÖDÜLLERİ AL</button>
+                    <button id="btn-collect-chest" class="btn-primary collect-btn hidden">ENVANTERE EKLE VE DEVAM ET ▶</button>
                 </div>
             </div>
         </div>
@@ -425,6 +425,6 @@
         });
       }
     </script>
-    <script src="game.js?v=160" defer></script>
+    <script src="game.js?v=170" defer></script>
 </body>
 </html>
