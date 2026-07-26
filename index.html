@@ -97,10 +97,10 @@
                             <span id="txt-timetrial-btn">⏱️ ZAMANA KARŞI MOD (SEVİYE 1)</span>
                         </button>
                         <button id="btn-menu-journal" class="btn-secondary btn-menu btn-journal">
-                            <span>📖 YAPBOZ GÜNLÜĞÜ</span>
+                            <span data-i18n="journalBtnText">📖 YAPBOZ GÜNLÜĞÜ</span>
                         </button>
                         <button id="btn-menu-settings" class="btn-secondary btn-menu">
-                            <span>⚙️ AYARLAR</span>
+                            <span data-i18n="settingsTitle">⚙️ AYARLAR</span>
                         </button>
                     </div>
                 </div>
@@ -133,8 +133,8 @@
 
                     <!-- Action Navigation Buttons -->
                     <div class="tut-nav-btns">
-                        <button id="btn-tut-prev" class="btn-secondary tut-btn-prev hidden">⬅️ GERİ</button>
-                        <button id="btn-tut-next" class="btn-primary tut-btn-next">İLERİ ➡️</button>
+                        <button id="btn-tut-prev" class="btn-secondary tut-btn-prev hidden" data-i18n="prevBtn">⬅️ GERİ</button>
+                        <button id="btn-tut-next" class="btn-primary tut-btn-next" data-i18n="nextBtn">İLERİ ➡️</button>
                     </div>
                 </div>
             </div>
@@ -184,17 +184,17 @@
 
                     <!-- Replay How-to-Play Tutorial Button inside Settings -->
                     <button id="btn-menu-tutorial" class="btn-secondary settings-full-btn">
-                        <span>📖 NASIL OYNANIR? (REHBER)</span>
+                        <span data-i18n="howToPlayBtnText">📖 NASIL OYNANIR? (REHBER)</span>
                     </button>
 
                     <!-- Reset & New Game inside Settings -->
                     <button id="btn-menu-newgame" class="btn-danger-reset">
-                        <span>🔄 SIFIRLA VE YENİ OYUN BAŞLAT</span>
+                        <span data-i18n="newGameBtn">🔄 SIFIRLA VE YENİ OYUN BAŞLAT</span>
                     </button>
 
                     <!-- Force Update & Clear Cache Button -->
                     <button id="btn-force-update" class="btn-secondary settings-full-btn" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff; font-weight: 700; margin-top: 8px;">
-                        <span data-i18n="forceUpdateBtn">⚡ CANLI GÜNCELLEMEYİ YÜKLE (v1.8.0)</span>
+                        <span data-i18n="forceUpdateBtn">⚡ CANLI GÜNCELLEMEYİ YÜKLE (v2.0.0)</span>
                     </button>
 
                     <button id="btn-save-settings" class="btn-primary" data-i18n="saveBtn">KAYDET VE KAPAT</button>
@@ -205,21 +205,21 @@
             <div id="modal-reset-confirm" class="modal-overlay hidden">
                 <div class="modal-card reset-choice-card">
                     <div class="modal-header-row">
-                        <h2 class="modal-title">🔄 HANGİ MOD SIFIRLANSIN?</h2>
+                        <h2 class="modal-title" data-i18n="resetModalTitle">🔄 HANGİ MOD SIFIRLANSIN?</h2>
                         <button id="btn-close-reset-confirm" class="btn-close-x">✕</button>
                     </div>
 
-                    <p class="reset-desc">Sıfırlamak istediğiniz oyun modunu seçin:</p>
+                    <p class="reset-desc" data-i18n="resetModalDesc">Sıfırlamak istediğiniz oyun modunu seçin:</p>
 
                     <div class="reset-btn-stack">
                         <button id="btn-reset-classic" class="btn-secondary reset-option-btn">
-                            <span>🎮 KLASİK MODU SIFIRLA</span>
+                            <span data-i18n="resetClassicBtn">🎮 KLASİK MODU SIFIRLA</span>
                         </button>
                         <button id="btn-reset-timetrial" class="btn-timetrial reset-option-btn">
-                            <span>⏱️ ZAMANA KARŞI MODU SIFIRLA</span>
+                            <span data-i18n="resetTimeTrialBtn">⏱️ ZAMANA KARŞI MODU SIFIRLA</span>
                         </button>
                         <button id="btn-reset-both" class="btn-danger-reset reset-option-btn">
-                            <span>💥 HER İKİ MODU DA SIFIRLA</span>
+                            <span data-i18n="resetBothBtn">💥 HER İKİ MODU DA SIFIRLA</span>
                         </button>
                     </div>
                 </div>
@@ -233,7 +233,7 @@
                     
                     <div class="hud-info-group">
                         <div class="hud-item badge-level">
-                            <span class="hud-label">SEVİYE</span>
+                            <span class="hud-label" data-i18n="levelLabel">SEVİYE</span>
                             <span id="level-num" class="hud-val">1</span>
                         </div>
 
@@ -248,7 +248,7 @@
                             <span id="score-val" class="hud-val">0</span>
                         </div>
                         <div class="hud-item badge-gold">
-                            <span class="hud-label">ALTIN</span>
+                            <span class="hud-label" data-i18n="goldLabel">ALTIN</span>
                             <span class="gold-icon">🪙</span>
                             <span id="gold-val" class="hud-val">0</span>
                         </div>
@@ -263,21 +263,21 @@
                     <!-- Smart Hint Button (300 Score Base) -->
                     <button id="btn-hint" class="booster-pill hint-pill" title="Akıllı İpucu">
                         <span class="booster-icon">💡</span>
-                        <span class="booster-text">İPUCU</span>
+                        <span class="booster-text" data-i18n="hintLabel">İPUCU</span>
                         <span id="hint-cost-badge" class="cost-badge">300</span>
                     </button>
 
                     <!-- Extra Slot Booster Button (1000 Score Base) -->
                     <button id="btn-extra-slot" class="booster-pill slot-pill" title="Ek Slot Hakkı">
                         <span class="booster-icon">➕</span>
-                        <span class="booster-text">+1 SLOT</span>
+                        <span class="booster-text" data-i18n="slotBtnLabel">+1 SLOT</span>
                         <span id="slot-cost-badge" class="cost-badge cost-gold">1000</span>
                     </button>
 
                     <!-- Shuffle Board Booster Button (5000 Score Base) -->
                     <button id="btn-shuffle" class="booster-pill shuffle-pill" title="Kartları Karıştır">
                         <span class="booster-icon">🔀</span>
-                        <span class="booster-text">KARIŞTIR</span>
+                        <span class="booster-text" data-i18n="shuffleBtnLabel">KARIŞTIR</span>
                         <span id="shuffle-cost-badge" class="cost-badge cost-purple">5000</span>
                     </button>
                 </div>
@@ -300,7 +300,7 @@
 
             <!-- Floating Top Emergency 6th Slot Holder (Appears above center slot) -->
             <div id="floating-extra-slot" class="floating-extra-slot hidden">
-                <div class="extra-slot-badge">🚨 ACİL SLOT</div>
+                <div class="extra-slot-badge" data-i18n="emergencySlotTitle">🚨 ACİL SLOT</div>
                 <div class="extra-slot-box"></div>
             </div>
 
@@ -343,14 +343,14 @@
 
                 <!-- Stage 1 Button: ÖDÜLLERİ AL 🎁 (Sadece 1. Aşamada Görünür) -->
                 <button id="btn-open-chest" class="btn-primary chest-open-btn">
-                    <span>🎁 ÖDÜLLERİ AL</span>
+                    <span data-i18n="chestOpenBtn">🎁 ÖDÜLLERİ AL</span>
                 </button>
 
                 <!-- Stage 2 Content: Ödüller & Envantere Ekle (Sadece 2. Aşamada Görünür) -->
                 <div id="chest-reward-content" class="chest-reward-content hidden">
                     <div id="chest-reward-list" class="chest-reward-list"></div>
                     <button id="btn-collect-chest" class="btn-primary collect-btn">
-                        <span>▶ ENVANTERE EKLE VE DEVAM ET</span>
+                        <span data-i18n="chestCollectBtn">▶ ENVANTERE EKLE VE DEVAM ET</span>
                     </button>
                 </div>
             </div>
@@ -361,15 +361,15 @@
             <div class="modal-card gallery-modal-card journal-book-card">
                 <button id="btn-close-gallery" class="btn-close-x">✕</button>
                 <div class="journal-book-header">
-                    <span class="journal-ribbon">📖 YAPBOZ GÜNLÜĞÜ</span>
+                    <span class="journal-ribbon" data-i18n="journalBtnText">📖 YAPBOZ GÜNLÜĞÜ</span>
                     <h2 id="journal-picture-title" class="modal-title">Pamuk Kedi 🐱</h2>
                 </div>
 
                 <!-- Journal Page Navigation Controls -->
                 <div class="journal-page-nav">
-                    <button id="btn-prev-page" class="journal-nav-btn">◀ ÖNCEKİ SAYFA</button>
+                    <button id="btn-prev-page" class="journal-nav-btn" data-i18n="prevPageBtn">◀ ÖNCEKİ SAYFA</button>
                     <span id="journal-page-num" class="journal-page-badge">Sayfa 1 / 12</span>
-                    <button id="btn-next-page" class="journal-nav-btn">SONRAKİ SAYFA ▶</button>
+                    <button id="btn-next-page" class="journal-nav-btn" data-i18n="nextPageBtn">SONRAKİ SAYFA ▶</button>
                 </div>
 
                 <!-- Main 3x4 Puzzle Placement Board (12 Jigsaw Grid Slots) -->
@@ -381,14 +381,14 @@
                 <!-- Gold Economy: Buy Missing Piece Button -->
                 <div class="gallery-action-bar">
                     <button id="btn-buy-puzzle-piece" class="btn-secondary buy-piece-btn">
-                        <span>🧩 1 Parça Al</span>
-                        <span class="buy-cost-tag">🪙 100 Altın</span>
+                        <span data-i18n="buyPieceBtn">🧩 1 Parça Al</span>
+                        <span class="buy-cost-tag" data-i18n="buyPieceCostTag">🪙 100 Altın</span>
                     </button>
                 </div>
 
                 <!-- Unplaced Pieces Inventory Drag & Drop Tray -->
                 <div class="inventory-section">
-                    <h3 class="inventory-title">📦 ENVANTER (Parçaları Tahtaya Sürükleyin veya Dokunun):</h3>
+                    <h3 class="inventory-title" data-i18n="inventoryTitle">📦 ENVANTER (Parçaları Tahtaya Sürükleyin veya Dokunun):</h3>
                     <div id="puzzle-inventory-tray" class="inventory-tray"></div>
                 </div>
             </div>
@@ -416,7 +416,7 @@
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./sw.js?v=1.8.0').then((reg) => {
+          navigator.serviceWorker.register('./sw.js?v=2.0.0').then((reg) => {
             reg.update();
 
             reg.addEventListener('updatefound', () => {
@@ -441,6 +441,6 @@
         });
       }
     </script>
-    <script src="game.js?v=1.8.0" defer></script>
+    <script src="game.js?v=2.0.0" defer></script>
 </body>
 </html>
