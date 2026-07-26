@@ -463,6 +463,10 @@ class TileMatchingGame {
         // Full 7-Language Global Localization Engine (TR, EN, DE, FR, IT, ES, PT)
         this.i18n = {
             tr: {
+                adFullTag: "DOLDU",
+                adChestLimitReached: "⚠️ Bugünkü Ücretsiz Reklam Sandığı Hakkınız Bitti! (0/3 - Yarın Tekrar Gel 🎁)",
+                adReviveLimitReached: "⚠️ Bu Bölümdeki Reklamla Devam Etme Hakkınız Bitti! (2/2)",
+                reviveUsedToast: "Canlı Hak Kullanıldı!",
                 adWidgetTag: "ÜCRETSİZ",
                 adChestBtn: "📺 REKLAM İZLE & SANDIK KAZAN! 🎁",
                 adReviveBtn: "📺 REKLAM İZLE & +1 SLOT İLE DEVAM ET",
@@ -531,6 +535,10 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 TEBRİKLER! {name} BULMACASI TAMAMLANDI!"
             },
             en: {
+                adFullTag: "FULL",
+                adChestLimitReached: "⚠️ Daily Free Ad Chest Limit Reached! (0/3 - Come Back Tomorrow 🎁)",
+                adReviveLimitReached: "⚠️ Max Level Revives Reached! (2/2)",
+                reviveUsedToast: "Revive Used!",
                 adWidgetTag: "FREE",
                 adChestBtn: "📺 WATCH AD & WIN CHEST! 🎁",
                 adReviveBtn: "📺 WATCH AD & CONTINUE WITH +1 SLOT",
@@ -599,6 +607,10 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 CONGRATS! {name} PUZZLE COMPLETED!"
             },
             de: {
+                adFullTag: "VOLL",
+                adChestLimitReached: "⚠️ Tägliches Gratis-Truhen-Limit erreicht! (0/3 - Morgen wiederkommen 🎁)",
+                adReviveLimitReached: "⚠️ Max. Reaktivierungen in diesem Level erreicht! (2/2)",
+                reviveUsedToast: "Reaktivierung genutzt!",
                 adWidgetTag: "GRATIS",
                 adChestBtn: "📺 WERBUNG SEHEN & TRUHE GEWINNEN! 🎁",
                 adReviveBtn: "📺 WERBUNG SEHEN & MIT +1 SLOT FORTFAHREN",
@@ -667,6 +679,10 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 GLÜCKWUNSCH! {name} PUZZLE VOLLSTÄNDIG!"
             },
             fr: {
+                adFullTag: "PLEIN",
+                adChestLimitReached: "⚠️ Limite quotidienne de coffres gratuits atteinte! (0/3 - Revenez demain 🎁)",
+                adReviveLimitReached: "⚠️ Limite de réanimations par niveau atteinte! (2/2)",
+                reviveUsedToast: "Réanimation utilisée!",
                 adWidgetTag: "GRATUIT",
                 adChestBtn: "📺 REGARDER PUB & GAGNER COFFRE! 🎁",
                 adReviveBtn: "📺 REGARDER PUB & CONTINUER AVEC +1 EMPLACEMENT",
@@ -735,6 +751,10 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 BRAVO! PUZZLE {name} COMPLÉTÉ!"
             },
             it: {
+                adFullTag: "PIENO",
+                adChestLimitReached: "⚠️ Limite giornaliero bauli gratis raggiunto! (0/3 - Torna domani 🎁)",
+                adReviveLimitReached: "⚠️ Limite di riattivazioni per livello raggiunto! (2/2)",
+                reviveUsedToast: "Riattivazione usata!",
                 adWidgetTag: "GRATIS",
                 adChestBtn: "📺 GUARDA PUBBLICITÀ & VINCI BAULE! 🎁",
                 adReviveBtn: "📺 GUARDA PUBBLICITÀ & CONTINUA CON +1 SLOT",
@@ -803,6 +823,10 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 COMPLIMENTI! PUZZLE {name} COMPLETATO!"
             },
             es: {
+                adFullTag: "LLENO",
+                adChestLimitReached: "⚠️ ¡Límite diario de cofres gratis alcanzado! (0/3 - Vuelve mañana 🎁)",
+                adReviveLimitReached: "⚠️ ¡Límite de reanimaciones por nivel alcanzado! (2/2)",
+                reviveUsedToast: "¡Reanimación usada!",
                 adWidgetTag: "GRATIS",
                 adChestBtn: "📺 ¡VER ANUNCIO Y GANAR COFRE! 🎁",
                 adReviveBtn: "📺 VER ANUNCIO Y CONTINUAR CON +1 CASILLA",
@@ -871,6 +895,10 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 ¡ENHORABUENA! ¡PUZZLE {name} COMPLETADO!"
             },
             pt: {
+                adFullTag: "CHEIO",
+                adChestLimitReached: "⚠️ Limite diário de baús grátis atingido! (0/3 - Volte amanhã 🎁)",
+                adReviveLimitReached: "⚠️ Limite de reativações por nível atingido! (2/2)",
+                reviveUsedToast: "Reativação usada!",
                 adWidgetTag: "GRÁTIS",
                 adChestBtn: "📺 VER ANÚNCIO E GANHAR BAÚ! 🎁",
                 adReviveBtn: "📺 VER ANÚNCIO E CONTINUAR COM +1 ESPAÇO",
@@ -1250,12 +1278,23 @@ class TileMatchingGame {
             this.openSettings();
         });
 
-        // REWARDED AD MAIN MENU FLOATING CHEST WIDGET CLICK
+        // REWARDED AD MAIN MENU FLOATING CHEST WIDGET CLICK (DAILY LIMIT 3)
         const btnAdChest = document.getElementById('btn-menu-ad-chest');
         if (btnAdChest) {
             btnAdChest.addEventListener('click', () => {
+                const remaining = this.getDailyAdChestRemaining();
+                if (remaining <= 0) {
+                    this.sound.playLockThud();
+                    btnAdChest.classList.add('shaking');
+                    setTimeout(() => btnAdChest.classList.remove('shaking'), 250);
+                    const dict = this.i18n[this.settings.lang] || this.i18n.tr;
+                    this.showToast(dict.adChestLimitReached || '⚠️ Bugünkü Ücretsiz Reklam Sandığı Hakkınız Bitti! (0/3)');
+                    return;
+                }
+
                 this.sound.playClick();
                 this.showRewardedAd(() => {
+                    this.useDailyAdChestClaim();
                     this.showToast('🎁 Reklam Ödülü: Görev Başarılı! Sandık Açılıyor...');
                     const stars = this.rollChestStarRating(false);
                     this.triggerChestRewardModal(stars, false);
@@ -1263,21 +1302,41 @@ class TileMatchingGame {
             });
         }
 
-        // REWARDED AD DEFEAT REVIVE CLICK (+1 Slot & Remove Defeat)
+        // REWARDED AD DEFEAT REVIVE CLICK (MAX 2 PER LEVEL)
         const btnAdRevive = document.getElementById('btn-ad-revive');
         if (btnAdRevive) {
             btnAdRevive.addEventListener('click', () => {
+                if (this.levelAdReviveCount >= 2) {
+                    this.sound.playLockThud();
+                    btnAdRevive.classList.add('shaking');
+                    setTimeout(() => btnAdRevive.classList.remove('shaking'), 250);
+                    const dict = this.i18n[this.settings.lang] || this.i18n.tr;
+                    this.showToast(dict.adReviveLimitReached || '⚠️ Bu Bölümdeki Reklamla Devam Etme Hakkınız Bitti! (2/2)');
+                    return;
+                }
+
                 this.sound.playClick();
                 this.showRewardedAd(() => {
                     this.sound.playBoosterChime();
+                    this.levelAdReviveCount = (this.levelAdReviveCount || 0) + 1;
                     document.getElementById('modal-gameover').classList.add('hidden');
                     
-                    // Unlock emergency 6th slot and give +1 slot capacity
+                    // Revive 1: Unlock emergency 6th slot
+                    // Revive 2: Clear 1 non-matching slot tile from tray for extra breathing room
                     this.maxSlotCapacity = 6;
                     const floatSlot = document.getElementById('floating-extra-slot');
                     if (floatSlot) floatSlot.classList.remove('hidden');
 
-                    this.showToast('🚨 Canlı Hak Kullanıldı! +1 Acil Slot Açıldı!');
+                    if (this.levelAdReviveCount >= 2 && this.slotTiles.length > 0) {
+                        const removedTile = this.slotTiles.pop();
+                        if (removedTile && removedTile.element) {
+                            removedTile.element.remove();
+                        }
+                    }
+
+                    const remainingRevives = Math.max(0, 2 - this.levelAdReviveCount);
+                    const dict = this.i18n[this.settings.lang] || this.i18n.tr;
+                    this.showToast(`🚨 ${dict.reviveUsedToast || 'Canlı Hak Kullanıldı! +1 Acil Slot Açıldı!'} (${this.levelAdReviveCount}/2)`);
                     this.checkDeadlockAndMatch();
                 });
             });
@@ -1315,6 +1374,7 @@ class TileMatchingGame {
         btnVib.addEventListener('click', () => {
             this.settings.vibration = !this.settings.vibration;
             this.updateVibBtnUI();
+        this.updateAdWidgetUI();
             if (this.settings.vibration && navigator.vibrate) {
                 navigator.vibrate(40);
             }
@@ -1530,6 +1590,7 @@ class TileMatchingGame {
     }
 
     startLevel(lvl, isNewGame = false, mode = 'classic') {
+        this.levelAdReviveCount = 0;
         this.boardTiles = [];
         this.slotTiles = [];
 
@@ -1720,6 +1781,18 @@ class TileMatchingGame {
                 document.getElementById('defeat-title').innerText = dict.defeatTitle;
                 document.getElementById('defeat-desc').innerText = dict.defeatDesc;
                 document.getElementById('modal-gameover').classList.remove('hidden');
+            const btnAdRevive = document.getElementById('btn-ad-revive');
+            if (btnAdRevive) {
+                const count = this.levelAdReviveCount || 0;
+                const remaining = Math.max(0, 2 - count);
+                const dict = this.i18n[this.settings.lang] || this.i18n.tr;
+                if (remaining > 0) {
+                    btnAdRevive.style.display = 'block';
+                    btnAdRevive.querySelector('span').innerText = `📺 ${dict.adReviveBtn || 'REKLAM İZLE & DEVAM ET'} (${remaining}/2 HAK)`;
+                } else {
+                    btnAdRevive.style.display = 'none';
+                }
+            }
             }
         }, 1000);
     }
@@ -2254,6 +2327,18 @@ class TileMatchingGame {
                     document.getElementById('defeat-title').innerText = dict.defeatTitle;
                     document.getElementById('defeat-desc').innerText = dict.defeatDesc;
                     document.getElementById('modal-gameover').classList.remove('hidden');
+            const btnAdRevive = document.getElementById('btn-ad-revive');
+            if (btnAdRevive) {
+                const count = this.levelAdReviveCount || 0;
+                const remaining = Math.max(0, 2 - count);
+                const dict = this.i18n[this.settings.lang] || this.i18n.tr;
+                if (remaining > 0) {
+                    btnAdRevive.style.display = 'block';
+                    btnAdRevive.querySelector('span').innerText = `📺 ${dict.adReviveBtn || 'REKLAM İZLE & DEVAM ET'} (${remaining}/2 HAK)`;
+                } else {
+                    btnAdRevive.style.display = 'none';
+                }
+            }
                 }
             }, 250);
         }
@@ -2919,6 +3004,54 @@ class TileMatchingGame {
     // =========================================================
     // GOOGLE ADMOB REWARDED VIDEO & INTERSTITIAL AD ENGINE
     // =========================================================
+
+    // =========================================================
+    // DAILY AD CHEST LIMIT (3 PER DAY) & PER-LEVEL REVIVE (2 PER LEVEL)
+    // =========================================================
+    getDailyAdChestRemaining() {
+        try {
+            const todayStr = new Date().toISOString().slice(0, 10);
+            const savedDate = localStorage.getItem('tile_game_ad_chest_date');
+            const savedCount = parseInt(localStorage.getItem('tile_game_ad_chest_count') || '0', 10);
+
+            if (savedDate !== todayStr) {
+                localStorage.setItem('tile_game_ad_chest_date', todayStr);
+                localStorage.setItem('tile_game_ad_chest_count', '0');
+                return 3;
+            }
+            return Math.max(0, 3 - savedCount);
+        } catch (e) {
+            return 3;
+        }
+    }
+
+    useDailyAdChestClaim() {
+        try {
+            const todayStr = new Date().toISOString().slice(0, 10);
+            const currentRemaining = this.getDailyAdChestRemaining();
+            const usedSoFar = 3 - currentRemaining;
+            localStorage.setItem('tile_game_ad_chest_date', todayStr);
+            localStorage.setItem('tile_game_ad_chest_count', (usedSoFar + 1).toString());
+            this.updateAdWidgetUI();
+        } catch (e) {}
+    }
+
+    updateAdWidgetUI() {
+        const widgetTag = document.querySelector('.ad-widget-label');
+        const remaining = this.getDailyAdChestRemaining();
+        const dict = (this.i18n && this.i18n[this.settings.lang]) ? this.i18n[this.settings.lang] : (this.i18n ? this.i18n.tr : {});
+
+        if (widgetTag) {
+            if (remaining > 0) {
+                widgetTag.innerText = `(${remaining}/3)`;
+                widgetTag.style.background = '#10b981';
+            } else {
+                widgetTag.innerText = dict.adFullTag || 'DOLDU';
+                widgetTag.style.background = '#ef4444';
+            }
+        }
+    }
+
     showRewardedAd(onSuccess, onFailure) {
         // Production Check for Google AdMob H5 / Native Android Bridge
         if (window.AndroidAdMob && typeof window.AndroidAdMob.showRewardedAd === 'function') {
