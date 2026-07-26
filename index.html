@@ -66,6 +66,13 @@
 
                 <!-- Glassmorphic Integrated Menu Card Panel -->
                 <div class="menu-card">
+                    <!-- Round Floating Pop-up Ad Chest Widget in Top Right Corner -->
+                    <div id="btn-menu-ad-chest" class="floating-ad-chest-widget" title="Reklam İzle & Sandık Kazan!">
+                        <div class="ad-camera-badge">🎥</div>
+                        <div class="ad-chest-gift-icon">🎁</div>
+                        <span class="ad-widget-label" data-i18n="adWidgetTag">Ücretsiz</span>
+                    </div>
+
                     <!-- Ultra Eye-Catching 3D Heart Logo Emblem with Golden Crown & Sunburst Aura -->
                     <div class="menu-logo-frame">
                         <!-- Rotating Sunburst Aura -->
@@ -95,9 +102,6 @@
                         </button>
                         <button id="btn-mode-timetrial" class="btn-timetrial btn-menu">
                             <span id="txt-timetrial-btn">⏱️ ZAMANA KARŞI MOD (SEVİYE 1)</span>
-                        </button>
-                        <button id="btn-menu-ad-chest" class="btn-ad-chest btn-menu">
-                            <span data-i18n="adChestBtn">📺 REKLAM İZLE & SANDIK KAZAN! 🎁</span>
                         </button>
                         <button id="btn-menu-journal" class="btn-secondary btn-menu btn-journal">
                             <span data-i18n="journalBtnText">📖 YAPBOZ GÜNLÜĞÜ</span>
@@ -197,7 +201,7 @@
 
                     <!-- Force Update & Clear Cache Button -->
                     <button id="btn-force-update" class="btn-secondary settings-full-btn" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff; font-weight: 700; margin-top: 8px;">
-                        <span data-i18n="forceUpdateBtn">⚡ CANLI GÜNCELLEMEYİ YÜKLE (v2.2.0)</span>
+                        <span data-i18n="forceUpdateBtn">⚡ CANLI GÜNCELLEMEYİ YÜKLE (v2.3.0)</span>
                     </button>
 
                     <button id="btn-save-settings" class="btn-primary" data-i18n="saveBtn">KAYDET VE KAPAT</button>
@@ -436,7 +440,7 @@
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./sw.js?v=2.2.0').then((reg) => {
+          navigator.serviceWorker.register('./sw.js?v=2.3.0').then((reg) => {
             reg.update();
 
             reg.addEventListener('updatefound', () => {
@@ -461,6 +465,6 @@
         });
       }
     </script>
-    <script src="game.js?v=2.2.0" defer></script>
+    <script src="game.js?v=2.3.0" defer></script>
 </body>
 </html>

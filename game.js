@@ -463,6 +463,7 @@ class TileMatchingGame {
         // Full 7-Language Global Localization Engine (TR, EN, DE, FR, IT, ES, PT)
         this.i18n = {
             tr: {
+                adWidgetTag: "ÜCRETSİZ",
                 adChestBtn: "📺 REKLAM İZLE & SANDIK KAZAN! 🎁",
                 adReviveBtn: "📺 REKLAM İZLE & +1 SLOT İLE DEVAM ET",
                 gameTitle: "EŞLE GİTSİN! 3D",
@@ -530,6 +531,7 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 TEBRİKLER! {name} BULMACASI TAMAMLANDI!"
             },
             en: {
+                adWidgetTag: "FREE",
                 adChestBtn: "📺 WATCH AD & WIN CHEST! 🎁",
                 adReviveBtn: "📺 WATCH AD & CONTINUE WITH +1 SLOT",
                 gameTitle: "MATCH & GO! 3D",
@@ -597,6 +599,7 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 CONGRATS! {name} PUZZLE COMPLETED!"
             },
             de: {
+                adWidgetTag: "GRATIS",
                 adChestBtn: "📺 WERBUNG SEHEN & TRUHE GEWINNEN! 🎁",
                 adReviveBtn: "📺 WERBUNG SEHEN & MIT +1 SLOT FORTFAHREN",
                 gameTitle: "MATCH & GO! 3D",
@@ -664,6 +667,7 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 GLÜCKWUNSCH! {name} PUZZLE VOLLSTÄNDIG!"
             },
             fr: {
+                adWidgetTag: "GRATUIT",
                 adChestBtn: "📺 REGARDER PUB & GAGNER COFFRE! 🎁",
                 adReviveBtn: "📺 REGARDER PUB & CONTINUER AVEC +1 EMPLACEMENT",
                 gameTitle: "MATCH & GO! 3D",
@@ -731,6 +735,7 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 BRAVO! PUZZLE {name} COMPLÉTÉ!"
             },
             it: {
+                adWidgetTag: "GRATIS",
                 adChestBtn: "📺 GUARDA PUBBLICITÀ & VINCI BAULE! 🎁",
                 adReviveBtn: "📺 GUARDA PUBBLICITÀ & CONTINUA CON +1 SLOT",
                 gameTitle: "MATCH & GO! 3D",
@@ -798,6 +803,7 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 COMPLIMENTI! PUZZLE {name} COMPLETATO!"
             },
             es: {
+                adWidgetTag: "GRATIS",
                 adChestBtn: "📺 ¡VER ANUNCIO Y GANAR COFRE! 🎁",
                 adReviveBtn: "📺 VER ANUNCIO Y CONTINUAR CON +1 CASILLA",
                 gameTitle: "MATCH & GO! 3D",
@@ -865,6 +871,7 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 ¡ENHORABUENA! ¡PUZZLE {name} COMPLETADO!"
             },
             pt: {
+                adWidgetTag: "GRÁTIS",
                 adChestBtn: "📺 VER ANÚNCIO E GANHAR BAÚ! 🎁",
                 adReviveBtn: "📺 VER ANÚNCIO E CONTINUAR COM +1 ESPAÇO",
                 gameTitle: "MATCH & GO! 3D",

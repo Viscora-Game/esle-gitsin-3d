@@ -1481,32 +1481,92 @@ body {
     box-shadow: 0 4px 14px rgba(16, 185, 129, 0.5);
 }
 
-/* Rewarded Ad Chest Main Menu Button */
-.btn-ad-chest {
-    background: linear-gradient(135deg, #a855f7 0%, #7e22ce 100%);
-    border: 2px solid #c084fc;
-    color: #ffffff;
-    font-weight: 900;
-    box-shadow: 0 6px 20px rgba(168, 85, 247, 0.4), 0 0 15px rgba(192, 132, 252, 0.3);
-    position: relative;
-    overflow: hidden;
-}
-
-.btn-ad-chest::before {
-    content: '';
+/* Round Floating Pop-Up Ad Chest Widget in Top Corner of Main Menu Card */
+.floating-ad-chest-widget {
     position: absolute;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: linear-gradient(60deg, transparent, rgba(255, 255, 255, 0.25), transparent);
-    transform: rotate(30deg);
-    animation: shineRibbon 3s infinite;
+    top: -14px;
+    right: -10px;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #a855f7 0%, #7e22ce 60%, #ec4899 100%);
+    border: 2.5px solid #f472b6;
+    box-shadow: 0 8px 24px rgba(168, 85, 247, 0.6), 0 0 16px rgba(244, 114, 182, 0.4);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 50;
+    animation: adWidgetBounce 2.2s ease-in-out infinite alternate;
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
 }
 
-@keyframes shineRibbon {
-    0% { transform: translateX(-100%) rotate(30deg); }
-    100% { transform: translateX(100%) rotate(30deg); }
+.floating-ad-chest-widget:hover {
+    transform: scale(1.14) rotate(6deg);
+    box-shadow: 0 12px 30px rgba(168, 85, 247, 0.8), 0 0 25px rgba(244, 114, 182, 0.7);
+}
+
+.floating-ad-chest-widget:active {
+    transform: scale(0.92);
+}
+
+/* Floating Camera/Video Badge on Top Left of Circle */
+.ad-camera-badge {
+    position: absolute;
+    top: -4px;
+    left: -4px;
+    width: 24px;
+    height: 24px;
+    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+    border: 1.5px solid #ffffff;
+    border-radius: 50%;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.4);
+    z-index: 55;
+    animation: cameraPulse 1.4s ease-in-out infinite alternate;
+}
+
+/* Big Sparkling Center Gift Box Icon */
+.ad-chest-gift-icon {
+    font-size: 26px;
+    filter: drop-shadow(0 2px 6px rgba(0,0,0,0.4));
+    animation: giftSparkle 1.8s ease-in-out infinite alternate;
+}
+
+/* Bottom Mini Pill Tag (Ücretsiz / Free) */
+.ad-widget-label {
+    position: absolute;
+    bottom: -8px;
+    background: #10b981;
+    color: #ffffff;
+    border: 1px solid #34d399;
+    font-size: 10px;
+    font-weight: 900;
+    padding: 1px 7px;
+    border-radius: 10px;
+    white-space: nowrap;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.5);
+    text-transform: uppercase;
+}
+
+@keyframes adWidgetBounce {
+    0% { transform: translateY(0) scale(1); }
+    50% { transform: translateY(-5px) scale(1.05); }
+    100% { transform: translateY(0) scale(1); }
+}
+
+@keyframes cameraPulse {
+    0% { transform: scale(1); }
+    100% { transform: scale(1.2) rotate(-8deg); }
+}
+
+@keyframes giftSparkle {
+    0% { transform: scale(1) rotate(0deg); }
+    100% { transform: scale(1.12) rotate(6deg); }
 }
 
 /* Journal Book & Jigsaw Styling */
