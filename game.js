@@ -463,6 +463,10 @@ class TileMatchingGame {
         // Full 7-Language Global Localization Engine (TR, EN, DE, FR, IT, ES, PT)
         this.i18n = {
             tr: {
+                wheelAdCooldownTag: "⏳ REKLAMLI ÇEVİRME: {time}",
+                wheelResetTag: "⏳ YARIN GEL: {time}",
+                wheelAdCooldownBadge: "⏳ 8 SAATLİK REKLAM SOĞUMA SÜRESİ: {time}",
+                wheelResetBadge: "⏳ 24 SAATLİK YENİLENME SÜRESİ: {time}",
                 wheelRewardTitle: "🎡 ŞANS ÇARKI ÖDÜLÜ! 🎉",
                 wheelRewardDesc: "🏆 Çarktan Çıkan Ödülleriniz:",
                 wheelWonTitle: "🎉 TEBRİKLER! ÖDÜL KAZANDIN!",
@@ -555,6 +559,10 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 TEBRİKLER! {name} BULMACASI TAMAMLANDI!"
             },
             en: {
+                wheelAdCooldownTag: "⏳ AD SPIN IN: {time}",
+                wheelResetTag: "⏳ BACK IN: {time}",
+                wheelAdCooldownBadge: "⏳ 8-HOUR AD COOLDOWN: {time}",
+                wheelResetBadge: "⏳ 24-HOUR RESET TIMER: {time}",
                 wheelRewardTitle: "🎡 LUCKY WHEEL REWARD! 🎉",
                 wheelRewardDesc: "🏆 Your Lucky Wheel Rewards:",
                 wheelWonTitle: "🎉 CONGRATULATIONS! YOU WON!",
@@ -647,6 +655,10 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 CONGRATS! {name} PUZZLE COMPLETED!"
             },
             de: {
+                wheelAdCooldownTag: "⏳ WERBUNG IN: {time}",
+                wheelResetTag: "⏳ MORGEN WIEDER: {time}",
+                wheelAdCooldownBadge: "⏳ 8-STUNDEN-WERBEPAUSE: {time}",
+                wheelResetBadge: "⏳ 24-STUNDEN-NEUSTART: {time}",
                 wheelRewardTitle: "🎡 GLÜCKSRAD-BELOHNUNG! 🎉",
                 wheelRewardDesc: "🏆 Deine Glücksrad-Belohnungen:",
                 wheelWonTitle: "🎉 GLÜCKWUNSCH! GEWONNEN!",
@@ -739,6 +751,10 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 GLÜCKWUNSCH! {name} PUZZLE VOLLSTÄNDIG!"
             },
             fr: {
+                wheelAdCooldownTag: "⏳ PUB DANS: {time}",
+                wheelResetTag: "⏳ REVENEZ DANS: {time}",
+                wheelAdCooldownBadge: "⏳ PAUSE PUB 8H: {time}",
+                wheelResetBadge: "⏳ RECHARGE EN 24H: {time}",
                 wheelRewardTitle: "🎡 RÉCOMPENSE ROUE! 🎉",
                 wheelRewardDesc: "🏆 Vos récompenses de la roue:",
                 wheelWonTitle: "🎉 FÉLICITATIONS! GAGNÉ!",
@@ -831,6 +847,10 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 BRAVO! PUZZLE {name} COMPLÉTÉ!"
             },
             it: {
+                wheelAdCooldownTag: "⏳ PUBBLICITÀ TRA: {time}",
+                wheelResetTag: "⏳ TORNA TRA: {time}",
+                wheelAdCooldownBadge: "⏳ PAUSA PUBBLICITÀ 8 ORE: {time}",
+                wheelResetBadge: "⏳ REIMPOSTAZIONE 24 ORE: {time}",
                 wheelRewardTitle: "🎡 PREMIO RUOTA DELLA FORTUNA! 🎉",
                 wheelRewardDesc: "🏆 I tuoi premi della ruota:",
                 wheelWonTitle: "🎉 CONGRATULAZIONI! HAI VINTO!",
@@ -923,6 +943,10 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 COMPLIMENTI! PUZZLE {name} COMPLETATO!"
             },
             es: {
+                wheelAdCooldownTag: "⏳ ANUNCIO EN: {time}",
+                wheelResetTag: "⏳ VUELVE EN: {time}",
+                wheelAdCooldownBadge: "⏳ ESPERA DE 8 HORAS: {time}",
+                wheelResetBadge: "⏳ REINICIO EN 24 HORAS: {time}",
                 wheelRewardTitle: "🎡 ¡RECOMPENSA RUEDA! 🎉",
                 wheelRewardDesc: "🏆 Tus recompensas de la rueda:",
                 wheelWonTitle: "🎉 ¡ENHORABUENA! ¡HAS GANADO!",
@@ -1015,6 +1039,10 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 ¡ENHORABUENA! ¡PUZZLE {name} COMPLETADO!"
             },
             pt: {
+                wheelAdCooldownTag: "⏳ ANÚNCIO EM: {time}",
+                wheelResetTag: "⏳ VOLTE EM: {time}",
+                wheelAdCooldownBadge: "⏳ INTERVALO DE 8 HORAS: {time}",
+                wheelResetBadge: "⏳ REINÍCIO EM 24 HORAS: {time}",
                 wheelRewardTitle: "🎡 RECOMPENSA RODA! 🎉",
                 wheelRewardDesc: "🏆 Suas recompensas da roda:",
                 wheelWonTitle: "🎉 PARABÉNS! VOCÊ GANHOU!",
@@ -1297,6 +1325,7 @@ class TileMatchingGame {
 
     initUI() {
         this.updateMainMenuButtons();
+        this.startWheelTimerLoop();
 
         // TUTORIAL EVENTS
         document.getElementById('btn-close-tutorial').addEventListener('click', () => {
@@ -1428,7 +1457,11 @@ class TileMatchingGame {
                     btnAdChest.classList.add('shaking');
                     setTimeout(() => btnAdChest.classList.remove('shaking'), 250);
                     const dict = this.i18n[this.settings.lang] || this.i18n.tr;
-                    this.showToast(dict.adChestLimitReached || '⚠️ Bugünkü Ücretsiz Reklam Sandığı Hakkınız Bitti! (0/3)');
+                    const midnight = new Date();
+                    midnight.setHours(24, 0, 0, 0);
+                    const resetRemaining = Math.max(0, midnight.getTime() - Date.now());
+                    const timeStr = this.formatTimeLeft(resetRemaining);
+                    this.showToast((dict.adChestLimitReached || '⚠️ Bugünkü Ücretsiz Reklam Sandığı Hakkınız Bitti! (0/3 - {time})').replace('{time}', timeStr));
                     return;
                 }
 
@@ -1532,6 +1565,7 @@ class TileMatchingGame {
             this.stopTimer();
             this.saveGameProgress();
             this.updateMainMenuButtons();
+        this.startWheelTimerLoop();
             document.getElementById('main-menu').classList.remove('hidden');
             this.showMainMenuBannerAd();
         });
@@ -1562,7 +1596,7 @@ class TileMatchingGame {
             this.settings.vibration = !this.settings.vibration;
             this.updateVibBtnUI();
         this.updateAdWidgetUI();
-        this.updateWheelWidgetUI();
+        this.updateWheelTimerState();
             if (this.settings.vibration && navigator.vibrate) {
                 navigator.vibrate(40);
             }
@@ -1719,6 +1753,7 @@ class TileMatchingGame {
         });
         this.applyLanguage();
         this.updateMainMenuButtons();
+        this.startWheelTimerLoop();
     }
 
     applyLanguage() {
@@ -1735,6 +1770,7 @@ class TileMatchingGame {
 
         // Re-render main menu buttons with localized level labels
         this.updateMainMenuButtons();
+        this.startWheelTimerLoop();
 
         // Re-render tutorial slide in active language
         this.renderTutorialStep();
@@ -3252,12 +3288,17 @@ class TileMatchingGame {
         const remaining = this.getDailyAdChestRemaining();
         const dict = (this.i18n && this.i18n[this.settings.lang]) ? this.i18n[this.settings.lang] : (this.i18n ? this.i18n.tr : {});
 
+        const midnight = new Date();
+        midnight.setHours(24, 0, 0, 0);
+        const resetRemaining = Math.max(0, midnight.getTime() - Date.now());
+        const timeStr = this.formatTimeLeft(resetRemaining);
+
         if (widgetTag) {
             if (remaining > 0) {
                 widgetTag.innerText = `(${remaining}/3)`;
                 widgetTag.style.background = '#10b981';
             } else {
-                widgetTag.innerText = dict.adFullTag || 'DOLDU';
+                widgetTag.innerText = timeStr;
                 widgetTag.style.background = '#ef4444';
             }
         }
@@ -3271,6 +3312,9 @@ class TileMatchingGame {
     // =========================================================
     // CUTE 3D LUCKY WHEEL ENGINE (85% GOLD / 15% PIECES)
     // =========================================================
+    // =========================================================
+    // CUTE 3D LUCKY WHEEL ENGINE WITH 8-HR COOLDOWN & 24-HR RESET
+    // =========================================================
     getDailyWheelSpinsCount() {
         try {
             const todayStr = new Date().toISOString().slice(0, 10);
@@ -3280,9 +3324,18 @@ class TileMatchingGame {
             if (savedDate !== todayStr) {
                 localStorage.setItem('tile_game_wheel_date', todayStr);
                 localStorage.setItem('tile_game_wheel_spins', '0');
+                localStorage.setItem('tile_game_wheel_last_spin_time', '0');
                 return 0;
             }
             return savedSpins;
+        } catch (e) {
+            return 0;
+        }
+    }
+
+    getLastWheelSpinTime() {
+        try {
+            return parseInt(localStorage.getItem('tile_game_wheel_last_spin_time') || '0', 10);
         } catch (e) {
             return 0;
         }
@@ -3294,27 +3347,105 @@ class TileMatchingGame {
             const currentSpins = this.getDailyWheelSpinsCount();
             localStorage.setItem('tile_game_wheel_date', todayStr);
             localStorage.setItem('tile_game_wheel_spins', (currentSpins + 1).toString());
-            this.updateWheelWidgetUI();
+            localStorage.setItem('tile_game_wheel_last_spin_time', Date.now().toString());
+            this.updateWheelTimerState();
         } catch (e) {}
     }
 
-    updateWheelWidgetUI() {
+    formatTimeLeft(ms) {
+        if (ms <= 0) return '00:00:00';
+        const totalSecs = Math.floor(ms / 1000);
+        const hrs = Math.floor(totalSecs / 3600);
+        const mins = Math.floor((totalSecs % 3600) / 60);
+        const secs = totalSecs % 60;
+        return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    }
+
+    updateWheelTimerState() {
         const widgetTag = document.querySelector('.wheel-widget-label');
-        const spins = this.getDailyWheelSpinsCount();
+        const statusBadge = document.getElementById('wheel-status-badge');
+        const btnSpin = document.getElementById('btn-spin-wheel');
+        const txtSpin = document.getElementById('txt-spin-btn');
         const dict = this.i18n[this.settings.lang] || this.i18n.tr;
 
-        if (widgetTag) {
-            if (spins === 0) {
+        const spins = this.getDailyWheelSpinsCount();
+        const lastSpinTime = this.getLastWheelSpinTime();
+        const now = Date.now();
+
+        // 8 Hours Cooldown = 8 * 60 * 60 * 1000 = 28,800,000 ms
+        const EIGHT_HOURS_MS = 8 * 60 * 60 * 1000;
+        const cooldownRemaining = Math.max(0, (lastSpinTime + EIGHT_HOURS_MS) - now);
+
+        // 24 Hours Midnight Reset Remaining
+        const midnight = new Date();
+        midnight.setHours(24, 0, 0, 0);
+        const resetRemaining = Math.max(0, midnight.getTime() - now);
+
+        if (spins === 0) {
+            // Spin 0: Free Spin Ready
+            if (widgetTag) {
                 widgetTag.innerText = dict.wheelWidgetTag || 'ÇARK';
                 widgetTag.style.background = '#f59e0b';
-            } else if (spins === 1) {
-                widgetTag.innerText = 'REKLAM';
-                widgetTag.style.background = '#8b5cf6';
+            }
+            if (statusBadge && txtSpin && btnSpin) {
+                statusBadge.innerText = dict.wheelStatusFree || '✨ 1 ÜCRETSİZ ÇEVİRME HAKKI';
+                statusBadge.style.color = '#fbbf24';
+                txtSpin.innerText = dict.spinBtnFree || '🎯 ÜCRETSİZ ÇEVİR!';
+                btnSpin.style.background = 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)';
+                btnSpin.disabled = false;
+            }
+        } else if (spins === 1) {
+            // Spin 1: Free spin used, check 8-hour ad cooldown
+            if (cooldownRemaining > 0) {
+                const timeStr = this.formatTimeLeft(cooldownRemaining);
+                if (widgetTag) {
+                    widgetTag.innerText = timeStr;
+                    widgetTag.style.background = '#8b5cf6';
+                }
+                if (statusBadge && txtSpin && btnSpin) {
+                    statusBadge.innerText = (dict.wheelAdCooldownBadge || '⏳ 8 SAATLİK REKLAM SOĞUMA SÜRESİ: {time}').replace('{time}', timeStr);
+                    statusBadge.style.color = '#c084fc';
+                    txtSpin.innerText = (dict.wheelAdCooldownTag || '⏳ REKLAMLI ÇEVİRME: {time}').replace('{time}', timeStr);
+                    btnSpin.style.background = '#475569';
+                    btnSpin.disabled = true;
+                }
             } else {
+                // 8 Hours Cooldown Passed! Ad Spin Unlocked!
+                if (widgetTag) {
+                    widgetTag.innerText = 'REKLAM';
+                    widgetTag.style.background = '#8b5cf6';
+                }
+                if (statusBadge && txtSpin && btnSpin) {
+                    statusBadge.innerText = dict.wheelStatusAd || '📺 1 REKLAMLI ÇEVİRME HAKKI';
+                    statusBadge.style.color = '#c084fc';
+                    txtSpin.innerText = dict.spinBtnAd || '📺 REKLAM İZLE & ÇEVİR!';
+                    btnSpin.style.background = 'linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%)';
+                    btnSpin.disabled = false;
+                }
+            }
+        } else {
+            // Spin 2: All spins done today, 24-hour midnight reset countdown
+            const timeStr = this.formatTimeLeft(resetRemaining);
+            if (widgetTag) {
                 widgetTag.innerText = dict.adFullTag || 'DOLDU';
                 widgetTag.style.background = '#ef4444';
             }
+            if (statusBadge && txtSpin && btnSpin) {
+                statusBadge.innerText = (dict.wheelResetBadge || '⏳ 24 SAATLİK YENİLENME SÜRESİ: {time}').replace('{time}', timeStr);
+                statusBadge.style.color = '#ef4444';
+                txtSpin.innerText = (dict.wheelResetTag || '⏳ YARIN GEL: {time}').replace('{time}', timeStr);
+                btnSpin.style.background = '#475569';
+                btnSpin.disabled = true;
+            }
         }
+    }
+
+    startWheelTimerLoop() {
+        if (this.wheelTimerInterval) clearInterval(this.wheelTimerInterval);
+        this.updateWheelTimerState();
+        this.wheelTimerInterval = setInterval(() => {
+            this.updateWheelTimerState();
+        }, 1000);
     }
 
     renderWheelCanvas() {
@@ -3368,34 +3499,7 @@ class TileMatchingGame {
         const disc = document.getElementById('wheel-disc');
         if (disc) disc.style.transform = 'rotate(0deg)';
 
-        const spins = this.getDailyWheelSpinsCount();
-        const statusBadge = document.getElementById('wheel-status-badge');
-        const btnSpin = document.getElementById('btn-spin-wheel');
-        const txtSpin = document.getElementById('txt-spin-btn');
-        const dict = this.i18n[this.settings.lang] || this.i18n.tr;
-
-        if (statusBadge && btnSpin && txtSpin) {
-            if (spins === 0) {
-                statusBadge.innerText = dict.wheelStatusFree || '✨ 1 ÜCRETSİZ ÇEVİRME HAKKI';
-                statusBadge.style.color = '#fbbf24';
-                txtSpin.innerText = dict.spinBtnFree || '🎯 ÜCRETSİZ ÇEVİR!';
-                btnSpin.style.background = 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)';
-                btnSpin.disabled = false;
-            } else if (spins === 1) {
-                statusBadge.innerText = dict.wheelStatusAd || '📺 1 REKLAMLI ÇEVİRME HAKKI';
-                statusBadge.style.color = '#c084fc';
-                txtSpin.innerText = dict.spinBtnAd || '📺 REKLAM İZLE & ÇEVİR!';
-                btnSpin.style.background = 'linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%)';
-                btnSpin.disabled = false;
-            } else {
-                statusBadge.innerText = dict.wheelStatusDone || '🔒 BUGÜNKÜ HAKLAR DOLDU (2/2)';
-                statusBadge.style.color = '#ef4444';
-                txtSpin.innerText = 'YARIN GELEBİLİRSİN 🎁';
-                btnSpin.style.background = '#475569';
-                btnSpin.disabled = true;
-            }
-        }
-
+        this.updateWheelTimerState();
         document.getElementById('modal-wheel').classList.remove('hidden');
     }
 
