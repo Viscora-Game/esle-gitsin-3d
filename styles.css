@@ -1645,6 +1645,167 @@ body {
     color: #cbd5e1;
 }
 
+/* Round Floating Pop-Up Lucky Wheel Widget in Top-Left Corner of Main Menu Card */
+.floating-wheel-widget {
+    position: absolute;
+    top: 14px;
+    left: 14px;
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 60%, #ef4444 100%);
+    border: 2.5px solid #fbbf24;
+    box-shadow: 0 8px 24px rgba(245, 158, 11, 0.6), 0 0 16px rgba(251, 191, 36, 0.4);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 100;
+    animation: adWidgetBounce 2.4s ease-in-out infinite alternate;
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease;
+}
+
+.floating-wheel-widget:hover {
+    transform: scale(1.14) rotate(-6deg);
+    box-shadow: 0 12px 30px rgba(245, 158, 11, 0.8), 0 0 25px rgba(251, 191, 36, 0.7);
+}
+
+.floating-wheel-widget:active {
+    transform: scale(0.92);
+}
+
+/* Floating Sparkle Badge on Top Right of Wheel Circle */
+.wheel-sparkle-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    width: 24px;
+    height: 24px;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    border: 1.5px solid #ffffff;
+    border-radius: 50%;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.4);
+    z-index: 55;
+    animation: cameraPulse 1.6s ease-in-out infinite alternate;
+}
+
+/* Big Sparkling Center Wheel Icon */
+.wheel-center-icon {
+    font-size: 26px;
+    filter: drop-shadow(0 2px 6px rgba(0,0,0,0.4));
+    animation: giftSparkle 2s ease-in-out infinite alternate;
+}
+
+/* Bottom Mini Pill Tag (Çark / Wheel) */
+.wheel-widget-label {
+    position: absolute;
+    bottom: -8px;
+    background: #f59e0b;
+    color: #ffffff;
+    border: 1px solid #fbbf24;
+    font-size: 10px;
+    font-weight: 900;
+    padding: 1px 7px;
+    border-radius: 10px;
+    white-space: nowrap;
+    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.5);
+    text-transform: uppercase;
+}
+
+/* 3D Lucky Wheel Modal Container Styling */
+.wheel-card {
+    background: linear-gradient(145deg, #1e1b4b 0%, #0f172a 100%);
+    border: 2.5px solid #fbbf24;
+    box-shadow: 0 0 45px rgba(245, 158, 11, 0.5), inset 0 0 20px rgba(0, 0, 0, 0.7);
+    padding: 24px 18px;
+    max-width: 360px;
+    width: 90%;
+    text-align: center;
+    border-radius: 28px;
+    position: relative;
+}
+
+.wheel-wrapper {
+    position: relative;
+    width: 280px;
+    height: 280px;
+    margin: 16px auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Golden Pointer Indicator at Top */
+.wheel-pointer {
+    position: absolute;
+    top: -12px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 28px;
+    color: #fbbf24;
+    text-shadow: 0 4px 10px rgba(0, 0, 0, 0.6);
+    z-index: 80;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.8));
+    animation: pointerWiggle 1s ease-in-out infinite alternate;
+}
+
+@keyframes pointerWiggle {
+    0% { transform: translateX(-50%) translateY(0); }
+    100% { transform: translateX(-50%) translateY(3px); }
+}
+
+.wheel-disc {
+    width: 280px;
+    height: 280px;
+    border-radius: 50%;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.6), inset 0 0 15px rgba(255, 255, 255, 0.2);
+    border: 4px solid #fbbf24;
+    overflow: hidden;
+    transition: transform 4s cubic-bezier(0.15, 0.9, 0.25, 1);
+}
+
+.wheel-center-cap {
+    position: absolute;
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+    border: 3px solid #ffffff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    z-index: 70;
+}
+
+.wheel-status-badge {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fbbf24;
+    border: 1px solid rgba(251, 191, 36, 0.4);
+    padding: 4px 14px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 800;
+    display: inline-block;
+    margin-bottom: 12px;
+}
+
+.btn-spin-wheel {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%) !important;
+    border: 2px solid #fde047 !important;
+    box-shadow: 0 6px 20px rgba(245, 158, 11, 0.5) !important;
+    color: #ffffff !important;
+    font-size: 16px !important;
+    font-weight: 900 !important;
+    width: 100% !important;
+}
+
 /* Journal Book & Jigsaw Styling */
 .btn-journal {
     background: linear-gradient(135deg, #b45309 0%, #78350f 100%) !important;

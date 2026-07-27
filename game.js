@@ -463,6 +463,15 @@ class TileMatchingGame {
         // Full 7-Language Global Localization Engine (TR, EN, DE, FR, IT, ES, PT)
         this.i18n = {
             tr: {
+                wheelWidgetTag: "ÇARK",
+                wheelTitle: "🎡 ŞANS ÇARKI 🎁",
+                wheelSubtitle: "Çarkı çevir, sürpriz altın ve yapboz parçaları kazan!",
+                spinBtnFree: "🎯 ÜCRETSİZ ÇEVİR!",
+                spinBtnAd: "📺 REKLAM İZLE & ÇEVİR!",
+                wheelLimitReached: "⚠️ Bugünkü Çark Haklarınız Bitti! (2/2 - Yarın Tekrar Gel 🎁)",
+                wheelStatusFree: "✨ 1 ÜCRETSİZ ÇEVİRME HAKKI",
+                wheelStatusAd: "📺 1 REKLAMLI ÇEVİRME HAKKI",
+                wheelStatusDone: "🔒 BUGÜNKÜ HAKLAR DOLDU (2/2)",
                 adBannerBadge: "SPONSORLU",
                 chestStarTitle: "{stars} YILDIZLI SANDIK! 🎁",
                 bonusChestStarTitle: "🏆 BONUS {stars} YILDIZLI SANDIK! 🎁",
@@ -542,6 +551,15 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 TEBRİKLER! {name} BULMACASI TAMAMLANDI!"
             },
             en: {
+                wheelWidgetTag: "WHEEL",
+                wheelTitle: "🎡 LUCKY WHEEL 🎁",
+                wheelSubtitle: "Spin the wheel to win gold and puzzle pieces!",
+                spinBtnFree: "🎯 SPIN FOR FREE!",
+                spinBtnAd: "📺 WATCH AD & SPIN!",
+                wheelLimitReached: "⚠️ Daily Wheel Limit Reached! (2/2 - Come Back Tomorrow 🎁)",
+                wheelStatusFree: "✨ 1 FREE SPIN AVAILABLE",
+                wheelStatusAd: "📺 1 REWARDED AD SPIN AVAILABLE",
+                wheelStatusDone: "🔒 DAILY LIMIT REACHED (2/2)",
                 adBannerBadge: "SPONSORED",
                 chestStarTitle: "{stars}-STAR CHEST! 🎁",
                 bonusChestStarTitle: "🏆 BONUS {stars}-STAR CHEST! 🎁",
@@ -621,6 +639,15 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 CONGRATS! {name} PUZZLE COMPLETED!"
             },
             de: {
+                wheelWidgetTag: "RAD",
+                wheelTitle: "🎡 GLÜCKSRAD 🎁",
+                wheelSubtitle: "Drehe das Rad und gewinne Gold & Puzzleteile!",
+                spinBtnFree: "🎯 KOSTENLOS DREHEN!",
+                spinBtnAd: "📺 WERBUNG SEHEN & DREHEN!",
+                wheelLimitReached: "⚠️ Tägliches Rad-Limit erreicht! (2/2 - Morgen wiederkommen 🎁)",
+                wheelStatusFree: "✨ 1 KOSTENLOSE DREHUNG",
+                wheelStatusAd: "📺 1 WERBUNG-DREHUNG VERFÜGBAR",
+                wheelStatusDone: "🔒 TÄGLICHES LIMIT ERREICHT (2/2)",
                 adBannerBadge: "GESPONSERT",
                 chestStarTitle: "{stars}-STERNE TRUHE! 🎁",
                 bonusChestStarTitle: "🏆 BONUS {stars}-STERNE TRUHE! 🎁",
@@ -700,6 +727,15 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 GLÜCKWUNSCH! {name} PUZZLE VOLLSTÄNDIG!"
             },
             fr: {
+                wheelWidgetTag: "ROUE",
+                wheelTitle: "🎡 ROUE DE LA FORTUNE 🎁",
+                wheelSubtitle: "Tournez la roue et gagnez de l'or et des pièces de puzzle!",
+                spinBtnFree: "🎯 TOURNER GRATUITEMENT!",
+                spinBtnAd: "📺 REGARDER PUB & TOURNER!",
+                wheelLimitReached: "⚠️ Limite quotidienne de la roue atteinte! (2/2 - Revenez demain 🎁)",
+                wheelStatusFree: "✨ 1 TOUR GRATUIT DISPONIBLE",
+                wheelStatusAd: "📺 1 TOUR AVEC PUB DISPONIBLE",
+                wheelStatusDone: "🔒 LIMITE ATTEINTE (2/2)",
                 adBannerBadge: "SPONSORISÉ",
                 chestStarTitle: "COFFRE {stars} ÉTOILE(S)! 🎁",
                 bonusChestStarTitle: "🏆 COFFRE BONUS {stars} ÉTOILE(S)! 🎁",
@@ -779,6 +815,15 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 BRAVO! PUZZLE {name} COMPLÉTÉ!"
             },
             it: {
+                wheelWidgetTag: "RUOTA",
+                wheelTitle: "🎡 RUOTA DELLA FORTUNA 🎁",
+                wheelSubtitle: "Gira la ruota per vincere oro e pezzi di puzzle!",
+                spinBtnFree: "🎯 GIRA GRATIS!",
+                spinBtnAd: "📺 GUARDA PUBBLICITÀ E GIRA!",
+                wheelLimitReached: "⚠️ Limite giornaliero ruota raggiunto! (2/2 - Torna domani 🎁)",
+                wheelStatusFree: "✨ 1 GIRO GRATUITO DISPONIBILE",
+                wheelStatusAd: "📺 1 GIRO CON PUBBLICITÀ DISPONIBILE",
+                wheelStatusDone: "🔒 LIMITE GIORNALIERO RAGGIUNTO (2/2)",
                 adBannerBadge: "SPONSORIZZATO",
                 chestStarTitle: "BAULE A {stars} STELLE! 🎁",
                 bonusChestStarTitle: "🏆 BAULE BONUS A {stars} STELLE! 🎁",
@@ -858,6 +903,15 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 COMPLIMENTI! PUZZLE {name} COMPLETATO!"
             },
             es: {
+                wheelWidgetTag: "RUEDA",
+                wheelTitle: "🎡 RUEDA DE LA SUERTE 🎁",
+                wheelSubtitle: "¡Gira la rueda para ganar oro y piezas de puzzle!",
+                spinBtnFree: "🎯 ¡GIRAR GRATIS!",
+                spinBtnAd: "📺 ¡VER ANUNCIO Y GIRAR!",
+                wheelLimitReached: "⚠️ ¡Límite diario de la rueda alcanzado! (2/2 - Vuelve mañana 🎁)",
+                wheelStatusFree: "✨ 1 GIRO GRATIS DISPONIBLE",
+                wheelStatusAd: "📺 1 GIRO CON ANUNCIO DISPONIBLE",
+                wheelStatusDone: "🔒 LÍMITE DIARIO ALCANZADO (2/2)",
                 adBannerBadge: "PATROCINADO",
                 chestStarTitle: "¡COFRE DE {stars} ESTRELLA(S)! 🎁",
                 bonusChestStarTitle: "🏆 ¡COFRE BONUS DE {stars} ESTRELLA(S)! 🎁",
@@ -937,6 +991,15 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 ¡ENHORABUENA! ¡PUZZLE {name} COMPLETADO!"
             },
             pt: {
+                wheelWidgetTag: "RODA",
+                wheelTitle: "🎡 RODA DA SORTE 🎁",
+                wheelSubtitle: "Gire a roda para ganhar ouro e peças de puzzle!",
+                spinBtnFree: "🎯 GIRAR GRÁTIS!",
+                spinBtnAd: "📺 VER ANÚNCIO E GIRAR!",
+                wheelLimitReached: "⚠️ Limite diário da roda atingido! (2/2 - Volte amanhã 🎁)",
+                wheelStatusFree: "✨ 1 GIRO GRÁTIS DISPONÍVEL",
+                wheelStatusAd: "📺 1 GIRO COM ANÚNCIO DISPONÍVEL",
+                wheelStatusDone: "🔒 LIMITE DIÁRIO ATINGIDO (2/2)",
                 adBannerBadge: "PATROCINADO",
                 chestStarTitle: "BAÚ DE {stars} ESTRELA(S)! 🎁",
                 bonusChestStarTitle: "🏆 BAÚ BÔNUS DE {stars} ESTRELA(S)! 🎁",
@@ -1351,6 +1414,29 @@ class TileMatchingGame {
             });
         }
 
+        // LUCKY WHEEL EVENT LISTENERS
+        const btnWheel = document.getElementById('btn-menu-wheel');
+        if (btnWheel) {
+            btnWheel.addEventListener('click', () => {
+                this.sound.playClick();
+                this.openWheelModal();
+            });
+        }
+
+        const btnCloseWheel = document.getElementById('btn-close-wheel');
+        if (btnCloseWheel) {
+            btnCloseWheel.addEventListener('click', () => {
+                document.getElementById('modal-wheel').classList.add('hidden');
+            });
+        }
+
+        const btnSpinWheel = document.getElementById('btn-spin-wheel');
+        if (btnSpinWheel) {
+            btnSpinWheel.addEventListener('click', () => {
+                this.spinWheelAction();
+            });
+        }
+
         // REWARDED AD DEFEAT REVIVE CLICK (MAX 2 PER LEVEL)
         const btnAdRevive = document.getElementById('btn-ad-revive');
         if (btnAdRevive) {
@@ -1425,6 +1511,7 @@ class TileMatchingGame {
             this.settings.vibration = !this.settings.vibration;
             this.updateVibBtnUI();
         this.updateAdWidgetUI();
+        this.updateWheelWidgetUI();
             if (this.settings.vibration && navigator.vibrate) {
                 navigator.vibrate(40);
             }
@@ -3129,6 +3216,235 @@ class TileMatchingGame {
     // =========================================================
     // MAIN MENU EXCLUSIVE ADMOB BANNER AD CONTROLLER
     // =========================================================
+
+    // =========================================================
+    // CUTE 3D LUCKY WHEEL ENGINE (85% GOLD / 15% PIECES)
+    // =========================================================
+    getDailyWheelSpinsCount() {
+        try {
+            const todayStr = new Date().toISOString().slice(0, 10);
+            const savedDate = localStorage.getItem('tile_game_wheel_date');
+            const savedSpins = parseInt(localStorage.getItem('tile_game_wheel_spins') || '0', 10);
+
+            if (savedDate !== todayStr) {
+                localStorage.setItem('tile_game_wheel_date', todayStr);
+                localStorage.setItem('tile_game_wheel_spins', '0');
+                return 0;
+            }
+            return savedSpins;
+        } catch (e) {
+            return 0;
+        }
+    }
+
+    incrementWheelSpinsCount() {
+        try {
+            const todayStr = new Date().toISOString().slice(0, 10);
+            const currentSpins = this.getDailyWheelSpinsCount();
+            localStorage.setItem('tile_game_wheel_date', todayStr);
+            localStorage.setItem('tile_game_wheel_spins', (currentSpins + 1).toString());
+            this.updateWheelWidgetUI();
+        } catch (e) {}
+    }
+
+    updateWheelWidgetUI() {
+        const widgetTag = document.querySelector('.wheel-widget-label');
+        const spins = this.getDailyWheelSpinsCount();
+        const dict = this.i18n[this.settings.lang] || this.i18n.tr;
+
+        if (widgetTag) {
+            if (spins === 0) {
+                widgetTag.innerText = dict.wheelWidgetTag || 'ÇARK';
+                widgetTag.style.background = '#f59e0b';
+            } else if (spins === 1) {
+                widgetTag.innerText = 'REKLAM';
+                widgetTag.style.background = '#8b5cf6';
+            } else {
+                widgetTag.innerText = dict.adFullTag || 'DOLDU';
+                widgetTag.style.background = '#ef4444';
+            }
+        }
+    }
+
+    renderWheelCanvas() {
+        const canvas = document.getElementById('wheel-canvas');
+        if (!canvas || !canvas.getContext) return;
+        const ctx = canvas.getContext('2d');
+
+        const segments = [
+            { text: '10 ALTIN', icon: '🪙', bg: '#f59e0b', color: '#ffffff' },
+            { text: '1 PARÇA', icon: '🧩', bg: '#8b5cf6', color: '#ffffff' },
+            { text: '15 ALTIN', icon: '🪙', bg: '#3b82f6', color: '#ffffff' },
+            { text: '2 PARÇA', icon: '🧩', bg: '#ec4899', color: '#ffffff' },
+            { text: '20 ALTIN', icon: '🪙', bg: '#10b981', color: '#ffffff' },
+            { text: '25 ALTIN', icon: '🪙', bg: '#f97316', color: '#ffffff' },
+            { text: '50 ALTIN', icon: '🪙', bg: '#06b6d4', color: '#ffffff' },
+            { text: '3 PARÇA', icon: '🌟', bg: '#eab308', color: '#0f172a' }
+        ];
+
+        const numSegs = segments.length;
+        const arc = (2 * Math.PI) / numSegs;
+        const cx = 140, cy = 140, r = 135;
+
+        ctx.clearRect(0, 0, 280, 280);
+
+        for (let i = 0; i < numSegs; i++) {
+            const angle = i * arc;
+            ctx.beginPath();
+            ctx.fillStyle = segments[i].bg;
+            ctx.moveTo(cx, cy);
+            ctx.arc(cx, cy, r, angle, angle + arc);
+            ctx.lineTo(cx, cy);
+            ctx.fill();
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = '#ffffff';
+            ctx.stroke();
+
+            // Render Segment Labels & Icons
+            ctx.save();
+            ctx.translate(cx, cy);
+            ctx.rotate(angle + arc / 2);
+            ctx.textAlign = 'right';
+            ctx.fillStyle = segments[i].color;
+            ctx.font = '900 13px sans-serif';
+            ctx.fillText(`${segments[i].icon} ${segments[i].text}`, r - 15, 5);
+            ctx.restore();
+        }
+    }
+
+    openWheelModal() {
+        this.renderWheelCanvas();
+        const spins = this.getDailyWheelSpinsCount();
+        const statusBadge = document.getElementById('wheel-status-badge');
+        const btnSpin = document.getElementById('btn-spin-wheel');
+        const txtSpin = document.getElementById('txt-spin-btn');
+        const dict = this.i18n[this.settings.lang] || this.i18n.tr;
+
+        if (statusBadge && btnSpin && txtSpin) {
+            if (spins === 0) {
+                statusBadge.innerText = dict.wheelStatusFree || '✨ 1 ÜCRETSİZ ÇEVİRME HAKKI';
+                statusBadge.style.color = '#fbbf24';
+                txtSpin.innerText = dict.spinBtnFree || '🎯 ÜCRETSİZ ÇEVİR!';
+                btnSpin.style.background = 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)';
+                btnSpin.disabled = false;
+            } else if (spins === 1) {
+                statusBadge.innerText = dict.wheelStatusAd || '📺 1 REKLAMLI ÇEVİRME HAKKI';
+                statusBadge.style.color = '#c084fc';
+                txtSpin.innerText = dict.spinBtnAd || '📺 REKLAM İZLE & ÇEVİR!';
+                btnSpin.style.background = 'linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%)';
+                btnSpin.disabled = false;
+            } else {
+                statusBadge.innerText = dict.wheelStatusDone || '🔒 BUGÜNKÜ HAKLAR DOLDU (2/2)';
+                statusBadge.style.color = '#ef4444';
+                txtSpin.innerText = 'YARIN GELEBİLİRSİN 🎁';
+                btnSpin.style.background = '#475569';
+                btnSpin.disabled = true;
+            }
+        }
+
+        document.getElementById('modal-wheel').classList.remove('hidden');
+    }
+
+    rollWheelReward() {
+        // 85% Gold / 15% Puzzle Pieces Probability Split
+        const isGold = Math.random() < 0.85;
+
+        if (isGold) {
+            // Gold internal weighted odds
+            const goldRoll = Math.random() * 100;
+            let gold = 10;
+            let segIdx = 0; // default 10 gold segment
+
+            if (goldRoll <= 32) { gold = 10; segIdx = 0; }
+            else if (goldRoll <= 57) { gold = 15; segIdx = 2; }
+            else if (goldRoll <= 75) { gold = 20; segIdx = 4; }
+            else if (goldRoll <= 85) { gold = 25; segIdx = 5; }
+            else if (goldRoll <= 94) { gold = 50; segIdx = 6; }
+            else { gold = 100; segIdx = 6; } // 100 Gold hits big 50/100 segment
+
+            return { type: 'gold', amount: gold, segIdx: segIdx };
+        } else {
+            // Puzzle Piece internal weighted odds
+            const pieceRoll = Math.random() * 100;
+            let count = 1;
+            let segIdx = 1; // default 1 piece segment
+
+            if (pieceRoll <= 70) { count = 1; segIdx = 1; }
+            else if (pieceRoll <= 94) { count = 2; segIdx = 3; }
+            else { count = 3; segIdx = 7; } // 3 Pieces jackpot
+
+            return { type: 'piece', count: count, segIdx: segIdx };
+        }
+    }
+
+    spinWheelAction() {
+        const spins = this.getDailyWheelSpinsCount();
+        if (spins >= 2) {
+            this.sound.playLockThud();
+            const dict = this.i18n[this.settings.lang] || this.i18n.tr;
+            this.showToast(dict.wheelLimitReached || '⚠️ Bugünkü Çark Haklarınız Bitti! (2/2)');
+            return;
+        }
+
+        const executeSpin = () => {
+            const btnSpin = document.getElementById('btn-spin-wheel');
+            if (btnSpin) btnSpin.disabled = true;
+
+            const reward = this.rollWheelReward();
+            const disc = document.getElementById('wheel-disc');
+            
+            // 8 Segments = 45 deg per segment
+            const segAngle = 45;
+            // Target angle to land pointer (at top, -90 deg offset)
+            const targetRotation = 360 * 5 + (360 - reward.segIdx * segAngle - segAngle / 2);
+
+            if (disc) {
+                disc.style.transform = `rotate(${targetRotation}deg)`;
+            }
+
+            this.sound.playBoosterChime();
+
+            setTimeout(() => {
+                this.incrementWheelSpinsCount();
+
+                if (reward.type === 'gold') {
+                    this.goldCoins += reward.amount;
+                    const goldEl = document.getElementById('gold-val');
+                    if (goldEl) goldEl.innerText = this.goldCoins;
+                    this.fx.triggerSparkles();
+                    this.sound.playVictorySound();
+                    this.showToast(`🎉 ŞANS ÇARKI ÖDÜLÜ: +${reward.amount} ALTIN KAZANDIN! 🪙`);
+                } else {
+                    const awardedPieces = [];
+                    for (let i = 0; i < reward.count; i++) {
+                        const piece = this.awardRandomMissingPuzzlePiece();
+                        if (piece) awardedPieces.push(piece);
+                    }
+                    this.fx.triggerSparkles();
+                    this.sound.playVictorySound();
+                    this.showToast(`🎉 ŞANS ÇARKI ÖDÜLÜ: ${reward.count} ADET YAPBOZ PARÇASI KAZANDIN! 🧩`);
+                }
+
+                this.saveGameProgress();
+
+                setTimeout(() => {
+                    document.getElementById('modal-wheel').classList.add('hidden');
+                    if (disc) disc.style.transform = 'rotate(0deg)';
+                }, 1200);
+            }, 4100);
+        };
+
+        if (spins === 0) {
+            // Free Spin
+            executeSpin();
+        } else {
+            // Rewarded Video Ad Spin
+            this.showRewardedAd(() => {
+                executeSpin();
+            });
+        }
+    }
+
     showMainMenuBannerAd() {
         const bannerContainer = document.getElementById('main-menu-ad-banner');
         if (bannerContainer) bannerContainer.classList.remove('hidden');
