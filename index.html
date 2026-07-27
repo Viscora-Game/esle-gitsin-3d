@@ -252,7 +252,7 @@
 
                     <!-- Force Update & Clear Cache Button -->
                     <button id="btn-force-update" class="btn-secondary settings-full-btn" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff; font-weight: 700; margin-top: 8px;">
-                        <span data-i18n="forceUpdateBtn">⚡ CANLI GÜNCELLEMEYİ YÜKLE (v5.6.0)</span>
+                        <span data-i18n="forceUpdateBtn">⚡ CANLI GÜNCELLEMEYİ YÜKLE (v5.7.0)</span>
                     </button>
 
                     <button id="btn-save-settings" class="btn-primary" data-i18n="saveBtn">KAYDET VE KAPAT</button>
@@ -522,7 +522,7 @@
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./sw.js?v=5.6.0').then((reg) => {
+          navigator.serviceWorker.register('./sw.js?v=5.7.0').then((reg) => {
             reg.update();
 
             reg.addEventListener('updatefound', () => {
@@ -547,6 +547,6 @@
         });
       }
     </script>
-    <script src="game.js?v=5.6.0" defer></script>
+    <script src="game.js?v=5.7.0" defer></script>
 </body>
 </html>
