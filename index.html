@@ -203,6 +203,18 @@
                         </button>
                     </div>
 
+                    <!-- Music Song Track Selector -->
+                    <div class="setting-row setting-row-lang">
+                        <div class="setting-info">
+                            <span class="setting-label" data-i18n="trackLabel">🎶 Müzik Seçimi</span>
+                        </div>
+                        <div class="lang-grid-selector">
+                            <button id="btn-track-carefree" class="lang-btn active">🌸 Carefree</button>
+                            <button id="btn-track-duck" class="lang-btn">🦆 Ördekçik</button>
+                            <button id="btn-track-monkeys" class="lang-btn">🐒 Marimba</button>
+                        </div>
+                    </div>
+
                     <!-- Vibration Setting -->
                     <div class="setting-row">
                         <div class="setting-info">
@@ -241,7 +253,7 @@
 
                     <!-- Force Update & Clear Cache Button -->
                     <button id="btn-force-update" class="btn-secondary settings-full-btn" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff; font-weight: 700; margin-top: 8px;">
-                        <span data-i18n="forceUpdateBtn">⚡ CANLI GÜNCELLEMEYİ YÜKLE (v5.2.0)</span>
+                        <span data-i18n="forceUpdateBtn">⚡ CANLI GÜNCELLEMEYİ YÜKLE (v5.3.0)</span>
                     </button>
 
                     <button id="btn-save-settings" class="btn-primary" data-i18n="saveBtn">KAYDET VE KAPAT</button>
@@ -511,7 +523,7 @@
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./sw.js?v=5.2.0').then((reg) => {
+          navigator.serviceWorker.register('./sw.js?v=5.3.0').then((reg) => {
             reg.update();
 
             reg.addEventListener('updatefound', () => {
@@ -536,6 +548,6 @@
         });
       }
     </script>
-    <script src="game.js?v=5.2.0" defer></script>
+    <script src="game.js?v=5.3.0" defer></script>
 </body>
 </html>

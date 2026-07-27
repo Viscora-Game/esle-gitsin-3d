@@ -532,6 +532,7 @@ class TileMatchingGame {
         // Full 7-Language Global Localization Engine (TR, EN, DE, FR, IT, ES, PT)
         this.i18n = {
             tr: {
+                trackLabel: "🎶 Müzik Seçimi",
                 musicLabel: "🎵 Arka Plan Müziği",
                 combo2x: "✨ HARİKA UYUM!",
                 combo3x: "💖 MUHTEŞEM EŞLEŞME!",
@@ -637,6 +638,7 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 TEBRİKLER! {name} BULMACASI TAMAMLANDI!"
             },
             en: {
+                trackLabel: "🎶 Music Track",
                 musicLabel: "🎵 Background Music",
                 combo2x: "✨ SWEET MATCH!",
                 combo3x: "💖 WONDERFUL!",
@@ -742,6 +744,7 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 CONGRATS! {name} PUZZLE COMPLETED!"
             },
             de: {
+                trackLabel: "🎶 Musikwahl",
                 musicLabel: "🎵 Hintergrundmusik",
                 combo2x: "✨ SÜSSES MATCH!",
                 combo3x: "💖 WUNDERBAR!",
@@ -847,6 +850,7 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 GLÜCKWUNSCH! {name} PUZZLE VOLLSTÄNDIG!"
             },
             fr: {
+                trackLabel: "🎶 Choix Musique",
                 musicLabel: "🎵 Musique de fond",
                 combo2x: "✨ ADORABLE COMBO!",
                 combo3x: "💖 MAGNIFIQUE!",
@@ -952,6 +956,7 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 BRAVO! PUZZLE {name} COMPLÉTÉ!"
             },
             it: {
+                trackLabel: "🎶 Traccia Musica",
                 musicLabel: "🎵 Musica di sottofondo",
                 combo2x: "✨ MERAVIGLIOSO!",
                 combo3x: "💖 ADORABILE!",
@@ -1057,6 +1062,7 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 COMPLIMENTI! PUZZLE {name} COMPLETATO!"
             },
             es: {
+                trackLabel: "🎶 Selección Música",
                 musicLabel: "🎵 Música de fondo",
                 combo2x: "✨ ¡DULCE COMBO!",
                 combo3x: "💖 ¡MAGNÍFICO!",
@@ -1162,6 +1168,7 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 ¡ENHORABUENA! ¡PUZZLE {name} COMPLETADO!"
             },
             pt: {
+                trackLabel: "🎶 Escolha Música",
                 musicLabel: "🎵 Música de fundo",
                 combo2x: "✨ COMBINAÇÃO DOCE!",
                 combo3x: "💖 MARAVILHOSO!",
@@ -1783,7 +1790,39 @@ class TileMatchingGame {
             this.saveSettings();
         });
 
-                const btnMusic = document.getElementById('btn-toggle-music');
+                        // Background Music Track Selector Listeners
+        const btnCarefree = document.getElementById('btn-track-carefree');
+        const btnDuck = document.getElementById('btn-track-duck');
+        const btnMonkeys = document.getElementById('btn-track-monkeys');
+
+        const updateTrackBtnsUI = () => {
+            const current = this.settings.bgmTrack || 'carefree';
+            if (btnCarefree) btnCarefree.classList.toggle('active', current === 'carefree');
+            if (btnDuck) btnDuck.classList.toggle('active', current === 'fluffing_a_duck');
+            if (btnMonkeys) btnMonkeys.classList.toggle('active', current === 'monkeys');
+        };
+
+        if (btnCarefree) {
+            btnCarefree.addEventListener('click', () => {
+                this.setBGMTrack('carefree');
+                updateTrackBtnsUI();
+            });
+        }
+        if (btnDuck) {
+            btnDuck.addEventListener('click', () => {
+                this.setBGMTrack('fluffing_a_duck');
+                updateTrackBtnsUI();
+            });
+        }
+        if (btnMonkeys) {
+            btnMonkeys.addEventListener('click', () => {
+                this.setBGMTrack('monkeys');
+                updateTrackBtnsUI();
+            });
+        }
+        updateTrackBtnsUI();
+
+        const btnMusic = document.getElementById('btn-toggle-music');
         if (btnMusic) {
             btnMusic.addEventListener('click', () => {
                 this.settings.musicEnabled = (this.settings.musicEnabled === false) ? true : false;
@@ -1986,19 +2025,39 @@ class TileMatchingGame {
     // =========================================================
     // CUTE BACKGROUND MUSIC ENGINE & MOBILE AUTOPLAY UNLOCKER
     // =========================================================
+    getBGMTrackPath() {
+        const track = (this.settings && this.settings.bgmTrack) ? this.settings.bgmTrack : 'carefree';
+        if (track === 'fluffing_a_duck') return 'audio/fluffing_a_duck.mp3';
+        if (track === 'monkeys') return 'audio/monkeys.mp3';
+        return 'audio/carefree.mp3';
+    }
+
+    setBGMTrack(trackName) {
+        if (!this.settings) this.settings = {};
+        this.settings.bgmTrack = trackName;
+        this.saveSettings();
+
+        const newPath = this.getBGMTrackPath();
+        if (this.bgMusic) {
+            this.bgMusic.pause();
+        }
+        this.bgMusic = new Audio(newPath);
+        this.bgMusic.loop = true;
+        this.updateMusicUI();
+    }
+
     initBackgroundMusic() {
         try {
+            const trackPath = this.getBGMTrackPath();
             if (!this.bgMusic) {
-                this.bgMusic = new Audio('audio/bgm_cute.mp3');
+                this.bgMusic = new Audio(trackPath);
                 this.bgMusic.loop = true;
-                this.bgMusic.volume = (this.settings.musicEnabled === false) ? 0 : 0.20;
             }
 
             if (this.settings.musicEnabled !== false) {
                 const playPromise = this.bgMusic.play();
                 if (playPromise !== undefined) {
                     playPromise.catch(() => {
-                        // Mobile autoplay gesture fallback: start playing smoothly on first user touch/tap!
                         const unlockMusic = () => {
                             if (this.settings.musicEnabled !== false && this.bgMusic && this.bgMusic.paused) {
                                 this.bgMusic.play().catch(() => {});
