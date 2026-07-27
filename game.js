@@ -463,6 +463,9 @@ class TileMatchingGame {
         // Full 7-Language Global Localization Engine (TR, EN, DE, FR, IT, ES, PT)
         this.i18n = {
             tr: {
+                pasText: "PAS ❌",
+                pasWonTitle: "💨 PAS GEÇTİN!",
+                pasWonDesc: "Bu çevirmede şansın yaver gitmedi, tekrar dene!",
                 wheelAdCooldownTag: "⏳ REKLAMLI ÇEVİRME: {time}",
                 wheelResetTag: "⏳ YARIN GEL: {time}",
                 wheelAdCooldownBadge: "⏳ 8 SAATLİK REKLAM SOĞUMA SÜRESİ: {time}",
@@ -559,6 +562,9 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 TEBRİKLER! {name} BULMACASI TAMAMLANDI!"
             },
             en: {
+                pasText: "MISS ❌",
+                pasWonTitle: "💨 BAD LUCK!",
+                pasWonDesc: "No prize this time, try your luck again!",
                 wheelAdCooldownTag: "⏳ AD SPIN IN: {time}",
                 wheelResetTag: "⏳ BACK IN: {time}",
                 wheelAdCooldownBadge: "⏳ 8-HOUR AD COOLDOWN: {time}",
@@ -655,6 +661,9 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 CONGRATS! {name} PUZZLE COMPLETED!"
             },
             de: {
+                pasText: "NIETE ❌",
+                pasWonTitle: "💨 PECH GEHABT!",
+                pasWonDesc: "Diesmal kein Gewinn, versuche es nochmal!",
                 wheelAdCooldownTag: "⏳ WERBUNG IN: {time}",
                 wheelResetTag: "⏳ MORGEN WIEDER: {time}",
                 wheelAdCooldownBadge: "⏳ 8-STUNDEN-WERBEPAUSE: {time}",
@@ -751,6 +760,9 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 GLÜCKWUNSCH! {name} PUZZLE VOLLSTÄNDIG!"
             },
             fr: {
+                pasText: "PERDU ❌",
+                pasWonTitle: "💨 PAS DE CHANCE!",
+                pasWonDesc: "Pas de lot cette fois, réessayez!",
                 wheelAdCooldownTag: "⏳ PUB DANS: {time}",
                 wheelResetTag: "⏳ REVENEZ DANS: {time}",
                 wheelAdCooldownBadge: "⏳ PAUSE PUB 8H: {time}",
@@ -847,6 +859,9 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 BRAVO! PUZZLE {name} COMPLÉTÉ!"
             },
             it: {
+                pasText: "PASSA ❌",
+                pasWonTitle: "💨 PECCATO!",
+                pasWonDesc: "Nessun premio questa volta, riprova!",
                 wheelAdCooldownTag: "⏳ PUBBLICITÀ TRA: {time}",
                 wheelResetTag: "⏳ TORNA TRA: {time}",
                 wheelAdCooldownBadge: "⏳ PAUSA PUBBLICITÀ 8 ORE: {time}",
@@ -943,6 +958,9 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 COMPLIMENTI! PUZZLE {name} COMPLETATO!"
             },
             es: {
+                pasText: "PASO ❌",
+                pasWonTitle: "💨 ¡MALA SUERTE!",
+                pasWonDesc: "¡Sin premio esta vez, inténtalo de nuevo!",
                 wheelAdCooldownTag: "⏳ ANUNCIO EN: {time}",
                 wheelResetTag: "⏳ VUELVE EN: {time}",
                 wheelAdCooldownBadge: "⏳ ESPERA DE 8 HORAS: {time}",
@@ -1039,6 +1057,9 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 ¡ENHORABUENA! ¡PUZZLE {name} COMPLETADO!"
             },
             pt: {
+                pasText: "PASSO ❌",
+                pasWonTitle: "💨 AZAR!",
+                pasWonDesc: "Sem prêmio desta vez, tente novamente!",
                 wheelAdCooldownTag: "⏳ ANÚNCIO EM: {time}",
                 wheelResetTag: "⏳ VOLTE EM: {time}",
                 wheelAdCooldownBadge: "⏳ INTERVALO DE 8 HORAS: {time}",
@@ -3448,159 +3469,86 @@ class TileMatchingGame {
         }, 1000);
     }
 
+        getWheelSegments() {
+        const dict = (this.i18n && this.i18n[this.settings.lang]) ? this.i18n[this.settings.lang] : (this.i18n ? this.i18n.tr : {});
+        const pasLabel = dict.pasText || 'PAS ❌';
+
+        return [
+            { id: 'pas_1', type: 'pas', text: pasLabel, icon: '💨', prob: 5, bg: '#64748b', color: '#ffffff' },
+            { id: 'gold_10', type: 'gold', amount: 10, text: '10 ALTIN', icon: '🪙', prob: 28, bg: '#f59e0b', color: '#ffffff' },
+            { id: 'piece_1', type: 'piece', count: 1, text: '1 PARÇA', icon: '🧩', prob: 10, bg: '#8b5cf6', color: '#ffffff' },
+            { id: 'gold_15', type: 'gold', amount: 15, text: '15 ALTIN', icon: '🪙', prob: 20, bg: '#3b82f6', color: '#ffffff' },
+            { id: 'piece_2', type: 'piece', count: 2, text: '2 PARÇA', icon: '🧩', prob: 4, bg: '#ec4899', color: '#ffffff' },
+            { id: 'gold_20', type: 'gold', amount: 20, text: '20 ALTIN', icon: '🪙', prob: 14, bg: '#10b981', color: '#ffffff' },
+            { id: 'pas_2', type: 'pas', text: pasLabel, icon: '💨', prob: 5, bg: '#475569', color: '#ffffff' },
+            { id: 'gold_25', type: 'gold', amount: 25, text: '25 ALTIN', icon: '🪙', prob: 8, bg: '#f97316', color: '#ffffff' },
+            { id: 'gold_50', type: 'gold', amount: 50, text: '50 ALTIN', icon: '🪙', prob: 4, bg: '#06b6d4', color: '#ffffff' },
+            { id: 'piece_3', type: 'piece', count: 3, text: '3 PARÇA', icon: '🌟', prob: 2, bg: '#eab308', color: '#0f172a' }
+        ];
+    }
+
     renderWheelCanvas() {
         const canvas = document.getElementById('wheel-canvas');
         if (!canvas || !canvas.getContext) return;
         const ctx = canvas.getContext('2d');
 
-        const segments = [
-            { text: '10 ALTIN', icon: '🪙', bg: '#f59e0b', color: '#ffffff' },
-            { text: '1 PARÇA', icon: '🧩', bg: '#8b5cf6', color: '#ffffff' },
-            { text: '15 ALTIN', icon: '🪙', bg: '#3b82f6', color: '#ffffff' },
-            { text: '2 PARÇA', icon: '🧩', bg: '#ec4899', color: '#ffffff' },
-            { text: '20 ALTIN', icon: '🪙', bg: '#10b981', color: '#ffffff' },
-            { text: '25 ALTIN', icon: '🪙', bg: '#f97316', color: '#ffffff' },
-            { text: '50 ALTIN', icon: '🪙', bg: '#06b6d4', color: '#ffffff' },
-            { text: '3 PARÇA', icon: '🌟', bg: '#eab308', color: '#0f172a' }
-        ];
-
-        const numSegs = segments.length;
-        const arc = (2 * Math.PI) / numSegs;
+        const segments = this.getWheelSegments();
         const cx = 140, cy = 140, r = 135;
 
         ctx.clearRect(0, 0, 280, 280);
 
-        for (let i = 0; i < numSegs; i++) {
-            const angle = i * arc;
+        let currentAngle = 0;
+        for (let i = 0; i < segments.length; i++) {
+            const segAngle = (segments[i].prob / 100) * (2 * Math.PI);
+            const startAngle = currentAngle;
+            const endAngle = currentAngle + segAngle;
+
             ctx.beginPath();
             ctx.fillStyle = segments[i].bg;
             ctx.moveTo(cx, cy);
-            ctx.arc(cx, cy, r, angle, angle + arc);
+            ctx.arc(cx, cy, r, startAngle, endAngle);
             ctx.lineTo(cx, cy);
             ctx.fill();
-            ctx.lineWidth = 2;
+            ctx.lineWidth = 2.5;
             ctx.strokeStyle = '#ffffff';
             ctx.stroke();
 
-            // Render Segment Labels & Icons
+            // Render Segment Labels & Icons aligned to center of slice
+            const midAngle = startAngle + segAngle / 2;
             ctx.save();
             ctx.translate(cx, cy);
-            ctx.rotate(angle + arc / 2);
+            ctx.rotate(midAngle);
             ctx.textAlign = 'right';
             ctx.fillStyle = segments[i].color;
-            ctx.font = '900 13px sans-serif';
-            ctx.fillText(`${segments[i].icon} ${segments[i].text}`, r - 15, 5);
+            ctx.font = '900 12px sans-serif';
+
+            // Scale text size down slightly for narrow slices (< 15 deg)
+            const degrees = (segments[i].prob / 100) * 360;
+            if (degrees < 12) {
+                ctx.font = '900 9px sans-serif';
+            } else if (degrees < 20) {
+                ctx.font = '900 10.5px sans-serif';
+            }
+
+            ctx.fillText(`${segments[i].icon} ${segments[i].text}`, r - 12, 4);
             ctx.restore();
+
+            currentAngle = endAngle;
         }
-    }
-
-    openWheelModal() {
-        this.renderWheelCanvas();
-        const disc = document.getElementById('wheel-disc');
-        if (disc) disc.style.transform = 'rotate(0deg)';
-
-        this.updateWheelTimerState();
-        document.getElementById('modal-wheel').classList.remove('hidden');
-    }
-
-
-    triggerWheelRewardModal(reward) {
-        const modalChest = document.getElementById('modal-chest');
-        const starDisp = document.getElementById('chest-star-display');
-        const titleEl = document.getElementById('chest-modal-title');
-        const descEl = document.getElementById('chest-modal-desc');
-        const btnOpenChest = document.getElementById('btn-open-chest');
-        const rewardContent = document.getElementById('chest-reward-content');
-        const rewardListEl = document.getElementById('chest-reward-list');
-        const dict = this.i18n[this.settings.lang] || this.i18n.tr;
-
-        if (starDisp) starDisp.innerText = '🎡 🌟 🎡';
-        if (titleEl) titleEl.innerText = dict.wheelRewardTitle || '🎡 ŞANS ÇARKI ÖDÜLÜ! 🎉';
-        if (descEl) descEl.innerText = dict.wheelRewardDesc || '🏆 Çarktan Çıkan Ödülleriniz:';
-
-        // Hide Stage 1 button directly and open Stage 2 reward list!
-        if (btnOpenChest) {
-            btnOpenChest.style.display = 'none';
-            btnOpenChest.classList.add('hidden');
-        }
-
-        const awardedPieces = [];
-        let goldReward = 0;
-
-        if (reward.type === 'gold') {
-            goldReward = reward.amount;
-        } else {
-            for (let i = 0; i < reward.count; i++) {
-                const piece = this.awardRandomMissingPuzzlePiece();
-                if (piece) awardedPieces.push(piece);
-            }
-        }
-
-        this.pendingChestReward = { gold: goldReward, pieces: awardedPieces };
-        this.hasOpenedChestThisLevel = false;
-
-        if (rewardListEl) {
-            rewardListEl.innerHTML = '';
-            
-            if (goldReward > 0) {
-                const item = document.createElement('div');
-                item.className = 'chest-reward-item reward-gold';
-                const goldText = (dict.chestGoldRewardText || '+{gold} ALTIN').replace('{gold}', goldReward);
-                item.innerHTML = `<div class="reward-icon">🪙</div><div class="reward-text">${goldText}</div>`;
-                rewardListEl.appendChild(item);
-            }
-
-            if (awardedPieces.length > 0) {
-                for (const piece of awardedPieces) {
-                    const item = document.createElement('div');
-                    item.className = 'chest-reward-item reward-piece';
-                    const localizedName = this.getPuzzleName(piece.puzzleId);
-                    if (piece.isDuplicate) {
-                        const dupMsg = (dict.duplicatePieceConverted || '(Varolan {name} #{idx} Dönüştü!)').replace('{name}', localizedName).replace('{idx}', piece.pieceIndex + 1);
-                        item.innerHTML = `<div class="reward-icon">🪙</div><div class="reward-text">+50 ALTIN <span class="dup-note">${dupMsg}</span></div>`;
-                    } else {
-                        const pieceMsg = (dict.puzzlePieceEarned || '{name} Parçası #{idx}').replace('{name}', localizedName).replace('{idx}', piece.pieceIndex + 1);
-                        item.innerHTML = `<div class="reward-icon">🧩</div><div class="reward-text">${pieceMsg}</div>`;
-                    }
-                    rewardListEl.appendChild(item);
-                }
-            }
-        }
-
-        if (rewardContent) rewardContent.classList.remove('hidden');
-        if (modalChest) modalChest.classList.remove('hidden');
     }
 
     rollWheelReward() {
-        // 85% Gold / 15% Puzzle Pieces Probability Split
-        const isGold = Math.random() < 0.85;
+        const segments = this.getWheelSegments();
+        const rand = Math.random() * 100;
+        let cumulative = 0;
 
-        if (isGold) {
-            // Gold internal weighted odds
-            const goldRoll = Math.random() * 100;
-            let gold = 10;
-            let segIdx = 0; // default 10 gold segment
-
-            if (goldRoll <= 32) { gold = 10; segIdx = 0; }
-            else if (goldRoll <= 57) { gold = 15; segIdx = 2; }
-            else if (goldRoll <= 75) { gold = 20; segIdx = 4; }
-            else if (goldRoll <= 85) { gold = 25; segIdx = 5; }
-            else if (goldRoll <= 94) { gold = 50; segIdx = 6; }
-            else { gold = 100; segIdx = 6; } // 100 Gold hits big 50/100 segment
-
-            return { type: 'gold', amount: gold, segIdx: segIdx };
-        } else {
-            // Puzzle Piece internal weighted odds
-            const pieceRoll = Math.random() * 100;
-            let count = 1;
-            let segIdx = 1; // default 1 piece segment
-
-            if (pieceRoll <= 70) { count = 1; segIdx = 1; }
-            else if (pieceRoll <= 94) { count = 2; segIdx = 3; }
-            else { count = 3; segIdx = 7; } // 3 Pieces jackpot
-
-            return { type: 'piece', count: count, segIdx: segIdx };
+        for (let i = 0; i < segments.length; i++) {
+            cumulative += segments[i].prob;
+            if (rand <= cumulative) {
+                return { seg: segments[i], segIndex: i };
+            }
         }
+        return { seg: segments[0], segIndex: 0 };
     }
 
     spinWheelAction() {
@@ -3616,16 +3564,29 @@ class TileMatchingGame {
             const btnSpin = document.getElementById('btn-spin-wheel');
             if (btnSpin) btnSpin.disabled = true;
 
-            const reward = this.rollWheelReward();
-            const disc = document.getElementById('wheel-disc');
-            
-            // 8 Segments = 45 deg per segment
-            const segAngle = 45;
-            // Target angle to land pointer (at top, -90 deg offset)
-            const targetRotation = 360 * 5 + (360 - reward.segIdx * segAngle - segAngle / 2);
+            const roll = this.rollWheelReward();
+            const selectedSeg = roll.seg;
+            const segIndex = roll.segIndex;
+            const segments = this.getWheelSegments();
 
+            // Calculate exact target mid-angle for landed segment (0 deg at 3 o'clock)
+            let cumulativeAngleDeg = 0;
+            for (let i = 0; i < segIndex; i++) {
+                cumulativeAngleDeg += (segments[i].prob / 100) * 360;
+            }
+            const segSliceDeg = (selectedSeg.prob / 100) * 360;
+            const midAngleDeg = cumulativeAngleDeg + (segSliceDeg / 2);
+
+            // Top pointer is at 12 o'clock = 270 degrees
+            let degreesToTarget = 270 - midAngleDeg;
+            while (degreesToTarget < 0) degreesToTarget += 360;
+
+            // Add 5 full 360-degree rotations (1800 deg) for realistic spinning physics!
+            const targetRotationDeg = (360 * 5) + degreesToTarget;
+
+            const disc = document.getElementById('wheel-disc');
             if (disc) {
-                disc.style.transform = `rotate(${targetRotation}deg)`;
+                disc.style.transform = `rotate(${targetRotationDeg}deg)`;
             }
 
             this.sound.playBoosterChime();
@@ -3643,19 +3604,97 @@ class TileMatchingGame {
                 const modalWheel = document.getElementById('modal-wheel');
                 if (modalWheel) modalWheel.classList.add('hidden');
 
-                this.triggerWheelRewardModal(reward);
+                this.triggerWheelRewardModal(selectedSeg);
             }, 4100);
         };
 
         if (spins === 0) {
-            // Free Spin
             executeSpin();
         } else {
-            // Rewarded Video Ad Spin
             this.showRewardedAd(() => {
                 executeSpin();
             });
         }
+    }
+
+    triggerWheelRewardModal(seg) {
+        const modalChest = document.getElementById('modal-chest');
+        const starDisp = document.getElementById('chest-star-display');
+        const titleEl = document.getElementById('chest-modal-title');
+        const descEl = document.getElementById('chest-modal-desc');
+        const btnOpenChest = document.getElementById('btn-open-chest');
+        const rewardContent = document.getElementById('chest-reward-content');
+        const rewardListEl = document.getElementById('chest-reward-list');
+        const dict = this.i18n[this.settings.lang] || this.i18n.tr;
+
+        if (seg.type === 'pas') {
+            if (starDisp) starDisp.innerText = '💨 ❌ 💨';
+            if (titleEl) titleEl.innerText = dict.pasWonTitle || '💨 PAS GEÇTİN!';
+            if (descEl) descEl.innerText = dict.pasWonDesc || 'Bu çevirmede şansın yaver gitmedi, tekrar dene!';
+            this.pendingChestReward = { gold: 0, pieces: [] };
+        } else if (seg.type === 'gold') {
+            if (starDisp) starDisp.innerText = '🎡 🪙 🎡';
+            if (titleEl) titleEl.innerText = dict.wheelRewardTitle || '🎡 ŞANS ÇARKI ÖDÜLÜ! 🎉';
+            if (descEl) descEl.innerText = dict.wheelRewardDesc || '🏆 Çarktan Çıkan Ödülleriniz:';
+            this.pendingChestReward = { gold: seg.amount, pieces: [] };
+        } else {
+            if (starDisp) starDisp.innerText = '🎡 🧩 🎡';
+            if (titleEl) titleEl.innerText = dict.wheelRewardTitle || '🎡 ŞANS ÇARKI ÖDÜLÜ! 🎉';
+            if (descEl) descEl.innerText = dict.wheelRewardDesc || '🏆 Çarktan Çıkan Ödülleriniz:';
+            
+            const awardedPieces = [];
+            for (let i = 0; i < seg.count; i++) {
+                const piece = this.awardRandomMissingPuzzlePiece();
+                if (piece) awardedPieces.push(piece);
+            }
+            this.pendingChestReward = { gold: 0, pieces: awardedPieces };
+        }
+
+        if (btnOpenChest) {
+            btnOpenChest.style.display = 'none';
+            btnOpenChest.classList.add('hidden');
+        }
+
+        this.hasOpenedChestThisLevel = false;
+
+        if (rewardListEl) {
+            rewardListEl.innerHTML = '';
+
+            if (seg.type === 'pas') {
+                const item = document.createElement('div');
+                item.className = 'chest-reward-item reward-gold';
+                item.style.borderColor = '#64748b';
+                item.innerHTML = `<div class="reward-icon">💨</div><div class="reward-text">${dict.pasWonTitle || 'PAS GEÇTİN!'}</div>`;
+                rewardListEl.appendChild(item);
+            } else {
+                if (this.pendingChestReward.gold > 0) {
+                    const item = document.createElement('div');
+                    item.className = 'chest-reward-item reward-gold';
+                    const goldText = (dict.chestGoldRewardText || '+{gold} ALTIN').replace('{gold}', this.pendingChestReward.gold);
+                    item.innerHTML = `<div class="reward-icon">🪙</div><div class="reward-text">${goldText}</div>`;
+                    rewardListEl.appendChild(item);
+                }
+
+                if (this.pendingChestReward.pieces && this.pendingChestReward.pieces.length > 0) {
+                    for (const piece of this.pendingChestReward.pieces) {
+                        const item = document.createElement('div');
+                        item.className = 'chest-reward-item reward-piece';
+                        const localizedName = this.getPuzzleName(piece.puzzleId);
+                        if (piece.isDuplicate) {
+                            const dupMsg = (dict.duplicatePieceConverted || '(Varolan {name} #{idx} Dönüştü!)').replace('{name}', localizedName).replace('{idx}', piece.pieceIndex + 1);
+                            item.innerHTML = `<div class="reward-icon">🪙</div><div class="reward-text">+50 ALTIN <span class="dup-note">${dupMsg}</span></div>`;
+                        } else {
+                            const pieceMsg = (dict.puzzlePieceEarned || '{name} Parçası #{idx}').replace('{name}', localizedName).replace('{idx}', piece.pieceIndex + 1);
+                            item.innerHTML = `<div class="reward-icon">🧩</div><div class="reward-text">${pieceMsg}</div>`;
+                        }
+                        rewardListEl.appendChild(item);
+                    }
+                }
+            }
+        }
+
+        if (rewardContent) rewardContent.classList.remove('hidden');
+        if (modalChest) modalChest.classList.remove('hidden');
     }
 
     showMainMenuBannerAd() {
