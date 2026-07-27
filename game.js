@@ -405,6 +405,30 @@ class ParticleFX {
 }
 
 class TileMatchingGame {
+        getLocalizedPuzzleName(puzzleId) {
+        const dict = this.i18n[this.settings.lang] || this.i18n.tr;
+        if (dict.puzzles && dict.puzzles[puzzleId]) {
+            return dict.puzzles[puzzleId];
+        }
+        if (this.puzzles) {
+            const p = this.puzzles.find(x => x.id === puzzleId);
+            if (p) return p.name;
+        }
+        return puzzleId;
+    }
+
+    getWheelSliceLabel(slice) {
+        const dict = this.i18n[this.settings.lang] || this.i18n.tr;
+        if (slice.type === 'gold') {
+            return `${slice.amount} ${dict.goldLabel || 'ALTIN'}`;
+        } else if (slice.type === 'piece') {
+            const pWord = slice.count > 1 ? (dict.piecesWord || 'PARÇA') : (dict.pieceWord || 'PARÇA');
+            return `${slice.count} ${pWord}`;
+        } else {
+            return dict.pasText || 'PAS ❌';
+        }
+    }
+
     constructor() {
         this.cardW = 70;
         this.cardH = 90;
@@ -2173,10 +2197,8 @@ class TileMatchingGame {
         this.updateMainMenuButtons();
         this.startWheelTimerLoop();
 
-        // Re-render tutorial slide in active language
         this.renderTutorialStep();
-
-        // Re-render puzzle gallery modal if currently open
+        this.renderWheelCanvas();
         const modalGallery = document.getElementById('modal-puzzle-gallery');
         if (modalGallery && !modalGallery.classList.contains('hidden')) {
             this.renderPuzzleGalleryModal();
@@ -4015,7 +4037,7 @@ class TileMatchingGame {
                 ctx.font = '900 10.5px sans-serif';
             }
 
-            ctx.fillText(`${segments[i].icon} ${segments[i].text}`, r - 12, 4);
+            ctx.fillText(`${segments[i].icon} ${this.getWheelSliceLabel(segments[i])}`, r - 12, 4);
             ctx.restore();
 
             currentAngle = endAngle;
