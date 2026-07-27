@@ -193,14 +193,13 @@
                         <input type="range" id="slider-volume" min="0" max="100" value="80" class="setting-slider">
                     </div>
 
-                    <!-- Background Music Setting -->
+                    <!-- Background Music Volume Slider Setting -->
                     <div class="setting-row">
                         <div class="setting-info">
-                            <span class="setting-label" data-i18n="musicLabel">🎵 Arka Plan Müziği</span>
+                            <span class="setting-label" data-i18n="musicLabel">🎵 Müzik Sesi</span>
+                            <span id="music-val-text" class="setting-val">30%</span>
                         </div>
-                        <button id="btn-toggle-music" class="toggle-btn active">
-                            <span id="music-btn-text">AÇIK</span>
-                        </button>
+                        <input type="range" id="slider-music" min="0" max="100" value="30" class="setting-slider">
                     </div>
 
                     <!-- Music Song Track Selector -->
@@ -253,7 +252,7 @@
 
                     <!-- Force Update & Clear Cache Button -->
                     <button id="btn-force-update" class="btn-secondary settings-full-btn" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff; font-weight: 700; margin-top: 8px;">
-                        <span data-i18n="forceUpdateBtn">⚡ CANLI GÜNCELLEMEYİ YÜKLE (v5.3.0)</span>
+                        <span data-i18n="forceUpdateBtn">⚡ CANLI GÜNCELLEMEYİ YÜKLE (v5.4.0)</span>
                     </button>
 
                     <button id="btn-save-settings" class="btn-primary" data-i18n="saveBtn">KAYDET VE KAPAT</button>
@@ -523,7 +522,7 @@
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./sw.js?v=5.3.0').then((reg) => {
+          navigator.serviceWorker.register('./sw.js?v=5.4.0').then((reg) => {
             reg.update();
 
             reg.addEventListener('updatefound', () => {
@@ -548,6 +547,6 @@
         });
       }
     </script>
-    <script src="game.js?v=5.3.0" defer></script>
+    <script src="game.js?v=5.4.0" defer></script>
 </body>
 </html>

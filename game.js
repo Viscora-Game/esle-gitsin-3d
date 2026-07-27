@@ -524,6 +524,8 @@ class TileMatchingGame {
         // Settings State
         this.settings = {
             volume: 80,
+            musicVolume: 30,
+            bgmTrack: 'carefree',
             vibration: true,
             lang: 'tr'
         };
@@ -532,6 +534,7 @@ class TileMatchingGame {
         // Full 7-Language Global Localization Engine (TR, EN, DE, FR, IT, ES, PT)
         this.i18n = {
             tr: {
+                musicLabel: "🎵 Müzik Sesi",
                 trackLabel: "🎶 Müzik Seçimi",
                 musicLabel: "🎵 Arka Plan Müziği",
                 combo2x: "✨ HARİKA UYUM!",
@@ -638,6 +641,7 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 TEBRİKLER! {name} BULMACASI TAMAMLANDI!"
             },
             en: {
+                musicLabel: "🎵 Music Volume",
                 trackLabel: "🎶 Music Track",
                 musicLabel: "🎵 Background Music",
                 combo2x: "✨ SWEET MATCH!",
@@ -744,6 +748,7 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 CONGRATS! {name} PUZZLE COMPLETED!"
             },
             de: {
+                musicLabel: "🎵 Musiklautstärke",
                 trackLabel: "🎶 Musikwahl",
                 musicLabel: "🎵 Hintergrundmusik",
                 combo2x: "✨ SÜSSES MATCH!",
@@ -850,6 +855,7 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 GLÜCKWUNSCH! {name} PUZZLE VOLLSTÄNDIG!"
             },
             fr: {
+                musicLabel: "🎵 Volume Musique",
                 trackLabel: "🎶 Choix Musique",
                 musicLabel: "🎵 Musique de fond",
                 combo2x: "✨ ADORABLE COMBO!",
@@ -956,6 +962,7 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 BRAVO! PUZZLE {name} COMPLÉTÉ!"
             },
             it: {
+                musicLabel: "🎵 Volume Musica",
                 trackLabel: "🎶 Traccia Musica",
                 musicLabel: "🎵 Musica di sottofondo",
                 combo2x: "✨ MERAVIGLIOSO!",
@@ -1062,6 +1069,7 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 COMPLIMENTI! PUZZLE {name} COMPLETATO!"
             },
             es: {
+                musicLabel: "🎵 Volumen Música",
                 trackLabel: "🎶 Selección Música",
                 musicLabel: "🎵 Música de fondo",
                 combo2x: "✨ ¡DULCE COMBO!",
@@ -1168,6 +1176,7 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 ¡ENHORABUENA! ¡PUZZLE {name} COMPLETADO!"
             },
             pt: {
+                musicLabel: "🎵 Volume Música",
                 trackLabel: "🎶 Escolha Música",
                 musicLabel: "🎵 Música de fundo",
                 combo2x: "✨ COMBINAÇÃO DOCE!",
@@ -1786,6 +1795,15 @@ class TileMatchingGame {
             this.settings.volume = parseInt(e.target.value);
             document.getElementById('vol-val-text').innerText = `${this.settings.volume}%`;
             this.sound.setVolume(this.settings.volume);
+        // Background Music Volume Slider
+        const sliderMusic = document.getElementById('slider-music');
+        if (sliderMusic) {
+            sliderMusic.addEventListener('input', (e) => {
+                this.settings.musicVolume = parseInt(e.target.value);
+                this.updateMusicUI();
+                this.saveSettings();
+            });
+        }
             this.updateMusicUI();
             this.saveSettings();
         });
@@ -1822,14 +1840,7 @@ class TileMatchingGame {
         }
         updateTrackBtnsUI();
 
-        const btnMusic = document.getElementById('btn-toggle-music');
-        if (btnMusic) {
-            btnMusic.addEventListener('click', () => {
-                this.settings.musicEnabled = (this.settings.musicEnabled === false) ? true : false;
-                this.saveSettings();
-                this.updateMusicUI();
-            });
-        }
+
 
         const btnVib = document.getElementById('btn-toggle-vib');
         btnVib.addEventListener('click', () => {
@@ -2054,12 +2065,14 @@ class TileMatchingGame {
                 this.bgMusic.loop = true;
             }
 
-            if (this.settings.musicEnabled !== false) {
+            const mVol = (typeof this.settings.musicVolume === 'number') ? this.settings.musicVolume : 30;
+            if (mVol > 0) {
                 const playPromise = this.bgMusic.play();
                 if (playPromise !== undefined) {
                     playPromise.catch(() => {
                         const unlockMusic = () => {
-                            if (this.settings.musicEnabled !== false && this.bgMusic && this.bgMusic.paused) {
+                            const curMVol = (typeof this.settings.musicVolume === 'number') ? this.settings.musicVolume : 30;
+                            if (curMVol > 0 && this.bgMusic && this.bgMusic.paused) {
                                 this.bgMusic.play().catch(() => {});
                             }
                             window.removeEventListener('pointerdown', unlockMusic);
@@ -2077,26 +2090,21 @@ class TileMatchingGame {
     }
 
     updateMusicUI() {
-        const btnMusic = document.getElementById('btn-toggle-music');
-        const txtMusic = document.getElementById('music-btn-text');
-        const volPct = (typeof this.settings.volume === 'number') ? this.settings.volume : 80;
-        const targetVol = (volPct / 100) * 0.35;
+        const sliderMusic = document.getElementById('slider-music');
+        const txtMusicVal = document.getElementById('music-val-text');
+        const mVol = (typeof this.settings.musicVolume === 'number') ? this.settings.musicVolume : 30;
 
-        if (btnMusic && txtMusic) {
-            if (this.settings.musicEnabled !== false) {
-                btnMusic.classList.add('active');
-                txtMusic.innerText = 'AÇIK';
-                if (this.bgMusic) {
-                    this.bgMusic.volume = targetVol;
-                    if (this.bgMusic.paused) this.bgMusic.play().catch(() => {});
-                }
+        if (sliderMusic) sliderMusic.value = mVol;
+        if (txtMusicVal) txtMusicVal.innerText = `${mVol}%`;
+
+        if (this.bgMusic) {
+            // Softer base music scaling (0.15 max volume at 100% slider, 0.045 at default 30% slider)
+            const targetVol = (mVol / 100) * 0.15;
+            this.bgMusic.volume = targetVol;
+            if (mVol > 0) {
+                if (this.bgMusic.paused) this.bgMusic.play().catch(() => {});
             } else {
-                btnMusic.classList.remove('active');
-                txtMusic.innerText = 'KAPALI';
-                if (this.bgMusic) {
-                    this.bgMusic.volume = 0;
-                    this.bgMusic.pause();
-                }
+                this.bgMusic.pause();
             }
         }
     }
