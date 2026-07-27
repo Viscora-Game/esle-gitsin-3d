@@ -558,6 +558,9 @@ class TileMatchingGame {
         // Full 7-Language Global Localization Engine (TR, EN, DE, FR, IT, ES, PT)
         this.i18n = {
             tr: {
+                tabSwitchedMsg: "{name} sekmesine geçildi! Tekrar dokunarak yerleştirebilirsiniz.",
+                wrongTabMsg: "Lütfen parçayı ait olduğu karakter sekmesine yerleştirin!",
+
                 trackCarefree: "🌸 Carefree",
                 trackDuck: "🦆 Ördekçik",
                 trackMarimba: "🐒 Marimba",
@@ -566,6 +569,9 @@ class TileMatchingGame {
                 pageWord: "Sayfa",
                 emptyInventoryMsg: "Envanterinizde henüz yerleştirilmemiş parça yok. Sandık açarak veya Altın ile parça kazanabilirsiniz!",
                 puzzles: {
+                tabSwitchedMsg: "¡Cambiado a la pestaña {name}! Toca de nuevo para colocar.",
+                wrongTabMsg: "¡Coloca la pieza en la pestaña de personaje correcta!",
+
                 trackCarefree: "🌸 Carefree",
                 trackDuck: "🦆 Patito",
                 trackMarimba: "🐒 Marimba",
@@ -708,6 +714,9 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 TEBRİKLER! {name} BULMACASI TAMAMLANDI!"
             },
             en: {
+                tabSwitchedMsg: "Switched to {name} tab! Tap again to place piece.",
+                wrongTabMsg: "Please place the piece in its correct character tab!",
+
                 trackCarefree: "🌸 Carefree",
                 trackDuck: "🦆 Little Duck",
                 trackMarimba: "🐒 Marimba",
@@ -836,6 +845,9 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 CONGRATS! {name} PUZZLE COMPLETED!"
             },
             de: {
+                tabSwitchedMsg: "Zum Tab {name} gewechselt! Zum Platzieren erneut tippen.",
+                wrongTabMsg: "Bitte platziere das Teil im richtigen Charakter-Tab!",
+
                 trackCarefree: "🌸 Carefree",
                 trackDuck: "🦆 Entchen",
                 trackMarimba: "🐒 Marimba",
@@ -964,6 +976,9 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 GLÜCKWUNSCH! {name} PUZZLE VOLLSTÄNDIG!"
             },
             fr: {
+                tabSwitchedMsg: "Onglet {name} ouvert! Touchez à nouveau pour placer la pièce.",
+                wrongTabMsg: "Veuillez placer la pièce dans l'onglet de personnage correspondant!",
+
                 trackCarefree: "🌸 Carefree",
                 trackDuck: "🦆 Caneton",
                 trackMarimba: "🐒 Marimba",
@@ -1092,6 +1107,9 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 BRAVO! PUZZLE {name} COMPLÉTÉ!"
             },
             it: {
+                tabSwitchedMsg: "Passato alla scheda {name}! Tocca di nuovo per posizionare.",
+                wrongTabMsg: "Inserisci il pezzo nella scheda del personaggio corretta!",
+
                 trackCarefree: "🌸 Carefree",
                 trackDuck: "🦆 Paperotto",
                 trackMarimba: "🐒 Marimba",
@@ -1326,6 +1344,9 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 ¡ENHORABUENA! PUZZLE {name} COMPLETADO!"
             },
             pt: {
+                tabSwitchedMsg: "Mudado para a aba {name}! Toque novamente para colocar.",
+                wrongTabMsg: "Por favor, coloque a peça na aba de personagem correta!",
+
                 trackCarefree: "🌸 Carefree",
                 trackDuck: "🦆 Patinho",
                 trackMarimba: "🐒 Marimba",
@@ -3282,23 +3303,7 @@ class TileMatchingGame {
 
 
     getPuzzleName(puzzleId) {
-        const lang = (this.settings && this.settings.lang) ? this.settings.lang : 'tr';
-        const names = {
-            cat: { tr: "Pamuk Kedi 🐱", en: "Fluffy Cat 🐱", de: "Flauschige Katze 🐱", fr: "Chat Doux 🐱", it: "Gatto Morbido 🐱", es: "Gato Esponjoso 🐱", pt: "Gato Fofo 🐱" },
-            shiba: { tr: "Tatlı Shiba 🐕", en: "Sweet Shiba 🐕", de: "Süßer Shiba 🐕", fr: "Shiba Mignon 🐕", it: "Dolce Shiba 🐕", es: "Dulce Shiba 🐕", pt: "Doce Shiba 🐕" },
-            panda: { tr: "Şirin Panda 🐼", en: "Cute Panda 🐼", de: "Niedlicher Panda 🐼", fr: "Panda Mignon 🐼", it: "Panda Tenero 🐼", es: "Panda Lindo 🐼", pt: "Panda Fofo 🐼" },
-            dragon: { tr: "Sevimli Ejderha 🐉", en: "Cute Dragon 🐉", de: "Niedlicher Drache 🐉", fr: "Dragon Mignon 🐉", it: "Drago Tenero 🐉", es: "Dragón Lindo 🐉", pt: "Dragão Fofo 🐉" },
-            fox: { tr: "Komik Tilki 🦊", en: "Funny Fox 🦊", de: "Lustiger Fuchs 🦊", fr: "Renard Rigolo 🦊", it: "Volpe Buffa 🦊", es: "Zorro Divertido 🦊", pt: "Raposa Engraçada 🦊" },
-            lion: { tr: "Kral Aslan 🦁", en: "King Lion 🦁", de: "König Löwe 🦁", fr: "Roi Lion 🦁", it: "Re Leone 🦁", es: "Rey León 🦁", pt: "Rei Leão 🦁" },
-            bunny: { tr: "Minik Tavşan 🐰", en: "Tiny Bunny 🐰", de: "Kleines Hasenkind 🐰", fr: "Petit Lapin 🐰", it: "Piccolo Coniglio 🐰", es: "Pequeno Conejo 🐰", pt: "Pequeno Coelho 🐰" },
-            owl: { tr: "Bilge Baykuş 🦉", en: "Wise Owl 🦉", de: "Weise Eule 🦉", fr: "Hibou Sage 🦉", it: "Gufo Saggio 🦉", es: "Búho Sabio 🦉", pt: "Coruja Sábia 🦉" },
-            unicorn: { tr: "Büyülü Tekboynuz 🦄", en: "Magical Unicorn 🦄", de: "Zauber-Einhorn 🦄", fr: "Licorne Magique 🦄", it: "Unicorno Magico 🦄", es: "Unicornio Mágico 🦄", pt: "Unicórnio Mágico 🦄" },
-            penguin: { tr: "Sevimli Penguen 🐧", en: "Cute Penguin 🐧", de: "Niedlicher Pinguin 🐧", fr: "Pingouin Mignon 🐧", it: "Pinguino Tenero 🐧", es: "Pingüino Lindo 🐧", pt: "Pinguim Fofo 🐧" },
-            red_panda: { tr: "Kırmızı Panda 🐾", en: "Red Panda 🐾", de: "Roter Panda 🐾", fr: "Panda Roux 🐾", it: "Panda Rosso 🐾", es: "Panda Rojo 🐾", pt: "Panda Vermelho 🐾" },
-            frog: { tr: "Tatlı Kurbağa 🐸", en: "Sweet Frog 🐸", de: "Süßer Frosch 🐸", fr: "Grenouille Douce 🐸", it: "Dolce Rana 🐸", es: "Dulce Rana 🐸", pt: "Doce Rã 🐸" }
-        };
-        const pObj = names[puzzleId] || names.cat;
-        return pObj[lang] || pObj.tr;
+        return this.getLocalizedPuzzleName(puzzleId);
     }
 
     triggerChestRewardModal(starLevel, isBonus) {
@@ -3410,13 +3415,20 @@ class TileMatchingGame {
                     totalGold += 50;
                     const item = document.createElement('div');
                     item.className = 'chest-reward-item';
-                    item.innerHTML = `<span class="reward-icon">🪙</span><span class="reward-val">+50 ALTIN <br><small style="font-size:10px; color:#fbbf24;">(Varolan ${pieceData.puzzleName} #${pieceData.pieceIndex + 1} Dönüştü!)</small></span>`;
+                    const pNameLoc = this.getLocalizedPuzzleName(pieceData.puzzleId);
+                    const dict = this.i18n[this.settings.lang] || this.i18n.tr;
+                    const subText = (dict.duplicatePieceConverted || '(Varolan {name} #{idx} Dönüştü!)').replace('{name}', pNameLoc).replace('{idx}', pieceData.pieceIndex + 1);
+                    const goldText = (dict.chestGoldRewardText || '+{gold} ALTIN').replace('{gold}', 50);
+                    item.innerHTML = `<span class="reward-icon">🪙</span><span class="reward-val">${goldText} <br><small style="font-size:10px; color:#fbbf24;">${subText}</small></span>`;
                     if (rewardListEl) rewardListEl.appendChild(item);
                 } else {
                     this.pendingAwardedPieces.push(pieceData);
                     const item = document.createElement('div');
                     item.className = 'chest-reward-item';
-                    item.innerHTML = `<span class="reward-icon">🧩</span><span class="reward-val">${pieceData.puzzleName} (#${pieceData.pieceIndex + 1})</span>`;
+                    const pNameLoc = this.getLocalizedPuzzleName(pieceData.puzzleId);
+                    const dict = this.i18n[this.settings.lang] || this.i18n.tr;
+                    const pieceText = (dict.puzzlePieceEarned || '{name} Parçası #{idx}').replace('{name}', pNameLoc).replace('{idx}', pieceData.pieceIndex + 1);
+                    item.innerHTML = `<span class="reward-icon">🧩</span><span class="reward-val">${pieceText}</span>`;
                     if (rewardListEl) rewardListEl.appendChild(item);
                 }
             }
@@ -3544,7 +3556,10 @@ class TileMatchingGame {
         if (goldEl) goldEl.innerText = this.goldCoins;
 
         this.sound.playBoosterChime();
-        this.showToast(`🎉 1 Parça Alındı: ${added.puzzleName} (#${added.pieceIndex + 1})!`);
+        const pNameLoc = this.getLocalizedPuzzleName(added.puzzleId);
+        const dict = this.i18n[this.settings.lang] || this.i18n.tr;
+        const msg = (dict.pieceBought || '🎉 1 Parça Alındı: {name} (#{idx})!').replace('{name}', pNameLoc).replace('{idx}', added.pieceIndex + 1);
+        this.showToast(msg);
         this.saveGameProgress();
         this.renderPuzzleGalleryModal();
     }
@@ -3699,7 +3714,10 @@ class TileMatchingGame {
                         } else {
                             this.activePuzzleId = pItem.puzzleId;
                             this.renderPuzzleGalleryModal();
-                            this.showToast(`${puzzleDef.name} sekmesine geçildi! Tekrar dokunarak yerleştirebilirsiniz.`);
+                            const pNameLoc = this.getLocalizedPuzzleName(pItem.puzzleId);
+                            const dict = this.i18n[this.settings.lang] || this.i18n.tr;
+                            const msg = (dict.tabSwitchedMsg || '{name} sekmesine geçildi! Tekrar dokunarak yerleştirebilirsiniz.').replace('{name}', pNameLoc);
+                            this.showToast(msg);
                         }
                     });
 
@@ -3711,7 +3729,8 @@ class TileMatchingGame {
 
     handlePlacePuzzlePiece(invId, puzzleId, pieceIndex, targetSlotIndex) {
         if (puzzleId !== this.activePuzzleId) {
-            this.showToast('Lütfen parçayı ait olduğu karakter sekmesine yerleştirin!');
+            const dict = this.i18n[this.settings.lang] || this.i18n.tr;
+            this.showToast(dict.wrongTabMsg || 'Lütfen parçayı ait olduğu karakter sekmesine yerleştirin!');
             return;
         }
 
@@ -3725,7 +3744,9 @@ class TileMatchingGame {
                 setTimeout(() => targetSlot.classList.remove('shake-reject'), 450);
             }
 
-            this.showToast(`❌ Yanlış Yuva! Bu parça #${pieceIndex + 1} numaralı yuvaya aittir. Envantere geri döndü.`);
+            const dict = this.i18n[this.settings.lang] || this.i18n.tr;
+            const msg = (dict.wrongSlotMsg || '❌ Yanlış Yuva! Bu parça #{idx} numaralı yuvaya aittir. Envantere geri döndü.').replace('{idx}', pieceIndex + 1);
+            this.showToast(msg);
             return;
         }
 
