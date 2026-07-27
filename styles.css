@@ -1934,22 +1934,22 @@ body {
 
 /* Puzzle Gallery Modal */
 .gallery-modal-card {
-    max-width: 440px;
-    width: 92%;
-    max-height: 90vh;
+    max-width: 420px;
+    width: 94%;
+    max-height: 94vh;
     overflow-y: auto;
     background: linear-gradient(145deg, #0f172a 0%, #1e1b4b 100%);
     border: 2px solid #38bdf8;
     box-shadow: 0 0 40px rgba(56, 189, 248, 0.3);
-    padding: 20px 16px;
+    padding: 12px 14px;
 }
 
 .puzzle-tabs-scroll {
     display: flex;
     gap: 8px;
     overflow-x: auto;
-    padding: 8px 4px;
-    margin-bottom: 12px;
+    padding: 6px 4px;
+    margin-bottom: 8px;
     scrollbar-width: thin;
 }
 
@@ -1957,9 +1957,9 @@ body {
     background: rgba(255, 255, 255, 0.08);
     border: 1.5px solid rgba(255, 255, 255, 0.15);
     border-radius: 12px;
-    padding: 6px 12px;
+    padding: 5px 10px;
     color: #94a3b8;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 800;
     white-space: nowrap;
     cursor: pointer;
@@ -1978,13 +1978,13 @@ body {
 
 .puzzle-board-wrapper {
     position: relative;
-    margin: 10px auto;
-    width: 255px;
-    height: 340px;
-    max-width: 82vw;
-    border-radius: 16px;
+    margin: 6px auto;
+    width: 195px;
+    height: 260px;
+    max-width: 75vw;
+    border-radius: 14px;
     border: 3px solid #fbbf24;
-    box-shadow: 0 0 25px rgba(251, 191, 36, 0.3), inset 0 0 20px rgba(0, 0, 0, 0.8);
+    box-shadow: 0 0 20px rgba(251, 191, 36, 0.3), inset 0 0 15px rgba(0, 0, 0, 0.8);
     overflow: hidden;
     background-size: 100% 100%;
     background-position: center;
@@ -2075,7 +2075,7 @@ body {
 }
 
 .gallery-action-bar {
-    margin: 12px 0;
+    margin: 6px 0;
     display: flex;
     justify-content: center;
 }
@@ -2083,15 +2083,16 @@ body {
 .buy-piece-btn {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
     background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
     border: 1.5px solid #fbbf24;
     color: #ffffff;
     font-weight: 900;
-    padding: 8px 16px;
-    border-radius: 16px;
+    padding: 5px 12px;
+    font-size: 13px;
+    border-radius: 12px;
     cursor: pointer;
-    box-shadow: 0 4px 14px rgba(245, 158, 11, 0.4);
+    box-shadow: 0 3px 10px rgba(245, 158, 11, 0.4);
 }
 
 .buy-cost-tag {
@@ -2104,8 +2105,8 @@ body {
 .inventory-section {
     width: 100%;
     background: rgba(0, 0, 0, 0.3);
-    border-radius: 14px;
-    padding: 10px;
+    border-radius: 12px;
+    padding: 6px 8px;
     border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
