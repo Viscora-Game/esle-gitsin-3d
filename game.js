@@ -261,17 +261,24 @@ class SoundSynth {
 class ParticleFX {
     constructor(canvasId) {
         this.canvas = document.getElementById(canvasId);
-        this.ctx = this.canvas.getContext('2d');
+        this.ctx = this.canvas ? this.canvas.getContext('2d') : null;
         this.particles = [];
+        this.isAnimating = false;
         this.resize();
         window.addEventListener('resize', () => this.resize());
-        this.animate();
     }
 
     resize() {
         if (!this.canvas) return;
-        this.canvas.width = this.canvas.parentElement.clientWidth;
-        this.canvas.height = this.canvas.parentElement.clientHeight;
+        this.canvas.width = this.canvas.parentElement ? this.canvas.parentElement.clientWidth : window.innerWidth;
+        this.canvas.height = this.canvas.parentElement ? this.canvas.parentElement.clientHeight : window.innerHeight;
+    }
+
+    startAnimationLoop() {
+        if (!this.isAnimating) {
+            this.isAnimating = true;
+            this.animate();
+        }
     }
 
     spawnBurst(x, y, count = 24) {
@@ -290,13 +297,14 @@ class ParticleFX {
                 decay: Math.random() * 0.03 + 0.02
             });
         }
+        this.startAnimationLoop();
     }
 
     spawnConfetti() {
         const colors = ['#fbbf24', '#ef4444', '#10b981', '#38bdf8', '#c084fc', '#f43f5e'];
         for (let i = 0; i < 70; i++) {
             this.particles.push({
-                x: Math.random() * this.canvas.width,
+                x: Math.random() * (this.canvas ? this.canvas.width : 400),
                 y: -10,
                 vx: (Math.random() - 0.5) * 4,
                 vy: Math.random() * 5 + 3,
@@ -306,9 +314,11 @@ class ParticleFX {
                 decay: 0.005
             });
         }
+        this.startAnimationLoop();
     }
 
     animate() {
+        if (!this.ctx || !this.canvas) return;
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
         for (let i = this.particles.length - 1; i >= 0; i--) {
@@ -331,7 +341,12 @@ class ParticleFX {
             this.ctx.restore();
         }
 
-        requestAnimationFrame(() => this.animate());
+        if (this.particles.length > 0) {
+            requestAnimationFrame(() => this.animate());
+        } else {
+            this.isAnimating = false;
+            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        }
     }
 }
 

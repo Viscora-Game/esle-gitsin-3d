@@ -13,6 +13,21 @@
     <link rel="apple-touch-icon" sizes="180x180" href="icons/app-apple-icon.png?v=3">
     <link rel="manifest" href="manifest.json?v=3">
 
+    <!-- Instant Asset Preloader for 0ms Asset Loading -->
+    <link rel="preload" as="image" href="images/cat.jpg">
+    <link rel="preload" as="image" href="images/fox.jpg">
+    <link rel="preload" as="image" href="images/panda.jpg">
+    <link rel="preload" as="image" href="images/dragon.jpg">
+    <link rel="preload" as="image" href="images/shiba.jpg">
+    <link rel="preload" as="image" href="images/unicorn.jpg">
+    <link rel="preload" as="image" href="images/lion.jpg">
+    <link rel="preload" as="image" href="images/bunny.jpg">
+    <link rel="preload" as="image" href="images/owl.jpg">
+    <link rel="preload" as="image" href="images/red_panda.jpg">
+    <link rel="preload" as="image" href="images/frog.jpg">
+    <link rel="preload" as="image" href="images/penguin.jpg">
+
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700;900&display=swap" rel="stylesheet">
@@ -216,7 +231,7 @@
 
                     <!-- Force Update & Clear Cache Button -->
                     <button id="btn-force-update" class="btn-secondary settings-full-btn" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff; font-weight: 700; margin-top: 8px;">
-                        <span data-i18n="forceUpdateBtn">⚡ CANLI GÜNCELLEMEYİ YÜKLE (v4.7.0)</span>
+                        <span data-i18n="forceUpdateBtn">⚡ CANLI GÜNCELLEMEYİ YÜKLE (v4.8.0)</span>
                     </button>
 
                     <button id="btn-save-settings" class="btn-primary" data-i18n="saveBtn">KAYDET VE KAPAT</button>
@@ -486,7 +501,7 @@
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./sw.js?v=4.7.0').then((reg) => {
+          navigator.serviceWorker.register('./sw.js?v=4.8.0').then((reg) => {
             reg.update();
 
             reg.addEventListener('updatefound', () => {
@@ -511,6 +526,6 @@
         });
       }
     </script>
-    <script src="game.js?v=4.7.0" defer></script>
+    <script src="game.js?v=4.8.0" defer></script>
 </body>
 </html>
