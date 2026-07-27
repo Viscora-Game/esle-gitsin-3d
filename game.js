@@ -467,7 +467,7 @@ class TileMatchingGame {
                 combo3x: "💖 MUHTEŞEM EŞLEŞME!",
                 combo4x: "🌟 SÜPER COMBO!",
                 combo5x: "🌈 EFSANEVİ EŞLEŞME!",
-                offlineAdMsg: "📡 Çevrimdışısınız! Ödüllü reklam izlemek için internet bağlantısı gerekiyor.",
+                offlineAdMsg: "📡 Çevrimdışısınız! Reklam için internet bekleniyor.",
                 pasText: "PAS ❌",
                 pasWonTitle: "💨 PAS GEÇTİN!",
                 pasWonDesc: "Bu çevirmede şansın yaver gitmedi, tekrar dene!",
@@ -571,7 +571,7 @@ class TileMatchingGame {
                 combo3x: "💖 WONDERFUL!",
                 combo4x: "🌟 SUPER COMBO!",
                 combo5x: "🌈 LEGENDARY MATCH!",
-                offlineAdMsg: "📡 You are offline! Internet connection required to watch rewarded ads.",
+                offlineAdMsg: "📡 Offline! Internet needed to play ad.",
                 pasText: "MISS ❌",
                 pasWonTitle: "💨 BAD LUCK!",
                 pasWonDesc: "No prize this time, try your luck again!",
@@ -675,7 +675,7 @@ class TileMatchingGame {
                 combo3x: "💖 WUNDERBAR!",
                 combo4x: "🌟 SUPER COMBO!",
                 combo5x: "🌈 LEGENDÄR!",
-                offlineAdMsg: "📡 Du bist offline! Internetverbindung erforderlich, um Belohnungswerbung zu sehen.",
+                offlineAdMsg: "📡 Offline! Internet für Werbung erforderlich.",
                 pasText: "NIETE ❌",
                 pasWonTitle: "💨 PECH GEHABT!",
                 pasWonDesc: "Diesmal kein Gewinn, versuche es nochmal!",
@@ -779,7 +779,7 @@ class TileMatchingGame {
                 combo3x: "💖 MAGNIFIQUE!",
                 combo4x: "🌟 SUPER MATCH!",
                 combo5x: "🌈 LÉGENDAIRE!",
-                offlineAdMsg: "📡 Vous êtes hors ligne! Connexion Internet requise pour regarder les publicités.",
+                offlineAdMsg: "📡 Hors ligne! Connexion requise pour la pub.",
                 pasText: "PERDU ❌",
                 pasWonTitle: "💨 PAS DE CHANCE!",
                 pasWonDesc: "Pas de lot cette fois, réessayez!",
@@ -883,7 +883,7 @@ class TileMatchingGame {
                 combo3x: "💖 ADORABILE!",
                 combo4x: "🌟 SUPER COMBO!",
                 combo5x: "🌈 LEGENDARIO!",
-                offlineAdMsg: "📡 Sei offline! Connessione Internet richiesta per guardare gli annunci.",
+                offlineAdMsg: "📡 Offline! Connessione necessaria per l'annuncio.",
                 pasText: "PASSA ❌",
                 pasWonTitle: "💨 PECCATO!",
                 pasWonDesc: "Nessun premio questa volta, riprova!",
@@ -987,7 +987,7 @@ class TileMatchingGame {
                 combo3x: "💖 ¡MAGNÍFICO!",
                 combo4x: "🌟 ¡SÚPER PAREJA!",
                 combo5x: "🌈 ¡LEYENDARIO!",
-                offlineAdMsg: "📡 ¡Estás desconectado! Se requiere conexión a Internet para ver anuncios.",
+                offlineAdMsg: "📡 ¡Sin conexión! Se requiere internet para anuncios.",
                 pasText: "PASO ❌",
                 pasWonTitle: "💨 ¡MALA SUERTE!",
                 pasWonDesc: "¡Sin premio esta vez, inténtalo de nuevo!",
@@ -1091,7 +1091,7 @@ class TileMatchingGame {
                 combo3x: "💖 MARAVILHOSO!",
                 combo4x: "🌟 SUPER COMBO!",
                 combo5x: "🌈 LENDÁRIO!",
-                offlineAdMsg: "📡 Você está offline! Conexão com a Internet necessária para ver anúncios.",
+                offlineAdMsg: "📡 Offline! Conexão necessária para o anúncio.",
                 pasText: "PASSO ❌",
                 pasWonTitle: "💨 AZAR!",
                 pasWonDesc: "Sem prêmio desta vez, tente novamente!",
@@ -3844,7 +3844,7 @@ class TileMatchingGame {
         // Offline Check: Notify player if internet connection is offline
         if (typeof navigator !== 'undefined' && navigator.onLine === false && !window.AndroidAdMob) {
             const dict = (this.i18n && this.i18n[this.settings.lang]) ? this.i18n[this.settings.lang] : (this.i18n ? this.i18n.tr : {});
-            this.showToast(dict.offlineAdMsg || '📡 Çevrimdışısınız! Ödüllü reklam izlemek için internet bağlantısı gerekiyor.');
+            this.showToast(dict.offlineAdMsg || '📡 Çevrimdışısınız! Reklam için internet bekleniyor.');
             if (onFailure) onFailure();
             return;
         }

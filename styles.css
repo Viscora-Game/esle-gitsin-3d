@@ -1020,19 +1020,22 @@ body {
     top: 24px;
     left: 50%;
     transform: translateX(-50%);
-    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-    border: 2px solid #f87171;
-    color: #ffffff;
-    padding: 10px 22px;
-    border-radius: 24px;
-    font-size: 14px;
-    font-weight: 900;
-    box-shadow: 0 8px 30px rgba(239, 68, 68, 0.7), 0 0 15px rgba(0, 0, 0, 0.5);
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    border: 2px solid #38bdf8;
+    color: #f8fafc;
+    padding: 10px 18px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: 800;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 18px rgba(56, 189, 248, 0.4);
     z-index: 9999 !important;
     pointer-events: none;
     transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-    white-space: nowrap;
+    max-width: 88vw;
+    width: max-content;
     text-align: center;
+    line-height: 1.35;
+    word-break: break-word;
 }
 
 .toast-msg.hidden {
