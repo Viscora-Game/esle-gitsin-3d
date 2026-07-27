@@ -532,6 +532,7 @@ class TileMatchingGame {
         // Full 7-Language Global Localization Engine (TR, EN, DE, FR, IT, ES, PT)
         this.i18n = {
             tr: {
+                musicLabel: "🎵 Arka Plan Müziği",
                 combo2x: "✨ HARİKA UYUM!",
                 combo3x: "💖 MUHTEŞEM EŞLEŞME!",
                 combo4x: "🌟 SÜPER COMBO!",
@@ -636,6 +637,7 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 TEBRİKLER! {name} BULMACASI TAMAMLANDI!"
             },
             en: {
+                musicLabel: "🎵 Background Music",
                 combo2x: "✨ SWEET MATCH!",
                 combo3x: "💖 WONDERFUL!",
                 combo4x: "🌟 SUPER COMBO!",
@@ -740,6 +742,7 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 CONGRATS! {name} PUZZLE COMPLETED!"
             },
             de: {
+                musicLabel: "🎵 Hintergrundmusik",
                 combo2x: "✨ SÜSSES MATCH!",
                 combo3x: "💖 WUNDERBAR!",
                 combo4x: "🌟 SUPER COMBO!",
@@ -844,6 +847,7 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 GLÜCKWUNSCH! {name} PUZZLE VOLLSTÄNDIG!"
             },
             fr: {
+                musicLabel: "🎵 Musique de fond",
                 combo2x: "✨ ADORABLE COMBO!",
                 combo3x: "💖 MAGNIFIQUE!",
                 combo4x: "🌟 SUPER MATCH!",
@@ -948,6 +952,7 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 BRAVO! PUZZLE {name} COMPLÉTÉ!"
             },
             it: {
+                musicLabel: "🎵 Musica di sottofondo",
                 combo2x: "✨ MERAVIGLIOSO!",
                 combo3x: "💖 ADORABILE!",
                 combo4x: "🌟 SUPER COMBO!",
@@ -1052,6 +1057,7 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 COMPLIMENTI! PUZZLE {name} COMPLETATO!"
             },
             es: {
+                musicLabel: "🎵 Música de fondo",
                 combo2x: "✨ ¡DULCE COMBO!",
                 combo3x: "💖 ¡MAGNÍFICO!",
                 combo4x: "🌟 ¡SÚPER PAREJA!",
@@ -1156,6 +1162,7 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 ¡ENHORABUENA! ¡PUZZLE {name} COMPLETADO!"
             },
             pt: {
+                musicLabel: "🎵 Música de fundo",
                 combo2x: "✨ COMBINAÇÃO DOCE!",
                 combo3x: "💖 MARAVILHOSO!",
                 combo4x: "🌟 SUPER COMBO!",
@@ -1276,6 +1283,7 @@ class TileMatchingGame {
         this.loadSettings();
         this.loadGameProgress();
         this.initUI();
+        this.initBackgroundMusic();
         this.checkFirstTimeTutorial();
     }
 
@@ -1773,6 +1781,15 @@ class TileMatchingGame {
             this.sound.setVolume(this.settings.volume);
         });
 
+                const btnMusic = document.getElementById('btn-toggle-music');
+        if (btnMusic) {
+            btnMusic.addEventListener('click', () => {
+                this.settings.musicEnabled = (this.settings.musicEnabled === false) ? true : false;
+                this.saveSettings();
+                this.updateMusicUI();
+            });
+        }
+
         const btnVib = document.getElementById('btn-toggle-vib');
         btnVib.addEventListener('click', () => {
             this.settings.vibration = !this.settings.vibration;
@@ -1961,6 +1978,61 @@ class TileMatchingGame {
         const modalGallery = document.getElementById('modal-puzzle-gallery');
         if (modalGallery && !modalGallery.classList.contains('hidden')) {
             this.renderPuzzleGalleryModal();
+        }
+    }
+
+    // =========================================================
+    // CUTE BACKGROUND MUSIC ENGINE & MOBILE AUTOPLAY UNLOCKER
+    // =========================================================
+    initBackgroundMusic() {
+        try {
+            if (!this.bgMusic) {
+                this.bgMusic = new Audio('audio/bgm_cute.mp3');
+                this.bgMusic.loop = true;
+                this.bgMusic.volume = (this.settings.musicEnabled === false) ? 0 : 0.20;
+            }
+
+            if (this.settings.musicEnabled !== false) {
+                const playPromise = this.bgMusic.play();
+                if (playPromise !== undefined) {
+                    playPromise.catch(() => {
+                        // Mobile autoplay gesture fallback: start playing smoothly on first user touch/tap!
+                        const unlockMusic = () => {
+                            if (this.settings.musicEnabled !== false && this.bgMusic && this.bgMusic.paused) {
+                                this.bgMusic.play().catch(() => {});
+                            }
+                            window.removeEventListener('pointerdown', unlockMusic);
+                            window.removeEventListener('touchstart', unlockMusic);
+                            window.removeEventListener('click', unlockMusic);
+                        };
+                        window.addEventListener('pointerdown', unlockMusic, { passive: true, once: true });
+                        window.addEventListener('touchstart', unlockMusic, { passive: true, once: true });
+                        window.addEventListener('click', unlockMusic, { passive: true, once: true });
+                    });
+                }
+            }
+            this.updateMusicUI();
+        } catch (e) {}
+    }
+
+    updateMusicUI() {
+        const btnMusic = document.getElementById('btn-toggle-music');
+        const txtMusic = document.getElementById('music-btn-text');
+        if (btnMusic && txtMusic) {
+            if (this.settings.musicEnabled !== false) {
+                btnMusic.classList.add('active');
+                txtMusic.innerText = 'AÇIK';
+                if (this.bgMusic) {
+                    this.bgMusic.volume = 0.20;
+                    if (this.bgMusic.paused) this.bgMusic.play().catch(() => {});
+                }
+            } else {
+                btnMusic.classList.remove('active');
+                txtMusic.innerText = 'KAPALI';
+                if (this.bgMusic) {
+                    this.bgMusic.pause();
+                }
+            }
         }
     }
 
