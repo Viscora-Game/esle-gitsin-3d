@@ -1789,13 +1789,19 @@ class TileMatchingGame {
             document.getElementById('modal-settings').classList.add('hidden');
         });
 
-        // Settings Controls
+        // Settings Controls - Sound Effects Volume Slider
         const sliderVol = document.getElementById('slider-volume');
-        sliderVol.addEventListener('input', (e) => {
-            this.settings.volume = parseInt(e.target.value);
-            document.getElementById('vol-val-text').innerText = `${this.settings.volume}%`;
-            this.sound.setVolume(this.settings.volume);
-        // Background Music Volume Slider
+        if (sliderVol) {
+            sliderVol.addEventListener('input', (e) => {
+                this.settings.volume = parseInt(e.target.value);
+                const txtVolVal = document.getElementById('vol-val-text');
+                if (txtVolVal) txtVolVal.innerText = `${this.settings.volume}%`;
+                this.sound.setVolume(this.settings.volume);
+                this.saveSettings();
+            });
+        }
+
+        // Settings Controls - Background Music Volume Slider
         const sliderMusic = document.getElementById('slider-music');
         if (sliderMusic) {
             sliderMusic.addEventListener('input', (e) => {
@@ -1804,9 +1810,6 @@ class TileMatchingGame {
                 this.saveSettings();
             });
         }
-            this.updateMusicUI();
-            this.saveSettings();
-        });
 
                         // Background Music Track Selector Listeners
         const btnCarefree = document.getElementById('btn-track-carefree');
@@ -2094,12 +2097,16 @@ class TileMatchingGame {
         const txtMusicVal = document.getElementById('music-val-text');
         const mVol = (typeof this.settings.musicVolume === 'number') ? this.settings.musicVolume : 30;
 
-        if (sliderMusic) sliderMusic.value = mVol;
-        if (txtMusicVal) txtMusicVal.innerText = `${mVol}%`;
+        if (sliderMusic && document.activeElement !== sliderMusic) {
+            sliderMusic.value = mVol;
+        }
+        if (txtMusicVal) {
+            txtMusicVal.innerText = `${mVol}%`;
+        }
 
         if (this.bgMusic) {
-            // Softer base music scaling (0.15 max volume at 100% slider, 0.045 at default 30% slider)
-            const targetVol = (mVol / 100) * 0.05;
+            // Clear, audible volume scaling (0.25 max volume at 100% slider, 0.075 at 30% default slider)
+            const targetVol = (mVol / 100) * 0.25;
             this.bgMusic.volume = targetVol;
             if (mVol > 0) {
                 if (this.bgMusic.paused) this.bgMusic.play().catch(() => {});
