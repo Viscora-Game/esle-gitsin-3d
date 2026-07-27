@@ -1,4 +1,4 @@
-const CACHE_NAME = 'esle-gitsin-3d-v3.8.0';
+const CACHE_NAME = 'esle-gitsin-3d-v3.9.0';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -6,7 +6,19 @@ const ASSETS_TO_CACHE = [
   './game.js',
   './manifest.json',
   './favicon.ico',
-  './favicon.png'
+  './favicon.png',
+  './images/cat.jpg',
+  './images/fox.jpg',
+  './images/panda.jpg',
+  './images/dragon.jpg',
+  './images/shiba.jpg',
+  './images/unicorn.jpg',
+  './images/lion.jpg',
+  './images/bunny.jpg',
+  './images/owl.jpg',
+  './images/red_panda.jpg',
+  './images/frog.jpg',
+  './images/penguin.jpg'
 ];
 
 // Install Event - Pre-cache core files & activate immediately

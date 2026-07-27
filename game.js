@@ -1344,7 +1344,32 @@ class TileMatchingGame {
         }
     }
 
+    preloadAllTileImages() {
+        const imagePaths = [
+            'images/cat.jpg',
+            'images/fox.jpg',
+            'images/panda.jpg',
+            'images/dragon.jpg',
+            'images/shiba.jpg',
+            'images/unicorn.jpg',
+            'images/lion.jpg',
+            'images/bunny.jpg',
+            'images/owl.jpg',
+            'images/red_panda.jpg',
+            'images/frog.jpg',
+            'images/penguin.jpg'
+        ];
+
+        this.preloadedImages = {};
+        for (const path of imagePaths) {
+            const img = new Image();
+            img.src = path;
+            this.preloadedImages[path] = img;
+        }
+    }
+
     initUI() {
+        this.preloadAllTileImages();
         this.updateMainMenuButtons();
         this.startWheelTimerLoop();
 
