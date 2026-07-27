@@ -534,6 +534,50 @@ class TileMatchingGame {
         // Full 7-Language Global Localization Engine (TR, EN, DE, FR, IT, ES, PT)
         this.i18n = {
             tr: {
+                trackCarefree: "🌸 Carefree",
+                trackDuck: "🦆 Ördekçik",
+                trackMarimba: "🐒 Marimba",
+                pieceWord: "PARÇA",
+                piecesWord: "PARÇA",
+                pageWord: "Sayfa",
+                emptyInventoryMsg: "Envanterinizde henüz yerleştirilmemiş parça yok. Sandık açarak veya Altın ile parça kazanabilirsiniz!",
+                puzzles: {
+                trackCarefree: "🌸 Carefree",
+                trackDuck: "🦆 Patito",
+                trackMarimba: "🐒 Marimba",
+                pieceWord: "PIEZA",
+                piecesWord: "PIEZAS",
+                pageWord: "Página",
+                emptyInventoryMsg: "¡No hay piezas sin colocar en tu inventario. Gana piezas en cofres o compra con Oro!",
+                puzzles: {
+                cat: "Gato Esponjoso 😻",
+                fox: "Zorro Lindo 🦊",
+                panda: "Panda Dulce 🐼",
+                dragon: "Dragón Mágico 🐲",
+                shiba: "Shiba Alegre 🐶",
+                unicorn: "Unicornio Brillante 🦄",
+                lion: "León Valiente 🦁",
+                bunny: "Conejo Lindo 🐰",
+                owl: "Búho Sabio 🦉",
+                red_panda: "Panda Rojo 🐾",
+                frog: "Rana Alegre 🐸",
+                penguin: "Pingüino Lindo 🐧"
+                },
+
+                cat: "Pamuk Kedi 😻",
+                fox: "Sevimli Tilki 🦊",
+                panda: "Tatlı Panda 🐼",
+                dragon: "Büyülü Ejderha 🐲",
+                shiba: "Neşeli Shiba 🐶",
+                unicorn: "Işıltılı Tekboynuz 🦄",
+                lion: "Cesur Aslan 🦁",
+                bunny: "Sevimli Tavşan 🐰",
+                owl: "Bilge Baykuş 🦉",
+                red_panda: "Kızıl Panda 🐾",
+                frog: "Neşeli Kurbağa 🐸",
+                penguin: "Sevimli Penguen 🐧"
+                },
+
                 musicLabel: "🎵 Müzik Sesi",
                 trackLabel: "🎶 Müzik Seçimi",
                 combo2x: "✨ HARİKA UYUM!",
@@ -640,6 +684,28 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 TEBRİKLER! {name} BULMACASI TAMAMLANDI!"
             },
             en: {
+                trackCarefree: "🌸 Carefree",
+                trackDuck: "🦆 Little Duck",
+                trackMarimba: "🐒 Marimba",
+                pieceWord: "PIECE",
+                piecesWord: "PIECES",
+                pageWord: "Page",
+                emptyInventoryMsg: "No unplaced pieces in your inventory. Win pieces from chests or buy with Gold!",
+                puzzles: {
+                cat: "Fluffy Cat 😻",
+                fox: "Cute Fox 🦊",
+                panda: "Sweet Panda 🐼",
+                dragon: "Magic Dragon 🐲",
+                shiba: "Happy Shiba 🐶",
+                unicorn: "Sparkly Unicorn 🦄",
+                lion: "Brave Lion 🦁",
+                bunny: "Cute Bunny 🐰",
+                owl: "Wise Owl 🦉",
+                red_panda: "Red Panda 🐾",
+                frog: "Happy Frog 🐸",
+                penguin: "Cute Penguin 🐧"
+                },
+
                 musicLabel: "🎵 Music Volume",
                 trackLabel: "🎶 Music Track",
                 combo2x: "✨ SWEET MATCH!",
@@ -746,6 +812,28 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 CONGRATS! {name} PUZZLE COMPLETED!"
             },
             de: {
+                trackCarefree: "🌸 Carefree",
+                trackDuck: "🦆 Entchen",
+                trackMarimba: "🐒 Marimba",
+                pieceWord: "TEIL",
+                piecesWord: "TEILE",
+                pageWord: "Seite",
+                emptyInventoryMsg: "Keine platzierten Teile im Inventar. Gewinne Teile aus Truhen oder kaufe mit Gold!",
+                puzzles: {
+                cat: "Flauschige Katze 😻",
+                fox: "Süßer Fuchs 🦊",
+                panda: "Süßer Panda 🐼",
+                dragon: "Zauberdrache 🐲",
+                shiba: "Fröhlicher Shiba 🐶",
+                unicorn: "Glitzer-Einhorn 🦄",
+                lion: "Tapferer Löwe 🦁",
+                bunny: "Süßes Hase 🐰",
+                owl: "Weise Eule 🦉",
+                red_panda: "Roter Panda 🐾",
+                frog: "Fröhlicher Frosch 🐸",
+                penguin: "Süßer Pinguin 🐧"
+                },
+
                 musicLabel: "🎵 Musiklautstärke",
                 trackLabel: "🎶 Musikwahl",
                 combo2x: "✨ SÜSSES MATCH!",
@@ -852,6 +940,28 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 GLÜCKWUNSCH! {name} PUZZLE VOLLSTÄNDIG!"
             },
             fr: {
+                trackCarefree: "🌸 Carefree",
+                trackDuck: "🦆 Caneton",
+                trackMarimba: "🐒 Marimba",
+                pieceWord: "PIÈCE",
+                piecesWord: "PIÈCES",
+                pageWord: "Page",
+                emptyInventoryMsg: "Aucune pièce non placée dans votre inventaire. Gagnez des pièces dans les coffres ou achetez avec de l'Or!",
+                puzzles: {
+                cat: "Chat Doux 😻",
+                fox: "Mignon Renard 🦊",
+                panda: "Doux Panda 🐼",
+                dragon: "Dragon Magique 🐲",
+                shiba: "Shiba Joyeux 🐶",
+                unicorn: "Licorne Étincelante 🦄",
+                lion: "Brave Lion 🦁",
+                bunny: "Mignon Lapin 🐰",
+                owl: "Chouette Sage 🦉",
+                red_panda: "Panda Roux 🐾",
+                frog: "Grenouille Joyeuse 🐸",
+                penguin: "Mignon Pingouin 🐧"
+                },
+
                 musicLabel: "🎵 Volume Musique",
                 trackLabel: "🎶 Choix Musique",
                 combo2x: "✨ ADORABLE COMBO!",
@@ -958,6 +1068,28 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 BRAVO! PUZZLE {name} COMPLÉTÉ!"
             },
             it: {
+                trackCarefree: "🌸 Carefree",
+                trackDuck: "🦆 Paperotto",
+                trackMarimba: "🐒 Marimba",
+                pieceWord: "PEZZO",
+                piecesWord: "PEZZI",
+                pageWord: "Pagina",
+                emptyInventoryMsg: "Nessun pezzo non posizionato nell'inventario. Vinci pezzi dai bauli o acquista con Oro!",
+                puzzles: {
+                cat: "Gatto Soffice 😻",
+                fox: "Volpe Carina 🦊",
+                panda: "Panda Dolce 🐼",
+                dragon: "Drago Magico 🐲",
+                shiba: "Shiba Felice 🐶",
+                unicorn: "Unicorno Brillante 🦄",
+                lion: "Leone Coraggioso 🦁",
+                bunny: "Coniglietto Carino 🐰",
+                owl: "Gufo Saggio 🦉",
+                red_panda: "Panda Rosso 🐾",
+                frog: "Rana Felice 🐸",
+                penguin: "Pinguino Carino 🐧"
+                },
+
                 musicLabel: "🎵 Volume Musica",
                 trackLabel: "🎶 Traccia Musica",
                 combo2x: "✨ MERAVIGLIOSO!",
@@ -1170,6 +1302,28 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 ¡ENHORABUENA! PUZZLE {name} COMPLETADO!"
             },
             pt: {
+                trackCarefree: "🌸 Carefree",
+                trackDuck: "🦆 Patinho",
+                trackMarimba: "🐒 Marimba",
+                pieceWord: "PEÇA",
+                piecesWord: "PEÇAS",
+                pageWord: "Página",
+                emptyInventoryMsg: "Nenhuma peça não colocada em seu inventário. Ganhe peças em baús ou compre com Ouro!",
+                puzzles: {
+                cat: "Gato Fofo 😻",
+                fox: "Raposa Fofa 🦊",
+                panda: "Panda Fofo 🐼",
+                dragon: "Dragão Mágico 🐲",
+                shiba: "Shiba Alegre 🐶",
+                unicorn: "Unicórnio Brilhante 🦄",
+                lion: "Leão Valente 🦁",
+                bunny: "Coelhinho Fofo 🐰",
+                owl: "Coruja Sábia 🦉",
+                red_panda: "Panda Vermelho 🐾",
+                frog: "Sapo Alegre 🐸",
+                penguin: "Pinguim Fofo 🐧"
+                },
+
                 musicLabel: "🎵 Volume Música",
                 trackLabel: "🎶 Escolha Música",
                 combo2x: "✨ COMBO FOFO!",
