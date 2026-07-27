@@ -3513,7 +3513,7 @@ class TileMatchingGame {
             ctx.strokeStyle = '#ffffff';
             ctx.stroke();
 
-            // Render Segment Labels & Icons aligned to center of slice
+            // Render Segment Labels & Icons
             const midAngle = startAngle + segAngle / 2;
             ctx.save();
             ctx.translate(cx, cy);
@@ -3522,7 +3522,6 @@ class TileMatchingGame {
             ctx.fillStyle = segments[i].color;
             ctx.font = '900 12px sans-serif';
 
-            // Scale text size down slightly for narrow slices (< 15 deg)
             const degrees = (segments[i].prob / 100) * 360;
             if (degrees < 12) {
                 ctx.font = '900 9px sans-serif';
@@ -3535,6 +3534,16 @@ class TileMatchingGame {
 
             currentAngle = endAngle;
         }
+    }
+
+    openWheelModal() {
+        this.renderWheelCanvas();
+        const disc = document.getElementById('wheel-disc');
+        if (disc) disc.style.transform = 'rotate(0deg)';
+
+        this.updateWheelTimerState();
+        const modalWheel = document.getElementById('modal-wheel');
+        if (modalWheel) modalWheel.classList.remove('hidden');
     }
 
     rollWheelReward() {
@@ -3569,7 +3578,6 @@ class TileMatchingGame {
             const segIndex = roll.segIndex;
             const segments = this.getWheelSegments();
 
-            // Calculate exact target mid-angle for landed segment (0 deg at 3 o'clock)
             let cumulativeAngleDeg = 0;
             for (let i = 0; i < segIndex; i++) {
                 cumulativeAngleDeg += (segments[i].prob / 100) * 360;
@@ -3577,11 +3585,9 @@ class TileMatchingGame {
             const segSliceDeg = (selectedSeg.prob / 100) * 360;
             const midAngleDeg = cumulativeAngleDeg + (segSliceDeg / 2);
 
-            // Top pointer is at 12 o'clock = 270 degrees
             let degreesToTarget = 270 - midAngleDeg;
             while (degreesToTarget < 0) degreesToTarget += 360;
 
-            // Add 5 full 360-degree rotations (1800 deg) for realistic spinning physics!
             const targetRotationDeg = (360 * 5) + degreesToTarget;
 
             const disc = document.getElementById('wheel-disc');
@@ -3592,7 +3598,6 @@ class TileMatchingGame {
             this.sound.playBoosterChime();
 
             setTimeout(() => {
-                // Instantly consume spin right & update status/badges
                 this.incrementWheelSpinsCount();
 
                 if (this.fx && typeof this.fx.spawnConfetti === 'function') {
@@ -3600,7 +3605,6 @@ class TileMatchingGame {
                 }
                 this.sound.playVictorySound();
 
-                // Close wheel modal completely & pop up the standard 3D Reward Modal!
                 const modalWheel = document.getElementById('modal-wheel');
                 if (modalWheel) modalWheel.classList.add('hidden');
 
@@ -3696,6 +3700,7 @@ class TileMatchingGame {
         if (rewardContent) rewardContent.classList.remove('hidden');
         if (modalChest) modalChest.classList.remove('hidden');
     }
+
 
     showMainMenuBannerAd() {
         const bannerContainer = document.getElementById('main-menu-ad-banner');
