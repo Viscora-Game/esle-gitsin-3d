@@ -548,7 +548,7 @@ class TileMatchingGame {
         // Settings State
         this.settings = {
             volume: 80,
-            musicVolume: 30,
+            musicVolume: 12,
             bgmTrack: 'carefree',
             vibration: true,
             lang: 'tr'
@@ -3437,7 +3437,9 @@ class TileMatchingGame {
         if (reward.gold > 0) {
             const item = document.createElement('div');
             item.className = 'chest-reward-item';
-            item.innerHTML = `<span class="reward-icon">🪙</span><span class="reward-val">+${reward.gold} ALTIN</span>`;
+            const dict = this.i18n[this.settings.lang] || this.i18n.tr;
+            const goldTxt = (dict.chestGoldRewardText || '+{gold} ALTIN').replace('{gold}', reward.gold);
+            item.innerHTML = `<span class="reward-icon">🪙</span><span class="reward-val">${goldTxt}</span>`;
             if (rewardListEl) rewardListEl.appendChild(item);
         }
 
@@ -3447,7 +3449,8 @@ class TileMatchingGame {
         if (chestBox) chestBox.innerText = '✨';
 
         const descEl = document.getElementById('chest-modal-desc');
-        if (descEl) descEl.innerText = '🏆 Sandıktan Çıkan Ödülleriniz:';
+        const dict = this.i18n[this.settings.lang] || this.i18n.tr;
+        if (descEl) descEl.innerText = dict.chestRewardsDesc || '🏆 Sandıktan Çıkan Ödülleriniz:';
 
         const rewardContent = document.getElementById('chest-reward-content');
         if (rewardContent) rewardContent.classList.remove('hidden');
@@ -4215,7 +4218,8 @@ class TileMatchingGame {
                         const localizedName = this.getPuzzleName(piece.puzzleId);
                         if (piece.isDuplicate) {
                             const dupMsg = (dict.duplicatePieceConverted || '(Varolan {name} #{idx} Dönüştü!)').replace('{name}', localizedName).replace('{idx}', piece.pieceIndex + 1);
-                            item.innerHTML = `<div class="reward-icon">🪙</div><div class="reward-text">+50 ALTIN <span class="dup-note">${dupMsg}</span></div>`;
+                            const gText = (dict.chestGoldRewardText || '+{gold} ALTIN').replace('{gold}', 50);
+                            item.innerHTML = `<div class="reward-icon">🪙</div><div class="reward-text">${gText} <span class="dup-note">${dupMsg}</span></div>`;
                         } else {
                             const pieceMsg = (dict.puzzlePieceEarned || '{name} Parçası #{idx}').replace('{name}', localizedName).replace('{idx}', piece.pieceIndex + 1);
                             item.innerHTML = `<div class="reward-icon">🧩</div><div class="reward-text">${pieceMsg}</div>`;
