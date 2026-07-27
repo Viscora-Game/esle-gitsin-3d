@@ -142,7 +142,7 @@ class SoundSynth {
         osc.frequency.setValueAtTime(400, now);
         osc.frequency.exponentialRampToValueAtTime(850, now + 0.08);
 
-        gain.gain.setValueAtTime(0.35 * this.masterVolume, now);
+        gain.gain.setValueAtTime(0.85 * this.masterVolume, now);
         gain.gain.exponentialRampToValueAtTime(0.01, now + 0.08);
 
         osc.connect(gain);
@@ -163,7 +163,7 @@ class SoundSynth {
         osc.frequency.setValueAtTime(880, now);
         osc.frequency.exponentialRampToValueAtTime(440, now + 0.05);
 
-        gain.gain.setValueAtTime(0.25 * this.masterVolume, now);
+        gain.gain.setValueAtTime(0.80 * this.masterVolume, now);
         gain.gain.exponentialRampToValueAtTime(0.01, now + 0.05);
 
         osc.connect(gain);
@@ -184,7 +184,7 @@ class SoundSynth {
         osc.frequency.setValueAtTime(150, now);
         osc.frequency.exponentialRampToValueAtTime(50, now + 0.14);
 
-        gain.gain.setValueAtTime(0.45 * this.masterVolume, now);
+        gain.gain.setValueAtTime(0.80 * this.masterVolume, now);
         gain.gain.exponentialRampToValueAtTime(0.01, now + 0.14);
 
         osc.connect(gain);
@@ -206,7 +206,7 @@ class SoundSynth {
             osc.type = 'sine';
             osc.frequency.setValueAtTime(freq, now + idx * 0.05);
 
-            gain.gain.setValueAtTime(0.3 * this.masterVolume, now + idx * 0.05);
+            gain.gain.setValueAtTime(0.70 * this.masterVolume, now + idx * 0.05);
             gain.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.05 + 0.2);
 
             osc.connect(gain);
@@ -229,7 +229,7 @@ class SoundSynth {
             osc.type = 'triangle';
             osc.frequency.setValueAtTime(freq, now + idx * 0.05);
 
-            gain.gain.setValueAtTime(0.35 * this.masterVolume, now + idx * 0.05);
+            gain.gain.setValueAtTime(0.85 * this.masterVolume, now + idx * 0.05);
             gain.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.05 + 0.22);
 
             osc.connect(gain);
@@ -254,7 +254,7 @@ class SoundSynth {
             osc.type = 'sine';
             osc.frequency.setValueAtTime(freq, now + idx * 0.04);
 
-            gain.gain.setValueAtTime(0.35 * this.masterVolume, now + idx * 0.04);
+            gain.gain.setValueAtTime(0.85 * this.masterVolume, now + idx * 0.04);
             gain.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.04 + 0.18);
 
             osc.connect(gain);
@@ -277,7 +277,7 @@ class SoundSynth {
             osc.type = 'triangle';
             osc.frequency.setValueAtTime(freq, now + idx * 0.08);
 
-            gain.gain.setValueAtTime(0.4 * this.masterVolume, now + idx * 0.08);
+            gain.gain.setValueAtTime(0.90 * this.masterVolume, now + idx * 0.08);
             gain.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.08 + 0.35);
 
             osc.connect(gain);
@@ -300,7 +300,7 @@ class SoundSynth {
             osc.type = 'sawtooth';
             osc.frequency.setValueAtTime(freq, now + idx * 0.1);
 
-            gain.gain.setValueAtTime(0.4 * this.masterVolume, now + idx * 0.1);
+            gain.gain.setValueAtTime(0.90 * this.masterVolume, now + idx * 0.1);
             gain.gain.exponentialRampToValueAtTime(0.01, now + idx * 0.1 + 0.25);
 
             osc.connect(gain);
@@ -2099,7 +2099,7 @@ class TileMatchingGame {
 
         if (this.bgMusic) {
             // Softer base music scaling (0.15 max volume at 100% slider, 0.045 at default 30% slider)
-            const targetVol = (mVol / 100) * 0.15;
+            const targetVol = (mVol / 100) * 0.05;
             this.bgMusic.volume = targetVol;
             if (mVol > 0) {
                 if (this.bgMusic.paused) this.bgMusic.play().catch(() => {});
