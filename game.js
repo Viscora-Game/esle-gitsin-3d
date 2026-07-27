@@ -1779,6 +1779,8 @@ class TileMatchingGame {
             this.settings.volume = parseInt(e.target.value);
             document.getElementById('vol-val-text').innerText = `${this.settings.volume}%`;
             this.sound.setVolume(this.settings.volume);
+            this.updateMusicUI();
+            this.saveSettings();
         });
 
                 const btnMusic = document.getElementById('btn-toggle-music');
@@ -1987,7 +1989,7 @@ class TileMatchingGame {
     initBackgroundMusic() {
         try {
             if (!this.bgMusic) {
-                this.bgMusic = new Audio('audio/bgm_cute.wav');
+                this.bgMusic = new Audio('audio/bgm_cute.mp3');
                 this.bgMusic.loop = true;
                 this.bgMusic.volume = (this.settings.musicEnabled === false) ? 0 : 0.20;
             }
@@ -2018,18 +2020,22 @@ class TileMatchingGame {
     updateMusicUI() {
         const btnMusic = document.getElementById('btn-toggle-music');
         const txtMusic = document.getElementById('music-btn-text');
+        const volPct = (typeof this.settings.volume === 'number') ? this.settings.volume : 80;
+        const targetVol = (volPct / 100) * 0.35;
+
         if (btnMusic && txtMusic) {
             if (this.settings.musicEnabled !== false) {
                 btnMusic.classList.add('active');
                 txtMusic.innerText = 'AÇIK';
                 if (this.bgMusic) {
-                    this.bgMusic.volume = 0.20;
+                    this.bgMusic.volume = targetVol;
                     if (this.bgMusic.paused) this.bgMusic.play().catch(() => {});
                 }
             } else {
                 btnMusic.classList.remove('active');
                 txtMusic.innerText = 'KAPALI';
                 if (this.bgMusic) {
+                    this.bgMusic.volume = 0;
                     this.bgMusic.pause();
                 }
             }

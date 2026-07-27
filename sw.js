@@ -1,4 +1,4 @@
-const CACHE_NAME = 'esle-gitsin-3d-v5.1.0';
+const CACHE_NAME = 'esle-gitsin-3d-v5.2.0';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -7,7 +7,7 @@ const ASSETS_TO_CACHE = [
   './manifest.json',
   './favicon.ico',
   './favicon.png',
-  './audio/bgm_cute.wav',
+  './audio/bgm_cute.mp3',
   './images/cat.jpg',
   './images/fox.jpg',
   './images/panda.jpg',
