@@ -463,6 +463,12 @@ class TileMatchingGame {
         // Full 7-Language Global Localization Engine (TR, EN, DE, FR, IT, ES, PT)
         this.i18n = {
             tr: {
+                chestStarTitle: "{stars} YILDIZLI SANDIK! 🎁",
+                bonusChestStarTitle: "🏆 BONUS {stars} YILDIZLI SANDIK! 🎁",
+                chestInitialDesc: "Bölüm Başarısı! Ödüllerinizi görmek için aşağıdaki ÖDÜLLERİ AL butonuna basın!",
+                chestGoldRewardText: "+{gold} ALTIN",
+                duplicatePieceConverted: "(Varolan {name} #{idx} Dönüştü!)",
+                puzzlePieceEarned: "{name} Parçası #{idx}",
                 adFullTag: "DOLDU",
                 adChestLimitReached: "⚠️ Bugünkü Ücretsiz Reklam Sandığı Hakkınız Bitti! (0/3 - Yarın Tekrar Gel 🎁)",
                 adReviveLimitReached: "⚠️ Bu Bölümdeki Reklamla Devam Etme Hakkınız Bitti! (2/2)",
@@ -535,6 +541,12 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 TEBRİKLER! {name} BULMACASI TAMAMLANDI!"
             },
             en: {
+                chestStarTitle: "{stars}-STAR CHEST! 🎁",
+                bonusChestStarTitle: "🏆 BONUS {stars}-STAR CHEST! 🎁",
+                chestInitialDesc: "Level Complete! Press OPEN CHEST below to see your rewards!",
+                chestGoldRewardText: "+{gold} GOLD",
+                duplicatePieceConverted: "(Owned {name} #{idx} Converted!)",
+                puzzlePieceEarned: "{name} Piece #{idx}",
                 adFullTag: "FULL",
                 adChestLimitReached: "⚠️ Daily Free Ad Chest Limit Reached! (0/3 - Come Back Tomorrow 🎁)",
                 adReviveLimitReached: "⚠️ Max Level Revives Reached! (2/2)",
@@ -607,6 +619,12 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 CONGRATS! {name} PUZZLE COMPLETED!"
             },
             de: {
+                chestStarTitle: "{stars}-STERNE TRUHE! 🎁",
+                bonusChestStarTitle: "🏆 BONUS {stars}-STERNE TRUHE! 🎁",
+                chestInitialDesc: "Level geschafft! Klicke unten auf TRUHE ÖFFNEN!",
+                chestGoldRewardText: "+{gold} GOLD",
+                duplicatePieceConverted: "(Bereits vorhanden: {name} #{idx} umgewandelt!)",
+                puzzlePieceEarned: "{name} Teil #{idx}",
                 adFullTag: "VOLL",
                 adChestLimitReached: "⚠️ Tägliches Gratis-Truhen-Limit erreicht! (0/3 - Morgen wiederkommen 🎁)",
                 adReviveLimitReached: "⚠️ Max. Reaktivierungen in diesem Level erreicht! (2/2)",
@@ -679,6 +697,12 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 GLÜCKWUNSCH! {name} PUZZLE VOLLSTÄNDIG!"
             },
             fr: {
+                chestStarTitle: "COFFRE {stars} ÉTOILE(S)! 🎁",
+                bonusChestStarTitle: "🏆 COFFRE BONUS {stars} ÉTOILE(S)! 🎁",
+                chestInitialDesc: "Niveau Réussi! Cliquez sur OUVRIR LE COFFRE ci-dessous!",
+                chestGoldRewardText: "+{gold} OR",
+                duplicatePieceConverted: "({name} #{idx} déjà possédé converti!)",
+                puzzlePieceEarned: "Pièce {name} #{idx}",
                 adFullTag: "PLEIN",
                 adChestLimitReached: "⚠️ Limite quotidienne de coffres gratuits atteinte! (0/3 - Revenez demain 🎁)",
                 adReviveLimitReached: "⚠️ Limite de réanimations par niveau atteinte! (2/2)",
@@ -751,6 +775,12 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 BRAVO! PUZZLE {name} COMPLÉTÉ!"
             },
             it: {
+                chestStarTitle: "BAULE A {stars} STELLE! 🎁",
+                bonusChestStarTitle: "🏆 BAULE BONUS A {stars} STELLE! 🎁",
+                chestInitialDesc: "Livello Completato! Clicca APRI IL BAULE qui sotto!",
+                chestGoldRewardText: "+{gold} ORO",
+                duplicatePieceConverted: "({name} #{idx} già posseduto convertito!)",
+                puzzlePieceEarned: "Pezzo {name} #{idx}",
                 adFullTag: "PIENO",
                 adChestLimitReached: "⚠️ Limite giornaliero bauli gratis raggiunto! (0/3 - Torna domani 🎁)",
                 adReviveLimitReached: "⚠️ Limite di riattivazioni per livello raggiunto! (2/2)",
@@ -823,6 +853,12 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 COMPLIMENTI! PUZZLE {name} COMPLETATO!"
             },
             es: {
+                chestStarTitle: "¡COFRE DE {stars} ESTRELLA(S)! 🎁",
+                bonusChestStarTitle: "🏆 ¡COFRE BONUS DE {stars} ESTRELLA(S)! 🎁",
+                chestInitialDesc: "¡Nivel Completado! ¡Pulsa ABRIR COFRE abajo!",
+                chestGoldRewardText: "+{gold} ORO",
+                duplicatePieceConverted: "({name} #{idx} ya poseído convertido!)",
+                puzzlePieceEarned: "Pieza {name} #{idx}",
                 adFullTag: "LLENO",
                 adChestLimitReached: "⚠️ ¡Límite diario de cofres gratis alcanzado! (0/3 - Vuelve mañana 🎁)",
                 adReviveLimitReached: "⚠️ ¡Límite de reanimaciones por nivel alcanzado! (2/2)",
@@ -895,6 +931,12 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 ¡ENHORABUENA! ¡PUZZLE {name} COMPLETADO!"
             },
             pt: {
+                chestStarTitle: "BAÚ DE {stars} ESTRELA(S)! 🎁",
+                bonusChestStarTitle: "🏆 BAÚ BÔNUS DE {stars} ESTRELA(S)! 🎁",
+                chestInitialDesc: "Nível Concluído! Clique em ABRIR BAÚ abaixo!",
+                chestGoldRewardText: "+{gold} OURO",
+                duplicatePieceConverted: "({name} #{idx} já possuído convertido!)",
+                puzzlePieceEarned: "Peça {name} #{idx}",
                 adFullTag: "CHEIO",
                 adChestLimitReached: "⚠️ Limite diário de baús grátis atingido! (0/3 - Volte amanhã 🎁)",
                 adReviveLimitReached: "⚠️ Limite de reativações por nível atingido! (2/2)",
@@ -2546,6 +2588,27 @@ class TileMatchingGame {
         }
     }
 
+
+    getPuzzleName(puzzleId) {
+        const lang = (this.settings && this.settings.lang) ? this.settings.lang : 'tr';
+        const names = {
+            cat: { tr: "Pamuk Kedi 🐱", en: "Fluffy Cat 🐱", de: "Flauschige Katze 🐱", fr: "Chat Doux 🐱", it: "Gatto Morbido 🐱", es: "Gato Esponjoso 🐱", pt: "Gato Fofo 🐱" },
+            shiba: { tr: "Tatlı Shiba 🐕", en: "Sweet Shiba 🐕", de: "Süßer Shiba 🐕", fr: "Shiba Mignon 🐕", it: "Dolce Shiba 🐕", es: "Dulce Shiba 🐕", pt: "Doce Shiba 🐕" },
+            panda: { tr: "Şirin Panda 🐼", en: "Cute Panda 🐼", de: "Niedlicher Panda 🐼", fr: "Panda Mignon 🐼", it: "Panda Tenero 🐼", es: "Panda Lindo 🐼", pt: "Panda Fofo 🐼" },
+            dragon: { tr: "Sevimli Ejderha 🐉", en: "Cute Dragon 🐉", de: "Niedlicher Drache 🐉", fr: "Dragon Mignon 🐉", it: "Drago Tenero 🐉", es: "Dragón Lindo 🐉", pt: "Dragão Fofo 🐉" },
+            fox: { tr: "Komik Tilki 🦊", en: "Funny Fox 🦊", de: "Lustiger Fuchs 🦊", fr: "Renard Rigolo 🦊", it: "Volpe Buffa 🦊", es: "Zorro Divertido 🦊", pt: "Raposa Engraçada 🦊" },
+            lion: { tr: "Kral Aslan 🦁", en: "King Lion 🦁", de: "König Löwe 🦁", fr: "Roi Lion 🦁", it: "Re Leone 🦁", es: "Rey León 🦁", pt: "Rei Leão 🦁" },
+            bunny: { tr: "Minik Tavşan 🐰", en: "Tiny Bunny 🐰", de: "Kleines Hasenkind 🐰", fr: "Petit Lapin 🐰", it: "Piccolo Coniglio 🐰", es: "Pequeno Conejo 🐰", pt: "Pequeno Coelho 🐰" },
+            owl: { tr: "Bilge Baykuş 🦉", en: "Wise Owl 🦉", de: "Weise Eule 🦉", fr: "Hibou Sage 🦉", it: "Gufo Saggio 🦉", es: "Búho Sabio 🦉", pt: "Coruja Sábia 🦉" },
+            unicorn: { tr: "Büyülü Tekboynuz 🦄", en: "Magical Unicorn 🦄", de: "Zauber-Einhorn 🦄", fr: "Licorne Magique 🦄", it: "Unicorno Magico 🦄", es: "Unicornio Mágico 🦄", pt: "Unicórnio Mágico 🦄" },
+            penguin: { tr: "Sevimli Penguen 🐧", en: "Cute Penguin 🐧", de: "Niedlicher Pinguin 🐧", fr: "Pingouin Mignon 🐧", it: "Pinguino Tenero 🐧", es: "Pingüino Lindo 🐧", pt: "Pinguim Fofo 🐧" },
+            red_panda: { tr: "Kırmızı Panda 🐾", en: "Red Panda 🐾", de: "Roter Panda 🐾", fr: "Panda Roux 🐾", it: "Panda Rosso 🐾", es: "Panda Rojo 🐾", pt: "Panda Vermelho 🐾" },
+            frog: { tr: "Tatlı Kurbağa 🐸", en: "Sweet Frog 🐸", de: "Süßer Frosch 🐸", fr: "Grenouille Douce 🐸", it: "Dolce Rana 🐸", es: "Dulce Rana 🐸", pt: "Doce Rã 🐸" }
+        };
+        const pObj = names[puzzleId] || names.cat;
+        return pObj[lang] || pObj.tr;
+    }
+
     triggerChestRewardModal(starLevel, isBonus) {
         this.hasOpenedChestThisLevel = false;
 
@@ -2553,17 +2616,18 @@ class TileMatchingGame {
         const starDisp = document.getElementById('chest-star-display');
         if (starDisp) starDisp.innerText = starsText;
 
+        const dict = this.i18n[this.settings.lang] || this.i18n.tr;
         const titleEl = document.getElementById('chest-modal-title');
         if (titleEl) {
             if (isBonus) {
-                titleEl.innerText = `🏆 BONUS ${starLevel} YILDIZLI SANDIK! 🎁`;
+                titleEl.innerText = (dict.bonusChestStarTitle || '🏆 BONUS {stars} YILDIZLI SANDIK! 🎁').replace('{stars}', starLevel);
             } else {
-                titleEl.innerText = `${starLevel} YILDIZLI SANDIK! 🎁`;
+                titleEl.innerText = (dict.chestStarTitle || '{stars} YILDIZLI SANDIK! 🎁').replace('{stars}', starLevel);
             }
         }
 
         const descEl = document.getElementById('chest-modal-desc');
-        if (descEl) descEl.innerText = 'Bölüm Başarısı! Ödüllerinizi görmek için aşağıdaki ÖDÜLLERİ AL butonuna basın!';
+        if (descEl) descEl.innerText = dict.chestInitialDesc || 'Bölüm Başarısı! Ödüllerinizi görmek için aşağıdaki ÖDÜLLERİ AL butonuna basın!';
 
         const chestCard = document.querySelector('.chest-card');
         const chestBox = document.getElementById('chest-box');
