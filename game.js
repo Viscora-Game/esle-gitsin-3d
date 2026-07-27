@@ -463,6 +463,10 @@ class TileMatchingGame {
         // Full 7-Language Global Localization Engine (TR, EN, DE, FR, IT, ES, PT)
         this.i18n = {
             tr: {
+                combo2x: "✨ HARİKA UYUM!",
+                combo3x: "💖 MUHTEŞEM EŞLEŞME!",
+                combo4x: "🌟 SÜPER COMBO!",
+                combo5x: "🌈 EFSANEVİ EŞLEŞME!",
                 offlineAdMsg: "📡 Çevrimdışısınız! Ödüllü reklam izlemek için internet bağlantısı gerekiyor.",
                 pasText: "PAS ❌",
                 pasWonTitle: "💨 PAS GEÇTİN!",
@@ -563,6 +567,10 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 TEBRİKLER! {name} BULMACASI TAMAMLANDI!"
             },
             en: {
+                combo2x: "✨ SWEET MATCH!",
+                combo3x: "💖 WONDERFUL!",
+                combo4x: "🌟 SUPER COMBO!",
+                combo5x: "🌈 LEGENDARY MATCH!",
                 offlineAdMsg: "📡 You are offline! Internet connection required to watch rewarded ads.",
                 pasText: "MISS ❌",
                 pasWonTitle: "💨 BAD LUCK!",
@@ -663,6 +671,10 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 CONGRATS! {name} PUZZLE COMPLETED!"
             },
             de: {
+                combo2x: "✨ SÜSSES MATCH!",
+                combo3x: "💖 WUNDERBAR!",
+                combo4x: "🌟 SUPER COMBO!",
+                combo5x: "🌈 LEGENDÄR!",
                 offlineAdMsg: "📡 Du bist offline! Internetverbindung erforderlich, um Belohnungswerbung zu sehen.",
                 pasText: "NIETE ❌",
                 pasWonTitle: "💨 PECH GEHABT!",
@@ -763,6 +775,10 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 GLÜCKWUNSCH! {name} PUZZLE VOLLSTÄNDIG!"
             },
             fr: {
+                combo2x: "✨ ADORABLE COMBO!",
+                combo3x: "💖 MAGNIFIQUE!",
+                combo4x: "🌟 SUPER MATCH!",
+                combo5x: "🌈 LÉGENDAIRE!",
                 offlineAdMsg: "📡 Vous êtes hors ligne! Connexion Internet requise pour regarder les publicités.",
                 pasText: "PERDU ❌",
                 pasWonTitle: "💨 PAS DE CHANCE!",
@@ -863,6 +879,10 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 BRAVO! PUZZLE {name} COMPLÉTÉ!"
             },
             it: {
+                combo2x: "✨ MERAVIGLIOSO!",
+                combo3x: "💖 ADORABILE!",
+                combo4x: "🌟 SUPER COMBO!",
+                combo5x: "🌈 LEGENDARIO!",
                 offlineAdMsg: "📡 Sei offline! Connessione Internet richiesta per guardare gli annunci.",
                 pasText: "PASSA ❌",
                 pasWonTitle: "💨 PECCATO!",
@@ -963,6 +983,10 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 COMPLIMENTI! PUZZLE {name} COMPLETATO!"
             },
             es: {
+                combo2x: "✨ ¡DULCE COMBO!",
+                combo3x: "💖 ¡MAGNÍFICO!",
+                combo4x: "🌟 ¡SÚPER PAREJA!",
+                combo5x: "🌈 ¡LEYENDARIO!",
                 offlineAdMsg: "📡 ¡Estás desconectado! Se requiere conexión a Internet para ver anuncios.",
                 pasText: "PASO ❌",
                 pasWonTitle: "💨 ¡MALA SUERTE!",
@@ -1063,6 +1087,10 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 ¡ENHORABUENA! ¡PUZZLE {name} COMPLETADO!"
             },
             pt: {
+                combo2x: "✨ COMBINAÇÃO DOCE!",
+                combo3x: "💖 MARAVILHOSO!",
+                combo4x: "🌟 SUPER COMBO!",
+                combo5x: "🌈 LENDÁRIO!",
                 offlineAdMsg: "📡 Você está offline! Conexão com a Internet necessária para ver anúncios.",
                 pasText: "PASSO ❌",
                 pasWonTitle: "💨 AZAR!",
@@ -2744,7 +2772,13 @@ class TileMatchingGame {
         document.getElementById('score-val').innerText = this.score;
 
         if (this.comboCount >= 2) {
-            this.showComboBadge(`🔥 ${this.comboCount}x COMBO! (+${points})`);
+            const dict = (this.i18n && this.i18n[this.settings.lang]) ? this.i18n[this.settings.lang] : (this.i18n ? this.i18n.tr : {});
+            let title = dict.combo2x || '✨ HARİKA UYUM!';
+            if (this.comboCount === 3) title = dict.combo3x || '💖 MUHTEŞEM EŞLEŞME!';
+            else if (this.comboCount === 4) title = dict.combo4x || '🌟 SÜPER COMBO!';
+            else if (this.comboCount >= 5) title = dict.combo5x || '🌈 EFSANEVİ EŞLEŞME!';
+            
+            this.showComboBadge(`${title} (+${points})`);
         }
 
         this.sound.playMatchSound(this.comboCount);
