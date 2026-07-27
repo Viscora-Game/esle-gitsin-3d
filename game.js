@@ -463,6 +463,7 @@ class TileMatchingGame {
         // Full 7-Language Global Localization Engine (TR, EN, DE, FR, IT, ES, PT)
         this.i18n = {
             tr: {
+                offlineAdMsg: "📡 Çevrimdışısınız! Ödüllü reklam izlemek için internet bağlantısı gerekiyor.",
                 pasText: "PAS ❌",
                 pasWonTitle: "💨 PAS GEÇTİN!",
                 pasWonDesc: "Bu çevirmede şansın yaver gitmedi, tekrar dene!",
@@ -562,6 +563,7 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 TEBRİKLER! {name} BULMACASI TAMAMLANDI!"
             },
             en: {
+                offlineAdMsg: "📡 You are offline! Internet connection required to watch rewarded ads.",
                 pasText: "MISS ❌",
                 pasWonTitle: "💨 BAD LUCK!",
                 pasWonDesc: "No prize this time, try your luck again!",
@@ -661,6 +663,7 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 CONGRATS! {name} PUZZLE COMPLETED!"
             },
             de: {
+                offlineAdMsg: "📡 Du bist offline! Internetverbindung erforderlich, um Belohnungswerbung zu sehen.",
                 pasText: "NIETE ❌",
                 pasWonTitle: "💨 PECH GEHABT!",
                 pasWonDesc: "Diesmal kein Gewinn, versuche es nochmal!",
@@ -760,6 +763,7 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 GLÜCKWUNSCH! {name} PUZZLE VOLLSTÄNDIG!"
             },
             fr: {
+                offlineAdMsg: "📡 Vous êtes hors ligne! Connexion Internet requise pour regarder les publicités.",
                 pasText: "PERDU ❌",
                 pasWonTitle: "💨 PAS DE CHANCE!",
                 pasWonDesc: "Pas de lot cette fois, réessayez!",
@@ -859,6 +863,7 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 BRAVO! PUZZLE {name} COMPLÉTÉ!"
             },
             it: {
+                offlineAdMsg: "📡 Sei offline! Connessione Internet richiesta per guardare gli annunci.",
                 pasText: "PASSA ❌",
                 pasWonTitle: "💨 PECCATO!",
                 pasWonDesc: "Nessun premio questa volta, riprova!",
@@ -958,6 +963,7 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 COMPLIMENTI! PUZZLE {name} COMPLETATO!"
             },
             es: {
+                offlineAdMsg: "📡 ¡Estás desconectado! Se requiere conexión a Internet para ver anuncios.",
                 pasText: "PASO ❌",
                 pasWonTitle: "💨 ¡MALA SUERTE!",
                 pasWonDesc: "¡Sin premio esta vez, inténtalo de nuevo!",
@@ -1057,6 +1063,7 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 ¡ENHORABUENA! ¡PUZZLE {name} COMPLETADO!"
             },
             pt: {
+                offlineAdMsg: "📡 Você está offline! Conexão com a Internet necessária para ver anúncios.",
                 pasText: "PASSO ❌",
                 pasWonTitle: "💨 AZAR!",
                 pasWonDesc: "Sem prêmio desta vez, tente novamente!",
@@ -3800,6 +3807,14 @@ class TileMatchingGame {
     }
 
     showRewardedAd(onSuccess, onFailure) {
+        // Offline Check: Notify player if internet connection is offline
+        if (typeof navigator !== 'undefined' && navigator.onLine === false && !window.AndroidAdMob) {
+            const dict = (this.i18n && this.i18n[this.settings.lang]) ? this.i18n[this.settings.lang] : (this.i18n ? this.i18n.tr : {});
+            this.showToast(dict.offlineAdMsg || '📡 Çevrimdışısınız! Ödüllü reklam izlemek için internet bağlantısı gerekiyor.');
+            if (onFailure) onFailure();
+            return;
+        }
+
         // Production Check for Google AdMob H5 / Native Android Bridge
         if (window.AndroidAdMob && typeof window.AndroidAdMob.showRewardedAd === 'function') {
             window.AndroidAdMob.showRewardedAd();

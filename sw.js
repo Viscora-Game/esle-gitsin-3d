@@ -1,4 +1,4 @@
-const CACHE_NAME = 'esle-gitsin-3d-v4.1.0';
+const CACHE_NAME = 'esle-gitsin-3d-v4.2.0';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -47,7 +47,7 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// Fetch Event - NETWORK FIRST for live updates
+// Fetch Event - Network First with Instant Cache Fallback for 100% Offline Gameplay
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
 
@@ -63,12 +63,9 @@ self.addEventListener('fetch', (event) => {
         return networkResponse;
       })
       .catch(() => {
-        return caches.match(event.request);
-      })
-  );
-});
-        // If offline or network fails, fall back to cached version
-        return caches.match(event.request);
+        return caches.match(event.request).then((cachedResponse) => {
+          return cachedResponse || caches.match('./index.html');
+        });
       })
   );
 });
