@@ -216,7 +216,7 @@
 
                     <!-- Force Update & Clear Cache Button -->
                     <button id="btn-force-update" class="btn-secondary settings-full-btn" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff; font-weight: 700; margin-top: 8px;">
-                        <span data-i18n="forceUpdateBtn">⚡ CANLI GÜNCELLEMEYİ YÜKLE (v3.0.0)</span>
+                        <span data-i18n="forceUpdateBtn">⚡ CANLI GÜNCELLEMEYİ YÜKLE (v3.1.0)</span>
                     </button>
 
                     <button id="btn-save-settings" class="btn-primary" data-i18n="saveBtn">KAYDET VE KAPAT</button>
@@ -382,23 +382,38 @@
         <div id="modal-wheel" class="modal-overlay hidden">
             <div class="modal-card wheel-card">
                 <button id="btn-close-wheel" class="btn-close-x">✕</button>
-                <h2 id="wheel-title" class="modal-title" data-i18n="wheelTitle">🎡 ŞANS ÇARKI 🎁</h2>
-                <p id="wheel-subtitle" class="modal-desc" data-i18n="wheelSubtitle">Çarkı çevir, sürpriz altın ve yapboz parçaları kazan!</p>
 
-                <!-- Wheel Canvas Container with Golden Ticker Pointer -->
-                <div class="wheel-wrapper">
-                    <div class="wheel-pointer">▼</div>
-                    <div id="wheel-disc" class="wheel-disc">
-                        <canvas id="wheel-canvas" width="280" height="280"></canvas>
+                <!-- Stage 1: Wheel Disc Spinner View -->
+                <div id="wheel-spin-stage">
+                    <h2 id="wheel-title" class="modal-title" data-i18n="wheelTitle">🎡 ŞANS ÇARKI 🎁</h2>
+                    <p id="wheel-subtitle" class="modal-desc" data-i18n="wheelSubtitle">Çarkı çevir, sürpriz altın ve yapboz parçaları kazan!</p>
+
+                    <!-- Wheel Canvas Container with Golden Ticker Pointer -->
+                    <div class="wheel-wrapper">
+                        <div class="wheel-pointer">▼</div>
+                        <div id="wheel-disc" class="wheel-disc">
+                            <canvas id="wheel-canvas" width="280" height="280"></canvas>
+                        </div>
+                        <div class="wheel-center-cap">🌟</div>
                     </div>
-                    <div class="wheel-center-cap">🌟</div>
+
+                    <!-- Dynamic Status Badge & Spin Action Button -->
+                    <div id="wheel-status-badge" class="wheel-status-badge">1/1 ÜCRETSİZ HAK</div>
+                    <button id="btn-spin-wheel" class="btn-primary btn-spin-wheel">
+                        <span id="txt-spin-btn" data-i18n="spinBtnText">🎯 ÇARKI ÇEVİR!</span>
+                    </button>
                 </div>
 
-                <!-- Dynamic Status Badge & Spin Action Button -->
-                <div id="wheel-status-badge" class="wheel-status-badge">1/1 ÜCRETSİZ HAK</div>
-                <button id="btn-spin-wheel" class="btn-primary btn-spin-wheel">
-                    <span id="txt-spin-btn" data-i18n="spinBtnText">🎯 ÇARKI ÇEVİR!</span>
-                </button>
+                <!-- Stage 2: Won Reward Announcement View -->
+                <div id="wheel-reward-stage" class="wheel-reward-stage hidden">
+                    <div class="wheel-reward-icon-large" id="wheel-reward-icon">🪙</div>
+                    <h2 class="modal-title" style="color: #fde047;" data-i18n="wheelWonTitle">🎉 TEBRİKLER! ÖDÜL KAZANDIN!</h2>
+                    <div id="wheel-reward-detail" class="wheel-reward-detail">+50 ALTIN</div>
+                    
+                    <button id="btn-collect-wheel-reward" class="btn-primary collect-btn" style="margin-top: 16px;">
+                        <span data-i18n="chestCollectBtn">▶ ENVANTERE EKLE VE DEVAM ET</span>
+                    </button>
+                </div>
             </div>
         </div>
 
@@ -479,7 +494,7 @@
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./sw.js?v=3.0.0').then((reg) => {
+          navigator.serviceWorker.register('./sw.js?v=3.1.0').then((reg) => {
             reg.update();
 
             reg.addEventListener('updatefound', () => {
@@ -504,6 +519,6 @@
         });
       }
     </script>
-    <script src="game.js?v=3.0.0" defer></script>
+    <script src="game.js?v=3.1.0" defer></script>
 </body>
 </html>

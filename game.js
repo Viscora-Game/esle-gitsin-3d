@@ -463,6 +463,8 @@ class TileMatchingGame {
         // Full 7-Language Global Localization Engine (TR, EN, DE, FR, IT, ES, PT)
         this.i18n = {
             tr: {
+                wheelWonTitle: "🎉 TEBRİKLER! ÖDÜL KAZANDIN!",
+                wheelPiecesWonText: "{count} Adet Yapboz Parçası Kazandın!",
                 wheelWidgetTag: "ÇARK",
                 wheelTitle: "🎡 ŞANS ÇARKI 🎁",
                 wheelSubtitle: "Çarkı çevir, sürpriz altın ve yapboz parçaları kazan!",
@@ -551,6 +553,8 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 TEBRİKLER! {name} BULMACASI TAMAMLANDI!"
             },
             en: {
+                wheelWonTitle: "🎉 CONGRATULATIONS! YOU WON!",
+                wheelPiecesWonText: "{count} Puzzle Piece(s) Won!",
                 wheelWidgetTag: "WHEEL",
                 wheelTitle: "🎡 LUCKY WHEEL 🎁",
                 wheelSubtitle: "Spin the wheel to win gold and puzzle pieces!",
@@ -639,6 +643,8 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 CONGRATS! {name} PUZZLE COMPLETED!"
             },
             de: {
+                wheelWonTitle: "🎉 GLÜCKWUNSCH! GEWONNEN!",
+                wheelPiecesWonText: "{count} Puzzleteil(e) gewonnen!",
                 wheelWidgetTag: "RAD",
                 wheelTitle: "🎡 GLÜCKSRAD 🎁",
                 wheelSubtitle: "Drehe das Rad und gewinne Gold & Puzzleteile!",
@@ -727,6 +733,8 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 GLÜCKWUNSCH! {name} PUZZLE VOLLSTÄNDIG!"
             },
             fr: {
+                wheelWonTitle: "🎉 FÉLICITATIONS! GAGNÉ!",
+                wheelPiecesWonText: "{count} Pièce(s) de Puzzle Gagnée(s)!",
                 wheelWidgetTag: "ROUE",
                 wheelTitle: "🎡 ROUE DE LA FORTUNE 🎁",
                 wheelSubtitle: "Tournez la roue et gagnez de l'or et des pièces de puzzle!",
@@ -815,6 +823,8 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 BRAVO! PUZZLE {name} COMPLÉTÉ!"
             },
             it: {
+                wheelWonTitle: "🎉 CONGRATULAZIONI! HAI VINTO!",
+                wheelPiecesWonText: "{count} Pezzo/i di Puzzle Vinto/i!",
                 wheelWidgetTag: "RUOTA",
                 wheelTitle: "🎡 RUOTA DELLA FORTUNA 🎁",
                 wheelSubtitle: "Gira la ruota per vincere oro e pezzi di puzzle!",
@@ -903,6 +913,8 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 COMPLIMENTI! PUZZLE {name} COMPLETATO!"
             },
             es: {
+                wheelWonTitle: "🎉 ¡ENHORABUENA! ¡HAS GANADO!",
+                wheelPiecesWonText: "¡{count} Pieza(s) de Puzzle Ganada(s)!",
                 wheelWidgetTag: "RUEDA",
                 wheelTitle: "🎡 RUEDA DE LA SUERTE 🎁",
                 wheelSubtitle: "¡Gira la rueda para ganar oro y piezas de puzzle!",
@@ -991,6 +1003,8 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 ¡ENHORABUENA! ¡PUZZLE {name} COMPLETADO!"
             },
             pt: {
+                wheelWonTitle: "🎉 PARABÉNS! VOCÊ GANHOU!",
+                wheelPiecesWonText: "{count} Peça(s) de Puzzle Ganha(s)!",
                 wheelWidgetTag: "RODA",
                 wheelTitle: "🎡 RODA DA SORTE 🎁",
                 wheelSubtitle: "Gire a roda para ganhar ouro e peças de puzzle!",
@@ -1434,6 +1448,29 @@ class TileMatchingGame {
         if (btnSpinWheel) {
             btnSpinWheel.addEventListener('click', () => {
                 this.spinWheelAction();
+            });
+        }
+
+        const btnCollectWheel = document.getElementById('btn-collect-wheel-reward');
+        if (btnCollectWheel) {
+            btnCollectWheel.addEventListener('click', () => {
+                this.sound.playClick();
+                if (this.pendingWheelReward) {
+                    if (this.pendingWheelReward.type === 'gold') {
+                        this.goldCoins += this.pendingWheelReward.amount;
+                        const goldEl = document.getElementById('gold-val');
+                        if (goldEl) goldEl.innerText = this.goldCoins;
+                    } else {
+                        for (let i = 0; i < this.pendingWheelReward.count; i++) {
+                            this.awardRandomMissingPuzzlePiece();
+                        }
+                    }
+                    this.pendingWheelReward = null;
+                    this.saveGameProgress();
+                }
+                
+                // Re-open wheel modal stage 1 to show updated spin limits (1/2 -> 2/2)
+                this.openWheelModal();
             });
         }
 
@@ -3314,6 +3351,16 @@ class TileMatchingGame {
 
     openWheelModal() {
         this.renderWheelCanvas();
+        
+        // Reset Stages: Show Stage 1 Spinner, Hide Stage 2 Reward
+        const spinStage = document.getElementById('wheel-spin-stage');
+        const rewardStage = document.getElementById('wheel-reward-stage');
+        if (spinStage) spinStage.classList.remove('hidden');
+        if (rewardStage) rewardStage.classList.add('hidden');
+
+        const disc = document.getElementById('wheel-disc');
+        if (disc) disc.style.transform = 'rotate(0deg)';
+
         const spins = this.getDailyWheelSpinsCount();
         const statusBadge = document.getElementById('wheel-status-badge');
         const btnSpin = document.getElementById('btn-spin-wheel');
@@ -3405,32 +3452,32 @@ class TileMatchingGame {
             this.sound.playBoosterChime();
 
             setTimeout(() => {
+                // Instantly consume spin right & update status/badges
                 this.incrementWheelSpinsCount();
+                this.pendingWheelReward = reward;
+
+                if (this.fx && typeof this.fx.spawnConfetti === 'function') {
+                    this.fx.spawnConfetti();
+                }
+                this.sound.playVictorySound();
+
+                // Transition to Stage 2: Reward Announcement View
+                const spinStage = document.getElementById('wheel-spin-stage');
+                const rewardStage = document.getElementById('wheel-reward-stage');
+                const rewardIcon = document.getElementById('wheel-reward-icon');
+                const rewardDetail = document.getElementById('wheel-reward-detail');
+                const dict = this.i18n[this.settings.lang] || this.i18n.tr;
+
+                if (spinStage) spinStage.classList.add('hidden');
+                if (rewardStage) rewardStage.classList.remove('hidden');
 
                 if (reward.type === 'gold') {
-                    this.goldCoins += reward.amount;
-                    const goldEl = document.getElementById('gold-val');
-                    if (goldEl) goldEl.innerText = this.goldCoins;
-                    this.fx.triggerSparkles();
-                    this.sound.playVictorySound();
-                    this.showToast(`🎉 ŞANS ÇARKI ÖDÜLÜ: +${reward.amount} ALTIN KAZANDIN! 🪙`);
+                    if (rewardIcon) rewardIcon.innerText = '🪙';
+                    if (rewardDetail) rewardDetail.innerText = (dict.chestGoldRewardText || '+{gold} ALTIN').replace('{gold}', reward.amount);
                 } else {
-                    const awardedPieces = [];
-                    for (let i = 0; i < reward.count; i++) {
-                        const piece = this.awardRandomMissingPuzzlePiece();
-                        if (piece) awardedPieces.push(piece);
-                    }
-                    this.fx.triggerSparkles();
-                    this.sound.playVictorySound();
-                    this.showToast(`🎉 ŞANS ÇARKI ÖDÜLÜ: ${reward.count} ADET YAPBOZ PARÇASI KAZANDIN! 🧩`);
+                    if (rewardIcon) rewardIcon.innerText = '🧩';
+                    if (rewardDetail) rewardDetail.innerText = (dict.wheelPiecesWonText || '{count} Adet Yapboz Parçası Kazandın!').replace('{count}', reward.count);
                 }
-
-                this.saveGameProgress();
-
-                setTimeout(() => {
-                    document.getElementById('modal-wheel').classList.add('hidden');
-                    if (disc) disc.style.transform = 'rotate(0deg)';
-                }, 1200);
             }, 4100);
         };
 
