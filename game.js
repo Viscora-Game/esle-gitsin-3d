@@ -1793,23 +1793,23 @@ class TileMatchingGame {
 
         const btnForceUpdate = document.getElementById('btn-force-update');
         if (btnForceUpdate) {
-            btnForceUpdate.onclick = () => {
+            btnForceUpdate.onclick = async () => {
+                btnForceUpdate.innerText = '⚡ GÜNCELLENİYOR...';
                 try {
-                    if ('serviceWorker' in navigator) {
-                        navigator.serviceWorker.getRegistrations().then(regs => {
-                            for (let reg of regs) reg.unregister();
-                        });
-                    }
                     if ('caches' in window) {
-                        caches.keys().then(keys => {
-                            for (let key of keys) caches.delete(key);
-                        });
+                        const keys = await caches.keys();
+                        await Promise.all(keys.map(key => caches.delete(key)));
                     }
-                } catch (e) {}
+                    if ('serviceWorker' in navigator) {
+                        const regs = await navigator.serviceWorker.getRegistrations();
+                        await Promise.all(regs.map(reg => reg.unregister()));
+                    }
+                } catch (e) {
+                    console.error('Update error:', e);
+                }
 
-                // Instant hard cache reload using location bypass
-                const targetUrl = window.location.origin + window.location.pathname + '?v=' + Date.now();
-                window.location.href = targetUrl;
+                // Force clean reload bypass cache
+                window.location.href = window.location.origin + window.location.pathname + '?nocache=' + Date.now();
             };
         }
 
