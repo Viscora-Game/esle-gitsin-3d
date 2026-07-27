@@ -1987,7 +1987,7 @@ class TileMatchingGame {
     initBackgroundMusic() {
         try {
             if (!this.bgMusic) {
-                this.bgMusic = new Audio('audio/bgm_cute.mp3');
+                this.bgMusic = new Audio('audio/bgm_cute.wav');
                 this.bgMusic.loop = true;
                 this.bgMusic.volume = (this.settings.musicEnabled === false) ? 0 : 0.20;
             }
