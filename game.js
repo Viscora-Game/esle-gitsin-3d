@@ -3278,14 +3278,15 @@ class TileMatchingGame {
     getDailyAdChestRemaining() {
         try {
             const resetTime = parseInt(localStorage.getItem('tile_game_ad_chest_reset_time') || '0', 10);
-            const savedCount = parseInt(localStorage.getItem('tile_game_ad_chest_count') || '0', 10);
-
+            
             if (resetTime > 0 && Date.now() >= resetTime) {
                 localStorage.setItem('tile_game_ad_chest_reset_time', '0');
                 localStorage.setItem('tile_game_ad_chest_count', '0');
                 return 3;
             }
 
+            const savedCount = parseInt(localStorage.getItem('tile_game_ad_chest_count') || '0', 10);
+            
             if (savedCount >= 3 && resetTime === 0) {
                 const TWENTY_FOUR_HOURS_MS = 24 * 60 * 60 * 1000;
                 localStorage.setItem('tile_game_ad_chest_reset_time', (Date.now() + TWENTY_FOUR_HOURS_MS).toString());
@@ -3305,8 +3306,11 @@ class TileMatchingGame {
             localStorage.setItem('tile_game_ad_chest_count', newCount.toString());
 
             if (newCount >= 3) {
-                const TWENTY_FOUR_HOURS_MS = 24 * 60 * 60 * 1000;
-                localStorage.setItem('tile_game_ad_chest_reset_time', (Date.now() + TWENTY_FOUR_HOURS_MS).toString());
+                const existingReset = parseInt(localStorage.getItem('tile_game_ad_chest_reset_time') || '0', 10);
+                if (existingReset === 0 || Date.now() >= existingReset) {
+                    const TWENTY_FOUR_HOURS_MS = 24 * 60 * 60 * 1000;
+                    localStorage.setItem('tile_game_ad_chest_reset_time', (Date.now() + TWENTY_FOUR_HOURS_MS).toString());
+                }
             }
             this.updateAdWidgetUI();
         } catch (e) {}
@@ -3316,14 +3320,13 @@ class TileMatchingGame {
         const widgetTag = document.querySelector('.ad-widget-label');
         const remaining = this.getDailyAdChestRemaining();
         let resetTime = parseInt(localStorage.getItem('tile_game_ad_chest_reset_time') || '0', 10);
-        const dict = (this.i18n && this.i18n[this.settings.lang]) ? this.i18n[this.settings.lang] : (this.i18n ? this.i18n.tr : {});
 
         if (widgetTag) {
             if (remaining > 0) {
                 widgetTag.innerText = `(${remaining}/3)`;
                 widgetTag.style.background = '#10b981';
             } else {
-                if (resetTime === 0) {
+                if (resetTime === 0 || Date.now() >= resetTime) {
                     const TWENTY_FOUR_HOURS_MS = 24 * 60 * 60 * 1000;
                     resetTime = Date.now() + TWENTY_FOUR_HOURS_MS;
                     localStorage.setItem('tile_game_ad_chest_reset_time', resetTime.toString());
@@ -3342,8 +3345,7 @@ class TileMatchingGame {
     getDailyWheelSpinsCount() {
         try {
             const resetTime = parseInt(localStorage.getItem('tile_game_wheel_reset_time') || '0', 10);
-            const savedSpins = parseInt(localStorage.getItem('tile_game_wheel_spins') || '0', 10);
-
+            
             if (resetTime > 0 && Date.now() >= resetTime) {
                 localStorage.setItem('tile_game_wheel_reset_time', '0');
                 localStorage.setItem('tile_game_wheel_spins', '0');
@@ -3351,6 +3353,8 @@ class TileMatchingGame {
                 return 0;
             }
 
+            const savedSpins = parseInt(localStorage.getItem('tile_game_wheel_spins') || '0', 10);
+            
             if (savedSpins >= 2 && resetTime === 0) {
                 const TWENTY_FOUR_HOURS_MS = 24 * 60 * 60 * 1000;
                 localStorage.setItem('tile_game_wheel_reset_time', (Date.now() + TWENTY_FOUR_HOURS_MS).toString());
@@ -3378,8 +3382,11 @@ class TileMatchingGame {
             localStorage.setItem('tile_game_wheel_last_spin_time', Date.now().toString());
             
             if (newSpins >= 2) {
-                const TWENTY_FOUR_HOURS_MS = 24 * 60 * 60 * 1000;
-                localStorage.setItem('tile_game_wheel_reset_time', (Date.now() + TWENTY_FOUR_HOURS_MS).toString());
+                const existingReset = parseInt(localStorage.getItem('tile_game_wheel_reset_time') || '0', 10);
+                if (existingReset === 0 || Date.now() >= existingReset) {
+                    const TWENTY_FOUR_HOURS_MS = 24 * 60 * 60 * 1000;
+                    localStorage.setItem('tile_game_wheel_reset_time', (Date.now() + TWENTY_FOUR_HOURS_MS).toString());
+                }
             }
             this.updateWheelTimerState();
         } catch (e) {}
@@ -3474,12 +3481,14 @@ class TileMatchingGame {
     startWheelTimerLoop() {
         if (this.wheelTimerInterval) clearInterval(this.wheelTimerInterval);
         this.updateWheelTimerState();
+        this.updateAdWidgetUI();
         this.wheelTimerInterval = setInterval(() => {
             this.updateWheelTimerState();
+            this.updateAdWidgetUI();
         }, 1000);
     }
 
-        getWheelSegments() {
+    getWheelSegments() {
         const dict = (this.i18n && this.i18n[this.settings.lang]) ? this.i18n[this.settings.lang] : (this.i18n ? this.i18n.tr : {});
         const pasLabel = dict.pasText || 'PAS ❌';
 
