@@ -1478,9 +1478,8 @@ class TileMatchingGame {
                     btnAdChest.classList.add('shaking');
                     setTimeout(() => btnAdChest.classList.remove('shaking'), 250);
                     const dict = this.i18n[this.settings.lang] || this.i18n.tr;
-                    const midnight = new Date();
-                    midnight.setHours(24, 0, 0, 0);
-                    const resetRemaining = Math.max(0, midnight.getTime() - Date.now());
+                    const resetTime = parseInt(localStorage.getItem('tile_game_ad_chest_reset_time') || '0', 10);
+                    const resetRemaining = Math.max(0, resetTime - Date.now());
                     const timeStr = this.formatTimeLeft(resetRemaining);
                     this.showToast((dict.adChestLimitReached || '⚠️ Bugünkü Ücretsiz Reklam Sandığı Hakkınız Bitti! (0/3 - {time})').replace('{time}', timeStr));
                     return;
@@ -3278,15 +3277,13 @@ class TileMatchingGame {
     // =========================================================
     getDailyAdChestRemaining() {
         try {
-            const todayStr = new Date().toISOString().slice(0, 10);
-            const savedDate = localStorage.getItem('tile_game_ad_chest_date');
-            const savedCount = parseInt(localStorage.getItem('tile_game_ad_chest_count') || '0', 10);
-
-            if (savedDate !== todayStr) {
-                localStorage.setItem('tile_game_ad_chest_date', todayStr);
+            const resetTime = parseInt(localStorage.getItem('tile_game_ad_chest_reset_time') || '0', 10);
+            if (resetTime > 0 && Date.now() >= resetTime) {
+                localStorage.setItem('tile_game_ad_chest_reset_time', '0');
                 localStorage.setItem('tile_game_ad_chest_count', '0');
                 return 3;
             }
+            const savedCount = parseInt(localStorage.getItem('tile_game_ad_chest_count') || '0', 10);
             return Math.max(0, 3 - savedCount);
         } catch (e) {
             return 3;
@@ -3295,11 +3292,15 @@ class TileMatchingGame {
 
     useDailyAdChestClaim() {
         try {
-            const todayStr = new Date().toISOString().slice(0, 10);
             const currentRemaining = this.getDailyAdChestRemaining();
             const usedSoFar = 3 - currentRemaining;
-            localStorage.setItem('tile_game_ad_chest_date', todayStr);
-            localStorage.setItem('tile_game_ad_chest_count', (usedSoFar + 1).toString());
+            const newCount = usedSoFar + 1;
+            localStorage.setItem('tile_game_ad_chest_count', newCount.toString());
+
+            if (newCount >= 3) {
+                const TWENTY_FOUR_HOURS_MS = 24 * 60 * 60 * 1000;
+                localStorage.setItem('tile_game_ad_chest_reset_time', (Date.now() + TWENTY_FOUR_HOURS_MS).toString());
+            }
             this.updateAdWidgetUI();
         } catch (e) {}
     }
@@ -3307,18 +3308,16 @@ class TileMatchingGame {
     updateAdWidgetUI() {
         const widgetTag = document.querySelector('.ad-widget-label');
         const remaining = this.getDailyAdChestRemaining();
+        const resetTime = parseInt(localStorage.getItem('tile_game_ad_chest_reset_time') || '0', 10);
         const dict = (this.i18n && this.i18n[this.settings.lang]) ? this.i18n[this.settings.lang] : (this.i18n ? this.i18n.tr : {});
-
-        const midnight = new Date();
-        midnight.setHours(24, 0, 0, 0);
-        const resetRemaining = Math.max(0, midnight.getTime() - Date.now());
-        const timeStr = this.formatTimeLeft(resetRemaining);
 
         if (widgetTag) {
             if (remaining > 0) {
                 widgetTag.innerText = `(${remaining}/3)`;
                 widgetTag.style.background = '#10b981';
             } else {
+                const resetRemaining = Math.max(0, resetTime - Date.now());
+                const timeStr = this.formatTimeLeft(resetRemaining);
                 widgetTag.innerText = timeStr;
                 widgetTag.style.background = '#ef4444';
             }
@@ -3338,16 +3337,14 @@ class TileMatchingGame {
     // =========================================================
     getDailyWheelSpinsCount() {
         try {
-            const todayStr = new Date().toISOString().slice(0, 10);
-            const savedDate = localStorage.getItem('tile_game_wheel_date');
-            const savedSpins = parseInt(localStorage.getItem('tile_game_wheel_spins') || '0', 10);
-
-            if (savedDate !== todayStr) {
-                localStorage.setItem('tile_game_wheel_date', todayStr);
+            const resetTime = parseInt(localStorage.getItem('tile_game_wheel_reset_time') || '0', 10);
+            if (resetTime > 0 && Date.now() >= resetTime) {
+                localStorage.setItem('tile_game_wheel_reset_time', '0');
                 localStorage.setItem('tile_game_wheel_spins', '0');
                 localStorage.setItem('tile_game_wheel_last_spin_time', '0');
                 return 0;
             }
+            const savedSpins = parseInt(localStorage.getItem('tile_game_wheel_spins') || '0', 10);
             return savedSpins;
         } catch (e) {
             return 0;
@@ -3364,11 +3361,15 @@ class TileMatchingGame {
 
     incrementWheelSpinsCount() {
         try {
-            const todayStr = new Date().toISOString().slice(0, 10);
             const currentSpins = this.getDailyWheelSpinsCount();
-            localStorage.setItem('tile_game_wheel_date', todayStr);
-            localStorage.setItem('tile_game_wheel_spins', (currentSpins + 1).toString());
+            const newSpins = currentSpins + 1;
+            localStorage.setItem('tile_game_wheel_spins', newSpins.toString());
             localStorage.setItem('tile_game_wheel_last_spin_time', Date.now().toString());
+            
+            if (newSpins >= 2) {
+                const TWENTY_FOUR_HOURS_MS = 24 * 60 * 60 * 1000;
+                localStorage.setItem('tile_game_wheel_reset_time', (Date.now() + TWENTY_FOUR_HOURS_MS).toString());
+            }
             this.updateWheelTimerState();
         } catch (e) {}
     }
@@ -3397,10 +3398,9 @@ class TileMatchingGame {
         const EIGHT_HOURS_MS = 8 * 60 * 60 * 1000;
         const cooldownRemaining = Math.max(0, (lastSpinTime + EIGHT_HOURS_MS) - now);
 
-        // 24 Hours Midnight Reset Remaining
-        const midnight = new Date();
-        midnight.setHours(24, 0, 0, 0);
-        const resetRemaining = Math.max(0, midnight.getTime() - now);
+        // 24 Hours Full Reset Remaining
+        const wheelResetTime = parseInt(localStorage.getItem('tile_game_wheel_reset_time') || '0', 10);
+        const resetRemaining = Math.max(0, wheelResetTime - now);
 
         if (spins === 0) {
             // Spin 0: Free Spin Ready
