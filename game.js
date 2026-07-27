@@ -463,6 +463,8 @@ class TileMatchingGame {
         // Full 7-Language Global Localization Engine (TR, EN, DE, FR, IT, ES, PT)
         this.i18n = {
             tr: {
+                wheelRewardTitle: "🎡 ŞANS ÇARKI ÖDÜLÜ! 🎉",
+                wheelRewardDesc: "🏆 Çarktan Çıkan Ödülleriniz:",
                 wheelWonTitle: "🎉 TEBRİKLER! ÖDÜL KAZANDIN!",
                 wheelPiecesWonText: "{count} Adet Yapboz Parçası Kazandın!",
                 wheelWidgetTag: "ÇARK",
@@ -553,6 +555,8 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 TEBRİKLER! {name} BULMACASI TAMAMLANDI!"
             },
             en: {
+                wheelRewardTitle: "🎡 LUCKY WHEEL REWARD! 🎉",
+                wheelRewardDesc: "🏆 Your Lucky Wheel Rewards:",
                 wheelWonTitle: "🎉 CONGRATULATIONS! YOU WON!",
                 wheelPiecesWonText: "{count} Puzzle Piece(s) Won!",
                 wheelWidgetTag: "WHEEL",
@@ -643,6 +647,8 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 CONGRATS! {name} PUZZLE COMPLETED!"
             },
             de: {
+                wheelRewardTitle: "🎡 GLÜCKSRAD-BELOHNUNG! 🎉",
+                wheelRewardDesc: "🏆 Deine Glücksrad-Belohnungen:",
                 wheelWonTitle: "🎉 GLÜCKWUNSCH! GEWONNEN!",
                 wheelPiecesWonText: "{count} Puzzleteil(e) gewonnen!",
                 wheelWidgetTag: "RAD",
@@ -733,6 +739,8 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 GLÜCKWUNSCH! {name} PUZZLE VOLLSTÄNDIG!"
             },
             fr: {
+                wheelRewardTitle: "🎡 RÉCOMPENSE ROUE! 🎉",
+                wheelRewardDesc: "🏆 Vos récompenses de la roue:",
                 wheelWonTitle: "🎉 FÉLICITATIONS! GAGNÉ!",
                 wheelPiecesWonText: "{count} Pièce(s) de Puzzle Gagnée(s)!",
                 wheelWidgetTag: "ROUE",
@@ -823,6 +831,8 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 BRAVO! PUZZLE {name} COMPLÉTÉ!"
             },
             it: {
+                wheelRewardTitle: "🎡 PREMIO RUOTA DELLA FORTUNA! 🎉",
+                wheelRewardDesc: "🏆 I tuoi premi della ruota:",
                 wheelWonTitle: "🎉 CONGRATULAZIONI! HAI VINTO!",
                 wheelPiecesWonText: "{count} Pezzo/i di Puzzle Vinto/i!",
                 wheelWidgetTag: "RUOTA",
@@ -913,6 +923,8 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 COMPLIMENTI! PUZZLE {name} COMPLETATO!"
             },
             es: {
+                wheelRewardTitle: "🎡 ¡RECOMPENSA RUEDA! 🎉",
+                wheelRewardDesc: "🏆 Tus recompensas de la rueda:",
                 wheelWonTitle: "🎉 ¡ENHORABUENA! ¡HAS GANADO!",
                 wheelPiecesWonText: "¡{count} Pieza(s) de Puzzle Ganada(s)!",
                 wheelWidgetTag: "RUEDA",
@@ -1003,6 +1015,8 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 ¡ENHORABUENA! ¡PUZZLE {name} COMPLETADO!"
             },
             pt: {
+                wheelRewardTitle: "🎡 RECOMPENSA RODA! 🎉",
+                wheelRewardDesc: "🏆 Suas recompensas da roda:",
                 wheelWonTitle: "🎉 PARABÉNS! VOCÊ GANHOU!",
                 wheelPiecesWonText: "{count} Peça(s) de Puzzle Ganha(s)!",
                 wheelWidgetTag: "RODA",
@@ -3351,13 +3365,6 @@ class TileMatchingGame {
 
     openWheelModal() {
         this.renderWheelCanvas();
-        
-        // Reset Stages: Show Stage 1 Spinner, Hide Stage 2 Reward
-        const spinStage = document.getElementById('wheel-spin-stage');
-        const rewardStage = document.getElementById('wheel-reward-stage');
-        if (spinStage) spinStage.classList.remove('hidden');
-        if (rewardStage) rewardStage.classList.add('hidden');
-
         const disc = document.getElementById('wheel-disc');
         if (disc) disc.style.transform = 'rotate(0deg)';
 
@@ -3390,6 +3397,74 @@ class TileMatchingGame {
         }
 
         document.getElementById('modal-wheel').classList.remove('hidden');
+    }
+
+
+    triggerWheelRewardModal(reward) {
+        const modalChest = document.getElementById('modal-chest');
+        const starDisp = document.getElementById('chest-star-display');
+        const titleEl = document.getElementById('chest-modal-title');
+        const descEl = document.getElementById('chest-modal-desc');
+        const btnOpenChest = document.getElementById('btn-open-chest');
+        const rewardContent = document.getElementById('chest-reward-content');
+        const rewardListEl = document.getElementById('chest-reward-list');
+        const dict = this.i18n[this.settings.lang] || this.i18n.tr;
+
+        if (starDisp) starDisp.innerText = '🎡 🌟 🎡';
+        if (titleEl) titleEl.innerText = dict.wheelRewardTitle || '🎡 ŞANS ÇARKI ÖDÜLÜ! 🎉';
+        if (descEl) descEl.innerText = dict.wheelRewardDesc || '🏆 Çarktan Çıkan Ödülleriniz:';
+
+        // Hide Stage 1 button directly and open Stage 2 reward list!
+        if (btnOpenChest) {
+            btnOpenChest.style.display = 'none';
+            btnOpenChest.classList.add('hidden');
+        }
+
+        const awardedPieces = [];
+        let goldReward = 0;
+
+        if (reward.type === 'gold') {
+            goldReward = reward.amount;
+        } else {
+            for (let i = 0; i < reward.count; i++) {
+                const piece = this.awardRandomMissingPuzzlePiece();
+                if (piece) awardedPieces.push(piece);
+            }
+        }
+
+        this.pendingChestReward = { gold: goldReward, pieces: awardedPieces };
+        this.hasOpenedChestThisLevel = false;
+
+        if (rewardListEl) {
+            rewardListEl.innerHTML = '';
+            
+            if (goldReward > 0) {
+                const item = document.createElement('div');
+                item.className = 'chest-reward-item reward-gold';
+                const goldText = (dict.chestGoldRewardText || '+{gold} ALTIN').replace('{gold}', goldReward);
+                item.innerHTML = `<div class="reward-icon">🪙</div><div class="reward-text">${goldText}</div>`;
+                rewardListEl.appendChild(item);
+            }
+
+            if (awardedPieces.length > 0) {
+                for (const piece of awardedPieces) {
+                    const item = document.createElement('div');
+                    item.className = 'chest-reward-item reward-piece';
+                    const localizedName = this.getPuzzleName(piece.puzzleId);
+                    if (piece.isDuplicate) {
+                        const dupMsg = (dict.duplicatePieceConverted || '(Varolan {name} #{idx} Dönüştü!)').replace('{name}', localizedName).replace('{idx}', piece.pieceIndex + 1);
+                        item.innerHTML = `<div class="reward-icon">🪙</div><div class="reward-text">+50 ALTIN <span class="dup-note">${dupMsg}</span></div>`;
+                    } else {
+                        const pieceMsg = (dict.puzzlePieceEarned || '{name} Parçası #{idx}').replace('{name}', localizedName).replace('{idx}', piece.pieceIndex + 1);
+                        item.innerHTML = `<div class="reward-icon">🧩</div><div class="reward-text">${pieceMsg}</div>`;
+                    }
+                    rewardListEl.appendChild(item);
+                }
+            }
+        }
+
+        if (rewardContent) rewardContent.classList.remove('hidden');
+        if (modalChest) modalChest.classList.remove('hidden');
     }
 
     rollWheelReward() {
@@ -3454,30 +3529,17 @@ class TileMatchingGame {
             setTimeout(() => {
                 // Instantly consume spin right & update status/badges
                 this.incrementWheelSpinsCount();
-                this.pendingWheelReward = reward;
 
                 if (this.fx && typeof this.fx.spawnConfetti === 'function') {
                     this.fx.spawnConfetti();
                 }
                 this.sound.playVictorySound();
 
-                // Transition to Stage 2: Reward Announcement View
-                const spinStage = document.getElementById('wheel-spin-stage');
-                const rewardStage = document.getElementById('wheel-reward-stage');
-                const rewardIcon = document.getElementById('wheel-reward-icon');
-                const rewardDetail = document.getElementById('wheel-reward-detail');
-                const dict = this.i18n[this.settings.lang] || this.i18n.tr;
+                // Close wheel modal completely & pop up the standard 3D Reward Modal!
+                const modalWheel = document.getElementById('modal-wheel');
+                if (modalWheel) modalWheel.classList.add('hidden');
 
-                if (spinStage) spinStage.classList.add('hidden');
-                if (rewardStage) rewardStage.classList.remove('hidden');
-
-                if (reward.type === 'gold') {
-                    if (rewardIcon) rewardIcon.innerText = '🪙';
-                    if (rewardDetail) rewardDetail.innerText = (dict.chestGoldRewardText || '+{gold} ALTIN').replace('{gold}', reward.amount);
-                } else {
-                    if (rewardIcon) rewardIcon.innerText = '🧩';
-                    if (rewardDetail) rewardDetail.innerText = (dict.wheelPiecesWonText || '{count} Adet Yapboz Parçası Kazandın!').replace('{count}', reward.count);
-                }
+                this.triggerWheelRewardModal(reward);
             }, 4100);
         };
 
