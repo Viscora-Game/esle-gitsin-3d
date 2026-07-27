@@ -3278,12 +3278,19 @@ class TileMatchingGame {
     getDailyAdChestRemaining() {
         try {
             const resetTime = parseInt(localStorage.getItem('tile_game_ad_chest_reset_time') || '0', 10);
+            const savedCount = parseInt(localStorage.getItem('tile_game_ad_chest_count') || '0', 10);
+
             if (resetTime > 0 && Date.now() >= resetTime) {
                 localStorage.setItem('tile_game_ad_chest_reset_time', '0');
                 localStorage.setItem('tile_game_ad_chest_count', '0');
                 return 3;
             }
-            const savedCount = parseInt(localStorage.getItem('tile_game_ad_chest_count') || '0', 10);
+
+            if (savedCount >= 3 && resetTime === 0) {
+                const TWENTY_FOUR_HOURS_MS = 24 * 60 * 60 * 1000;
+                localStorage.setItem('tile_game_ad_chest_reset_time', (Date.now() + TWENTY_FOUR_HOURS_MS).toString());
+            }
+
             return Math.max(0, 3 - savedCount);
         } catch (e) {
             return 3;
@@ -3308,7 +3315,7 @@ class TileMatchingGame {
     updateAdWidgetUI() {
         const widgetTag = document.querySelector('.ad-widget-label');
         const remaining = this.getDailyAdChestRemaining();
-        const resetTime = parseInt(localStorage.getItem('tile_game_ad_chest_reset_time') || '0', 10);
+        let resetTime = parseInt(localStorage.getItem('tile_game_ad_chest_reset_time') || '0', 10);
         const dict = (this.i18n && this.i18n[this.settings.lang]) ? this.i18n[this.settings.lang] : (this.i18n ? this.i18n.tr : {});
 
         if (widgetTag) {
@@ -3316,6 +3323,11 @@ class TileMatchingGame {
                 widgetTag.innerText = `(${remaining}/3)`;
                 widgetTag.style.background = '#10b981';
             } else {
+                if (resetTime === 0) {
+                    const TWENTY_FOUR_HOURS_MS = 24 * 60 * 60 * 1000;
+                    resetTime = Date.now() + TWENTY_FOUR_HOURS_MS;
+                    localStorage.setItem('tile_game_ad_chest_reset_time', resetTime.toString());
+                }
                 const resetRemaining = Math.max(0, resetTime - Date.now());
                 const timeStr = this.formatTimeLeft(resetRemaining);
                 widgetTag.innerText = timeStr;
@@ -3324,27 +3336,26 @@ class TileMatchingGame {
         }
     }
 
-
-    // =========================================================
-    // MAIN MENU EXCLUSIVE ADMOB BANNER AD CONTROLLER
-    // =========================================================
-
-    // =========================================================
-    // CUTE 3D LUCKY WHEEL ENGINE (85% GOLD / 15% PIECES)
-    // =========================================================
     // =========================================================
     // CUTE 3D LUCKY WHEEL ENGINE WITH 8-HR COOLDOWN & 24-HR RESET
     // =========================================================
     getDailyWheelSpinsCount() {
         try {
             const resetTime = parseInt(localStorage.getItem('tile_game_wheel_reset_time') || '0', 10);
+            const savedSpins = parseInt(localStorage.getItem('tile_game_wheel_spins') || '0', 10);
+
             if (resetTime > 0 && Date.now() >= resetTime) {
                 localStorage.setItem('tile_game_wheel_reset_time', '0');
                 localStorage.setItem('tile_game_wheel_spins', '0');
                 localStorage.setItem('tile_game_wheel_last_spin_time', '0');
                 return 0;
             }
-            const savedSpins = parseInt(localStorage.getItem('tile_game_wheel_spins') || '0', 10);
+
+            if (savedSpins >= 2 && resetTime === 0) {
+                const TWENTY_FOUR_HOURS_MS = 24 * 60 * 60 * 1000;
+                localStorage.setItem('tile_game_wheel_reset_time', (Date.now() + TWENTY_FOUR_HOURS_MS).toString());
+            }
+
             return savedSpins;
         } catch (e) {
             return 0;
@@ -3392,18 +3403,13 @@ class TileMatchingGame {
 
         const spins = this.getDailyWheelSpinsCount();
         const lastSpinTime = this.getLastWheelSpinTime();
+        let wheelResetTime = parseInt(localStorage.getItem('tile_game_wheel_reset_time') || '0', 10);
         const now = Date.now();
 
-        // 8 Hours Cooldown = 8 * 60 * 60 * 1000 = 28,800,000 ms
         const EIGHT_HOURS_MS = 8 * 60 * 60 * 1000;
         const cooldownRemaining = Math.max(0, (lastSpinTime + EIGHT_HOURS_MS) - now);
 
-        // 24 Hours Full Reset Remaining
-        const wheelResetTime = parseInt(localStorage.getItem('tile_game_wheel_reset_time') || '0', 10);
-        const resetRemaining = Math.max(0, wheelResetTime - now);
-
         if (spins === 0) {
-            // Spin 0: Free Spin Ready
             if (widgetTag) {
                 widgetTag.innerText = dict.wheelWidgetTag || 'ÇARK';
                 widgetTag.style.background = '#f59e0b';
@@ -3416,7 +3422,6 @@ class TileMatchingGame {
                 btnSpin.disabled = false;
             }
         } else if (spins === 1) {
-            // Spin 1: Free spin used, check 8-hour ad cooldown
             if (cooldownRemaining > 0) {
                 const timeStr = this.formatTimeLeft(cooldownRemaining);
                 if (widgetTag) {
@@ -3431,7 +3436,6 @@ class TileMatchingGame {
                     btnSpin.disabled = true;
                 }
             } else {
-                // 8 Hours Cooldown Passed! Ad Spin Unlocked!
                 if (widgetTag) {
                     widgetTag.innerText = 'REKLAM';
                     widgetTag.style.background = '#8b5cf6';
@@ -3445,8 +3449,14 @@ class TileMatchingGame {
                 }
             }
         } else {
-            // Spin 2: All spins done today, 24-hour midnight reset countdown
+            if (wheelResetTime === 0 || Date.now() >= wheelResetTime) {
+                const TWENTY_FOUR_HOURS_MS = 24 * 60 * 60 * 1000;
+                wheelResetTime = Date.now() + TWENTY_FOUR_HOURS_MS;
+                localStorage.setItem('tile_game_wheel_reset_time', wheelResetTime.toString());
+            }
+            const resetRemaining = Math.max(0, wheelResetTime - now);
             const timeStr = this.formatTimeLeft(resetRemaining);
+
             if (widgetTag) {
                 widgetTag.innerText = dict.adFullTag || 'DOLDU';
                 widgetTag.style.background = '#ef4444';
