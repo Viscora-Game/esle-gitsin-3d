@@ -463,6 +463,7 @@ class TileMatchingGame {
         // Full 7-Language Global Localization Engine (TR, EN, DE, FR, IT, ES, PT)
         this.i18n = {
             tr: {
+                adBannerBadge: "SPONSORLU",
                 chestStarTitle: "{stars} YILDIZLI SANDIK! 🎁",
                 bonusChestStarTitle: "🏆 BONUS {stars} YILDIZLI SANDIK! 🎁",
                 chestInitialDesc: "Bölüm Başarısı! Ödüllerinizi görmek için aşağıdaki ÖDÜLLERİ AL butonuna basın!",
@@ -541,6 +542,7 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 TEBRİKLER! {name} BULMACASI TAMAMLANDI!"
             },
             en: {
+                adBannerBadge: "SPONSORED",
                 chestStarTitle: "{stars}-STAR CHEST! 🎁",
                 bonusChestStarTitle: "🏆 BONUS {stars}-STAR CHEST! 🎁",
                 chestInitialDesc: "Level Complete! Press OPEN CHEST below to see your rewards!",
@@ -619,6 +621,7 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 CONGRATS! {name} PUZZLE COMPLETED!"
             },
             de: {
+                adBannerBadge: "GESPONSERT",
                 chestStarTitle: "{stars}-STERNE TRUHE! 🎁",
                 bonusChestStarTitle: "🏆 BONUS {stars}-STERNE TRUHE! 🎁",
                 chestInitialDesc: "Level geschafft! Klicke unten auf TRUHE ÖFFNEN!",
@@ -697,6 +700,7 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 GLÜCKWUNSCH! {name} PUZZLE VOLLSTÄNDIG!"
             },
             fr: {
+                adBannerBadge: "SPONSORISÉ",
                 chestStarTitle: "COFFRE {stars} ÉTOILE(S)! 🎁",
                 bonusChestStarTitle: "🏆 COFFRE BONUS {stars} ÉTOILE(S)! 🎁",
                 chestInitialDesc: "Niveau Réussi! Cliquez sur OUVRIR LE COFFRE ci-dessous!",
@@ -775,6 +779,7 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 BRAVO! PUZZLE {name} COMPLÉTÉ!"
             },
             it: {
+                adBannerBadge: "SPONSORIZZATO",
                 chestStarTitle: "BAULE A {stars} STELLE! 🎁",
                 bonusChestStarTitle: "🏆 BAULE BONUS A {stars} STELLE! 🎁",
                 chestInitialDesc: "Livello Completato! Clicca APRI IL BAULE qui sotto!",
@@ -853,6 +858,7 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 COMPLIMENTI! PUZZLE {name} COMPLETATO!"
             },
             es: {
+                adBannerBadge: "PATROCINADO",
                 chestStarTitle: "¡COFRE DE {stars} ESTRELLA(S)! 🎁",
                 bonusChestStarTitle: "🏆 ¡COFRE BONUS DE {stars} ESTRELLA(S)! 🎁",
                 chestInitialDesc: "¡Nivel Completado! ¡Pulsa ABRIR COFRE abajo!",
@@ -931,6 +937,7 @@ class TileMatchingGame {
                 puzzleCompleted: "🏆 ¡ENHORABUENA! ¡PUZZLE {name} COMPLETADO!"
             },
             pt: {
+                adBannerBadge: "PATROCINADO",
                 chestStarTitle: "BAÚ DE {stars} ESTRELA(S)! 🎁",
                 bonusChestStarTitle: "🏆 BAÚ BÔNUS DE {stars} ESTRELA(S)! 🎁",
                 chestInitialDesc: "Nível Concluído! Clique em ABRIR BAÚ abaixo!",
@@ -1389,6 +1396,7 @@ class TileMatchingGame {
             this.saveGameProgress();
             this.updateMainMenuButtons();
             document.getElementById('main-menu').classList.remove('hidden');
+            this.showMainMenuBannerAd();
         });
 
         document.getElementById('btn-hud-settings').addEventListener('click', () => {
@@ -1632,6 +1640,7 @@ class TileMatchingGame {
     }
 
     startLevel(lvl, isNewGame = false, mode = 'classic') {
+        this.hideMainMenuBannerAd();
         this.levelAdReviveCount = 0;
         this.boardTiles = [];
         this.slotTiles = [];
@@ -3113,6 +3122,30 @@ class TileMatchingGame {
                 widgetTag.innerText = dict.adFullTag || 'DOLDU';
                 widgetTag.style.background = '#ef4444';
             }
+        }
+    }
+
+
+    // =========================================================
+    // MAIN MENU EXCLUSIVE ADMOB BANNER AD CONTROLLER
+    // =========================================================
+    showMainMenuBannerAd() {
+        const bannerContainer = document.getElementById('main-menu-ad-banner');
+        if (bannerContainer) bannerContainer.classList.remove('hidden');
+
+        // Native Android / H5 AdMob Bridge Integration
+        if (window.AndroidAdMob && typeof window.AndroidAdMob.showBannerAd === 'function') {
+            window.AndroidAdMob.showBannerAd();
+        }
+    }
+
+    hideMainMenuBannerAd() {
+        const bannerContainer = document.getElementById('main-menu-ad-banner');
+        if (bannerContainer) bannerContainer.classList.add('hidden');
+
+        // Native Android / H5 AdMob Bridge Integration
+        if (window.AndroidAdMob && typeof window.AndroidAdMob.hideBannerAd === 'function') {
+            window.AndroidAdMob.hideBannerAd();
         }
     }
 
