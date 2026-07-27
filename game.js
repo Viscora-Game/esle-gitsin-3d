@@ -1177,16 +1177,26 @@ class TileMatchingGame {
 
     loadGameProgress() {
         try {
-            const savedClassic = localStorage.getItem('tile_game_classic');
+            // Load Primary Classic Progress with Backup Recovery
+            let savedClassic = localStorage.getItem('tile_game_classic');
+            if (!savedClassic) savedClassic = localStorage.getItem('tile_game_classic_backup');
+            
             if (savedClassic) {
                 const parsed = JSON.parse(savedClassic);
-                if (parsed && parsed.level) this.classicProgress = parsed;
+                if (parsed && typeof parsed.level === 'number' && parsed.level > 0) {
+                    this.classicProgress = parsed;
+                }
             }
 
-            const savedTimeTrial = localStorage.getItem('tile_game_timetrial');
+            // Load Primary Time Trial Progress with Backup Recovery
+            let savedTimeTrial = localStorage.getItem('tile_game_timetrial');
+            if (!savedTimeTrial) savedTimeTrial = localStorage.getItem('tile_game_timetrial_backup');
+            
             if (savedTimeTrial) {
                 const parsed = JSON.parse(savedTimeTrial);
-                if (parsed && parsed.level) this.timeTrialProgress = parsed;
+                if (parsed && typeof parsed.level === 'number' && parsed.level > 0) {
+                    this.timeTrialProgress = parsed;
+                }
             }
         
             const savedPuzzleData = localStorage.getItem('tile_game_puzzle_data');
@@ -1200,23 +1210,44 @@ class TileMatchingGame {
             }
             const goldEl = document.getElementById('gold-val');
             if (goldEl) goldEl.innerText = this.goldCoins;
-} catch (e) {}
+        } catch (e) {}
     }
 
-    saveGameProgress() {
+    saveGameProgress(isVictoryUnlock = false) {
         try {
-            const data = {
-                level: this.level,
-                score: this.score,
-                timestamp: Date.now()
-            };
+            if (!this.level || this.level < 1) return;
+
+            // Target level to record (If victory unlock, advance to next level!)
+            const targetSaveLevel = isVictoryUnlock ? (this.level + 1) : this.level;
 
             if (this.currentMode === 'classic') {
+                const currentHighest = (this.classicProgress && typeof this.classicProgress.level === 'number') ? this.classicProgress.level : 1;
+                const safeLevel = Math.max(currentHighest, targetSaveLevel);
+                
+                const data = {
+                    level: safeLevel,
+                    score: this.score,
+                    timestamp: Date.now()
+                };
+
                 this.classicProgress = data;
-                localStorage.setItem('tile_game_classic', JSON.stringify(data));
+                const jsonStr = JSON.stringify(data);
+                localStorage.setItem('tile_game_classic', jsonStr);
+                localStorage.setItem('tile_game_classic_backup', jsonStr);
             } else {
+                const currentHighest = (this.timeTrialProgress && typeof this.timeTrialProgress.level === 'number') ? this.timeTrialProgress.level : 1;
+                const safeLevel = Math.max(currentHighest, targetSaveLevel);
+
+                const data = {
+                    level: safeLevel,
+                    score: this.score,
+                    timestamp: Date.now()
+                };
+
                 this.timeTrialProgress = data;
-                localStorage.setItem('tile_game_timetrial', JSON.stringify(data));
+                const jsonStr = JSON.stringify(data);
+                localStorage.setItem('tile_game_timetrial', jsonStr);
+                localStorage.setItem('tile_game_timetrial_backup', jsonStr);
             }
         
             const puzzleData = {
@@ -1227,12 +1258,13 @@ class TileMatchingGame {
             localStorage.setItem('tile_game_puzzle_data', JSON.stringify(puzzleData));
             const goldEl = document.getElementById('gold-val');
             if (goldEl) goldEl.innerText = this.goldCoins;
-} catch (e) {}
+        } catch (e) {}
     }
 
     resetClassicProgress() {
         try {
             localStorage.removeItem('tile_game_classic');
+            localStorage.removeItem('tile_game_classic_backup');
         } catch (e) {}
         this.classicProgress = { level: 1, score: 0 };
     }
@@ -1240,6 +1272,7 @@ class TileMatchingGame {
     resetTimeTrialProgress() {
         try {
             localStorage.removeItem('tile_game_timetrial');
+            localStorage.removeItem('tile_game_timetrial_backup');
         } catch (e) {}
         this.timeTrialProgress = { level: 1, score: 0 };
     }
@@ -2732,8 +2765,8 @@ class TileMatchingGame {
                 this.sound.playVictorySound();
                 this.fx.spawnConfetti();
 
-                // Save next unlocked level for active mode
-                this.saveGameProgress();
+                // Save next unlocked level for active mode (Victory Unlock = true)
+                this.saveGameProgress(true);
 
                 const vicModal = document.getElementById('modal-victory');
                 if (vicModal) vicModal.classList.add('hidden');
