@@ -2032,7 +2032,7 @@ class TileMatchingGame {
         const pool = [];
 
         for (let i = 0; i < totalPairs; i++) {
-            const activeTypesCount = Math.min(this.types.length, 5 + Math.floor((this.level - 1) / 10));
+            const activeTypesCount = Math.min(this.types.length, 5 + Math.floor((this.level - 1) / 10) * 2);
         const activeTypes = this.types.slice(0, activeTypesCount);
         const typeObj = activeTypes[i % activeTypes.length];
             pool.push(typeObj, typeObj);
