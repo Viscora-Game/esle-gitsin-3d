@@ -23,12 +23,12 @@
 23-->
 24<manifest xmlns:android="http://schemas.android.com/apk/res/android"
 25    package="com.viscoragame.eslegitsin3d"
-26    android:versionCode="7"
-27    android:versionName="6.4.0" >
+26    android:versionCode="8"
+27    android:versionName="6.5.0" >
 28
 29    <uses-sdk
 30        android:minSdkVersion="21"
-31        android:targetSdkVersion="35" />
+31        android:targetSdkVersion="36" />
 32
 33    <queries>
 33-->[com.google.androidbrowserhelper:androidbrowserhelper:2.6.2] C:\Users\Acer\.gradle\caches\8.11.1\transforms\5053e02be90783e54992393be394bb70\transformed\androidbrowserhelper-2.6.2\AndroidManifest.xml:22:5-30:15
