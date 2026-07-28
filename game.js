@@ -1960,23 +1960,19 @@ class TileMatchingGame {
                     this.levelAdReviveCount = (this.levelAdReviveCount || 0) + 1;
                     document.getElementById('modal-gameover').classList.add('hidden');
                     
-                    // Revive 1: Unlock emergency 6th slot
-                    // Revive 2: Clear 1 non-matching slot tile from tray for extra breathing room
+                    // Revive: Unlock emergency 6th slot & return 2 tiles back to board to free space
                     this.maxSlotCapacity = 6;
+                    this.hasTemporaryExtraSlot = true;
                     const floatSlot = document.getElementById('floating-extra-slot');
                     if (floatSlot) floatSlot.classList.remove('hidden');
 
-                    if (this.levelAdReviveCount >= 2 && this.slotTiles.length > 0) {
-                        const removedTile = this.slotTiles.pop();
-                        if (removedTile && removedTile.element) {
-                            removedTile.element.remove();
-                        }
-                    }
+                    // Safely return 2 non-matching tiles from tray to board (NO TILES DELETED)
+                    this.returnTrayTilesToBoard(2);
 
                     const remainingRevives = Math.max(0, 2 - this.levelAdReviveCount);
                     const dict = this.i18n[this.settings.lang] || this.i18n.tr;
-                    this.showToast(`🚨 ${dict.reviveUsedToast || 'Canlı Hak Kullanıldı! +1 Acil Slot Açıldı!'} (${this.levelAdReviveCount}/2)`);
-                    this.checkDeadlockAndMatch();
+                    this.showToast(`🚨 ${dict.reviveUsedToast || 'Canlı Hak Kullanıldı! 2 Kart Tahtaya Dönüştü!'} (${this.levelAdReviveCount}/2)`);
+                    this.checkDeadlockAndAutoShuffle();
                 });
             });
         }
@@ -2870,6 +2866,10 @@ class TileMatchingGame {
         this.maxSlotCapacity = 6;
         document.getElementById('floating-extra-slot').classList.remove('hidden');
 
+        if (this.slotTiles.length >= 5) {
+            this.returnTrayTilesToBoard(2);
+        }
+
         this.sound.playBoosterChime();
         this.triggerVibration();
 
@@ -3074,6 +3074,38 @@ class TileMatchingGame {
         }
     }
 
+    returnTrayTilesToBoard(count = 2) {
+        if (!this.slotTiles || this.slotTiles.length === 0) return;
+
+        const tilesToReturn = [];
+        const numToMove = Math.min(count, this.slotTiles.length);
+
+        for (let i = 0; i < numToMove; i++) {
+            const tile = this.slotTiles.pop();
+            if (tile) {
+                tile.isInSlot = false;
+                tile.isMatching = false;
+                tilesToReturn.push(tile);
+            }
+        }
+
+        tilesToReturn.forEach((tile) => {
+            this.boardTiles.push(tile);
+            const boardEl = document.getElementById('board');
+            if (boardEl && tile.element) {
+                boardEl.appendChild(tile.element);
+                tile.element.classList.remove('in-slot');
+                tile.element.style.transition = 'all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1)';
+                tile.element.style.left = `${tile.x}px`;
+                tile.element.style.top = `${tile.y}px`;
+                tile.element.style.zIndex = tile.z || 10;
+            }
+        });
+
+        this.rearrangeSlotTiles();
+        this.updateLockStates();
+    }
+
     checkForMatches() {
         const group = {};
         for (let i = 0; i < this.slotTiles.length; i++) {
@@ -3220,14 +3252,6 @@ class TileMatchingGame {
         setTimeout(() => {
             if (tileA.element.parentElement) tileA.element.parentElement.removeChild(tileA.element);
             if (tileB.element.parentElement) tileB.element.parentElement.removeChild(tileB.element);
-
-            // LIFECYCLE RULE: ONLY DISAPPEAR ONCE A TILE ENTERED SLOT 6 AND HAS BEEN CLEARED!
-            if (this.hasTemporaryExtraSlot && this.extraSlotWasUsed && this.slotTiles.length <= 5) {
-                this.maxSlotCapacity = 5;
-                this.hasTemporaryExtraSlot = false;
-                this.extraSlotWasUsed = false;
-                document.getElementById('floating-extra-slot').classList.add('hidden');
-            }
 
             this.rearrangeSlotTiles();
 
