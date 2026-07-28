@@ -2188,3 +2188,12 @@ body {
 .mat-corner.corner-tr { top: 8px; right: 10px; }
 .mat-corner.corner-bl { bottom: 8px; left: 10px; }
 .mat-corner.corner-br { bottom: 8px; right: 10px; }
+
+
+/* GPU Acceleration & Performance Optimization Rules */
+.card-3d, .card-inner, .board-mat-frame, .tray-slot, .particle-canvas, .modal-content, #wheel-canvas, #wheel-disc {
+    will-change: transform, opacity;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+}

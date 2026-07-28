@@ -312,11 +312,19 @@ class SoundSynth {
     }
 }
 
+
+
 class ParticleFX {
     constructor(canvasId) {
         this.canvas = document.getElementById(canvasId);
         this.ctx = this.canvas ? this.canvas.getContext('2d') : null;
-        this.particles = [];
+        this.poolSize = 200;
+        this.pool = [];
+        for (let i = 0; i < this.poolSize; i++) {
+            this.pool.push({
+                x: 0, y: 0, vx: 0, vy: 0, radius: 0, color: '#ffffff', alpha: 0, decay: 0.02, active: false
+            });
+        }
         this.isAnimating = false;
         this.resize();
         window.addEventListener('resize', () => this.resize());
@@ -337,36 +345,44 @@ class ParticleFX {
 
     spawnBurst(x, y, count = 24) {
         const colors = ['#fbbf24', '#f59e0b', '#38bdf8', '#c084fc', '#ffffff', '#ec4899'];
-        for (let i = 0; i < count; i++) {
-            const angle = Math.random() * Math.PI * 2;
-            const speed = Math.random() * 8 + 2;
-            this.particles.push({
-                x: x,
-                y: y,
-                vx: Math.cos(angle) * speed,
-                vy: Math.sin(angle) * speed,
-                radius: Math.random() * 5 + 2,
-                color: colors[Math.floor(Math.random() * colors.length)],
-                alpha: 1,
-                decay: Math.random() * 0.03 + 0.02
-            });
+        let spawned = 0;
+        for (let i = 0; i < this.poolSize && spawned < count; i++) {
+            const p = this.pool[i];
+            if (!p.active) {
+                const angle = Math.random() * Math.PI * 2;
+                const speed = Math.random() * 8 + 2;
+                p.x = x;
+                p.y = y;
+                p.vx = Math.cos(angle) * speed;
+                p.vy = Math.sin(angle) * speed;
+                p.radius = Math.random() * 5 + 2;
+                p.color = colors[Math.floor(Math.random() * colors.length)];
+                p.alpha = 1;
+                p.decay = Math.random() * 0.03 + 0.02;
+                p.active = true;
+                spawned++;
+            }
         }
         this.startAnimationLoop();
     }
 
     spawnConfetti() {
         const colors = ['#fbbf24', '#ef4444', '#10b981', '#38bdf8', '#c084fc', '#f43f5e'];
-        for (let i = 0; i < 70; i++) {
-            this.particles.push({
-                x: Math.random() * (this.canvas ? this.canvas.width : 400),
-                y: -10,
-                vx: (Math.random() - 0.5) * 4,
-                vy: Math.random() * 5 + 3,
-                radius: Math.random() * 6 + 3,
-                color: colors[Math.floor(Math.random() * colors.length)],
-                alpha: 1,
-                decay: 0.005
-            });
+        let spawned = 0;
+        for (let i = 0; i < this.poolSize && spawned < 70; i++) {
+            const p = this.pool[i];
+            if (!p.active) {
+                p.x = Math.random() * (this.canvas ? this.canvas.width : 400);
+                p.y = -10;
+                p.vx = (Math.random() - 0.5) * 4;
+                p.vy = Math.random() * 5 + 3;
+                p.radius = Math.random() * 6 + 3;
+                p.color = colors[Math.floor(Math.random() * colors.length)];
+                p.alpha = 1;
+                p.decay = 0.005;
+                p.active = true;
+                spawned++;
+            }
         }
         this.startAnimationLoop();
     }
@@ -375,19 +391,23 @@ class ParticleFX {
         if (!this.ctx || !this.canvas) return;
         this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
 
-        for (let i = this.particles.length - 1; i >= 0; i--) {
-            const p = this.particles[i];
+        let hasActive = false;
+        for (let i = 0; i < this.poolSize; i++) {
+            const p = this.pool[i];
+            if (!p.active) continue;
+
             p.x += p.vx;
             p.y += p.vy;
             p.alpha -= p.decay;
 
             if (p.alpha <= 0) {
-                this.particles.splice(i, 1);
+                p.active = false;
                 continue;
             }
 
+            hasActive = true;
             this.ctx.save();
-            this.ctx.globalAlpha = p.alpha;
+            this.ctx.globalAlpha = Math.max(0, p.alpha);
             this.ctx.fillStyle = p.color;
             this.ctx.beginPath();
             this.ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
@@ -395,11 +415,10 @@ class ParticleFX {
             this.ctx.restore();
         }
 
-        if (this.particles.length > 0) {
+        if (hasActive) {
             requestAnimationFrame(() => this.animate());
         } else {
             this.isAnimating = false;
-            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
         }
     }
 }
@@ -1717,6 +1736,9 @@ class TileMatchingGame {
         for (const path of imagePaths) {
             const img = new Image();
             img.src = path;
+            if (img.decode) {
+                img.decode().catch(() => {});
+            }
             this.preloadedImages[path] = img;
         }
     }
