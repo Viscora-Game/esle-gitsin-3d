@@ -3,7 +3,7 @@
   "host": "viscora-game.github.io",
   "name": "Eşle Gitsin 3D",
   "launcherName": "Eşle Gitsin",
-  "display": "standalone",
+  "display": "fullscreen",
   "themeColor": "#1E1B4B",
   "themeColorDark": "#1E1B4B",
   "navigationColor": "#1E1B4B",
@@ -20,8 +20,8 @@
     "path": "../pwabuilder_package/signing.keystore",
     "alias": "my-key-alias"
   },
-  "appVersionName": "6.7.0",
-  "appVersionCode": 10,
+  "appVersionName": "6.8.0",
+  "appVersionCode": 11,
   "shortcuts": [],
   "generatorApp": "bubblewrap-cli",
   "webManifestUrl": "https://viscora-game.github.io/esle-gitsin-3d/manifest.json",
@@ -42,5 +42,5 @@
   ],
   "retainedBundles": [],
   "displayOverride": [],
-  "appVersion": "6.7.0"
+  "appVersion": "6.8.0"
 }

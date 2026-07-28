@@ -23,8 +23,8 @@
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.viscoragame.eslegitsin3d"
-    android:versionCode="10"
-    android:versionName="6.7.0" >
+    android:versionCode="11"
+    android:versionName="6.8.0" >
 
     <uses-sdk
         android:minSdkVersion="21"
@@ -55,7 +55,7 @@
         android:label="@string/appName"
         android:manageSpaceActivity="com.google.androidbrowserhelper.trusted.ManageDataLauncherActivity"
         android:supportsRtl="true"
-        android:theme="@android:style/Theme.Translucent.NoTitleBar" >
+        android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
         <meta-data
             android:name="asset_statements"
             android:resource="@string/assetStatements" />

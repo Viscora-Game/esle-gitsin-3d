@@ -23,8 +23,8 @@
 23-->
 24<manifest xmlns:android="http://schemas.android.com/apk/res/android"
 25    package="com.viscoragame.eslegitsin3d"
-26    android:versionCode="10"
-27    android:versionName="6.7.0" >
+26    android:versionCode="11"
+27    android:versionName="6.8.0" >
 28
 29    <uses-sdk
 30        android:minSdkVersion="21"
@@ -76,8 +76,8 @@
 56-->C:\Users\Acer\OneDrive\Masaüstü\Eşleme Oyunu\twa_project\app\src\main\AndroidManifest.xml:39:9-105
 57        android:supportsRtl="true"
 57-->C:\Users\Acer\OneDrive\Masaüstü\Eşleme Oyunu\twa_project\app\src\main\AndroidManifest.xml:41:9-35
-58        android:theme="@android:style/Theme.Translucent.NoTitleBar" >
-58-->C:\Users\Acer\OneDrive\Masaüstü\Eşleme Oyunu\twa_project\app\src\main\AndroidManifest.xml:42:9-68
+58        android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
+58-->C:\Users\Acer\OneDrive\Masaüstü\Eşleme Oyunu\twa_project\app\src\main\AndroidManifest.xml:42:9-67
 59        <meta-data
 59-->C:\Users\Acer\OneDrive\Masaüstü\Eşleme Oyunu\twa_project\app\src\main\AndroidManifest.xml:44:9-46:58
 60            android:name="asset_statements"

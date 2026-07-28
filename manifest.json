@@ -4,7 +4,7 @@
   "version": "1.0.0.5",
   "description": "Sevimli 3D karakterlerle dolu, zeka ve hafıza geliştiren eğlenceli 2'li kart eşleştirme oyunu!",
   "start_url": "./index.html",
-  "display": "standalone",
+  "display": "fullscreen",
   "orientation": "portrait",
   "background_color": "#060913",
   "theme_color": "#1e1b4b",
