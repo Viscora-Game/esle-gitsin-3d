@@ -1,0 +1,46 @@
+{
+  "packageId": "com.viscoragame.eslegitsin3d",
+  "host": "viscora-game.github.io",
+  "name": "Eşle Gitsin 3D",
+  "launcherName": "Eşle Gitsin",
+  "display": "standalone",
+  "themeColor": "#1E1B4B",
+  "themeColorDark": "#1E1B4B",
+  "navigationColor": "#1E1B4B",
+  "navigationColorDark": "#1E1B4B",
+  "navigationDividerColor": "#000000",
+  "navigationDividerColorDark": "#000000",
+  "backgroundColor": "#060913",
+  "enableNotifications": false,
+  "startUrl": "/esle-gitsin-3d/index.html",
+  "iconUrl": "https://viscora-game.github.io/esle-gitsin-3d/icons/app-icon-512.png",
+  "maskableIconUrl": "https://viscora-game.github.io/esle-gitsin-3d/icons/app-maskable-512.png",
+  "splashScreenFadeOutDuration": 300,
+  "signingKey": {
+    "path": "../pwabuilder_package/signing.keystore",
+    "alias": "my-key-alias"
+  },
+  "appVersionName": "6.4.0",
+  "appVersionCode": 7,
+  "shortcuts": [],
+  "generatorApp": "bubblewrap-cli",
+  "webManifestUrl": "https://viscora-game.github.io/esle-gitsin-3d/manifest.json",
+  "fallbackType": "customtabs",
+  "features": {},
+  "alphaDependencies": {
+    "enabled": false
+  },
+  "enableSiteSettingsShortcut": "true",
+  "isChromeOSOnly": false,
+  "isMetaQuest": false,
+  "fullScopeUrl": "https://viscora-game.github.io/esle-gitsin-3d/",
+  "minSdkVersion": 21,
+  "orientation": "portrait",
+  "fingerprints": [],
+  "additionalTrustedOrigins": [
+    "https://viscora-game.github.io"
+  ],
+  "retainedBundles": [],
+  "displayOverride": [],
+  "appVersion": "6.4.0"
+}
