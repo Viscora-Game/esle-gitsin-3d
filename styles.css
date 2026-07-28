@@ -61,17 +61,17 @@ body {
     align-items: center;
 }
 
-/* Mobile 1080x1920 Screen Container with Dynamic Background Transition */
+/* Mobile 1080x1920 Screen Container with Ultra-Stable Gradient Background */
 #game-container {
     width: 100%;
     height: 100%;
-    background: radial-gradient(circle at 50% 38%, rgba(52, 211, 153, 0.18) 0%, transparent 65%), repeating-radial-gradient(circle at 50% 50%, rgba(255,255,255,0.03) 0, rgba(255,255,255,0.03) 1px, transparent 1px, transparent 10px), radial-gradient(circle at center, #064e3b 0%, #022c22 75%, #01140e 100%);
-    transition: background 0.8s ease;
+    background: radial-gradient(circle at 50% 38%, #064e3b 0%, #022c22 75%, #01140e 100%);
     position: relative;
     display: flex;
     flex-direction: column;
     overflow: hidden;
     border-radius: 0;
+    contain: layout style;
 }
 
 /* Canvas Particle & Confetti Layer */
@@ -82,31 +82,24 @@ body {
     width: 100%;
     height: 100%;
     pointer-events: none;
-    z-index: 9999;
+    z-index: 900;
+    contain: strict;
 }
 
-/* Main Menu Overlay Screen with Vibrant Candy Pastel Gradient */
+/* Main Menu Overlay Screen with Stable Premium Dark Gradient */
 .menu-overlay {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: linear-gradient(135deg, #4338ca 0%, #6d28d9 30%, #be185d 70%, #d97706 100%);
-    background-size: 300% 300%;
-    animation: joyfulGradient 10s ease infinite alternate;
+    background: linear-gradient(135deg, #1e1b4b 0%, #31104b 50%, #0f172a 100%);
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 2000;
-    transition: opacity 0.4s ease, transform 0.4s ease;
+    transition: opacity 0.4s ease;
     overflow: hidden;
-}
-
-@keyframes joyfulGradient {
-    0% { background-position: 0% 0%; }
-    50% { background-position: 100% 100%; }
-    100% { background-position: 0% 0%; }
 }
 
 .menu-overlay.hidden {
@@ -2190,10 +2183,22 @@ body {
 .mat-corner.corner-br { bottom: 8px; right: 10px; }
 
 
-/* GPU Acceleration & Performance Optimization Rules */
-.card-3d, .card-inner, .board-mat-frame, .tray-slot, .particle-canvas, .modal-content, #wheel-canvas, #wheel-disc {
-    will-change: transform, opacity;
+/* GPU Acceleration & Anti-Flickering Layer Optimization */
+.card-3d, .card-inner, .tile-moving {
+    will-change: transform;
     transform: translateZ(0);
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
+}
+
+/* Landscape Mode Screen & Stacking Stability */
+@media (orientation: landscape) {
+    #app-wrapper {
+        background-color: #01140e;
+    }
+    #game-container {
+        max-width: 520px;
+        margin: 0 auto;
+        box-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
+    }
 }

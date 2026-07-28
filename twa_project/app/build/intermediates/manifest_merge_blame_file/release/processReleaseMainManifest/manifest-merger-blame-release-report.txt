@@ -23,8 +23,8 @@
 23-->
 24<manifest xmlns:android="http://schemas.android.com/apk/res/android"
 25    package="com.viscoragame.eslegitsin3d"
-26    android:versionCode="8"
-27    android:versionName="6.5.0" >
+26    android:versionCode="9"
+27    android:versionName="6.6.0" >
 28
 29    <uses-sdk
 30        android:minSdkVersion="21"

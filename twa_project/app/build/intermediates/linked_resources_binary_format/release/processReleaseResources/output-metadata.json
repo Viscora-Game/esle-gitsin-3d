@@ -11,8 +11,8 @@
       "type": "SINGLE",
       "filters": [],
       "attributes": [],
-      "versionCode": 8,
-      "versionName": "6.5.0",
+      "versionCode": 9,
+      "versionName": "6.6.0",
       "outputFile": "linked-resources-binary-format-release.ap_"
     }
   ],
