@@ -449,8 +449,20 @@ class TileMatchingGame {
     }
 
     constructor() {
-        this.cardW = 70;
-        this.cardH = 90;
+        try {
+        // Responsive Card Sizing - adapt to screen width
+        const screenW = window.innerWidth || 380;
+        const scaleFactor = Math.min(1, screenW / 400);
+        this.cardW = Math.round(70 * scaleFactor);
+        this.cardH = Math.round(90 * scaleFactor);
+        // Update CSS custom properties for responsive cards
+        document.documentElement.style.setProperty('--card-w', this.cardW + 'px');
+        document.documentElement.style.setProperty('--card-h', this.cardH + 'px');
+        // Also update tray width to fit cards
+        const trayW = Math.round((this.cardW + 14) * 5 + 28);
+        document.documentElement.style.setProperty('--tray-w', trayW + 'px');
+        document.documentElement.style.setProperty('--tray-h', (this.cardH + 20) + 'px');
+
         this.maxSlotCapacity = 5;
         this.hasTemporaryExtraSlot = false;
         this.extraSlotWasUsed = false;
@@ -588,43 +600,18 @@ class TileMatchingGame {
                 pageWord: "Sayfa",
                 emptyInventoryMsg: "Envanterinizde henüz yerleştirilmemiş parça yok. Sandık açarak veya Altın ile parça kazanabilirsiniz!",
                 puzzles: {
-                tabSwitchedMsg: "¡Cambiado a la pestaña {name}! Toca de nuevo para colocar.",
-                wrongTabMsg: "¡Coloca la pieza en la pestaña de personaje correcta!",
-
-                trackCarefree: "🌸 Carefree",
-                trackDuck: "🦆 Patito",
-                trackMarimba: "🐒 Marimba",
-                pieceWord: "PIEZA",
-                piecesWord: "PIEZAS",
-                pageWord: "Página",
-                emptyInventoryMsg: "¡No hay piezas sin colocar en tu inventario. Gana piezas en cofres o compra con Oro!",
-                puzzles: {
-                cat: "Gato Esponjoso 😻",
-                fox: "Zorro Lindo 🦊",
-                panda: "Panda Dulce 🐼",
-                dragon: "Dragón Mágico 🐲",
-                shiba: "Shiba Alegre 🐶",
-                unicorn: "Unicornio Brillante 🦄",
-                lion: "León Valiente 🦁",
-                bunny: "Conejo Lindo 🐰",
-                owl: "Búho Sabio 🦉",
-                red_panda: "Panda Rojo 🐾",
-                frog: "Rana Alegre 🐸",
-                penguin: "Pingüino Lindo 🐧"
-                },
-
-                cat: "Pamuk Kedi 😻",
-                fox: "Sevimli Tilki 🦊",
-                panda: "Tatlı Panda 🐼",
-                dragon: "Büyülü Ejderha 🐲",
-                shiba: "Neşeli Shiba 🐶",
-                unicorn: "Işıltılı Tekboynuz 🦄",
-                lion: "Cesur Aslan 🦁",
-                bunny: "Sevimli Tavşan 🐰",
-                owl: "Bilge Baykuş 🦉",
-                red_panda: "Kızıl Panda 🐾",
-                frog: "Neşeli Kurbağa 🐸",
-                penguin: "Sevimli Penguen 🐧"
+                    cat: "Pamuk Kedi 😻",
+                    fox: "Sevimli Tilki 🦊",
+                    panda: "Tatlı Panda 🐼",
+                    dragon: "Büyülü Ejderha 🐲",
+                    shiba: "Neşeli Shiba 🐶",
+                    unicorn: "Işıltılı Tekboynuz 🦄",
+                    lion: "Cesur Aslan 🦁",
+                    bunny: "Sevimli Tavşan 🐰",
+                    owl: "Bilge Baykuş 🦉",
+                    red_panda: "Kızıl Panda 🐾",
+                    frog: "Neşeli Kurbağa 🐸",
+                    penguin: "Sevimli Penguen 🐧"
                 },
 
                 musicLabel: "🎵 Müzik Sesi",
@@ -1512,6 +1499,24 @@ class TileMatchingGame {
         this.initUI();
         this.initBackgroundMusic();
         this.checkFirstTimeTutorial();
+        } catch (e) {
+            // CRITICAL ERROR BOUNDARY: If constructor crashes, ensure menu stays interactive
+            console.error('[EsleGitsin3D] Init error:', e);
+            // Force all modal overlays hidden so nothing blocks the screen
+            document.querySelectorAll('.modal-overlay').forEach(el => {
+                el.classList.add('hidden');
+                el.style.display = 'none';
+                el.style.pointerEvents = 'none';
+            });
+            // Ensure main menu is visible and clickable
+            const mainMenu = document.getElementById('main-menu');
+            if (mainMenu) {
+                mainMenu.classList.remove('hidden');
+                mainMenu.style.display = 'flex';
+                mainMenu.style.pointerEvents = 'auto';
+                mainMenu.style.opacity = '1';
+            }
+        }
     }
 
     loadGameProgress() {
@@ -4422,7 +4427,32 @@ class TileMatchingGame {
 }
 
 
-// Initialize Game on DOM Load
+// Initialize Game on DOM Load with Global Error Safety Net
 window.addEventListener('DOMContentLoaded', () => {
-    window.gameInstance = new TileMatchingGame();
+    try {
+        window.gameInstance = new TileMatchingGame();
+    } catch (e) {
+        console.error('[EsleGitsin3D] CRITICAL: Game init failed:', e);
+        // Emergency: force main menu visible and interactive
+        const mainMenu = document.getElementById('main-menu');
+        if (mainMenu) {
+            mainMenu.classList.remove('hidden');
+            mainMenu.style.display = 'flex';
+            mainMenu.style.opacity = '1';
+            mainMenu.style.pointerEvents = 'auto';
+        }
+        document.querySelectorAll('.modal-overlay').forEach(el => {
+            el.classList.add('hidden');
+            el.style.display = 'none';
+        });
+    }
+});
+
+// Global uncaught error safety net - never let screen freeze
+window.addEventListener('error', (e) => {
+    console.error('[EsleGitsin3D] Uncaught error:', e.error);
+});
+
+window.addEventListener('unhandledrejection', (e) => {
+    console.error('[EsleGitsin3D] Unhandled promise rejection:', e.reason);
 });
