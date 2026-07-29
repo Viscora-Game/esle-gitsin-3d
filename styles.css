@@ -641,18 +641,20 @@ body {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(6, 9, 19, 0.88);
-    backdrop-filter: blur(14px);
+    background: rgba(6, 9, 19, 0.92);
     display: flex;
     justify-content: center;
     align-items: center;
     z-index: 3000;
-    transition: opacity 0.3s ease;
+    transition: opacity 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: opacity;
 }
 
 .modal-overlay.hidden {
     opacity: 0;
     pointer-events: none;
+    visibility: hidden;
+    display: none !important;
 }
 
 .modal-card {
@@ -1008,7 +1010,7 @@ body {
     color: #ffffff;
 }
 
-/* Toast Alert Notification (Z-Index 9999 - Above ALL Modals & Overlays!) */
+/* Toast Alert Notification (Z-Index 999999 - Above ALL Modals & Overlays!) */
 .toast-msg {
     position: fixed;
     top: 24px;
@@ -1022,7 +1024,7 @@ body {
     font-size: 13px;
     font-weight: 800;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6), 0 0 18px rgba(56, 189, 248, 0.4);
-    z-index: 9999 !important;
+    z-index: 999999 !important;
     pointer-events: none;
     transition: opacity 0.3s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
     max-width: 88vw;
@@ -1030,6 +1032,23 @@ body {
     text-align: center;
     line-height: 1.35;
     word-break: break-word;
+}
+
+.journal-gold-badge {
+    position: absolute;
+    top: 14px;
+    right: 18px;
+    background: rgba(15, 23, 42, 0.92);
+    border: 1.5px solid var(--accent-gold);
+    border-radius: 20px;
+    padding: 4px 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 800;
+    color: var(--accent-gold);
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
 }
 
 .toast-msg.hidden {

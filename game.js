@@ -3654,6 +3654,8 @@ class TileMatchingGame {
         this.goldCoins -= 100;
         const goldEl = document.getElementById('gold-val');
         if (goldEl) goldEl.innerText = this.goldCoins;
+        const goldPuzzleEl = document.getElementById('gold-val-puzzle');
+        if (goldPuzzleEl) goldPuzzleEl.innerText = this.goldCoins;
 
         this.sound.playBoosterChime();
         const pNameLoc = this.getLocalizedPuzzleName(added.puzzleId);
@@ -3674,6 +3676,10 @@ class TileMatchingGame {
     }
 
     renderPuzzleGalleryModal() {
+        const goldEl = document.getElementById('gold-val');
+        if (goldEl) goldEl.innerText = this.goldCoins;
+        const goldPuzzleEl = document.getElementById('gold-val-puzzle');
+        if (goldPuzzleEl) goldPuzzleEl.innerText = this.goldCoins;
         const tabsContainer = document.getElementById('puzzle-selector-tabs');
         if (tabsContainer) {
             tabsContainer.innerHTML = '';
@@ -4191,10 +4197,16 @@ class TileMatchingGame {
 
     spinWheelAction() {
         const spins = this.getDailyWheelSpinsCount();
+        const lastSpinTime = this.getLastWheelSpinTime();
+        const now = Date.now();
+        const EIGHT_HOURS_MS = 8 * 60 * 60 * 1000;
+        const cooldownRemaining = Math.max(0, (lastSpinTime + EIGHT_HOURS_MS) - now);
+
         if (spins >= 2) {
             this.sound.playLockThud();
+            const timeStr = this.formatTimeLeft(cooldownRemaining);
             const dict = this.i18n[this.settings.lang] || this.i18n.tr;
-            this.showToast(dict.wheelLimitReached || '⚠️ Bugünkü Çark Haklarınız Bitti! (2/2)');
+            this.showToast(dict.wheelLimitReached || `⚠️ Çarkıfelek Bekleme Süresinde! (${timeStr})`);
             return;
         }
 

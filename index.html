@@ -255,7 +255,7 @@
 
                     <!-- Force Update & Clear Cache Button -->
                     <button id="btn-force-update" class="btn-secondary settings-full-btn" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff; font-weight: 700; margin-top: 8px;">
-                        <span data-i18n="forceUpdateBtn">⚡ CANLI GÜNCELLEMEYİ YÜKLE (v7.0.0)</span>
+                        <span data-i18n="forceUpdateBtn">⚡ CANLI GÜNCELLEMEYİ YÜKLE (v7.1.0)</span>
                     </button>
 
                     <button id="btn-save-settings" class="btn-primary" data-i18n="saveBtn">KAYDET VE KAPAT</button>
@@ -347,11 +347,6 @@
             <!-- Combo Multiplier Floating HUD Badge -->
             <div id="combo-badge" class="combo-badge hidden">
                 <span id="combo-text">✨ HARİKA UYUM!</span>
-            </div>
-
-            <!-- Toast Alert Notification -->
-            <div id="toast-msg" class="toast-msg hidden">
-                <span id="toast-text">Yetersiz Skor!</span>
             </div>
 
             <!-- Main Stacked Pyramid Board Area -->
@@ -453,6 +448,10 @@
             <div class="modal-card gallery-modal-card journal-book-card">
                 <button id="btn-close-gallery" class="btn-close-x">✕</button>
                 <div class="journal-book-header">
+                    <div class="journal-gold-badge">
+                        <span class="gold-icon">🪙</span>
+                        <span id="gold-val-puzzle">0</span>
+                    </div>
                     <span class="journal-ribbon" data-i18n="journalBtnText">📖 YAPBOZ GÜNLÜĞÜ</span>
                     <h2 id="journal-picture-title" class="modal-title">Pamuk Kedi 🐱</h2>
                 </div>
@@ -525,7 +524,7 @@
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./sw.js?v=7.0.0').then((reg) => {
+          navigator.serviceWorker.register('./sw.js?v=7.1.0').then((reg) => {
             reg.update();
 
             reg.addEventListener('updatefound', () => {
@@ -550,6 +549,11 @@
         });
       }
     </script>
-    <script src="game.js?v=7.0.0" defer></script>
+    <!-- Global Toast Notification (Z-Index 999999 - Above ALL Modals) -->
+    <div id="toast-msg" class="toast-msg hidden">
+        <span id="toast-text">Yetersiz Altın!</span>
+    </div>
+
+    <script src="game.js?v=7.1.0" defer></script>
 </body>
 </html>
