@@ -104,8 +104,9 @@ body {
 
 .menu-overlay.hidden {
     opacity: 0;
-    transform: scale(1.05);
     pointer-events: none;
+    visibility: hidden;
+    display: none !important;
 }
 
 /* Rich Floating Background Character Cards (16 Characters Grid Layer) */

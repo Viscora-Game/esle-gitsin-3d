@@ -1743,10 +1743,61 @@ class TileMatchingGame {
         }
     }
 
+    setupPageVisibilityManager() {
+        const handleVisibility = () => {
+            if (document.hidden) {
+                this.pauseAppAudio();
+            } else {
+                this.resumeAppAudio();
+            }
+        };
+
+        document.addEventListener('visibilitychange', handleVisibility);
+        window.addEventListener('blur', () => this.pauseAppAudio());
+        window.addEventListener('focus', () => this.resumeAppAudio());
+        window.addEventListener('pagehide', () => this.pauseAppAudio());
+        window.addEventListener('pageshow', () => this.resumeAppAudio());
+
+        const requestFullscreenIfPossible = () => {
+            try {
+                if (!document.fullscreenElement) {
+                    const el = document.documentElement;
+                    if (el.requestFullscreen) el.requestFullscreen().catch(() => {});
+                    else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen().catch(() => {});
+                }
+            } catch (e) {}
+        };
+        document.addEventListener('pointerdown', requestFullscreenIfPossible, { once: true });
+        document.addEventListener('touchstart', requestFullscreenIfPossible, { once: true });
+    }
+
+    pauseAppAudio() {
+        this.isAppPaused = true;
+        if (this.bgMusic && !this.bgMusic.paused) {
+            this.bgMusic.pause();
+            this.wasMusicPlayingBeforePause = true;
+        }
+        if (this.sound && this.sound.ctx && this.sound.ctx.state === 'running') {
+            this.sound.ctx.suspend().catch(() => {});
+        }
+    }
+
+    resumeAppAudio() {
+        this.isAppPaused = false;
+        if (this.wasMusicPlayingBeforePause && this.bgMusic && !this.isMuted) {
+            this.bgMusic.play().catch(() => {});
+            this.wasMusicPlayingBeforePause = false;
+        }
+        if (this.sound && this.sound.ctx && this.sound.ctx.state === 'suspended') {
+            this.sound.ctx.resume().catch(() => {});
+        }
+    }
+
     initUI() {
         this.preloadAllTileImages();
         this.updateMainMenuButtons();
         this.startWheelTimerLoop();
+        this.setupPageVisibilityManager();
 
         // TUTORIAL EVENTS
         document.getElementById('btn-close-tutorial').addEventListener('click', () => {
