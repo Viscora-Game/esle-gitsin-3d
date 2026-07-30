@@ -4520,10 +4520,15 @@ class TileMatchingGame {
             return;
         }
 
-        // Official Production & Test AdMob Integration Credentials
+        // Official Production & Test AdMob Integration Credentials (All 6 Ad Units Mapped)
         window.admobConfig = {
             appId: "ca-app-pub-5810332619798187~2097711537",
-            rewardedAdUnitId: "ca-app-pub-5810332619798187/5186661887"
+            bannerAdUnitId: "ca-app-pub-5810332619798187/5186661887",
+            interstitialAdUnitId: "ca-app-pub-5810332619798187/7152535583",
+            rewardedChestAdUnitId: "ca-app-pub-5810332619798187/8395847375",
+            rewardedSlotShuffleAdUnitId: "ca-app-pub-5810332619798187/5769684031",
+            rewardedWheelAdUnitId: "ca-app-pub-5810332619798187/4526372248",
+            rewardedInterstitialAdUnitId: "ca-app-pub-5810332619798187/1151782174"
         };
 
         // Check for Native Android / Web AdMob Bridge
