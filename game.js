@@ -2698,8 +2698,8 @@ class TileMatchingGame {
             if (badgeTimer) badgeTimer.classList.remove('hidden');
             const totalTiles = this.boardTiles.length;
             const totalPairs = Math.ceil(totalTiles / 2);
-            // Tile-Based Math Formula: 2.5 seconds per pair + 15 seconds base scanning buffer
-            const calculatedSecs = Math.round((totalPairs * 2.5) + 15);
+            // Tile-Based Math Formula: 2.0 seconds per pair + 15 seconds base scanning buffer
+            const calculatedSecs = Math.round((totalPairs * 2) + 15);
             this.remainingSeconds = Math.max(30, calculatedSecs);
             this.startTimer();
         } else {
@@ -3432,7 +3432,7 @@ class TileMatchingGame {
         }
 
         if (this.currentMode === 'timetrial') {
-            this.remainingSeconds += 2;
+            this.remainingSeconds += 1;
             const timerVal = document.getElementById('timer-val');
             if (timerVal) timerVal.innerText = `${this.remainingSeconds}s`;
         }
