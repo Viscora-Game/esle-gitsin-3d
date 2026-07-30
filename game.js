@@ -4576,13 +4576,13 @@ class TileMatchingGame {
 }
 
 
-// Initialize Game on DOM Load with Global Error Safety Net
-window.addEventListener('DOMContentLoaded', () => {
+// Initialize Game Engine Immediately (Handles DOM Ready State & Deferred Script Loader)
+function bootGameEngine() {
+    if (window.gameInstance) return;
     try {
         window.gameInstance = new TileMatchingGame();
     } catch (e) {
         console.error('[EsleGitsin3D] CRITICAL: Game init failed:', e);
-        // Emergency: force main menu visible and interactive
         const mainMenu = document.getElementById('main-menu');
         if (mainMenu) {
             mainMenu.classList.remove('hidden');
@@ -4595,7 +4595,14 @@ window.addEventListener('DOMContentLoaded', () => {
             el.style.display = 'none';
         });
     }
-});
+}
+
+if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    setTimeout(bootGameEngine, 1);
+} else {
+    window.addEventListener('DOMContentLoaded', bootGameEngine);
+}
+window.addEventListener('load', bootGameEngine);
 
 // Global uncaught error safety net - never let screen freeze
 window.addEventListener('error', (e) => {
