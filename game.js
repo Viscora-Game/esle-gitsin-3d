@@ -423,6 +423,94 @@ class ParticleFX {
     }
 }
 
+/**
+ * Pure WebAudio Background Music Player
+ * Plays looping BGM via WebAudio AudioBufferSourceNode instead of HTML5 Audio elements.
+ * Completely suppresses Android System Media Notifications (YouTube-style scrub bar / notification cards).
+ */
+class WebAudioBGMPlayer {
+    constructor(soundSynth) {
+        this.synth = soundSynth;
+        this.currentTrackPath = null;
+        this.bufferMap = {};
+        this.source = null;
+        this.gainNode = null;
+        this.volume = 0.3;
+        this.isPlaying = false;
+    }
+
+    async loadTrackBuffer(trackPath) {
+        if (this.bufferMap[trackPath]) {
+            return this.bufferMap[trackPath];
+        }
+        try {
+            const res = await fetch(trackPath);
+            const arrayBuf = await res.arrayBuffer();
+            this.synth.init();
+            if (!this.synth.ctx) return null;
+            const decoded = await this.synth.ctx.decodeAudioData(arrayBuf);
+            this.bufferMap[trackPath] = decoded;
+            return decoded;
+        } catch (e) {
+            return null;
+        }
+    }
+
+    async play(trackPath, volPct = 30) {
+        this.stop();
+        this.currentTrackPath = trackPath;
+        this.volume = Math.max(0, Math.min(1, volPct / 100)) * 0.35;
+
+        if (this.volume <= 0) return;
+
+        this.synth.init();
+        const ctx = this.synth.ctx;
+        if (!ctx) return;
+
+        if (ctx.state === 'suspended') {
+            try { await ctx.resume(); } catch (e) {}
+        }
+
+        const buf = await this.loadTrackBuffer(trackPath);
+        if (!buf || this.currentTrackPath !== trackPath) return;
+
+        try {
+            this.source = ctx.createBufferSource();
+            this.source.buffer = buf;
+            this.source.loop = true;
+
+            this.gainNode = ctx.createGain();
+            this.gainNode.gain.value = this.volume;
+
+            this.source.connect(this.gainNode);
+            this.gainNode.connect(ctx.destination);
+
+            this.source.start(0);
+            this.isPlaying = true;
+        } catch (e) {}
+    }
+
+    setVolume(volPct) {
+        this.volume = Math.max(0, Math.min(1, volPct / 100)) * 0.35;
+        if (this.gainNode && this.synth && this.synth.ctx) {
+            try {
+                this.gainNode.gain.setValueAtTime(this.volume, this.synth.ctx.currentTime);
+            } catch (e) {}
+        }
+    }
+
+    stop() {
+        if (this.source) {
+            try {
+                this.source.stop(0);
+                this.source.disconnect();
+            } catch (e) {}
+            this.source = null;
+        }
+        this.isPlaying = false;
+    }
+}
+
 class TileMatchingGame {
         getLocalizedPuzzleName(puzzleId) {
         const dict = this.i18n[this.settings.lang] || this.i18n.tr;
@@ -1781,10 +1869,6 @@ class TileMatchingGame {
 
     pauseAppAudio() {
         this.isAppPaused = true;
-        if (this.bgMusic && !this.bgMusic.paused) {
-            this.bgMusic.pause();
-            this.wasMusicPlayingBeforePause = true;
-        }
         if (this.sound && this.sound.ctx && this.sound.ctx.state === 'running') {
             this.sound.ctx.suspend().catch(() => {});
         }
@@ -1792,10 +1876,6 @@ class TileMatchingGame {
 
     resumeAppAudio() {
         this.isAppPaused = false;
-        if (this.wasMusicPlayingBeforePause && this.bgMusic && !this.isMuted) {
-            this.bgMusic.play().catch(() => {});
-            this.wasMusicPlayingBeforePause = false;
-        }
         if (this.sound && this.sound.ctx && this.sound.ctx.state === 'suspended') {
             this.sound.ctx.resume().catch(() => {});
         }
@@ -2357,57 +2437,35 @@ class TileMatchingGame {
         this.saveSettings();
 
         const newPath = this.getBGMTrackPath();
-        if (this.bgMusic) {
-            this.bgMusic.pause();
+        const mVol = (typeof this.settings.musicVolume === 'number') ? this.settings.musicVolume : 30;
+        if (!this.bgmPlayer) {
+            this.bgmPlayer = new WebAudioBGMPlayer(this.sound);
         }
-        this.bgMusic = new Audio(newPath);
-        this.bgMusic.loop = true;
+        this.bgmPlayer.play(newPath, mVol);
         this.updateMusicUI();
-    }
-
-    disableMediaSessionNotification() {
-        try {
-            if ('mediaSession' in navigator) {
-                navigator.mediaSession.metadata = null;
-                navigator.mediaSession.playbackState = 'none';
-                const actions = ['play', 'pause', 'seekbackward', 'seekforward', 'previoustrack', 'nexttrack', 'stop', 'seekto'];
-                actions.forEach(act => {
-                    try { navigator.mediaSession.setActionHandler(act, null); } catch (e) {}
-                });
-            }
-        } catch (e) {}
     }
 
     initBackgroundMusic() {
         try {
-            this.disableMediaSessionNotification();
-            const trackPath = this.getBGMTrackPath();
-            if (!this.bgMusic) {
-                this.bgMusic = new Audio(trackPath);
-                this.bgMusic.loop = true;
+            if (!this.bgmPlayer) {
+                this.bgmPlayer = new WebAudioBGMPlayer(this.sound);
             }
-
+            const trackPath = this.getBGMTrackPath();
             const mVol = (typeof this.settings.musicVolume === 'number') ? this.settings.musicVolume : 30;
             if (mVol > 0) {
-                const playPromise = this.bgMusic.play();
-                if (playPromise !== undefined) {
-                    playPromise.catch(() => {
-                        const unlockMusic = () => {
-                            this.disableMediaSessionNotification();
-                            const curMVol = (typeof this.settings.musicVolume === 'number') ? this.settings.musicVolume : 30;
-                            if (curMVol > 0 && this.bgMusic && this.bgMusic.paused) {
-                                this.bgMusic.play().catch(() => {});
-                                this.disableMediaSessionNotification();
-                            }
-                            window.removeEventListener('pointerdown', unlockMusic);
-                            window.removeEventListener('touchstart', unlockMusic);
-                            window.removeEventListener('click', unlockMusic);
-                        };
-                        window.addEventListener('pointerdown', unlockMusic, { passive: true, once: true });
-                        window.addEventListener('touchstart', unlockMusic, { passive: true, once: true });
-                        window.addEventListener('click', unlockMusic, { passive: true, once: true });
-                    });
-                }
+                this.bgmPlayer.play(trackPath, mVol);
+                const unlockMusic = () => {
+                    const curMVol = (typeof this.settings.musicVolume === 'number') ? this.settings.musicVolume : 30;
+                    if (curMVol > 0 && this.bgmPlayer && !this.bgmPlayer.isPlaying) {
+                        this.bgmPlayer.play(trackPath, curMVol);
+                    }
+                    window.removeEventListener('pointerdown', unlockMusic);
+                    window.removeEventListener('touchstart', unlockMusic);
+                    window.removeEventListener('click', unlockMusic);
+                };
+                window.addEventListener('pointerdown', unlockMusic, { passive: true, once: true });
+                window.addEventListener('touchstart', unlockMusic, { passive: true, once: true });
+                window.addEventListener('click', unlockMusic, { passive: true, once: true });
             }
             this.updateMusicUI();
         } catch (e) {}
@@ -2418,22 +2476,15 @@ class TileMatchingGame {
         const txtMusicVal = document.getElementById('music-val-text');
         const mVol = (typeof this.settings.musicVolume === 'number') ? this.settings.musicVolume : 30;
 
+        if (this.bgmPlayer) {
+            this.bgmPlayer.setVolume(mVol);
+        }
+
         if (sliderMusic && document.activeElement !== sliderMusic) {
             sliderMusic.value = mVol;
         }
         if (txtMusicVal) {
             txtMusicVal.innerText = `${mVol}%`;
-        }
-
-        if (this.bgMusic) {
-            // Clear, audible volume scaling (0.25 max volume at 100% slider, 0.075 at 30% default slider)
-            const targetVol = (mVol / 100) * 0.25;
-            this.bgMusic.volume = targetVol;
-            if (mVol > 0) {
-                if (this.bgMusic.paused) this.bgMusic.play().catch(() => {});
-            } else {
-                this.bgMusic.pause();
-            }
         }
     }
 
