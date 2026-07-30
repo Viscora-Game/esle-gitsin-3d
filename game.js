@@ -2685,6 +2685,18 @@ class TileMatchingGame {
         }
 
         this.updateLockStates();
+
+        const badgeTimer = document.getElementById('badge-timer');
+        if (this.currentMode === 'timetrial') {
+            if (badgeTimer) badgeTimer.classList.remove('hidden');
+            const baseSecs = 60;
+            const extraSecs = Math.floor((this.level - 1) / 5) * 5;
+            this.remainingSeconds = Math.min(120, baseSecs + extraSecs);
+            this.startTimer();
+        } else {
+            if (badgeTimer) badgeTimer.classList.add('hidden');
+            this.stopTimer();
+        }
     }
 
     stopTimer() {
@@ -2707,23 +2719,22 @@ class TileMatchingGame {
 
             if (this.remainingSeconds <= 0) {
                 this.stopTimer();
-                const dict = this.i18n[this.settings.lang];
-                document.getElementById('defeat-icon').innerText = '⏰';
-                document.getElementById('defeat-title').innerText = dict.defeatTitle;
-                document.getElementById('defeat-desc').innerText = dict.defeatDesc;
-                document.getElementById('modal-gameover').classList.remove('hidden');
-            const btnAdRevive = document.getElementById('btn-ad-revive');
-            if (btnAdRevive) {
-                const count = this.levelAdReviveCount || 0;
-                const remaining = Math.max(0, 2 - count);
                 const dict = this.i18n[this.settings.lang] || this.i18n.tr;
-                if (remaining > 0) {
-                    btnAdRevive.style.display = 'block';
-                    btnAdRevive.querySelector('span').innerText = `📺 ${dict.adReviveBtn || 'REKLAM İZLE & DEVAM ET'} (${remaining}/2 HAK)`;
-                } else {
-                    btnAdRevive.style.display = 'none';
+                document.getElementById('defeat-icon').innerText = '⏰';
+                document.getElementById('defeat-title').innerText = dict.timeUpTitle || 'SÜRE BİTTİ!';
+                document.getElementById('defeat-desc').innerText = dict.timeUpDesc || 'Zamana karşı yarışta süre doldu!';
+                document.getElementById('modal-gameover').classList.remove('hidden');
+                const btnAdRevive = document.getElementById('btn-ad-revive');
+                if (btnAdRevive) {
+                    const count = this.levelAdReviveCount || 0;
+                    const remaining = Math.max(0, 2 - count);
+                    if (remaining > 0) {
+                        btnAdRevive.style.display = 'block';
+                        btnAdRevive.querySelector('span').innerText = `📺 ${dict.adReviveBtn || 'REKLAM İZLE & DEVAM ET'} (${remaining}/2 HAK)`;
+                    } else {
+                        btnAdRevive.style.display = 'none';
+                    }
                 }
-            }
             }
         }, 1000);
     }
