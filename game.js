@@ -457,11 +457,17 @@ class WebAudioBGMPlayer {
     }
 
     async play(trackPath, volPct = 30) {
-        this.stop();
+        if (this.isPlaying && this.currentTrackPath === trackPath) {
+            this.setVolume(volPct);
+            return;
+        }
         this.currentTrackPath = trackPath;
         this.volume = Math.max(0, Math.min(1, volPct / 100)) * 0.35;
 
-        if (this.volume <= 0) return;
+        if (this.volume <= 0) {
+            this.stop();
+            return;
+        }
 
         this.synth.init();
         const ctx = this.synth.ctx;
@@ -475,6 +481,7 @@ class WebAudioBGMPlayer {
         if (!buf || this.currentTrackPath !== trackPath) return;
 
         try {
+            this.stop();
             this.source = ctx.createBufferSource();
             this.source.buffer = buf;
             this.source.loop = true;
