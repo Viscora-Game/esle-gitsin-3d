@@ -2696,9 +2696,11 @@ class TileMatchingGame {
         const badgeTimer = document.getElementById('badge-timer');
         if (this.currentMode === 'timetrial') {
             if (badgeTimer) badgeTimer.classList.remove('hidden');
-            const baseSecs = 60;
-            const extraSecs = Math.floor((this.level - 1) / 5) * 5;
-            this.remainingSeconds = Math.min(120, baseSecs + extraSecs);
+            const totalTiles = this.boardTiles.length;
+            const totalPairs = Math.ceil(totalTiles / 2);
+            // Tile-Based Math Formula: 2.5 seconds per pair + 15 seconds base scanning buffer
+            const calculatedSecs = Math.round((totalPairs * 2.5) + 15);
+            this.remainingSeconds = Math.max(30, calculatedSecs);
             this.startTimer();
         } else {
             if (badgeTimer) badgeTimer.classList.add('hidden');
@@ -3427,6 +3429,12 @@ class TileMatchingGame {
             else if (this.comboCount >= 5) title = dict.combo5x || '🌈 EFSANEVİ EŞLEŞME!';
             
             this.showComboBadge(`${title} (+${points})`);
+        }
+
+        if (this.currentMode === 'timetrial') {
+            this.remainingSeconds += 2;
+            const timerVal = document.getElementById('timer-val');
+            if (timerVal) timerVal.innerText = `${this.remainingSeconds}s`;
         }
 
         this.sound.playMatchSound(this.comboCount);
