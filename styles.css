@@ -41,16 +41,37 @@ img, canvas, svg {
     box-shadow: 0 0 20px rgba(239, 68, 68, 0.9) !important;
 }
 
+html {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    touch-action: none !important;
+    -ms-touch-action: none !important;
+    overscroll-behavior: none !important;
+    overscroll-behavior-y: none !important;
+    -webkit-text-size-adjust: 100%;
+}
+
 body {
     font-family: 'Fredoka', 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif;
     background-color: var(--bg-main);
     color: #f8fafc;
-    height: 100vh;
-    width: 100vw;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
     overflow: hidden;
+    touch-action: none !important;
+    -ms-touch-action: none !important;
+    overscroll-behavior: none !important;
+    overscroll-behavior-y: none !important;
 }
 
 #app-wrapper {
@@ -59,6 +80,8 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    touch-action: none !important;
+    overscroll-behavior: none !important;
 }
 
 /* Mobile 1080x1920 Screen Container with Ultra-Stable Gradient Background */
@@ -72,6 +95,8 @@ body {
     overflow: hidden;
     border-radius: 0;
     contain: layout style;
+    touch-action: none !important;
+    overscroll-behavior: none !important;
 }
 
 /* Canvas Particle & Confetti Layer */

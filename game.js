@@ -448,20 +448,23 @@ class TileMatchingGame {
         }
     }
 
+    updateResponsiveCardSizing() {
+        try {
+            const screenW = Math.min(window.innerWidth || 380, document.documentElement.clientWidth || 380);
+            const scaleFactor = Math.min(1, Math.max(0.62, screenW / 400));
+            this.cardW = Math.round(70 * scaleFactor);
+            this.cardH = Math.round(90 * scaleFactor);
+            document.documentElement.style.setProperty('--card-w', this.cardW + 'px');
+            document.documentElement.style.setProperty('--card-h', this.cardH + 'px');
+            const trayW = Math.round((this.cardW + 14) * 5 + 28);
+            document.documentElement.style.setProperty('--tray-w', trayW + 'px');
+            document.documentElement.style.setProperty('--tray-h', (this.cardH + 20) + 'px');
+        } catch (e) {}
+    }
+
     constructor() {
         try {
-        // Responsive Card Sizing - adapt to screen width
-        const screenW = window.innerWidth || 380;
-        const scaleFactor = Math.min(1, screenW / 400);
-        this.cardW = Math.round(70 * scaleFactor);
-        this.cardH = Math.round(90 * scaleFactor);
-        // Update CSS custom properties for responsive cards
-        document.documentElement.style.setProperty('--card-w', this.cardW + 'px');
-        document.documentElement.style.setProperty('--card-h', this.cardH + 'px');
-        // Also update tray width to fit cards
-        const trayW = Math.round((this.cardW + 14) * 5 + 28);
-        document.documentElement.style.setProperty('--tray-w', trayW + 'px');
-        document.documentElement.style.setProperty('--tray-h', (this.cardH + 20) + 'px');
+        this.updateResponsiveCardSizing();
 
         this.maxSlotCapacity = 5;
         this.hasTemporaryExtraSlot = false;
@@ -1804,6 +1807,44 @@ class TileMatchingGame {
         this.startWheelTimerLoop();
         this.setupPageVisibilityManager();
 
+        // Anti-Zoom & Layout Recalculation Listeners
+        window.addEventListener('resize', () => {
+            this.updateResponsiveCardSizing();
+            this.rearrangeSlotTiles();
+        });
+        window.addEventListener('orientationchange', () => {
+            setTimeout(() => {
+                this.updateResponsiveCardSizing();
+                this.rearrangeSlotTiles();
+            }, 200);
+        });
+
+        // Block multi-touch pinch zoom & double-tap zoom 100%
+        document.addEventListener('touchstart', (e) => {
+            if (e.touches && e.touches.length > 1) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+
+        document.addEventListener('touchmove', (e) => {
+            if (e.touches && e.touches.length > 1) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+
+        let lastTouchEnd = 0;
+        document.addEventListener('touchend', (e) => {
+            const now = Date.now();
+            if (now - lastTouchEnd <= 300) {
+                e.preventDefault();
+            }
+            lastTouchEnd = now;
+        }, false);
+
+        document.addEventListener('gesturestart', (e) => e.preventDefault(), { passive: false });
+        document.addEventListener('gesturechange', (e) => e.preventDefault(), { passive: false });
+        document.addEventListener('gestureend', (e) => e.preventDefault(), { passive: false });
+
         // TUTORIAL EVENTS
         document.getElementById('btn-close-tutorial').addEventListener('click', () => {
             document.getElementById('modal-tutorial').classList.add('hidden');
@@ -3081,25 +3122,26 @@ class TileMatchingGame {
         const total = this.slotTiles.length;
         if (total === 0) return;
 
-        const trayBg = document.getElementById('slot-tray-bg');
+        const layerEl = document.getElementById('slot-tiles-layer');
         const markers = document.querySelectorAll('.slot-marker');
-        let trayRect = null;
-        if (trayBg && trayBg.getBoundingClientRect) {
-            trayRect = trayBg.getBoundingClientRect();
+        let layerRect = null;
+        if (layerEl && layerEl.getBoundingClientRect) {
+            layerRect = layerEl.getBoundingClientRect();
         }
 
-        const fallbackSpacing = 82;
-        const fallbackStartX = 7;
+        const cardW = this.cardW || 68;
+        const fallbackSpacing = cardW + 14;
+        const fallbackStartX = 14;
 
         for (let i = 0; i < total; i++) {
             const tile = this.slotTiles[i];
 
             if (i < 5) {
                 let targetX, targetY;
-                if (trayRect && markers[i] && markers[i].getBoundingClientRect) {
+                if (layerRect && markers[i] && markers[i].getBoundingClientRect) {
                     const mRect = markers[i].getBoundingClientRect();
-                    targetX = mRect.left - trayRect.left;
-                    targetY = mRect.top - trayRect.top;
+                    targetX = mRect.left - layerRect.left;
+                    targetY = mRect.top - layerRect.top;
                 } else {
                     targetX = fallbackStartX + (i * fallbackSpacing);
                     targetY = 10;
@@ -3111,13 +3153,13 @@ class TileMatchingGame {
                 tile.element.style.zIndex = 200 + i;
             } else {
                 let centerX, centerY;
-                if (trayRect && markers[2] && markers[2].getBoundingClientRect) {
+                if (layerRect && markers[2] && markers[2].getBoundingClientRect) {
                     const mRect = markers[2].getBoundingClientRect();
-                    centerX = mRect.left - trayRect.left;
-                    centerY = (mRect.top - trayRect.top) - 105;
+                    centerX = mRect.left - layerRect.left;
+                    centerY = (mRect.top - layerRect.top) - (this.cardH + 15);
                 } else {
                     centerX = fallbackStartX + (2 * fallbackSpacing);
-                    centerY = 10 - 105;
+                    centerY = 10 - (this.cardH + 15);
                 }
 
                 this.extraSlotWasUsed = true;
