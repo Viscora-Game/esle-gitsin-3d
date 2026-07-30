@@ -4520,7 +4520,24 @@ class TileMatchingGame {
             return;
         }
 
-        // Web Preview / Browser Testing Simulated Rewarded Ad Player (3-Second Interactive Demo)
+        // Official Production & Test AdMob Integration Credentials
+        window.admobConfig = {
+            appId: "ca-app-pub-5810332619798187~2097711537",
+            rewardedAdUnitId: "ca-app-pub-5810332619798187/5186661887"
+        };
+
+        // Check for Native Android / Web AdMob Bridge
+        if (window.AndroidAdMob && window.AndroidAdMob.showRewardedAd) {
+            try {
+                window.AndroidAdMob.showRewardedAd(window.admobConfig.rewardedAdUnitId);
+                window.onAdMobRewardSuccess = () => {
+                    if (onSuccess) onSuccess();
+                };
+                return;
+            } catch (e) {}
+        }
+
+        // Web Preview / Browser Testing Rewarded Ad Player
         const adModal = document.getElementById('modal-ad-player');
         const progressBar = document.getElementById('ad-progress-fill');
         const timerText = document.getElementById('ad-timer-countdown');
