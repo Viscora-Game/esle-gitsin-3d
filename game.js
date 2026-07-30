@@ -2365,8 +2365,22 @@ class TileMatchingGame {
         this.updateMusicUI();
     }
 
+    disableMediaSessionNotification() {
+        try {
+            if ('mediaSession' in navigator) {
+                navigator.mediaSession.metadata = null;
+                navigator.mediaSession.playbackState = 'none';
+                const actions = ['play', 'pause', 'seekbackward', 'seekforward', 'previoustrack', 'nexttrack', 'stop', 'seekto'];
+                actions.forEach(act => {
+                    try { navigator.mediaSession.setActionHandler(act, null); } catch (e) {}
+                });
+            }
+        } catch (e) {}
+    }
+
     initBackgroundMusic() {
         try {
+            this.disableMediaSessionNotification();
             const trackPath = this.getBGMTrackPath();
             if (!this.bgMusic) {
                 this.bgMusic = new Audio(trackPath);
@@ -2379,9 +2393,11 @@ class TileMatchingGame {
                 if (playPromise !== undefined) {
                     playPromise.catch(() => {
                         const unlockMusic = () => {
+                            this.disableMediaSessionNotification();
                             const curMVol = (typeof this.settings.musicVolume === 'number') ? this.settings.musicVolume : 30;
                             if (curMVol > 0 && this.bgMusic && this.bgMusic.paused) {
                                 this.bgMusic.play().catch(() => {});
+                                this.disableMediaSessionNotification();
                             }
                             window.removeEventListener('pointerdown', unlockMusic);
                             window.removeEventListener('touchstart', unlockMusic);
