@@ -546,14 +546,19 @@ class TileMatchingGame {
     updateResponsiveCardSizing() {
         try {
             const screenW = Math.min(window.innerWidth || 380, document.documentElement.clientWidth || 380);
-            const scaleFactor = Math.min(1, Math.max(0.62, screenW / 400));
-            this.cardW = Math.round(70 * scaleFactor);
-            this.cardH = Math.round(90 * scaleFactor);
+            const screenH = Math.min(window.innerHeight || 600, document.documentElement.clientHeight || 600);
+            
+            const widthScale = screenW / 410;
+            const heightScale = screenH / 740;
+            const scaleFactor = Math.min(1, Math.max(0.58, Math.min(widthScale, heightScale)));
+
+            this.cardW = Math.round(68 * scaleFactor);
+            this.cardH = Math.round(88 * scaleFactor);
             document.documentElement.style.setProperty('--card-w', this.cardW + 'px');
             document.documentElement.style.setProperty('--card-h', this.cardH + 'px');
-            const trayW = Math.round((this.cardW + 14) * 5 + 28);
+            const trayW = Math.round((this.cardW + 12) * 5 + 24);
             document.documentElement.style.setProperty('--tray-w', trayW + 'px');
-            document.documentElement.style.setProperty('--tray-h', (this.cardH + 20) + 'px');
+            document.documentElement.style.setProperty('--tray-h', (this.cardH + 18) + 'px');
         } catch (e) {}
     }
 
@@ -3217,36 +3222,49 @@ class TileMatchingGame {
         }
 
         const cardW = this.cardW || 68;
-        const fallbackSpacing = cardW + 14;
-        const fallbackStartX = 14;
+        const fallbackSpacing = cardW + 12;
+        const fallbackStartX = 12;
 
         for (let i = 0; i < total; i++) {
             const tile = this.slotTiles[i];
+            if (!tile || !tile.element) continue;
 
             if (i < 5) {
-                let targetX, targetY;
+                let targetX, targetY, targetW, targetH;
                 if (layerRect && markers[i] && markers[i].getBoundingClientRect) {
                     const mRect = markers[i].getBoundingClientRect();
-                    targetX = mRect.left - layerRect.left;
-                    targetY = mRect.top - layerRect.top;
+                    targetX = Math.round(mRect.left - layerRect.left);
+                    targetY = Math.round(mRect.top - layerRect.top);
+                    targetW = Math.round(mRect.width);
+                    targetH = Math.round(mRect.height);
                 } else {
                     targetX = fallbackStartX + (i * fallbackSpacing);
                     targetY = 10;
+                    targetW = cardW;
+                    targetH = this.cardH || 88;
                 }
 
                 tile.element.style.transition = 'all 0.18s cubic-bezier(0.34, 1.56, 0.64, 1)';
                 tile.element.style.left = `${targetX}px`;
                 tile.element.style.top = `${targetY}px`;
+                if (targetW > 0 && targetH > 0) {
+                    tile.element.style.width = `${targetW}px`;
+                    tile.element.style.height = `${targetH}px`;
+                }
                 tile.element.style.zIndex = 200 + i;
             } else {
-                let centerX, centerY;
+                let centerX, centerY, targetW, targetH;
                 if (layerRect && markers[2] && markers[2].getBoundingClientRect) {
                     const mRect = markers[2].getBoundingClientRect();
-                    centerX = mRect.left - layerRect.left;
-                    centerY = (mRect.top - layerRect.top) - (this.cardH + 15);
+                    centerX = Math.round(mRect.left - layerRect.left);
+                    centerY = Math.round((mRect.top - layerRect.top) - (mRect.height + 15));
+                    targetW = Math.round(mRect.width);
+                    targetH = Math.round(mRect.height);
                 } else {
                     centerX = fallbackStartX + (2 * fallbackSpacing);
-                    centerY = 10 - (this.cardH + 15);
+                    centerY = 10 - ((this.cardH || 88) + 15);
+                    targetW = cardW;
+                    targetH = this.cardH || 88;
                 }
 
                 this.extraSlotWasUsed = true;
@@ -3254,6 +3272,10 @@ class TileMatchingGame {
                 tile.element.style.transition = 'all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1)';
                 tile.element.style.left = `${centerX}px`;
                 tile.element.style.top = `${centerY}px`;
+                if (targetW > 0 && targetH > 0) {
+                    tile.element.style.width = `${targetW}px`;
+                    tile.element.style.height = `${targetH}px`;
+                }
                 tile.element.style.zIndex = 600;
             }
         }
@@ -3283,6 +3305,8 @@ class TileMatchingGame {
                 tile.element.style.transition = 'all 0.35s cubic-bezier(0.34, 1.56, 0.64, 1)';
                 tile.element.style.left = `${tile.x}px`;
                 tile.element.style.top = `${tile.y}px`;
+                tile.element.style.width = `${this.cardW}px`;
+                tile.element.style.height = `${this.cardH}px`;
                 tile.element.style.zIndex = tile.z || 10;
             }
         });
