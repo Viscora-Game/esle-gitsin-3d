@@ -20,8 +20,8 @@
     "path": "../pwabuilder_package/signing.keystore",
     "alias": "my-key-alias"
   },
-  "appVersionName": "8.3.0",
-  "appVersionCode": 26,
+  "appVersionName": "8.4.0",
+  "appVersionCode": 27,
   "shortcuts": [],
   "generatorApp": "bubblewrap-cli",
   "webManifestUrl": "https://viscora-game.github.io/esle-gitsin-3d/manifest.json",
