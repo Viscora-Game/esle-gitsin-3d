@@ -16,6 +16,9 @@
 package com.viscoragame.eslegitsin3d;
 
 import android.content.pm.ActivityInfo;
+import android.graphics.Color;
+import android.graphics.PixelFormat;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -28,6 +31,15 @@ public class LauncherActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Set pitch dark background on Window & DecorView IMMEDIATELY to bypass white clear frame!
+        if (getWindow() != null) {
+            getWindow().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#03050a")));
+            if (getWindow().getDecorView() != null) {
+                getWindow().getDecorView().setBackgroundColor(Color.parseColor("#03050a"));
+            }
+            getWindow().setFormat(PixelFormat.OPAQUE);
+        }
+
         super.onCreate(savedInstanceState);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);

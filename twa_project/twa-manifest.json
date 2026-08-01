@@ -15,13 +15,13 @@
   "startUrl": "/esle-gitsin-3d/index.html",
   "iconUrl": "https://viscora-game.github.io/esle-gitsin-3d/icons/app-icon-512.png",
   "maskableIconUrl": "https://viscora-game.github.io/esle-gitsin-3d/icons/app-maskable-512.png",
-  "splashScreenFadeOutDuration": 300,
+  "splashScreenFadeOutDuration": 0,
   "signingKey": {
     "path": "../pwabuilder_package/signing.keystore",
     "alias": "my-key-alias"
   },
-  "appVersionName": "8.7.0",
-  "appVersionCode": 30,
+  "appVersionName": "8.8.0",
+  "appVersionCode": 31,
   "shortcuts": [],
   "generatorApp": "bubblewrap-cli",
   "webManifestUrl": "https://viscora-game.github.io/esle-gitsin-3d/manifest.json",
