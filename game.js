@@ -1893,34 +1893,59 @@ class TileMatchingGame {
         }
     }
 
-    playCyberCoreIntro() {
+    setupStudioIntro() {
         const introStage = document.getElementById('cybercore-intro-stage');
         if (!introStage) return;
 
-        try {
-            const audio = new Audio('audio/cybercore_sound_2_hollywood.wav');
-            audio.volume = 0.85;
-            audio.play().catch(e => console.warn('Intro audio notice:', e));
-        } catch (e) {}
+        this.introActive = true;
 
-        let isDismissed = false;
+        let audioPlayed = false;
+        const playChime = () => {
+            if (audioPlayed) return;
+            audioPlayed = true;
+            try {
+                const audioEl = document.getElementById('cybercore-intro-audio');
+                if (audioEl) {
+                    audioEl.currentTime = 0;
+                    audioEl.volume = 1.0;
+                    audioEl.play().catch(() => {
+                        const fallback = new Audio('audio/cybercore_sound_2_hollywood.wav');
+                        fallback.volume = 1.0;
+                        fallback.play().catch(() => {});
+                    });
+                } else {
+                    const fallback = new Audio('audio/cybercore_sound_2_hollywood.wav');
+                    fallback.volume = 1.0;
+                    fallback.play().catch(() => {});
+                }
+            } catch (e) {
+                console.warn('Intro audio notice:', e);
+            }
+        };
+
+        // Play Hollywood intro chime on exact visual paint of intro stage (never before screen appears!)
+        requestAnimationFrame(() => {
+            playChime();
+        });
+
         const dismiss = () => {
-            if (isDismissed) return;
-            isDismissed = true;
-            introStage.classList.add('fade-out');
+            if (!this.introActive) return;
+            introStage.classList.add('intro-hidden');
             setTimeout(() => {
                 introStage.style.display = 'none';
-            }, 500);
+                this.introActive = false;
+            }, 600);
         };
 
         introStage.addEventListener('click', dismiss, { once: true });
         introStage.addEventListener('touchstart', dismiss, { once: true });
 
+        // Smooth cinematic presentation matching Maze of Fear (2200ms)
         setTimeout(dismiss, 2200);
     }
 
     initUI() {
-        this.playCyberCoreIntro();
+        this.setupStudioIntro();
         this.preloadAllTileImages();
         this.updateMainMenuButtons();
         this.startWheelTimerLoop();
