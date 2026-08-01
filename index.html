@@ -33,13 +33,46 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=34">
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700;900&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css?v=35">
 </head>
 <body oncontextmenu="return false;" onselectstart="return false;" ondragstart="return false;">
     <div id="app-wrapper">
         <!-- Main Game Container (1080x1920 Portrait Aspect Ratio) -->
         <div id="game-container">
+            <!-- CYBERCORE INTERACTIVE STUDIO INTRO STAGE -->
+            <div id="cybercore-intro-stage">
+                <div class="intro-grid"></div>
+                <div class="glow-aura"></div>
+                <div class="logo-box" id="logo-box">
+                    <svg class="vector-ci-logo" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="metalGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#ffffff" />
+                                <stop offset="30%" stop-color="#cbd5e1" />
+                                <stop offset="70%" stop-color="#64748b" />
+                                <stop offset="100%" stop-color="#334155" />
+                            </linearGradient>
+                            <linearGradient id="cyanGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#38bdf8" />
+                                <stop offset="100%" stop-color="#00f2fe" />
+                            </linearGradient>
+                            <filter id="neonGlow" x="-20%" y="-20%" width="140%" height="140%">
+                                <feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#00f2fe" flood-opacity="0.9"/>
+                            </filter>
+                        </defs>
+                        <path d="M 125 35 A 72 72 0 1 0 90 172 L 90 148 A 48 48 0 1 1 112 56 Z" fill="url(#metalGrad)" stroke="#00f2fe" stroke-width="1.5" filter="url(#neonGlow)" />
+                        <path d="M 134 26 L 160 48 L 144 65 L 122 46 Z" fill="url(#metalGrad)" stroke="#00f2fe" stroke-width="1.5" filter="url(#neonGlow)" />
+                        <rect x="94" y="78" width="22" height="66" rx="2" fill="url(#metalGrad)" stroke="#00f2fe" stroke-width="1.5" filter="url(#neonGlow)" />
+                        <rect x="94" y="50" width="22" height="20" rx="2" fill="url(#cyanGrad)" stroke="#ffffff" stroke-width="1" filter="drop-shadow(0 0 10px #00f2fe)" />
+                    </svg>
+                    <h1 class="brand-title">
+                        CYBERCORE
+                        <div class="light-sweep"></div>
+                    </h1>
+                    <div class="brand-subtitle">INTERACTIVE</div>
+                </div>
+            </div>
             <!-- SVG Jigsaw Piece ClipPath Definitions -->
             <svg width="0" height="0" style="position:absolute; pointer-events:none;">
                 <defs>
@@ -536,6 +569,6 @@
         <span id="toast-text">Yetersiz Altın!</span>
     </div>
 
-    <script src="game.js?v=8.4.0" defer></script>
+    <script src="game.js?v=8.5.0" defer></script>
 </body>
 </html>

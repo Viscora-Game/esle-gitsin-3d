@@ -1893,7 +1893,34 @@ class TileMatchingGame {
         }
     }
 
+    playCyberCoreIntro() {
+        const introStage = document.getElementById('cybercore-intro-stage');
+        if (!introStage) return;
+
+        try {
+            const audio = new Audio('audio/cybercore_sound_2_hollywood.wav');
+            audio.volume = 0.85;
+            audio.play().catch(e => console.warn('Intro audio notice:', e));
+        } catch (e) {}
+
+        let isDismissed = false;
+        const dismiss = () => {
+            if (isDismissed) return;
+            isDismissed = true;
+            introStage.classList.add('fade-out');
+            setTimeout(() => {
+                introStage.style.display = 'none';
+            }, 500);
+        };
+
+        introStage.addEventListener('click', dismiss, { once: true });
+        introStage.addEventListener('touchstart', dismiss, { once: true });
+
+        setTimeout(dismiss, 2200);
+    }
+
     initUI() {
+        this.playCyberCoreIntro();
         this.preloadAllTileImages();
         this.updateMainMenuButtons();
         this.startWheelTimerLoop();
