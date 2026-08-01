@@ -18,7 +18,7 @@
   
     <string-array name="additional_trusted_origins">
     
-      <item>https://https://viscora-game.github.io</item>
+      <item>https://viscora-game.github.io</item>
     
     </string-array>
   
@@ -43,14 +43,5 @@
             \"site\": \"https://viscora-game.github.io\"
         }
     }]
-    
-      ,[{
-          \"relation\": [\"delegate_permission/common.handle_all_urls\"],
-          \"target\": {
-              \"namespace\": \"web\",
-              \"site\": \"https://https://viscora-game.github.io\"
-          }
-      }]        
-    
   </string>  
 </resources>

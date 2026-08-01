@@ -141,6 +141,10 @@
 
             
 
+            <meta-data
+                android:name="android.support.customtabs.trusted.DISPLAY_MODE"
+                android:value="immersive"/>
+
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -152,20 +156,17 @@
                 <category android:name="android.intent.category.BROWSABLE"/>
                 <data android:scheme="https"
                     android:host="@string/hostName"
-                
                     android:pathPrefix="/esle-gitsin-3d/"
-                
                 />
             </intent-filter>
 
-            
-                <intent-filter android:autoVerify="true">
-                    <action android:name="android.intent.action.VIEW"/>
-                    <category android:name="android.intent.category.DEFAULT" />
-                    <category android:name="android.intent.category.BROWSABLE"/>
-                    <data android:scheme="https"
-                        android:host="https://viscora-game.github.io"/>
-                </intent-filter>
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE"/>
+                <data android:scheme="https"
+                    android:host="viscora-game.github.io"/>
+            </intent-filter>
             
 
             

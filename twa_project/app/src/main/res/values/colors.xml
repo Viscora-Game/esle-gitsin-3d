@@ -14,5 +14,12 @@
      limitations under the License.
 -->
 <resources>
-    <color name="shortcut_background">#F5F5F5</color>
+    <color name="shortcut_background">#03050a</color>
+    <color name="backgroundColor">#03050a</color>
+    <color name="colorPrimary">#03050a</color>
+    <color name="colorPrimaryDark">#03050a</color>
+    <color name="navigationColor">#03050a</color>
+    <color name="navigationColorDark">#03050a</color>
+    <color name="navigationDividerColor">#03050a</color>
+    <color name="navigationDividerColorDark">#03050a</color>
 </resources>
