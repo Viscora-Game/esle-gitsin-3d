@@ -3977,7 +3977,6 @@ class TileMatchingGame {
 
         const pageNumEl = document.getElementById('journal-page-num');
         if (pageNumEl) pageNumEl.innerText = `Sayfa ${activeIdx + 1} / ${this.puzzlesCatalog.length}`;
-        const placedPieces = this.placedPuzzlePieces[activePuzzle.id] || [];
         const isCompleted = placedPieces.length === 12;
 
         const badge = document.getElementById('puzzle-completed-badge');
