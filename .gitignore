@@ -3,8 +3,14 @@
 Thumbs.db
 *.log
 
+# Build & Gradle Directories
+build/
+**/build/
+.gradle/
+
 # PWABuilder Packages & Local Releases
 pwabuilder_package/
 *.keystore
 *.aab
 *.apk
+
