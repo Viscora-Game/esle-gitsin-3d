@@ -4012,7 +4012,7 @@ class TileMatchingGame {
                 if (placedPieces.includes(i)) {
                     slot.className = 'puzzle-slot jigsaw-shaped filled';
                     slot.style.backgroundImage = `url(${activePuzzle.imgSrc})`;
-                    slot.style.backgroundSize = '300% 400%';
+                    slot.style.backgroundSize = '305% 405%';
                     slot.style.backgroundPosition = `${col * 50}% ${row * 33.333}%`;
                     slot.style.clipPath = `url(#jigsaw-clip-${i})`;
                     slot.style.webkitClipPath = `url(#jigsaw-clip-${i})`;
@@ -4074,7 +4074,7 @@ class TileMatchingGame {
                     pieceEl.style.webkitClipPath = `url(#jigsaw-clip-${pItem.pieceIndex})`;
                     pieceEl.draggable = true;
                     pieceEl.style.backgroundImage = `url(${puzzleDef.imgSrc})`;
-                    pieceEl.style.backgroundSize = '300% 400%';
+                    pieceEl.style.backgroundSize = '305% 405%';
                     pieceEl.style.backgroundPosition = `${col * 50}% ${row * 33.333}%`;
 
                     const label = document.createElement('div');
