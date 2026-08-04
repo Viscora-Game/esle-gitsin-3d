@@ -4940,29 +4940,6 @@ class TileMatchingGame {
         };
         const myPuzzleCount = countPlacedPuzzles();
 
-        const baseRivals = [
-            { name: 'KozmikKedi', tag: '0001', classicLvl: 85, classicScore: 485000, ttLvl: 64, ttScore: 340000, puzzles: 11 },
-            { name: 'TurboPanda', tag: '0077', classicLvl: 78, classicScore: 420000, ttLvl: 58, ttScore: 310000, puzzles: 10 },
-            { name: 'EjderKral', tag: '1000', classicLvl: 74, classicScore: 390000, ttLvl: 52, ttScore: 285000, puzzles: 9 },
-            { name: 'MistikTilki', tag: '0404', classicLvl: 68, classicScore: 345000, ttLvl: 48, ttScore: 260000, puzzles: 8 },
-            { name: 'SihirliKoyun', tag: '7777', classicLvl: 62, classicScore: 310000, ttLvl: 44, ttScore: 235000, puzzles: 8 },
-            { name: 'MatchPro3D', tag: '3333', classicLvl: 58, classicScore: 280000, ttLvl: 40, ttScore: 210000, puzzles: 7 },
-            { name: 'ZaferAvcısı', tag: '1923', classicLvl: 54, classicScore: 255000, ttLvl: 38, ttScore: 195000, puzzles: 6 },
-            { name: 'KutupPenguen', tag: '0099', classicLvl: 50, classicScore: 230000, ttLvl: 35, ttScore: 180000, puzzles: 6 },
-            { name: 'AslanKral', tag: '1001', classicLvl: 46, classicScore: 210000, ttLvl: 32, ttScore: 160000, puzzles: 5 },
-            { name: 'ShibaMaster', tag: '8888', classicLvl: 42, classicScore: 190000, ttLvl: 30, ttScore: 145000, puzzles: 5 },
-            { name: 'BilgeBaykuş', tag: '4040', classicLvl: 38, classicScore: 170000, ttLvl: 26, ttScore: 130000, puzzles: 4 },
-            { name: 'Gökkuşağı', tag: '1234', classicLvl: 35, classicScore: 150000, ttLvl: 24, ttScore: 115000, puzzles: 4 },
-            { name: 'KızılPanda', tag: '0505', classicLvl: 32, classicScore: 135000, ttLvl: 22, ttScore: 100000, puzzles: 3 },
-            { name: 'AlfaKurbağa', tag: '0606', classicLvl: 28, classicScore: 115000, ttLvl: 20, ttScore: 90000, puzzles: 3 },
-            { name: 'Fırtına3D', tag: '9999', classicLvl: 25, classicScore: 98000, ttLvl: 18, ttScore: 80000, puzzles: 2 },
-            { name: 'YıldızAvcısı', tag: '7070', classicLvl: 22, classicScore: 84000, ttLvl: 16, ttScore: 70000, puzzles: 2 },
-            { name: 'CosmicStar', tag: '4321', classicLvl: 18, classicScore: 70000, ttLvl: 14, ttScore: 58000, puzzles: 1 },
-            { name: 'GölgeEşleyici', tag: '6666', classicLvl: 15, classicScore: 56000, ttLvl: 12, ttScore: 48000, puzzles: 1 },
-            { name: 'BüyülüUnicorn', tag: '1111', classicLvl: 12, classicScore: 44000, ttLvl: 10, ttScore: 36000, puzzles: 1 },
-            { name: 'DenizEjder', tag: '2222', classicLvl: 10, classicScore: 35000, ttLvl: 8, ttScore: 28000, puzzles: 0 }
-        ];
-
         const list = [];
         list.push({
             isSelf: true,
@@ -4976,21 +4953,6 @@ class TileMatchingGame {
             overallScore: myOverallScore,
             puzzles: myPuzzleCount
         });
-
-        for (const b of baseRivals) {
-            list.push({
-                isSelf: false,
-                name: b.name,
-                tag: b.tag,
-                fullTag: `${b.name}#${b.tag}`,
-                classicLvl: b.classicLvl,
-                classicScore: b.classicScore,
-                ttLvl: b.ttLvl,
-                ttScore: b.ttScore,
-                overallScore: b.classicScore + b.ttScore,
-                puzzles: b.puzzles
-            });
-        }
 
         // MERGE REAL LIVE ONLINE PLAYERS FROM CLOUD DATABASE
         if (this.latestCloudDataset && Array.isArray(this.latestCloudDataset)) {
