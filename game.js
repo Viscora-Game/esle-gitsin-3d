@@ -2664,14 +2664,13 @@ class TileMatchingGame {
         document.getElementById('level-num').innerText = this.level;
         document.getElementById('score-val').innerText = this.score;
 
-        // Apply Dynamic Level Table Theme to Game Arena and Inner Board Mat Table
+        // Apply Dynamic Level Table Theme to Game Arena and Outer Background Wrapper
         const themeIndex = (this.level - 1) % this.bgThemes.length;
         const themeBg = this.bgThemes[themeIndex];
         const gameContainer = document.getElementById('game-container');
+        const appWrapper = document.getElementById('app-wrapper');
         if (gameContainer) gameContainer.style.background = themeBg;
-
-        const matFrame = document.querySelector('.board-mat-frame');
-        if (matFrame) matFrame.style.background = themeBg;
+        if (appWrapper) appWrapper.style.background = themeBg;
 
         // SPECIAL STAR FORMATION ON EVERY 10th LEVEL (10, 20, 30, 40...)
         let formationType;
