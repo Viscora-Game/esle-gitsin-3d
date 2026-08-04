@@ -1956,8 +1956,8 @@ class TileMatchingGame {
         introStage.addEventListener('click', dismiss, { once: true });
         introStage.addEventListener('touchstart', dismiss, { once: true });
 
-        // Fast, smooth cinematic presentation (1400ms auto-dismiss)
-        setTimeout(dismiss, 1400);
+        // Smooth cinematic presentation (2200ms auto-dismiss)
+        setTimeout(dismiss, 2200);
     }
 
     initUI() {
@@ -4725,28 +4725,17 @@ function bootGameEngine() {
         window.gameInstance = new TileMatchingGame();
     } catch (e) {
         console.error('[EsleGitsin3D] CRITICAL: Game init failed:', e);
-    } finally {
-        // GUARANTEED SAFETY NET: Dismiss studio intro stage within 1.6 seconds no matter what!
-        setTimeout(() => {
-            const introStage = document.getElementById('cybercore-intro-stage');
-            if (introStage) {
-                introStage.classList.add('intro-hidden');
-                introStage.style.opacity = '0';
-                introStage.style.pointerEvents = 'none';
-                setTimeout(() => {
-                    if (introStage && introStage.parentNode) {
-                        introStage.parentNode.removeChild(introStage);
-                    }
-                }, 400);
-            }
-            const mainMenu = document.getElementById('main-menu');
-            if (mainMenu) {
-                mainMenu.classList.remove('hidden');
-                mainMenu.style.display = 'flex';
-                mainMenu.style.opacity = '1';
-                mainMenu.style.pointerEvents = 'auto';
-            }
-        }, 1600);
+        const introStage = document.getElementById('cybercore-intro-stage');
+        if (introStage && introStage.parentNode) {
+            introStage.parentNode.removeChild(introStage);
+        }
+        const mainMenu = document.getElementById('main-menu');
+        if (mainMenu) {
+            mainMenu.classList.remove('hidden');
+            mainMenu.style.display = 'flex';
+            mainMenu.style.opacity = '1';
+            mainMenu.style.pointerEvents = 'auto';
+        }
     }
 }
 
