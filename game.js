@@ -1718,6 +1718,9 @@ class TileMatchingGame {
                 localStorage.setItem('tile_game_timetrial', jsonStr);
                 localStorage.setItem('tile_game_timetrial_backup', jsonStr);
             }
+
+            // Sync scores to live cloud database
+            this.syncCloudLeaderboard();
         } catch (e) {}
     }
 
@@ -4989,6 +4992,32 @@ class TileMatchingGame {
             });
         }
 
+        // MERGE REAL LIVE ONLINE PLAYERS FROM CLOUD DATABASE
+        if (this.latestCloudDataset && Array.isArray(this.latestCloudDataset)) {
+            for (const cp of this.latestCloudDataset) {
+                if (cp && cp.fullTag && cp.fullTag !== myFullTag) {
+                    const existingIdx = list.findIndex(item => item.fullTag === cp.fullTag);
+                    const cloudPlayer = {
+                        isSelf: false,
+                        name: cp.name || cp.fullTag.split('#')[0],
+                        tag: cp.tag || '0000',
+                        fullTag: cp.fullTag,
+                        classicLvl: cp.classicLvl || 1,
+                        classicScore: cp.classicScore || 0,
+                        ttLvl: cp.ttLvl || 1,
+                        ttScore: cp.ttScore || 0,
+                        overallScore: cp.overallScore || ((cp.classicScore || 0) + (cp.ttScore || 0)),
+                        puzzles: cp.puzzles || 0
+                    };
+                    if (existingIdx >= 0) {
+                        list[existingIdx] = cloudPlayer;
+                    } else {
+                        list.push(cloudPlayer);
+                    }
+                }
+            }
+        }
+
         list.sort((a, b) => {
             if (category === 'classic') {
                 if (b.classicScore !== a.classicScore) return b.classicScore - a.classicScore;
@@ -5008,7 +5037,75 @@ class TileMatchingGame {
         return list;
     }
 
-    openLeaderboardModal(activeCategory = 'overall') {
+    syncCloudLeaderboard() {
+        if (typeof navigator !== 'undefined' && !navigator.onLine) return;
+        if (!this.playerProfile || !this.playerProfile.nickname) return;
+
+        try {
+            const myName = this.playerProfile.nickname;
+            const myTag = this.playerProfile.tag || '0001';
+            const myFullTag = `${myName}#${myTag}`;
+            
+            const myClassicLvl = (this.classicProgress && this.classicProgress.level) || 1;
+            const myClassicScore = (this.classicProgress && this.classicProgress.score) || 0;
+            const myTtLvl = (this.timeTrialProgress && this.timeTrialProgress.level) || 1;
+            const myTtScore = (this.timeTrialProgress && this.timeTrialProgress.score) || 0;
+            
+            let myPuzzleCount = 0;
+            for (const pId in this.placedPuzzlePieces) {
+                if (this.placedPuzzlePieces[pId] && this.placedPuzzlePieces[pId].length === 12) {
+                    myPuzzleCount++;
+                }
+            }
+
+            const payload = {
+                fullTag: myFullTag,
+                name: myName,
+                tag: myTag,
+                classicLvl: myClassicLvl,
+                classicScore: myClassicScore,
+                ttLvl: myTtLvl,
+                ttScore: myTtScore,
+                overallScore: myClassicScore + myTtScore,
+                puzzles: myPuzzleCount,
+                updatedAt: Date.now()
+            };
+
+            const safeKey = myFullTag.replace(/[^a-zA-Z0-9_]/g, '_');
+            const dbUrl = `https://esle-gitsin-3d-default-rtdb.firebaseio.com/leaderboard/${safeKey}.json`;
+
+            fetch(dbUrl, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            }).then(() => {
+                this.cloudSyncLastSuccess = Date.now();
+            }).catch(e => {});
+        } catch (e) {}
+    }
+
+    async fetchCloudLeaderboardData() {
+        if (typeof navigator !== 'undefined' && !navigator.onLine) return null;
+        try {
+            const dbUrl = 'https://esle-gitsin-3d-default-rtdb.firebaseio.com/leaderboard.json';
+            const resp = await fetch(dbUrl);
+            if (!resp.ok) return null;
+            const data = await resp.json();
+            if (!data) return null;
+
+            const cloudList = [];
+            for (const k in data) {
+                if (data[k] && data[k].fullTag) {
+                    cloudList.push(data[k]);
+                }
+            }
+            return cloudList;
+        } catch (e) {
+            return null;
+        }
+    }
+
+    async openLeaderboardModal(activeCategory = 'overall') {
         this.sound.playClick();
 
         if (!navigator.onLine) {
@@ -5030,10 +5127,19 @@ class TileMatchingGame {
             }
         });
 
+        // 1. Instantly render local dataset for zero latency
         this.renderLeaderboardList(activeCategory);
 
         modal.classList.remove('hidden');
         modal.style.display = 'flex';
+
+        // 2. Asynchronously sync score & fetch live online player scores from Cloud Database
+        this.syncCloudLeaderboard();
+        const cloudData = await this.fetchCloudLeaderboardData();
+        if (cloudData && cloudData.length > 0) {
+            this.latestCloudDataset = cloudData;
+            this.renderLeaderboardList(activeCategory);
+        }
     }
 
     renderLeaderboardList(category = 'overall') {
