@@ -40,7 +40,7 @@
             background: #03050a !important;
         }
     </style>
-    <link rel="stylesheet" href="styles.css?v=59">
+    <link rel="stylesheet" href="styles.css?v=60">
 </head>
 <body oncontextmenu="return false;" onselectstart="return false;" ondragstart="return false;">
     <div id="app-wrapper">
@@ -494,17 +494,13 @@
                         <span id="gold-val-puzzle">0</span>
                     </div>
                     <span class="journal-ribbon" data-i18n="journalBtnText">📖 YAPBOZ GÜNLÜĞÜ</span>
-                    <h2 id="journal-picture-title" class="modal-title">Pamuk Kedi 🐱</h2>
-                </div>
-
-                <!-- Horizontal Scrollable Character Puzzle Selector Tabs -->
-                <div id="puzzle-selector-tabs" class="puzzle-tabs-scroll"></div>
-
-                <!-- Journal Page Navigation Controls -->
-                <div class="journal-page-nav">
-                    <button id="btn-prev-page" class="journal-nav-btn" data-i18n="prevPageBtn">◀ ÖNCEKİ SAYFA</button>
+                    
+                    <div class="journal-character-selector-row">
+                        <button id="btn-prev-page" class="journal-arrow-nav-btn">◀</button>
+                        <h2 id="journal-picture-title" class="modal-title">Pamuk Kedi 🐱</h2>
+                        <button id="btn-next-page" class="journal-arrow-nav-btn">▶</button>
+                    </div>
                     <span id="journal-page-num" class="journal-page-badge">Sayfa 1 / 12</span>
-                    <button id="btn-next-page" class="journal-nav-btn" data-i18n="nextPageBtn">SONRAKİ SAYFA ▶</button>
                 </div>
 
                 <!-- Main 3x4 Puzzle Placement Board (12 Jigsaw Grid Slots) -->
@@ -579,6 +575,6 @@
         <span id="toast-text">Yetersiz Altın!</span>
     </div>
 
-    <script src="game.js?v=8.9.20" defer></script>
+    <script src="game.js?v=8.9.21" defer></script>
 </body>
 </html>
