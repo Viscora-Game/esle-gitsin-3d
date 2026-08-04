@@ -1662,6 +1662,16 @@ class TileMatchingGame {
 
     saveGameProgress(isVictoryUnlock = false) {
         try {
+            // ALWAYS save puzzle inventory, placed puzzle pieces & gold coins
+            const puzzleData = {
+                goldCoins: this.goldCoins,
+                puzzleInventory: this.puzzleInventory,
+                placedPuzzlePieces: this.placedPuzzlePieces
+            };
+            localStorage.setItem('tile_game_puzzle_data', JSON.stringify(puzzleData));
+            const goldEl = document.getElementById('gold-val');
+            if (goldEl) goldEl.innerText = this.goldCoins;
+
             if (!this.level || this.level < 1) return;
 
             // Target level to record (If victory unlock, advance to next level!)
@@ -1696,15 +1706,6 @@ class TileMatchingGame {
                 localStorage.setItem('tile_game_timetrial', jsonStr);
                 localStorage.setItem('tile_game_timetrial_backup', jsonStr);
             }
-        
-            const puzzleData = {
-                goldCoins: this.goldCoins,
-                puzzleInventory: this.puzzleInventory,
-                placedPuzzlePieces: this.placedPuzzlePieces
-            };
-            localStorage.setItem('tile_game_puzzle_data', JSON.stringify(puzzleData));
-            const goldEl = document.getElementById('gold-val');
-            if (goldEl) goldEl.innerText = this.goldCoins;
         } catch (e) {}
     }
 
@@ -2229,6 +2230,20 @@ class TileMatchingGame {
 
         document.getElementById('btn-hud-settings').addEventListener('click', () => {
             this.openSettings();
+        });
+
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                if (this.currentMode === 'timetrial' && this.timerInterval) {
+                    this.stopTimer();
+                    this.isTimerPausedForBackground = true;
+                }
+            } else {
+                if (this.currentMode === 'timetrial' && this.isTimerPausedForBackground) {
+                    this.isTimerPausedForBackground = false;
+                    this.startTimer();
+                }
+            }
         });
 
         document.getElementById('btn-close-settings').addEventListener('click', () => {
@@ -4185,8 +4200,12 @@ class TileMatchingGame {
     getDailyWheelSpinsCount() {
         try {
             const resetTime = parseInt(localStorage.getItem('tile_game_wheel_reset_time') || '0', 10);
-            
-            if (resetTime > 0 && Date.now() >= resetTime) {
+            const lastSpinTime = parseInt(localStorage.getItem('tile_game_wheel_last_spin_time') || '0', 10);
+            const TWENTY_FOUR_HOURS_MS = 24 * 60 * 60 * 1000;
+            const now = Date.now();
+
+            // Reset if 24h reset time reached OR 24h passed since last spin
+            if ((resetTime > 0 && now >= resetTime) || (lastSpinTime > 0 && (now - lastSpinTime >= TWENTY_FOUR_HOURS_MS))) {
                 localStorage.setItem('tile_game_wheel_reset_time', '0');
                 localStorage.setItem('tile_game_wheel_spins', '0');
                 localStorage.setItem('tile_game_wheel_last_spin_time', '0');
@@ -4194,12 +4213,6 @@ class TileMatchingGame {
             }
 
             const savedSpins = parseInt(localStorage.getItem('tile_game_wheel_spins') || '0', 10);
-            
-            if (savedSpins >= 2 && resetTime === 0) {
-                const TWENTY_FOUR_HOURS_MS = 24 * 60 * 60 * 1000;
-                localStorage.setItem('tile_game_wheel_reset_time', (Date.now() + TWENTY_FOUR_HOURS_MS).toString());
-            }
-
             return savedSpins;
         } catch (e) {
             return 0;
@@ -4218,16 +4231,17 @@ class TileMatchingGame {
         try {
             const currentSpins = this.getDailyWheelSpinsCount();
             const newSpins = currentSpins + 1;
+            const TWENTY_FOUR_HOURS_MS = 24 * 60 * 60 * 1000;
+            const now = Date.now();
+
             localStorage.setItem('tile_game_wheel_spins', newSpins.toString());
-            localStorage.setItem('tile_game_wheel_last_spin_time', Date.now().toString());
+            localStorage.setItem('tile_game_wheel_last_spin_time', now.toString());
             
-            if (newSpins >= 2) {
-                const existingReset = parseInt(localStorage.getItem('tile_game_wheel_reset_time') || '0', 10);
-                if (existingReset === 0 || Date.now() >= existingReset) {
-                    const TWENTY_FOUR_HOURS_MS = 24 * 60 * 60 * 1000;
-                    localStorage.setItem('tile_game_wheel_reset_time', (Date.now() + TWENTY_FOUR_HOURS_MS).toString());
-                }
+            const existingReset = parseInt(localStorage.getItem('tile_game_wheel_reset_time') || '0', 10);
+            if (existingReset === 0 || now >= existingReset) {
+                localStorage.setItem('tile_game_wheel_reset_time', (now + TWENTY_FOUR_HOURS_MS).toString());
             }
+
             this.updateWheelTimerState();
         } catch (e) {}
     }
