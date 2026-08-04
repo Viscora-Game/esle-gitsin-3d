@@ -2330,14 +2330,99 @@ class TileMatchingGame {
             });
         }
 
+        // MID-LEVEL HOME BUTTON QUIT CONFIRMATION (-500 SCORE PENALTY & ZERO IN-LEVEL POINTS KEPT)
         document.getElementById('btn-hud-home').addEventListener('click', () => {
-            this.stopTimer();
-            this.saveGameProgress();
-            this.updateMainMenuButtons();
-        this.startWheelTimerLoop();
-            document.getElementById('main-menu').classList.remove('hidden');
-            this.showMainMenuBannerAd();
+            this.sound.playClick();
+            if (this.boardTiles && this.boardTiles.length > 0) {
+                const modalQuit = document.getElementById('modal-confirm-quit');
+                if (modalQuit) {
+                    modalQuit.classList.remove('hidden');
+                    modalQuit.style.display = 'flex';
+                }
+            } else {
+                this.stopTimer();
+                this.saveGameProgress();
+                this.updateMainMenuButtons();
+                this.startWheelTimerLoop();
+                document.getElementById('main-menu').classList.remove('hidden');
+                this.showMainMenuBannerAd();
+            }
         });
+
+        const btnCancelQuit = document.getElementById('btn-cancel-quit');
+        if (btnCancelQuit) {
+            btnCancelQuit.addEventListener('click', () => {
+                this.sound.playClick();
+                document.getElementById('modal-confirm-quit').classList.add('hidden');
+            });
+        }
+
+        const btnAcceptQuitPenalty = document.getElementById('btn-accept-quit-penalty');
+        if (btnAcceptQuitPenalty) {
+            btnAcceptQuitPenalty.addEventListener('click', () => {
+                this.sound.playLockThud();
+                document.getElementById('modal-confirm-quit').classList.add('hidden');
+
+                // 1. Discard all points accumulated in current unfinished level
+                this.score = this.levelStartScore || 0;
+
+                // 2. Deduct 500 points penalty
+                this.score = Math.max(0, this.score - 500);
+
+                const scoreEl = document.getElementById('score-val');
+                if (scoreEl) scoreEl.innerText = this.score;
+
+                // 3. Reset level tiles
+                this.boardTiles = [];
+                this.slotTiles = [];
+                this.hintHighlights = [];
+                const boardContainer = document.getElementById('board');
+                if (boardContainer) boardContainer.innerHTML = '';
+
+                // 4. Save progress & sync penalty to Cloud DB
+                this.saveGameProgress();
+
+                // 5. Return to main menu
+                this.stopTimer();
+                this.updateMainMenuButtons();
+                this.startWheelTimerLoop();
+                document.getElementById('main-menu').classList.remove('hidden');
+                this.showMainMenuBannerAd();
+
+                this.showToast('⚠️ Bölümden ayrıldınız! (-500 Puan Cezası Kesildi)');
+            });
+        }
+
+        // WHEEL AD SPIN PERMISSION MODAL LISTENERS
+        const closeAdConfirmModal = () => {
+            const m = document.getElementById('modal-wheel-ad-confirm');
+            if (m) m.classList.add('hidden');
+        };
+
+        const btnCloseAdConfirm = document.getElementById('btn-close-wheel-ad-confirm');
+        if (btnCloseAdConfirm) btnCloseAdConfirm.addEventListener('click', closeAdConfirmModal);
+
+        const btnSpinAdCancel = document.getElementById('btn-spin-ad-cancel');
+        if (btnSpinAdCancel) btnSpinAdCancel.addEventListener('click', closeAdConfirmModal);
+
+        const btnSpinAdAccept = document.getElementById('btn-spin-ad-accept');
+        if (btnSpinAdAccept) {
+            btnSpinAdAccept.addEventListener('click', () => {
+                closeAdConfirmModal();
+                if (!navigator.onLine) {
+                    this.sound.playLockThud();
+                    this.showToast('📡 Çevrimdışısınız! Reklam izlemek için lütfen internet bağlantınızı açın.');
+                    return;
+                }
+                if (typeof this.pendingAdWheelExecute === 'function') {
+                    const exec = this.pendingAdWheelExecute;
+                    this.pendingAdWheelExecute = null;
+                    this.showRewardedAd(() => {
+                        exec();
+                    });
+                }
+            });
+        }
 
         document.getElementById('btn-hud-settings').addEventListener('click', () => {
             this.openSettings();
@@ -3193,6 +3278,7 @@ class TileMatchingGame {
         if (foundMatchTiles.length > 0) {
             this.score -= this.hintCost;
             document.getElementById('score-val').innerText = this.score;
+            this.saveGameProgress();
 
             // Double the cost for next use in current level (%100 Increase!)
             this.hintCost *= 2;
@@ -3226,6 +3312,7 @@ class TileMatchingGame {
 
         this.score -= this.slotCost;
         document.getElementById('score-val').innerText = this.score;
+        this.saveGameProgress();
 
         // Double the cost for next use in current level (%100 Increase!)
         this.slotCost *= 2;
@@ -3264,6 +3351,7 @@ class TileMatchingGame {
 
         this.score -= this.shuffleCost;
         document.getElementById('score-val').innerText = this.score;
+        this.saveGameProgress();
 
         // Double the cost for next use in current level (5000 -> 10000 -> 20000...)
         this.shuffleCost *= 2;
@@ -4628,9 +4716,23 @@ class TileMatchingGame {
         if (spins === 0) {
             executeSpin();
         } else {
-            this.showRewardedAd(() => {
-                executeSpin();
-            });
+            if (cooldownRemaining > 0) {
+                this.sound.playLockThud();
+                const timeStr = this.formatTimeLeft(cooldownRemaining);
+                this.showToast(`⏳ Reklamlı Çevirme Bekleme Süresinde! (Kalan: ${timeStr})`);
+                return;
+            }
+
+            const modalAdConfirm = document.getElementById('modal-wheel-ad-confirm');
+            if (modalAdConfirm) {
+                this.pendingAdWheelExecute = executeSpin;
+                modalAdConfirm.classList.remove('hidden');
+                modalAdConfirm.style.display = 'flex';
+            } else {
+                this.showRewardedAd(() => {
+                    executeSpin();
+                });
+            }
         }
     }
 
@@ -4739,8 +4841,9 @@ class TileMatchingGame {
     showRewardedAd(onSuccess, onFailure) {
         // Offline Check: Notify player if internet connection is offline
         if (typeof navigator !== 'undefined' && navigator.onLine === false && !window.AndroidAdMob) {
+            this.sound.playLockThud();
             const dict = (this.i18n && this.i18n[this.settings.lang]) ? this.i18n[this.settings.lang] : (this.i18n ? this.i18n.tr : {});
-            this.showToast(dict.offlineAdMsg || '📡 Çevrimdışısınız! Reklam için internet bekleniyor.');
+            this.showToast(dict.offlineAdMsg || '📡 Çevrimdışısınız! Reklam izlemek için lütfen internet bağlantınızı açın.');
             if (onFailure) onFailure();
             return;
         }

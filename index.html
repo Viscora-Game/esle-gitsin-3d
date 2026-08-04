@@ -34,7 +34,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700;900&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=69">
+    <link rel="stylesheet" href="styles.css?v=71">
 </head>
 <body oncontextmenu="return false;" onselectstart="return false;" ondragstart="return false;">
     <div id="app-wrapper">
@@ -622,6 +622,38 @@
         </div>
     </div>
 
+    <!-- Mid-Level Quit Confirmation Modal (-500 Score Penalty Warning) -->
+    <div id="modal-confirm-quit" class="modal-overlay hidden" style="z-index: 99995;">
+        <div class="modal-card confirm-quit-card">
+            <div class="modal-header-row">
+                <h2 class="modal-title" style="color: #ef4444;">⚠️ AYRILMA ONAYI</h2>
+            </div>
+            <p class="quit-warning-text">Bölümü tamamlamadan ana menüye dönerseniz:<br><br>• Bu bölümde kazanılan puanlar geçersiz sayılır.<br>• Account hesabınızdan <b style="color: #ef4444;">🔻 -500 PUAN CEZASI</b> kesilir!</p>
+            <div class="quit-btn-row">
+                <button id="btn-cancel-quit" class="btn-secondary quit-btn">❌ VAZGEÇ</button>
+                <button id="btn-accept-quit-penalty" class="btn-primary quit-btn penalty-accept-btn">🏠 CEZAYI KABUL ET VE AYRIL</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Wheel Ad Spin Permission Modal Screen -->
+    <div id="modal-wheel-ad-confirm" class="modal-overlay hidden" style="z-index: 99996;">
+        <div class="modal-card wheel-ad-confirm-card" style="text-align: center; max-width: 360px;">
+            <button id="btn-close-wheel-ad-confirm" class="btn-close-x">✕</button>
+            <div style="font-size: 44px; margin-bottom: 8px;">🎬 🎡</div>
+            <h2 class="modal-title" style="color: #fbbf24; font-size: 20px;">REKLAMLA +1 ÇEVİRME HAKKI</h2>
+            <p style="color: #cbd5e1; font-size: 13px; margin: 10px 0 16px 0; line-height: 1.4;">Kısa bir ödüllü reklam izleyerek Çarkı 1 kez daha çevirebilirsiniz!<br><br><span style="color: #38bdf8; font-weight: 800;">(Reklamlı çevirme 8 saatte bir tekrar kullanılabilir)</span></p>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <button id="btn-spin-ad-accept" class="btn-primary" style="background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); border-color: #c084fc; padding: 12px; font-size: 14px;">
+                    📺 REKLAM İZLE VE ÇARKI ÇEVİR
+                </button>
+                <button id="btn-spin-ad-cancel" class="btn-secondary" style="padding: 10px; font-size: 13px;">
+                    ❌ ŞİMDİLİK GEÇ
+                </button>
+            </div>
+        </div>
+    </div>
+
     <!-- Player Profile Card Summary Modal Screen -->
     <div id="modal-player-profile" class="modal-overlay hidden" style="z-index: 99985;">
         <div class="modal-card player-profile-card">
@@ -673,6 +705,6 @@
         <span id="toast-text">Yetersiz Altın!</span>
     </div>
 
-    <script src="game.js?v=8.9.30" defer></script>
+    <script src="game.js?v=8.9.32" defer></script>
 </body>
 </html>

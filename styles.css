@@ -2205,6 +2205,46 @@ body {
     color: #fbbf24;
 }
 
+/* Mid-Level Quit Confirmation Modal Styles */
+.confirm-quit-card {
+    max-width: 360px;
+    width: 90%;
+    padding: 22px 18px;
+    text-align: center;
+    background: linear-gradient(180deg, #1e1b4b 0%, #0f172a 100%);
+    border: 2px solid #ef4444;
+    border-radius: 24px;
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.9), 0 0 30px rgba(239, 68, 68, 0.3);
+}
+
+.quit-warning-text {
+    font-size: 13.5px;
+    color: #cbd5e1;
+    line-height: 1.5;
+    margin: 14px 0 20px 0;
+    text-align: left;
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px dashed rgba(239, 68, 68, 0.5);
+    padding: 12px 14px;
+    border-radius: 14px;
+}
+
+.quit-btn-row {
+    display: flex;
+    gap: 10px;
+}
+
+.quit-btn {
+    flex: 1;
+    padding: 12px 8px;
+    font-size: 13px;
+}
+
+.penalty-accept-btn {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%) !important;
+    border-color: #fca5a5 !important;
+}
+
 /* Floating Lucky Wheel Widget */
 .floating-wheel-widget {
     position: absolute;
