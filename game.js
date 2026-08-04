@@ -5037,7 +5037,7 @@ class TileMatchingGame {
         return list;
     }
 
-    syncCloudLeaderboard() {
+    async syncCloudLeaderboard() {
         if (typeof navigator !== 'undefined' && !navigator.onLine) return;
         if (!this.playerProfile || !this.playerProfile.nickname) return;
 
@@ -5058,7 +5058,7 @@ class TileMatchingGame {
                 }
             }
 
-            const payload = {
+            const myEntry = {
                 fullTag: myFullTag,
                 name: myName,
                 tag: myTag,
@@ -5071,35 +5071,52 @@ class TileMatchingGame {
                 updatedAt: Date.now()
             };
 
-            const safeKey = myFullTag.replace(/[^a-zA-Z0-9_]/g, '_');
-            const dbUrl = `https://esle-gitsin-3d-default-rtdb.firebaseio.com/leaderboard/${safeKey}.json`;
+            const cloudUrl = 'https://jsonblob.com/api/jsonBlob/019fcf1b-1d53-7a58-bad9-de2b58944893';
 
-            fetch(dbUrl, {
+            const resp = await fetch(cloudUrl);
+            let data = { players: [] };
+            if (resp.ok) {
+                const parsed = await resp.json();
+                if (parsed && Array.isArray(parsed.players)) {
+                    data = parsed;
+                }
+            }
+
+            const existingIdx = data.players.findIndex(p => p.fullTag === myFullTag);
+            if (existingIdx >= 0) {
+                data.players[existingIdx] = myEntry;
+            } else {
+                data.players.push(myEntry);
+            }
+
+            data.players.sort((a, b) => (b.overallScore || 0) - (a.overallScore || 0));
+            if (data.players.length > 1000) {
+                data.players = data.players.slice(0, 1000);
+            }
+
+            await fetch(cloudUrl, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            }).then(() => {
-                this.cloudSyncLastSuccess = Date.now();
-            }).catch(e => {});
-        } catch (e) {}
+                body: JSON.stringify(data)
+            });
+
+            this.latestCloudDataset = data.players;
+        } catch (e) {
+            console.log('[CloudSync] Exception:', e);
+        }
     }
 
     async fetchCloudLeaderboardData() {
         if (typeof navigator !== 'undefined' && !navigator.onLine) return null;
         try {
-            const dbUrl = 'https://esle-gitsin-3d-default-rtdb.firebaseio.com/leaderboard.json';
-            const resp = await fetch(dbUrl);
+            const cloudUrl = 'https://jsonblob.com/api/jsonBlob/019fcf1b-1d53-7a58-bad9-de2b58944893';
+            const resp = await fetch(cloudUrl);
             if (!resp.ok) return null;
             const data = await resp.json();
-            if (!data) return null;
-
-            const cloudList = [];
-            for (const k in data) {
-                if (data[k] && data[k].fullTag) {
-                    cloudList.push(data[k]);
-                }
+            if (data && Array.isArray(data.players)) {
+                return data.players;
             }
-            return cloudList;
+            return null;
         } catch (e) {
             return null;
         }
