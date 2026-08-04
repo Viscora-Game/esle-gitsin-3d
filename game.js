@@ -2333,13 +2333,15 @@ class TileMatchingGame {
         // MID-LEVEL HOME BUTTON QUIT CONFIRMATION (-500 SCORE PENALTY & ZERO IN-LEVEL POINTS KEPT)
         document.getElementById('btn-hud-home').addEventListener('click', () => {
             this.sound.playClick();
-            if (this.boardTiles && this.boardTiles.length > 0) {
+            // ONLY show penalty confirmation IF at least one tile was moved in the current level!
+            if (this.boardTiles && this.boardTiles.length > 0 && this.hasMovedAnyTileInCurrentLevel) {
                 const modalQuit = document.getElementById('modal-confirm-quit');
                 if (modalQuit) {
                     modalQuit.classList.remove('hidden');
                     modalQuit.style.display = 'flex';
                 }
             } else {
+                // ZERO TILES MOVED: EXIT DIRECTLY WITH 0 PENALTY!
                 this.stopTimer();
                 this.saveGameProgress();
                 this.updateMainMenuButtons();
@@ -2827,6 +2829,7 @@ class TileMatchingGame {
 
         // Store level starting score for penalty calculation
         this.levelStartScore = this.score;
+        this.hasMovedAnyTileInCurrentLevel = false;
 
         // Reset Level Costs & Capacity to Base
         this.hintCost = this.baseHintCost;
@@ -3457,6 +3460,8 @@ class TileMatchingGame {
             setTimeout(() => tile.element.classList.remove('shaking'), 180);
             return;
         }
+
+        this.hasMovedAnyTileInCurrentLevel = true;
 
         if (this.slotTiles.length >= this.maxSlotCapacity) return;
 
@@ -5139,33 +5144,34 @@ class TileMatchingGame {
             const cloudUrl = 'https://jsonblob.com/api/jsonBlob/019fcf1b-1d53-7a58-bad9-de2b58944893';
 
             const resp = await fetch(cloudUrl);
-            let data = { players: [] };
+            const playerMap = new Map();
+
             if (resp.ok) {
                 const parsed = await resp.json();
                 if (parsed && Array.isArray(parsed.players)) {
-                    data = parsed;
+                    for (const p of parsed.players) {
+                        if (p && p.fullTag) {
+                            playerMap.set(p.fullTag, p);
+                        }
+                    }
                 }
             }
 
-            const existingIdx = data.players.findIndex(p => p.fullTag === myFullTag);
-            if (existingIdx >= 0) {
-                data.players[existingIdx] = myEntry;
-            } else {
-                data.players.push(myEntry);
-            }
+            // Always update current player's latest accurate score
+            playerMap.set(myFullTag, myEntry);
 
-            data.players.sort((a, b) => (b.overallScore || 0) - (a.overallScore || 0));
-            if (data.players.length > 1000) {
-                data.players = data.players.slice(0, 1000);
-            }
+            const updatedPlayers = Array.from(playerMap.values());
+            updatedPlayers.sort((a, b) => (b.overallScore || 0) - (a.overallScore || 0));
+
+            const finalPlayers = updatedPlayers.slice(0, 1000);
 
             await fetch(cloudUrl, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
+                body: JSON.stringify({ players: finalPlayers })
             });
 
-            this.latestCloudDataset = data.players;
+            this.latestCloudDataset = finalPlayers;
         } catch (e) {
             console.log('[CloudSync] Exception:', e);
         }
