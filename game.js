@@ -2740,10 +2740,18 @@ class TileMatchingGame {
                 isInSlot: false
             };
 
-            tileEl.addEventListener('click', (e) => {
+            const handleTap = (e) => {
+                if (e.type === 'pointerdown') {
+                    tileObj.lastTouchTime = Date.now();
+                } else if (e.type === 'click' && tileObj.lastTouchTime && (Date.now() - tileObj.lastTouchTime < 350)) {
+                    return;
+                }
                 e.stopPropagation();
                 this.onTileClick(tileObj);
-            });
+            };
+
+            tileEl.addEventListener('pointerdown', handleTap, { passive: true });
+            tileEl.addEventListener('click', handleTap);
             
             this.boardTiles.push(tileObj);
         }
@@ -3296,7 +3304,7 @@ class TileMatchingGame {
                     targetH = this.cardH || 88;
                 }
 
-                tile.element.style.transition = 'all 0.18s cubic-bezier(0.34, 1.56, 0.64, 1)';
+                tile.element.style.transition = 'all 0.10s cubic-bezier(0.2, 0.9, 0.3, 1.0)';
                 tile.element.style.left = `${targetX}px`;
                 tile.element.style.top = `${targetY}px`;
                 if (targetW > 0 && targetH > 0) {
@@ -3321,7 +3329,7 @@ class TileMatchingGame {
 
                 this.extraSlotWasUsed = true;
 
-                tile.element.style.transition = 'all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1)';
+                tile.element.style.transition = 'all 0.10s cubic-bezier(0.2, 0.9, 0.3, 1.0)';
                 tile.element.style.left = `${centerX}px`;
                 tile.element.style.top = `${centerY}px`;
                 if (targetW > 0 && targetH > 0) {

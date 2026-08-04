@@ -2,7 +2,7 @@
 <resources>
     <string-array name="additional_trusted_origins">
     
-      <item>https://https://viscora-game.github.io</item>
+      <item>https://viscora-game.github.io</item>
     
     </string-array>
     <bool name="enableNotification">false</bool>
@@ -14,7 +14,7 @@
     <color name="navigationColorDark">#1E1B4B</color>
     <color name="navigationDividerColor">#000000</color>
     <color name="navigationDividerColorDark">#000000</color>
-    <color name="shortcut_background">#F5F5F5</color>
+    <color name="shortcut_background">#03050a</color>
     <integer name="splashScreenFadeOutDuration">300</integer>
     <string name="appName" translatable="false">Eşle Gitsin 3D</string>
     <string name="assetStatements">
@@ -25,15 +25,6 @@
             \"site\": \"https://viscora-game.github.io\"
         }
     }]
-    
-      ,[{
-          \"relation\": [\"delegate_permission/common.handle_all_urls\"],
-          \"target\": {
-              \"namespace\": \"web\",
-              \"site\": \"https://https://viscora-game.github.io\"
-          }
-      }]        
-    
   </string>
     <string name="fallbackType" translatable="false">customtabs</string>
     <string name="fullScopeUrl" translatable="false">https://viscora-game.github.io/esle-gitsin-3d/</string>

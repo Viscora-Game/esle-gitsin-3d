@@ -1359,7 +1359,7 @@ body {
 
 /* Matched Burst Animation */
 .tile.matching {
-    animation: matchBurst 0.22s ease-out forwards;
+    animation: matchBurst 0.14s ease-out forwards;
 }
 
 @keyframes matchBurst {
