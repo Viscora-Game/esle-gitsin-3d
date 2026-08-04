@@ -1757,12 +1757,11 @@ body {
     color: #cbd5e1;
 }
 
-/* Round Floating Pop-up Leaderboard Widget in Top Middle of Main Menu Card */
+/* Round Floating Pop-up Leaderboard Widget on Top Right (Below Ad Chest) */
 .floating-leaderboard-widget {
     position: absolute;
-    top: 14px;
-    left: 50%;
-    transform: translateX(-50%);
+    top: 80px;
+    right: 14px;
     width: 58px;
     height: 58px;
     border-radius: 50%;
@@ -1780,12 +1779,12 @@ body {
 }
 
 .floating-leaderboard-widget:hover {
-    transform: translateX(-50%) scale(1.14);
+    transform: scale(1.14);
     box-shadow: 0 12px 30px rgba(251, 191, 36, 0.8), 0 0 25px rgba(254, 240, 138, 0.7);
 }
 
 .floating-leaderboard-widget:active {
-    transform: translateX(-50%) scale(0.92);
+    transform: scale(0.92);
 }
 
 .leaderboard-sparkle-badge {
