@@ -2298,13 +2298,12 @@ class TileMatchingGame {
                     if (cloudPlayers && Array.isArray(cloudPlayers)) {
                         const isTaken = cloudPlayers.some(p => p && p.fullTag && p.fullTag.toLowerCase() === targetFullTag.toLowerCase());
                         if (isTaken) {
-                            const newTag = String(Math.floor(1000 + Math.random() * 9000));
-                            if (tagInput) tagInput.value = newTag;
                             if (errMsg) {
-                                errMsg.innerText = `⚠️ "${targetFullTag}" etiketi (ID) başkası tarafından alınmış! Sizin için "${newTag}" etiketi üretildi.`;
+                                errMsg.innerText = `⚠️ "${targetFullTag}" etiketi (ID) başkası tarafından alınmış! Lütfen 4 haneli farklı bir etiket seçin.`;
                                 errMsg.classList.remove('hidden');
                             }
                             this.sound.playLockThud();
+                            if (tagInput) tagInput.focus();
                             return;
                         }
                     }
