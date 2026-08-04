@@ -105,7 +105,7 @@ body {
     height: 100dvh !important;
     max-width: 100vw !important;
     max-height: 100vh !important;
-    background: url("data:image/svg+xml,%3Csvg width='30' height='30' viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h30v30H0z' fill='none'/%3E%3Cpath d='M0 30L30 0h-2L0 28v2zm0-4L26 0h-2L0 24v2zm0-4L22 0h-2L0 20v2zm0-4L18 0h-2L0 16v2zm0-4L14 0h-2L0 12v2zm0-4L10 0H8L0 8v2zm0-4L6 0H4L0 4v2z' fill='%23ffffff' fill-opacity='0.045'/%3E%3C/svg%3E"), radial-gradient(circle at 50% 35%, #065f46 0%, #047857 60%, #022c22 100%);
+    background: url("data:image/svg+xml,%3Csvg width='30' height='30' viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0 0h30v30H0z' fill='none'/%3E%3Cpath d='M0 30L30 0h-2L0 28v2zm0-4L26 0h-2L0 24v2zm0-4L22 0h-2L0 20v2zm0-4L18 0h-2L0 16v2zm0-4L14 0h-2L0 12v2zm0-4L10 0H8L0 8v2zm0-4L6 0H4L0 4v2z' fill='%23ffffff' fill-opacity='0.08'/%3E%3C/svg%3E"), radial-gradient(circle at 50% 40%, #10b981 0%, #059669 45%, #047857 75%, #065f46 100%);
     position: relative;
     display: flex;
     flex-direction: column;
@@ -1205,12 +1205,19 @@ body {
 #board-container {
     flex: 1;
     position: relative;
-    width: 100%;
+    width: calc(100% - 16px);
+    max-width: 480px;
+    margin: 4px auto;
     display: flex;
     justify-content: center;
     align-items: center;
     overflow: hidden;
-    padding: 10px 4px;
+    padding: 12px 6px;
+    background: rgba(0, 0, 0, 0.18);
+    border: 2.5px solid rgba(255, 255, 255, 0.35);
+    border-radius: 28px;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35), inset 0 0 24px rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(8px);
 }
 
 #board {
