@@ -3995,8 +3995,9 @@ class TileMatchingGame {
         const wrapperEl = (document.querySelector && document.querySelector('.puzzle-board-wrapper')) || document.getElementById('puzzle-board-grid');
         if (wrapperEl && wrapperEl.style) {
             wrapperEl.style.backgroundImage = `url(${activePuzzle.imgSrc})`;
-            wrapperEl.style.backgroundSize = 'cover';
-            wrapperEl.style.backgroundPosition = 'center';
+            wrapperEl.style.backgroundSize = '100% 100%';
+            wrapperEl.style.backgroundPosition = '0 0';
+            wrapperEl.style.backgroundRepeat = 'no-repeat';
         }
 
         const gridEl = document.getElementById('puzzle-board-grid');
@@ -4012,8 +4013,9 @@ class TileMatchingGame {
                 if (placedPieces.includes(i)) {
                     slot.className = 'puzzle-slot jigsaw-shaped filled';
                     slot.style.backgroundImage = `url(${activePuzzle.imgSrc})`;
-                    slot.style.backgroundSize = '305% 405%';
-                    slot.style.backgroundPosition = `${col * 50}% ${row * 33.333}%`;
+                    slot.style.backgroundSize = '300% 400%';
+                    slot.style.backgroundPosition = `${col * 50}% ${row * 33.333333}%`;
+                    slot.style.backgroundRepeat = 'no-repeat';
                     slot.style.clipPath = `url(#jigsaw-clip-${i})`;
                     slot.style.webkitClipPath = `url(#jigsaw-clip-${i})`;
                     slot.innerText = '';
@@ -4074,8 +4076,9 @@ class TileMatchingGame {
                     pieceEl.style.webkitClipPath = `url(#jigsaw-clip-${pItem.pieceIndex})`;
                     pieceEl.draggable = true;
                     pieceEl.style.backgroundImage = `url(${puzzleDef.imgSrc})`;
-                    pieceEl.style.backgroundSize = '305% 405%';
-                    pieceEl.style.backgroundPosition = `${col * 50}% ${row * 33.333}%`;
+                    pieceEl.style.backgroundSize = '300% 400%';
+                    pieceEl.style.backgroundPosition = `${col * 50}% ${row * 33.333333}%`;
+                    pieceEl.style.backgroundRepeat = 'no-repeat';
 
                     const label = document.createElement('div');
                     label.className = 'piece-label';
