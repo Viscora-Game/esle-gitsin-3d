@@ -2269,42 +2269,54 @@ class TileMatchingGame {
                 const rawNick = inputNick ? inputNick.value.trim() : '';
                 const rawTag = inputTag ? inputTag.value.trim() : '';
 
-                if (!rawNick || rawNick.length < 2 || this.isProfaneOrInappropriate(rawNick)) {
+                if (!rawNick || rawNick.length < 2) {
                     if (errMsg) {
-                        errMsg.innerText = '⚠️ Lütfen küfür/argo içermeyen uygun bir isim girin!';
+                        errMsg.innerText = '⚠️ KULLANICI ADI HATASI: İsim en az 2 karakter olmalıdır!';
                         errMsg.classList.remove('hidden');
                     }
                     this.sound.playLockThud();
+                    if (inputNick) inputNick.focus();
+                    return;
+                }
+
+                if (this.isProfaneOrInappropriate(rawNick)) {
+                    if (errMsg) {
+                        errMsg.innerText = '⚠️ KULLANICI ADI HATASI: Girilen kullanıcı adı uygunsuz sözcük içeremez!';
+                        errMsg.classList.remove('hidden');
+                    }
+                    this.sound.playLockThud();
+                    if (inputNick) inputNick.focus();
                     return;
                 }
 
                 if (!rawTag || rawTag.length !== 4 || !/^\d{4}$/.test(rawTag)) {
                     if (errMsg) {
-                        errMsg.innerText = '⚠️ Lütfen 4 haneli sayısal bir etiket girin! (Örn: 0001)';
+                        errMsg.innerText = '⚠️ ETİKET (ID) HATASI: Etiket 4 haneli sayısal bir sayı olmalıdır! (Örn: 0001)';
                         errMsg.classList.remove('hidden');
                     }
                     this.sound.playLockThud();
+                    if (inputTag) inputTag.focus();
                     return;
                 }
 
                 const targetFullTag = `${rawNick}#${rawTag}`;
-                btnSaveNick.disabled = true;
-                btnSaveNick.innerText = '⏳ KONTROL EDİLİYOR...';
+                btnSaveNickname.disabled = true;
+                btnSaveNickname.innerText = '⏳ KONTROL EDİLİYOR...';
 
                 // Asynchronously verify Tag/ID Uniqueness against live Cloud DB!
                 this.fetchCloudLeaderboardData().then(cloudPlayers => {
-                    btnSaveNick.disabled = false;
-                    btnSaveNick.innerText = 'KAYDET VE BAŞLA ✨';
+                    btnSaveNickname.disabled = false;
+                    btnSaveNickname.innerText = 'KAYDET VE BAŞLA ✨';
 
                     if (cloudPlayers && Array.isArray(cloudPlayers)) {
                         const isTaken = cloudPlayers.some(p => p && p.fullTag && p.fullTag.toLowerCase() === targetFullTag.toLowerCase());
                         if (isTaken) {
                             if (errMsg) {
-                                errMsg.innerText = `⚠️ "${targetFullTag}" etiketi (ID) başkası tarafından alınmış! Lütfen 4 haneli farklı bir etiket seçin.`;
+                                errMsg.innerText = `⚠️ ETİKET (ID) HATASI: "${targetFullTag}" etiketi başka bir oyuncu tarafından alınmış! Lütfen 4 haneli farklı bir etiket girin.`;
                                 errMsg.classList.remove('hidden');
                             }
                             this.sound.playLockThud();
-                            if (tagInput) tagInput.focus();
+                            if (inputTag) inputTag.focus();
                             return;
                         }
                     }
@@ -2316,8 +2328,8 @@ class TileMatchingGame {
                     this.showToast(`✨ Profil Kaydedildi: ${this.playerProfile.fullTag}`);
                     this.syncCloudLeaderboard();
                 }).catch(() => {
-                    btnSaveNick.disabled = false;
-                    btnSaveNick.innerText = 'KAYDET VE BAŞLA ✨';
+                    btnSaveNickname.disabled = false;
+                    btnSaveNickname.innerText = 'KAYDET VE BAŞLA ✨';
                     if (errMsg) errMsg.classList.add('hidden');
                     this.savePlayerProfile(rawNick, rawTag);
                     document.getElementById('modal-set-nickname').classList.add('hidden');
@@ -4985,17 +4997,14 @@ class TileMatchingGame {
 
     isProfaneOrInappropriate(text) {
         if (!text) return true;
-        const normalized = text.toLowerCase().trim()
-            .replace(/0/g, 'o').replace(/1/g, 'i').replace(/3/g, 'e').replace(/4/g, 'a').replace(/5/g, 's');
+        const normalized = text.toLowerCase().trim();
         
         const blacklist = [
-            'amk', 'aq', 'amq', 'sik', 'sik', 'yarrak', 'orospu', 'piç', 'pic', 'göt', 'got', 'ibne', 'yavsak', 'yavşak',
-            'fuck', 'shit', 'bitch', 'asshole', 'cunt', 'dick', 'bastard', 'pussy', 'nigger', 'nigga',
-            'pkk', 'fetö', 'feto', 'hdp', 'chp', 'akp', 'mhp', 'tayyip', 'erdogan', 'erdoğan', 'kemal', 'imamoğlu',
-            'terör', 'teror', 'kürdistan', 'kurdistan', 'dinsiz', 'kafir', 'şeytan', 'seytan', 'nazi', 'hitler'
+            'amk', 'amq', 'yarrak', 'orospu', 'göt', 'ibne', 'yavsak', 'yavşak',
+            'fuck', 'bitch', 'asshole', 'cunt', 'dick', 'bastard', 'pussy', 'nigger', 'nigga'
         ];
 
-        return blacklist.some(badWord => normalized.includes(badWord));
+        return blacklist.some(badWord => normalized === badWord || normalized.includes(badWord));
     }
 
     getRandomNicknameSuggestion() {
