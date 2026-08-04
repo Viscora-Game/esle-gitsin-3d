@@ -1205,19 +1205,12 @@ body {
 #board-container {
     flex: 1;
     position: relative;
-    width: calc(100% - 16px);
-    max-width: 480px;
-    margin: 4px auto;
+    width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
     overflow: hidden;
-    padding: 12px 6px;
-    background: rgba(0, 0, 0, 0.18);
-    border: 2.5px solid rgba(255, 255, 255, 0.35);
-    border-radius: 28px;
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35), inset 0 0 24px rgba(255, 255, 255, 0.12);
-    backdrop-filter: blur(8px);
+    padding: 10px 4px;
 }
 
 #board {
@@ -2322,6 +2315,23 @@ body {
     transform: translateZ(0);
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
+}
+
+/* Strict Landscape Lock: Keeps game strictly centered in Portrait column when turned sideways */
+@media screen and (orientation: landscape) {
+    #app-wrapper {
+        background: radial-gradient(circle at 50% 50%, #059669 0%, #047857 50%, #064e3b 85%, #022c22 100%) !important;
+    }
+    #game-container {
+        width: 100vh !important;
+        max-width: 480px !important;
+        height: 100vh !important;
+        height: 100dvh !important;
+        margin: 0 auto !important;
+        border-left: 2px solid rgba(255, 255, 255, 0.25);
+        border-right: 2px solid rgba(255, 255, 255, 0.25);
+        box-shadow: 0 0 60px rgba(0, 0, 0, 0.7);
+    }
 }
 
 /* Small Screen Phones (< 380px width, e.g. iPhone SE, Galaxy A Series) */
