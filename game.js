@@ -3559,6 +3559,19 @@ class TileMatchingGame {
             if (tileA.element.parentElement) tileA.element.parentElement.removeChild(tileA.element);
             if (tileB.element.parentElement) tileB.element.parentElement.removeChild(tileB.element);
 
+            // AUTO-CLOSE +1 EMERGENCY SLOT AS SOON AS IT IS USED ONCE & MATCHED
+            if (this.hasTemporaryExtraSlot && this.extraSlotWasUsed) {
+                this.hasTemporaryExtraSlot = false;
+                this.extraSlotWasUsed = false;
+                this.maxSlotCapacity = 5;
+                const floatSlot = document.getElementById('floating-extra-slot');
+                if (floatSlot) floatSlot.classList.add('hidden');
+                
+                const dict = (this.i18n && this.i18n[this.settings.lang]) ? this.i18n[this.settings.lang] : (this.i18n ? this.i18n.tr : {});
+                this.showToast(dict.slotUsedClosedToast || '🚨 +1 ACİL SLOT HAKKI KULLANILDI VE KAPANDI!');
+                this.updateBoosterBadgesUI();
+            }
+
             this.rearrangeSlotTiles();
 
             const remainingBoardTiles = this.boardTiles.filter(t => !t.isInSlot);
