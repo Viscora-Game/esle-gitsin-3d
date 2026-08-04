@@ -1941,18 +1941,23 @@ class TileMatchingGame {
 
         const dismiss = () => {
             if (!this.introActive) return;
+            this.introActive = false;
             introStage.classList.add('intro-hidden');
+            introStage.style.opacity = '0';
+            introStage.style.pointerEvents = 'none';
             setTimeout(() => {
                 introStage.style.display = 'none';
-                this.introActive = false;
-            }, 600);
+                if (introStage && introStage.parentNode) {
+                    introStage.parentNode.removeChild(introStage);
+                }
+            }, 500);
         };
 
         introStage.addEventListener('click', dismiss, { once: true });
         introStage.addEventListener('touchstart', dismiss, { once: true });
 
-        // Smooth cinematic presentation matching Maze of Fear (2200ms)
-        setTimeout(dismiss, 2200);
+        // Fast, smooth cinematic presentation (1400ms auto-dismiss)
+        setTimeout(dismiss, 1400);
     }
 
     initUI() {
@@ -4720,17 +4725,28 @@ function bootGameEngine() {
         window.gameInstance = new TileMatchingGame();
     } catch (e) {
         console.error('[EsleGitsin3D] CRITICAL: Game init failed:', e);
-        const mainMenu = document.getElementById('main-menu');
-        if (mainMenu) {
-            mainMenu.classList.remove('hidden');
-            mainMenu.style.display = 'flex';
-            mainMenu.style.opacity = '1';
-            mainMenu.style.pointerEvents = 'auto';
-        }
-        document.querySelectorAll('.modal-overlay').forEach(el => {
-            el.classList.add('hidden');
-            el.style.display = 'none';
-        });
+    } finally {
+        // GUARANTEED SAFETY NET: Dismiss studio intro stage within 1.6 seconds no matter what!
+        setTimeout(() => {
+            const introStage = document.getElementById('cybercore-intro-stage');
+            if (introStage) {
+                introStage.classList.add('intro-hidden');
+                introStage.style.opacity = '0';
+                introStage.style.pointerEvents = 'none';
+                setTimeout(() => {
+                    if (introStage && introStage.parentNode) {
+                        introStage.parentNode.removeChild(introStage);
+                    }
+                }, 400);
+            }
+            const mainMenu = document.getElementById('main-menu');
+            if (mainMenu) {
+                mainMenu.classList.remove('hidden');
+                mainMenu.style.display = 'flex';
+                mainMenu.style.opacity = '1';
+                mainMenu.style.pointerEvents = 'auto';
+            }
+        }, 1600);
     }
 }
 

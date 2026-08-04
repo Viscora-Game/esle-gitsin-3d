@@ -57,8 +57,8 @@ android {
         applicationId "com.viscoragame.eslegitsin3d"
         minSdkVersion 21
         targetSdkVersion 36
-        versionCode 45
-        versionName "8.9.13"
+        versionCode 46
+        versionName "8.9.14"
 
         // The name for the application
         resValue "string", "appName", twaManifest.name
