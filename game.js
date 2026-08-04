@@ -456,13 +456,13 @@ class WebAudioBGMPlayer {
         }
     }
 
-    async play(trackPath, volPct = 30) {
+    async play(trackPath, volPct = 35) {
         if (this.isPlaying && this.currentTrackPath === trackPath) {
             this.setVolume(volPct);
             return;
         }
         this.currentTrackPath = trackPath;
-        this.volume = Math.max(0, Math.min(1, volPct / 100)) * 0.35;
+        this.volume = Math.max(0, Math.min(1, volPct / 100)) * 0.5;
 
         if (this.volume <= 0) {
             this.stop();
@@ -498,7 +498,7 @@ class WebAudioBGMPlayer {
     }
 
     setVolume(volPct) {
-        this.volume = Math.max(0, Math.min(1, volPct / 100)) * 0.35;
+        this.volume = Math.max(0, Math.min(1, volPct / 100)) * 0.5;
         if (this.gainNode && this.synth && this.synth.ctx) {
             try {
                 this.gainNode.gain.setValueAtTime(this.volume, this.synth.ctx.currentTime);
@@ -692,7 +692,7 @@ class TileMatchingGame {
         // Settings State
         this.settings = {
             volume: 80,
-            musicVolume: 12,
+            musicVolume: 35,
             bgmTrack: 'carefree',
             vibration: true,
             lang: 'tr'
