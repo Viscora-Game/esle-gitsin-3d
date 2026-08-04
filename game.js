@@ -2755,18 +2755,10 @@ class TileMatchingGame {
                 isInSlot: false
             };
 
-            const handleTap = (e) => {
-                if (e.type === 'pointerdown') {
-                    tileObj.lastTouchTime = Date.now();
-                } else if (e.type === 'click' && tileObj.lastTouchTime && (Date.now() - tileObj.lastTouchTime < 350)) {
-                    return;
-                }
+            tileEl.addEventListener('click', (e) => {
                 e.stopPropagation();
                 this.onTileClick(tileObj);
-            };
-
-            tileEl.addEventListener('pointerdown', handleTap, { passive: true });
-            tileEl.addEventListener('click', handleTap);
+            });
             
             this.boardTiles.push(tileObj);
         }
@@ -3242,7 +3234,16 @@ class TileMatchingGame {
     }
 
     onTileClick(tile) {
-        if (tile.isInSlot) return;
+        if (tile.isInSlot || tile.isProcessingClick) return;
+
+        const now = Date.now();
+        if (this.lastTileClickTime && (now - this.lastTileClickTime < 110)) {
+            return; // Prevent phantom double-taps / synthetic click propagation
+        }
+        this.lastTileClickTime = now;
+
+        tile.isProcessingClick = true;
+        setTimeout(() => { tile.isProcessingClick = false; }, 150);
 
         this.clearHintHighlights();
 
