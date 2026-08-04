@@ -5151,35 +5151,48 @@ class TileMatchingGame {
 
             const cloudUrl = 'https://jsonblob.com/api/jsonBlob/019fcf1b-1d53-7a58-bad9-de2b58944893';
 
-            const resp = await fetch(cloudUrl);
             const playerMap = new Map();
 
-            if (resp.ok) {
-                const parsed = await resp.json();
-                if (parsed && Array.isArray(parsed.players)) {
-                    for (const p of parsed.players) {
-                        if (p && p.fullTag) {
-                            playerMap.set(p.fullTag, p);
-                        }
-                    }
+            // 1. First preserve all locally cached players to ensure zero data loss
+            if (this.latestCloudDataset && Array.isArray(this.latestCloudDataset)) {
+                for (const p of this.latestCloudDataset) {
+                    if (p && p.fullTag) playerMap.set(p.fullTag, p);
                 }
             }
 
-            // Always update current player's latest accurate score
+            // 2. Fetch live Cloud DB players
+            try {
+                const resp = await fetch(cloudUrl);
+                if (resp.ok) {
+                    const parsed = await resp.json();
+                    if (parsed && Array.isArray(parsed.players)) {
+                        for (const p of parsed.players) {
+                            if (p && p.fullTag) {
+                                const existing = playerMap.get(p.fullTag);
+                                if (!existing || (p.updatedAt || 0) >= (existing.updatedAt || 0)) {
+                                    playerMap.set(p.fullTag, p);
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch (fetchErr) {}
+
+            // 3. Always update current player's latest score
             playerMap.set(myFullTag, myEntry);
 
             const updatedPlayers = Array.from(playerMap.values());
             updatedPlayers.sort((a, b) => (b.overallScore || 0) - (a.overallScore || 0));
 
             const finalPlayers = updatedPlayers.slice(0, 1000);
+            this.latestCloudDataset = finalPlayers;
 
+            // 4. Send merged complete list back to Cloud
             await fetch(cloudUrl, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ players: finalPlayers })
             });
-
-            this.latestCloudDataset = finalPlayers;
         } catch (e) {
             console.log('[CloudSync] Exception:', e);
         }
@@ -5229,13 +5242,9 @@ class TileMatchingGame {
         modal.classList.remove('hidden');
         modal.style.display = 'flex';
 
-        // 2. Asynchronously sync score & fetch live online player scores from Cloud Database
-        this.syncCloudLeaderboard();
-        const cloudData = await this.fetchCloudLeaderboardData();
-        if (cloudData && cloudData.length > 0) {
-            this.latestCloudDataset = cloudData;
-            this.renderLeaderboardList(activeCategory);
-        }
+        // 2. Perform atomic cloud sync & render stable merged list
+        await this.syncCloudLeaderboard();
+        this.renderLeaderboardList(activeCategory);
     }
 
     renderLeaderboardList(category = 'overall') {
