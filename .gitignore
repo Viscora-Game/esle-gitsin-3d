@@ -1,12 +1,9 @@
-# OS & IDE Files
-.DS_Store
-Thumbs.db
-*.log
-
-# Build & Gradle Directories
+# Build & Gradle & Scratch Directories
 build/
 **/build/
 .gradle/
+scratch/
+
 
 # PWABuilder Packages & Local Releases
 pwabuilder_package/
