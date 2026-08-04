@@ -2300,18 +2300,6 @@ body {
     -webkit-backface-visibility: hidden;
 }
 
-/* Landscape Mode Screen & Stacking Stability */
-@media (orientation: landscape) {
-    #app-wrapper {
-        background-color: #01140e;
-    }
-    #game-container {
-        max-width: 520px;
-        margin: 0 auto;
-        box-shadow: 0 0 40px rgba(0, 0, 0, 0.8);
-    }
-}
-
 /* Small Screen Phones (< 380px width, e.g. iPhone SE, Galaxy A Series) */
 @media (max-width: 380px) {
     .menu-card {

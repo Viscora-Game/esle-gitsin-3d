@@ -545,8 +545,12 @@ class TileMatchingGame {
 
     updateResponsiveCardSizing() {
         try {
-            const screenW = Math.min(window.innerWidth || 380, document.documentElement.clientWidth || 380);
-            const screenH = Math.min(window.innerHeight || 600, document.documentElement.clientHeight || 600);
+            const rawW = window.innerWidth || document.documentElement.clientWidth || 380;
+            const rawH = window.innerHeight || document.documentElement.clientHeight || 600;
+
+            // ALWAYS enforce portrait orientation bounds (screenW is smaller dimension, screenH is larger dimension)
+            const screenW = Math.min(rawW, rawH);
+            const screenH = Math.max(rawW, rawH);
             
             const widthScale = screenW / 410;
             const heightScale = screenH / 740;
@@ -564,7 +568,12 @@ class TileMatchingGame {
 
     constructor() {
         try {
-        this.updateResponsiveCardSizing();
+            // Lock Web Screen Orientation strictly to Portrait mode
+            if (window.screen && window.screen.orientation && window.screen.orientation.lock) {
+                window.screen.orientation.lock('portrait').catch(() => {});
+            }
+
+            this.updateResponsiveCardSizing();
 
         this.maxSlotCapacity = 5;
         this.hasTemporaryExtraSlot = false;
