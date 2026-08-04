@@ -1610,6 +1610,7 @@ class TileMatchingGame {
         this.loadSettings();
         this.loadGameProgress();
         this.loadPlayerProfile();
+        this.loadCloudLeaderboardCache();
         this.initUI();
         this.initBackgroundMusic();
         this.checkFirstTimeTutorial();
@@ -4946,6 +4947,18 @@ class TileMatchingGame {
         }
     }
 
+    loadCloudLeaderboardCache() {
+        try {
+            const raw = localStorage.getItem('tile_game_cloud_lb_cache');
+            if (raw) {
+                const parsed = JSON.parse(raw);
+                if (parsed && Array.isArray(parsed)) {
+                    this.latestCloudDataset = parsed;
+                }
+            }
+        } catch (e) {}
+    }
+
     savePlayerProfile(nickname, tag) {
         const cleanNick = nickname.trim().substring(0, 10);
         const cleanTag = tag.trim().replace(/[^0-9]/g, '').padStart(4, '0').substring(0, 4);
@@ -5073,8 +5086,8 @@ class TileMatchingGame {
         // MERGE REAL LIVE ONLINE PLAYERS FROM CLOUD DATABASE
         if (this.latestCloudDataset && Array.isArray(this.latestCloudDataset)) {
             for (const cp of this.latestCloudDataset) {
-                if (cp && cp.fullTag && cp.fullTag !== myFullTag) {
-                    const existingIdx = list.findIndex(item => item.fullTag === cp.fullTag);
+                if (cp && cp.fullTag && cp.fullTag.toLowerCase() !== myFullTag.toLowerCase()) {
+                    const existingIdx = list.findIndex(item => item.fullTag.toLowerCase() === cp.fullTag.toLowerCase());
                     const cloudPlayer = {
                         isSelf: false,
                         name: cp.name || cp.fullTag.split('#')[0],
@@ -5096,16 +5109,19 @@ class TileMatchingGame {
             }
         }
 
+        // DETERMINISTIC TIE-BREAKER SORTING
         list.sort((a, b) => {
             if (category === 'classic') {
                 if (b.classicScore !== a.classicScore) return b.classicScore - a.classicScore;
-                return b.classicLvl - a.classicLvl;
+                if (b.classicLvl !== a.classicLvl) return b.classicLvl - a.classicLvl;
             } else if (category === 'timetrial') {
                 if (b.ttScore !== a.ttScore) return b.ttScore - a.ttScore;
-                return b.ttLvl - a.ttLvl;
+                if (b.ttLvl !== a.ttLvl) return b.ttLvl - a.ttLvl;
             } else {
-                return b.overallScore - a.overallScore;
+                if (b.overallScore !== a.overallScore) return b.overallScore - a.overallScore;
             }
+            if (b.puzzles !== a.puzzles) return b.puzzles - a.puzzles;
+            return a.fullTag.localeCompare(b.fullTag);
         });
 
         list.forEach((item, idx) => {
@@ -5156,7 +5172,7 @@ class TileMatchingGame {
             // 1. First preserve all locally cached players to ensure zero data loss
             if (this.latestCloudDataset && Array.isArray(this.latestCloudDataset)) {
                 for (const p of this.latestCloudDataset) {
-                    if (p && p.fullTag) playerMap.set(p.fullTag, p);
+                    if (p && p.fullTag) playerMap.set(p.fullTag.toLowerCase(), p);
                 }
             }
 
@@ -5168,9 +5184,10 @@ class TileMatchingGame {
                     if (parsed && Array.isArray(parsed.players)) {
                         for (const p of parsed.players) {
                             if (p && p.fullTag) {
-                                const existing = playerMap.get(p.fullTag);
+                                const key = p.fullTag.toLowerCase();
+                                const existing = playerMap.get(key);
                                 if (!existing || (p.updatedAt || 0) >= (existing.updatedAt || 0)) {
-                                    playerMap.set(p.fullTag, p);
+                                    playerMap.set(key, p);
                                 }
                             }
                         }
@@ -5179,13 +5196,17 @@ class TileMatchingGame {
             } catch (fetchErr) {}
 
             // 3. Always update current player's latest score
-            playerMap.set(myFullTag, myEntry);
+            playerMap.set(myFullTag.toLowerCase(), myEntry);
 
             const updatedPlayers = Array.from(playerMap.values());
             updatedPlayers.sort((a, b) => (b.overallScore || 0) - (a.overallScore || 0));
 
             const finalPlayers = updatedPlayers.slice(0, 1000);
             this.latestCloudDataset = finalPlayers;
+
+            try {
+                localStorage.setItem('tile_game_cloud_lb_cache', JSON.stringify(finalPlayers));
+            } catch (cacheErr) {}
 
             // 4. Send merged complete list back to Cloud
             await fetch(cloudUrl, {
@@ -5245,6 +5266,17 @@ class TileMatchingGame {
         // 2. Perform atomic cloud sync & render stable merged list
         await this.syncCloudLeaderboard();
         this.renderLeaderboardList(activeCategory);
+
+        // 3. Auto Live Polling while modal is visible (every 15s)
+        if (this.leaderboardPollInterval) clearInterval(this.leaderboardPollInterval);
+        this.leaderboardPollInterval = setInterval(async () => {
+            if (modal.classList.contains('hidden') || modal.style.display === 'none') {
+                clearInterval(this.leaderboardPollInterval);
+                return;
+            }
+            await this.syncCloudLeaderboard();
+            this.renderLeaderboardList(this.currentLeaderboardCategory);
+        }, 15000);
     }
 
     renderLeaderboardList(category = 'overall') {
@@ -5269,16 +5301,20 @@ class TileMatchingGame {
             else if (category === 'timetrial') displayScore = player.ttScore;
             else displayScore = player.overallScore;
 
+            const safeTag = String(player.fullTag).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+            const safeTitle = String(tierInfo.title).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
             rowEl.innerHTML = `
                 <div class="lb-rank-num">#${player.rank}</div>
                 <div class="lb-player-info">
-                    <span class="lb-name-tag">${player.fullTag} ${player.isSelf ? '(Siz)' : ''}</span>
-                    <span class="lb-tier-badge">${tierInfo.title}</span>
+                    <span class="lb-name-tag">${safeTag} ${player.isSelf ? '(Siz)' : ''}</span>
+                    <span class="lb-tier-badge">${safeTitle}</span>
                 </div>
                 <div class="lb-score-val">${displayScore.toLocaleString()} Puan</div>
             `;
 
             rowEl.addEventListener('click', () => {
+                this.sound.playClick();
                 this.openPlayerProfileModal(player);
             });
 
