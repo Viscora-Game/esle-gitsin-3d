@@ -846,14 +846,16 @@ body {
    ========================================================= */
 
 #hud-header {
-    padding: 10px 12px 10px 12px;
-    background: rgba(15, 23, 42, 0.90);
-    backdrop-filter: blur(18px);
+    padding: 10px 14px 10px 14px;
+    background: rgba(10, 15, 26, 0.94);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
     display: flex;
     flex-direction: column;
     gap: 8px;
     z-index: 1000;
-    border-bottom: 1.5px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 2px solid rgba(251, 191, 36, 0.4);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
     width: 100%;
 }
 
@@ -868,51 +870,65 @@ body {
 .hud-info-group {
     display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
 }
 
 .hud-icon-btn {
-    background: rgba(255, 255, 255, 0.1);
-    border: 1.5px solid rgba(255, 255, 255, 0.2);
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%);
+    border: 1.5px solid rgba(251, 191, 36, 0.5);
     color: #ffffff;
-    width: 36px;
-    height: 36px;
+    width: 38px;
+    height: 38px;
     border-radius: 50%;
-    font-size: 16px;
+    font-size: 17px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     flex-shrink: 0;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
     transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.2s ease;
 }
 
 .hud-icon-btn:hover {
-    transform: translateY(-2px) scale(1.1);
-    background: rgba(255, 255, 255, 0.25);
+    transform: translateY(-2px) scale(1.08);
+    background: linear-gradient(135deg, rgba(251, 191, 36, 0.3) 0%, rgba(245, 158, 11, 0.15) 100%);
 }
 
 .hud-icon-btn:active {
-    transform: scale(0.9);
+    transform: scale(0.92);
 }
 
 .hud-item {
-    background: rgba(255, 255, 255, 0.08);
-    padding: 4px 6px;
-    border-radius: 12px;
+    padding: 5px 9px;
+    border-radius: 14px;
     display: flex;
     align-items: center;
-    gap: 3px;
-    border: 1.5px solid rgba(255, 255, 255, 0.15);
+    gap: 4px;
     flex-shrink: 1;
     min-width: 0;
     white-space: nowrap;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.badge-level {
+    background: rgba(56, 189, 248, 0.12);
+    border: 1.5px solid rgba(56, 189, 248, 0.6);
+}
+
+.badge-score {
+    background: rgba(52, 211, 153, 0.12);
+    border: 1.5px solid rgba(52, 211, 153, 0.6);
+}
+
+.badge-gold {
+    background: rgba(251, 191, 36, 0.15);
+    border: 1.5px solid rgba(251, 191, 36, 0.6);
 }
 
 .badge-timer {
-    background: linear-gradient(135deg, rgba(239, 68, 68, 0.35) 0%, rgba(220, 38, 38, 0.25) 100%);
-    border: 1.5px solid #ef4444;
+    background: rgba(248, 113, 113, 0.18);
+    border: 1.5px solid #f87171;
 }
 
 .badge-timer.hidden {
@@ -937,14 +953,28 @@ body {
 .hud-label {
     font-size: 10px;
     font-weight: 800;
-    color: #cbd5e1;
-    letter-spacing: 0.3px;
+    color: #e2e8f0;
+    letter-spacing: 0.4px;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
 }
 
 .hud-val {
     font-size: 14px;
     font-weight: 900;
-    color: var(--accent-gold);
+    color: #ffffff;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+}
+
+.badge-gold .hud-val {
+    color: #fbbf24;
+}
+
+.badge-level .hud-val {
+    color: #38bdf8;
+}
+
+.badge-score .hud-val {
+    color: #34d399;
 }
 
 /* Row 2: Spacious & Bold Booster Buttons Bar */
@@ -952,7 +982,7 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 4px;
+    gap: 6px;
     width: 100%;
     max-width: 480px;
     margin: 0 auto;
@@ -962,19 +992,36 @@ body {
 .booster-pill {
     flex: 1 1 0;
     min-width: 0;
-    padding: 6px 4px;
-    border-radius: 14px;
+    padding: 7px 6px;
+    border-radius: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 3px;
-    font-size: clamp(9px, 2.5vw, 12px);
+    gap: 4px;
+    font-size: clamp(10px, 2.7vw, 13px);
     font-weight: 900;
     cursor: pointer;
-    border: 1.5px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease, filter 0.2s ease;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+    transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.18s ease;
     overflow: hidden;
+}
+
+.hint-pill {
+    background: linear-gradient(135deg, rgba(56, 189, 248, 0.22) 0%, rgba(14, 165, 233, 0.12) 100%);
+    border: 1.5px solid rgba(56, 189, 248, 0.7);
+    color: #38bdf8;
+}
+
+.slot-pill {
+    background: linear-gradient(135deg, rgba(251, 191, 36, 0.25) 0%, rgba(217, 119, 6, 0.14) 100%);
+    border: 1.5px solid rgba(251, 191, 36, 0.75);
+    color: #fbbf24;
+}
+
+.shuffle-pill {
+    background: linear-gradient(135deg, rgba(192, 132, 252, 0.25) 0%, rgba(147, 51, 234, 0.14) 100%);
+    border: 1.5px solid rgba(192, 132, 252, 0.75);
+    color: #c084fc;
 }
 
 .booster-pill:hover {
@@ -1317,7 +1364,7 @@ body {
 
 /* Bottom 5-Slot Fixed Tray Bar */
 #slot-tray-container {
-    padding: 16px 14px 28px 14px;
+    padding: 14px 14px 26px 14px;
     display: flex;
     justify-content: center;
     position: relative;
@@ -1327,11 +1374,12 @@ body {
 #slot-tray-bg {
     width: var(--tray-w);
     height: var(--tray-h);
-    background: rgba(15, 23, 42, 0.88);
-    border: 2.5px solid rgba(245, 158, 11, 0.5);
+    background: linear-gradient(180deg, rgba(15, 23, 42, 0.96) 0%, rgba(30, 41, 59, 0.94) 100%);
+    border: 2.5px solid rgba(251, 191, 36, 0.75);
     border-radius: 24px;
-    box-shadow: 0 12px 36px rgba(0, 0, 0, 0.7), inset 0 2px 10px rgba(255, 255, 255, 0.08);
-    backdrop-filter: blur(16px);
+    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.8), 0 0 20px rgba(251, 191, 36, 0.2), inset 0 2px 8px rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
     display: flex;
     justify-content: flex-start;
     align-items: center;
@@ -1342,10 +1390,10 @@ body {
 .slot-marker {
     width: var(--card-w);
     height: var(--card-h);
-    border: 2px dashed rgba(255, 255, 255, 0.22);
-    border-radius: 12px;
-    background: rgba(0, 0, 0, 0.35);
-    box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.6);
+    border: 2px dashed rgba(251, 191, 36, 0.35);
+    border-radius: 14px;
+    background: radial-gradient(circle at 50% 50%, rgba(15, 23, 42, 0.8) 0%, rgba(2, 6, 23, 0.95) 100%);
+    box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.7), 0 1px 2px rgba(255, 255, 255, 0.05);
     flex-shrink: 0;
 }
 
