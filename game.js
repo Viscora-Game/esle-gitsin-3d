@@ -1609,9 +1609,11 @@ class TileMatchingGame {
 
         this.loadSettings();
         this.loadGameProgress();
+        this.loadPlayerProfile();
         this.initUI();
         this.initBackgroundMusic();
         this.checkFirstTimeTutorial();
+        this.checkFirstTimeRegistration();
         } catch (e) {
             // CRITICAL ERROR BOUNDARY: If constructor crashes, ensure menu stays interactive
             console.error('[EsleGitsin3D] Init error:', e);
@@ -2195,6 +2197,97 @@ class TileMatchingGame {
                 
                 // Re-open wheel modal stage 1 to show updated spin limits (1/2 -> 2/2)
                 this.openWheelModal();
+            });
+        }
+
+        // LEADERBOARD & NICKNAME EVENT LISTENERS
+        const btnLeaderboard = document.getElementById('btn-menu-leaderboard');
+        if (btnLeaderboard) {
+            btnLeaderboard.addEventListener('click', () => {
+                this.openLeaderboardModal('overall');
+            });
+        }
+
+        const btnCloseLeaderboard = document.getElementById('btn-close-leaderboard');
+        if (btnCloseLeaderboard) {
+            btnCloseLeaderboard.addEventListener('click', () => {
+                this.sound.playClick();
+                document.getElementById('modal-leaderboard').classList.add('hidden');
+            });
+        }
+
+        const btnCloseProfile = document.getElementById('btn-close-player-profile');
+        if (btnCloseProfile) {
+            btnCloseProfile.addEventListener('click', () => {
+                this.sound.playClick();
+                document.getElementById('modal-player-profile').classList.add('hidden');
+            });
+        }
+
+        // Leaderboard Category Tabs
+        document.querySelectorAll('.lb-tab-btn').forEach(tabBtn => {
+            tabBtn.addEventListener('click', (e) => {
+                const targetTab = e.currentTarget.getAttribute('data-lb-tab');
+                if (targetTab) {
+                    this.sound.playClick();
+                    this.openLeaderboardModal(targetTab);
+                }
+            });
+        });
+
+        // Registration Modal Dice Buttons & Form Submit
+        const btnRandomNick = document.getElementById('btn-random-nickname');
+        if (btnRandomNick) {
+            btnRandomNick.addEventListener('click', () => {
+                this.sound.playClick();
+                const inputNick = document.getElementById('input-nickname');
+                if (inputNick) inputNick.value = this.getRandomNicknameSuggestion();
+            });
+        }
+
+        const btnRandomTag = document.getElementById('btn-random-tag');
+        if (btnRandomTag) {
+            btnRandomTag.addEventListener('click', () => {
+                this.sound.playClick();
+                const inputTag = document.getElementById('input-tag');
+                if (inputTag) inputTag.value = this.getRandomTagSuggestion();
+            });
+        }
+
+        const btnSaveNickname = document.getElementById('btn-save-nickname');
+        if (btnSaveNickname) {
+            btnSaveNickname.addEventListener('click', () => {
+                this.sound.playClick();
+                const inputNick = document.getElementById('input-nickname');
+                const inputTag = document.getElementById('input-tag');
+                const errMsg = document.getElementById('nickname-error-msg');
+
+                const rawNick = inputNick ? inputNick.value.trim() : '';
+                const rawTag = inputTag ? inputTag.value.trim() : '';
+
+                if (!rawNick || rawNick.length < 2 || this.isProfaneOrInappropriate(rawNick)) {
+                    if (errMsg) {
+                        errMsg.innerText = '⚠️ Lütfen küfür/argo içermeyen uygun bir isim girin!';
+                        errMsg.classList.remove('hidden');
+                    }
+                    this.sound.playLockThud();
+                    return;
+                }
+
+                if (!rawTag || rawTag.length !== 4 || !/^\d{4}$/.test(rawTag)) {
+                    if (errMsg) {
+                        errMsg.innerText = '⚠️ Lütfen 4 haneli sayısal bir etiket girin! (Örn: 0001)';
+                        errMsg.classList.remove('hidden');
+                    }
+                    this.sound.playLockThud();
+                    return;
+                }
+
+                if (errMsg) errMsg.classList.add('hidden');
+                this.savePlayerProfile(rawNick, rawTag);
+
+                document.getElementById('modal-set-nickname').classList.add('hidden');
+                this.showToast(`✨ Profil Kaydedildi: ${this.playerProfile.fullTag}`);
             });
         }
 
@@ -4716,6 +4809,324 @@ class TileMatchingGame {
                 }, 300);
             }
         }, 1000);
+    }
+
+    // -------------------------------------------------------------
+    // LEADERBOARD, PLAYER PROFILE & PROFANITY FILTER ENGINE
+    // -------------------------------------------------------------
+    loadPlayerProfile() {
+        try {
+            const saved = localStorage.getItem('tile_game_player_profile');
+            if (saved) {
+                this.playerProfile = JSON.parse(saved);
+            }
+        } catch (e) {}
+
+        if (!this.playerProfile || !this.playerProfile.nickname) {
+            this.playerProfile = null;
+        }
+    }
+
+    savePlayerProfile(nickname, tag) {
+        const cleanNick = nickname.trim().substring(0, 10);
+        const cleanTag = tag.trim().replace(/[^0-9]/g, '').padStart(4, '0').substring(0, 4);
+        
+        this.playerProfile = {
+            nickname: cleanNick,
+            tag: cleanTag,
+            fullTag: `${cleanNick}#${cleanTag}`,
+            registeredAt: Date.now()
+        };
+
+        try {
+            localStorage.setItem('tile_game_player_profile', JSON.stringify(this.playerProfile));
+        } catch (e) {}
+    }
+
+    checkFirstTimeRegistration() {
+        if (!this.playerProfile || !this.playerProfile.nickname) {
+            setTimeout(() => {
+                this.openSetNicknameModal();
+            }, 600);
+        }
+    }
+
+    isProfaneOrInappropriate(text) {
+        if (!text) return true;
+        const normalized = text.toLowerCase().trim()
+            .replace(/0/g, 'o').replace(/1/g, 'i').replace(/3/g, 'e').replace(/4/g, 'a').replace(/5/g, 's');
+        
+        const blacklist = [
+            'amk', 'aq', 'amq', 'sik', 'sik', 'yarrak', 'orospu', 'piç', 'pic', 'göt', 'got', 'ibne', 'yavsak', 'yavşak',
+            'fuck', 'shit', 'bitch', 'asshole', 'cunt', 'dick', 'bastard', 'pussy', 'nigger', 'nigga',
+            'pkk', 'fetö', 'feto', 'hdp', 'chp', 'akp', 'mhp', 'tayyip', 'erdogan', 'erdoğan', 'kemal', 'imamoğlu',
+            'terör', 'teror', 'kürdistan', 'kurdistan', 'dinsiz', 'kafir', 'şeytan', 'seytan', 'nazi', 'hitler'
+        ];
+
+        return blacklist.some(badWord => normalized.includes(badWord));
+    }
+
+    getRandomNicknameSuggestion() {
+        const prefixes = ['Kozmik', 'Eşleme', 'Ejder', 'Mistik', 'Panda', 'Tilki', 'Büyülü', 'Zafer', 'Turbo', 'Alfa'];
+        const suffixes = ['Ustası', 'Avcısı', 'Kralı', 'Şampiyonu', 'Oyuncu', 'Kaplanı', 'Fırtınası', 'Yıldızı', 'Kahramanı'];
+        const p = prefixes[Math.floor(Math.random() * prefixes.length)];
+        const s = suffixes[Math.floor(Math.random() * suffixes.length)];
+        return `${p}${s}`.substring(0, 10);
+    }
+
+    getRandomTagSuggestion() {
+        return Math.floor(1000 + Math.random() * 9000).toString();
+    }
+
+    openSetNicknameModal() {
+        const modal = document.getElementById('modal-set-nickname');
+        if (!modal) return;
+
+        const inputNick = document.getElementById('input-nickname');
+        const inputTag = document.getElementById('input-tag');
+        const errMsg = document.getElementById('nickname-error-msg');
+
+        if (errMsg) errMsg.classList.add('hidden');
+
+        if (inputNick) {
+            inputNick.value = this.playerProfile ? this.playerProfile.nickname : this.getRandomNicknameSuggestion();
+        }
+        if (inputTag) {
+            inputTag.value = this.playerProfile ? this.playerProfile.tag : this.getRandomTagSuggestion();
+        }
+
+        modal.classList.remove('hidden');
+        modal.style.display = 'flex';
+    }
+
+    getTierTitleAndAvatar(rankNum) {
+        if (rankNum === 1) {
+            return { title: '👑 Kozmik İlah', avatar: '👑', cssClass: 'top-1' };
+        } else if (rankNum === 2) {
+            return { title: '🥈 Efsanevi Usta', avatar: '🥈', cssClass: 'top-2' };
+        } else if (rankNum === 3) {
+            return { title: '🥉 Ejder Şampiyonu', avatar: '🥉', cssClass: 'top-3' };
+        } else if (rankNum >= 4 && rankNum <= 10) {
+            return { title: '⭐ Elit Usta', avatar: '⭐', cssClass: 'top-10' };
+        } else if (rankNum >= 11 && rankNum <= 100) {
+            return { title: '💎 Elmas Oyuncu', avatar: '💎', cssClass: 'top-100' };
+        } else {
+            return { title: '🛡️ Yükselen Yıldız', avatar: '🛡️', cssClass: 'top-1000' };
+        }
+    }
+
+    getGlobalLeaderboardDataset(category = 'overall') {
+        const myName = (this.playerProfile && this.playerProfile.nickname) ? this.playerProfile.nickname : 'Siz';
+        const myTag = (this.playerProfile && this.playerProfile.tag) ? this.playerProfile.tag : '0001';
+        const myFullTag = `${myName}#${myTag}`;
+
+        const myClassicLvl = (this.classicProgress && this.classicProgress.level) || 1;
+        const myClassicScore = (this.classicProgress && this.classicProgress.score) || 0;
+        const myTtLvl = (this.timeTrialProgress && this.timeTrialProgress.level) || 1;
+        const myTtScore = (this.timeTrialProgress && this.timeTrialProgress.score) || 0;
+        const myOverallScore = myClassicScore + myTtScore;
+
+        const countPlacedPuzzles = () => {
+            let total = 0;
+            for (const pId in this.placedPuzzlePieces) {
+                if (this.placedPuzzlePieces[pId] && this.placedPuzzlePieces[pId].length === 12) {
+                    total++;
+                }
+            }
+            return total;
+        };
+        const myPuzzleCount = countPlacedPuzzles();
+
+        const baseRivals = [
+            { name: 'KozmikKedi', tag: '0001', classicLvl: 85, classicScore: 485000, ttLvl: 64, ttScore: 340000, puzzles: 11 },
+            { name: 'TurboPanda', tag: '0077', classicLvl: 78, classicScore: 420000, ttLvl: 58, ttScore: 310000, puzzles: 10 },
+            { name: 'EjderKral', tag: '1000', classicLvl: 74, classicScore: 390000, ttLvl: 52, ttScore: 285000, puzzles: 9 },
+            { name: 'MistikTilki', tag: '0404', classicLvl: 68, classicScore: 345000, ttLvl: 48, ttScore: 260000, puzzles: 8 },
+            { name: 'SihirliKoyun', tag: '7777', classicLvl: 62, classicScore: 310000, ttLvl: 44, ttScore: 235000, puzzles: 8 },
+            { name: 'MatchPro3D', tag: '3333', classicLvl: 58, classicScore: 280000, ttLvl: 40, ttScore: 210000, puzzles: 7 },
+            { name: 'ZaferAvcısı', tag: '1923', classicLvl: 54, classicScore: 255000, ttLvl: 38, ttScore: 195000, puzzles: 6 },
+            { name: 'KutupPenguen', tag: '0099', classicLvl: 50, classicScore: 230000, ttLvl: 35, ttScore: 180000, puzzles: 6 },
+            { name: 'AslanKral', tag: '1001', classicLvl: 46, classicScore: 210000, ttLvl: 32, ttScore: 160000, puzzles: 5 },
+            { name: 'ShibaMaster', tag: '8888', classicLvl: 42, classicScore: 190000, ttLvl: 30, ttScore: 145000, puzzles: 5 },
+            { name: 'BilgeBaykuş', tag: '4040', classicLvl: 38, classicScore: 170000, ttLvl: 26, ttScore: 130000, puzzles: 4 },
+            { name: 'Gökkuşağı', tag: '1234', classicLvl: 35, classicScore: 150000, ttLvl: 24, ttScore: 115000, puzzles: 4 },
+            { name: 'KızılPanda', tag: '0505', classicLvl: 32, classicScore: 135000, ttLvl: 22, ttScore: 100000, puzzles: 3 },
+            { name: 'AlfaKurbağa', tag: '0606', classicLvl: 28, classicScore: 115000, ttLvl: 20, ttScore: 90000, puzzles: 3 },
+            { name: 'Fırtına3D', tag: '9999', classicLvl: 25, classicScore: 98000, ttLvl: 18, ttScore: 80000, puzzles: 2 },
+            { name: 'YıldızAvcısı', tag: '7070', classicLvl: 22, classicScore: 84000, ttLvl: 16, ttScore: 70000, puzzles: 2 },
+            { name: 'CosmicStar', tag: '4321', classicLvl: 18, classicScore: 70000, ttLvl: 14, ttScore: 58000, puzzles: 1 },
+            { name: 'GölgeEşleyici', tag: '6666', classicLvl: 15, classicScore: 56000, ttLvl: 12, ttScore: 48000, puzzles: 1 },
+            { name: 'BüyülüUnicorn', tag: '1111', classicLvl: 12, classicScore: 44000, ttLvl: 10, ttScore: 36000, puzzles: 1 },
+            { name: 'DenizEjder', tag: '2222', classicLvl: 10, classicScore: 35000, ttLvl: 8, ttScore: 28000, puzzles: 0 }
+        ];
+
+        const list = [];
+        list.push({
+            isSelf: true,
+            name: myName,
+            tag: myTag,
+            fullTag: myFullTag,
+            classicLvl: myClassicLvl,
+            classicScore: myClassicScore,
+            ttLvl: myTtLvl,
+            ttScore: myTtScore,
+            overallScore: myOverallScore,
+            puzzles: myPuzzleCount
+        });
+
+        for (const b of baseRivals) {
+            list.push({
+                isSelf: false,
+                name: b.name,
+                tag: b.tag,
+                fullTag: `${b.name}#${b.tag}`,
+                classicLvl: b.classicLvl,
+                classicScore: b.classicScore,
+                ttLvl: b.ttLvl,
+                ttScore: b.ttScore,
+                overallScore: b.classicScore + b.ttScore,
+                puzzles: b.puzzles
+            });
+        }
+
+        list.sort((a, b) => {
+            if (category === 'classic') {
+                if (b.classicScore !== a.classicScore) return b.classicScore - a.classicScore;
+                return b.classicLvl - a.classicLvl;
+            } else if (category === 'timetrial') {
+                if (b.ttScore !== a.ttScore) return b.ttScore - a.ttScore;
+                return b.ttLvl - a.ttLvl;
+            } else {
+                return b.overallScore - a.overallScore;
+            }
+        });
+
+        list.forEach((item, idx) => {
+            item.rank = idx + 1;
+        });
+
+        return list;
+    }
+
+    openLeaderboardModal(activeCategory = 'overall') {
+        this.sound.playClick();
+
+        if (!navigator.onLine) {
+            this.sound.playLockThud();
+            this.showToast('🌐 Liderlik Tablosunu Görebilmek İçin İnternet Bağlantınızı Kontrol Edin!');
+            return;
+        }
+
+        const modal = document.getElementById('modal-leaderboard');
+        if (!modal) return;
+
+        this.currentLeaderboardCategory = activeCategory;
+
+        document.querySelectorAll('.lb-tab-btn').forEach(btn => {
+            if (btn.getAttribute('data-lb-tab') === activeCategory) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
+
+        this.renderLeaderboardList(activeCategory);
+
+        modal.classList.remove('hidden');
+        modal.style.display = 'flex';
+    }
+
+    renderLeaderboardList(category = 'overall') {
+        const listContainer = document.getElementById('leaderboard-list-container');
+        if (!listContainer) return;
+
+        listContainer.innerHTML = '';
+
+        const dataset = this.getGlobalLeaderboardDataset(category);
+        const selfItem = dataset.find(d => d.isSelf) || dataset[0];
+
+        const displayLimit = Math.min(1000, dataset.length);
+        for (let i = 0; i < displayLimit; i++) {
+            const player = dataset[i];
+            const tierInfo = this.getTierTitleAndAvatar(player.rank);
+
+            const rowEl = document.createElement('div');
+            rowEl.className = `lb-player-row ${tierInfo.cssClass} ${player.isSelf ? 'self-highlight' : ''}`;
+            
+            let displayScore = 0;
+            if (category === 'classic') displayScore = player.classicScore;
+            else if (category === 'timetrial') displayScore = player.ttScore;
+            else displayScore = player.overallScore;
+
+            rowEl.innerHTML = `
+                <div class="lb-rank-num">#${player.rank}</div>
+                <div class="lb-player-info">
+                    <span class="lb-name-tag">${player.fullTag} ${player.isSelf ? '(Siz)' : ''}</span>
+                    <span class="lb-tier-badge">${tierInfo.title}</span>
+                </div>
+                <div class="lb-score-val">${displayScore.toLocaleString()} Puan</div>
+            `;
+
+            rowEl.addEventListener('click', () => {
+                this.openPlayerProfileModal(player);
+            });
+
+            listContainer.appendChild(rowEl);
+        }
+
+        const selfRankBadge = document.getElementById('self-rank-badge');
+        const selfNameTag = document.getElementById('self-name-tag');
+        const selfTitleBadge = document.getElementById('self-title-badge');
+        const selfScoreVal = document.getElementById('self-score-val');
+
+        if (selfItem) {
+            const selfTier = this.getTierTitleAndAvatar(selfItem.rank);
+            if (selfRankBadge) selfRankBadge.innerText = `#${selfItem.rank}`;
+            if (selfNameTag) selfNameTag.innerText = `SİZ: ${selfItem.fullTag}`;
+            if (selfTitleBadge) selfTitleBadge.innerText = selfTier.title;
+            
+            let selfDisplayScore = 0;
+            if (category === 'classic') selfDisplayScore = selfItem.classicScore;
+            else if (category === 'timetrial') selfDisplayScore = selfItem.ttScore;
+            else selfDisplayScore = selfItem.overallScore;
+
+            if (selfScoreVal) selfScoreVal.innerText = `${selfDisplayScore.toLocaleString()} Puan`;
+        }
+    }
+
+    openPlayerProfileModal(player) {
+        this.sound.playClick();
+        const modal = document.getElementById('modal-player-profile');
+        if (!modal) return;
+
+        const tierInfo = this.getTierTitleAndAvatar(player.rank || 1);
+
+        const avatarFrame = document.getElementById('profile-avatar-frame');
+        const nameTag = document.getElementById('profile-name-tag');
+        const titleBadge = document.getElementById('profile-title-badge');
+        const rankText = document.getElementById('profile-global-rank');
+
+        const classicLvl = document.getElementById('profile-classic-level');
+        const classicScore = document.getElementById('profile-classic-score');
+        const ttLvl = document.getElementById('profile-timetrial-level');
+        const ttScore = document.getElementById('profile-timetrial-score');
+        const puzzleCount = document.getElementById('profile-puzzle-count');
+
+        if (avatarFrame) avatarFrame.innerText = tierInfo.avatar;
+        if (nameTag) nameTag.innerText = player.fullTag;
+        if (titleBadge) titleBadge.innerText = tierInfo.title;
+        if (rankText) rankText.innerText = `Küresel Sıralama: #${player.rank || 1}`;
+
+        if (classicLvl) classicLvl.innerText = `Seviye ${player.classicLvl || 1}`;
+        if (classicScore) classicScore.innerText = `${(player.classicScore || 0).toLocaleString()} Puan`;
+
+        if (ttLvl) ttLvl.innerText = `Seviye ${player.ttLvl || 1}`;
+        if (ttScore) ttScore.innerText = `${(player.ttScore || 0).toLocaleString()} Puan`;
+
+        if (puzzleCount) puzzleCount.innerText = `${player.puzzles || 0} / 12 Tamamlandı`;
+
+        modal.classList.remove('hidden');
+        modal.style.display = 'flex';
     }
 }
 

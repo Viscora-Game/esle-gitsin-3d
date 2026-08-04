@@ -34,7 +34,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700;900&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=64">
+    <link rel="stylesheet" href="styles.css?v=65">
 </head>
 <body oncontextmenu="return false;" onselectstart="return false;" ondragstart="return false;">
     <div id="app-wrapper">
@@ -124,6 +124,13 @@
                         <div class="wheel-sparkle-badge">✨</div>
                         <div class="wheel-center-icon">🎡</div>
                         <span class="wheel-widget-label" data-i18n="wheelWidgetTag">Çark</span>
+                    </div>
+
+                    <!-- Round Floating Pop-up Leaderboard Widget in Top Middle -->
+                    <div id="btn-menu-leaderboard" class="floating-leaderboard-widget" title="Liderlik Tablosu">
+                        <div class="leaderboard-sparkle-badge">👑</div>
+                        <div class="leaderboard-center-icon">🏆</div>
+                        <span class="leaderboard-widget-label">Liderler</span>
                     </div>
 
                     <!-- Round Floating Pop-up Ad Chest Widget in Top Right Corner -->
@@ -554,6 +561,103 @@
         </div>
     </div>
 
+    <!-- First-Time Nickname & 4-Digit Tag Registration Modal -->
+    <div id="modal-set-nickname" class="modal-overlay hidden" style="z-index: 99990;">
+        <div class="modal-card nickname-card">
+            <div class="modal-header-row">
+                <h2 class="modal-title">👤 PROFİLİNİ OLUŞTUR</h2>
+            </div>
+            <p class="nickname-subtext">Liderlik tablosunda görünecek adınızı (Maks 10 Karakter) ve 4 haneli etiketinizi belirleyin!</p>
+            
+            <div class="nickname-form-group">
+                <label class="nickname-label">Kullanıcı Adı (Maks 10 Harf):</label>
+                <div class="input-with-random">
+                    <input type="text" id="input-nickname" maxlength="10" placeholder="Örn: Kozmik" class="nickname-input">
+                    <button id="btn-random-nickname" class="btn-random-dice" title="Rastgele İsim Öner">🎲</button>
+                </div>
+                
+                <label class="nickname-label" style="margin-top: 12px;">4 Haneli Etiket (Örn: #0001):</label>
+                <div class="tag-input-row">
+                    <span class="tag-hash-symbol">#</span>
+                    <input type="text" id="input-tag" maxlength="4" placeholder="0001" class="tag-input">
+                    <button id="btn-random-tag" class="btn-random-dice" title="Rastgele Etiket">🎲</button>
+                </div>
+                
+                <span id="nickname-error-msg" class="nickname-error hidden">⚠️ Lütfen uygun bir kullanıcı adı girin!</span>
+            </div>
+
+            <button id="btn-save-nickname" class="btn-primary nickname-submit-btn">✨ PROFİLİ KAYDET VE OYUNA BAŞLA</button>
+        </div>
+    </div>
+
+    <!-- Leaderboard Modal Screen (3-Tab, Top 1000 & Self Rank Sticky Bar) -->
+    <div id="modal-leaderboard" class="modal-overlay hidden" style="z-index: 99980;">
+        <div class="modal-card leaderboard-modal-card">
+            <button id="btn-close-leaderboard" class="btn-close-x">✕</button>
+            <div class="leaderboard-header">
+                <h2 class="modal-title">🏆 KÜRESEL LİDERLİK TABLOSU</h2>
+            </div>
+
+            <!-- 3 Leaderboard Category Tabs -->
+            <div class="leaderboard-tabs-row">
+                <button class="lb-tab-btn active" data-lb-tab="overall">🌐 GENEL</button>
+                <button class="lb-tab-btn" data-lb-tab="classic">🎮 KLASİK</button>
+                <button class="lb-tab-btn" data-lb-tab="timetrial">⚡ ZAMANA KARŞI</button>
+            </div>
+
+            <!-- Scrollable Leaderboard List (Top 1000 Players) -->
+            <div id="leaderboard-list-container" class="leaderboard-list-scroll">
+                <!-- Dynamically Injected Player Rows -->
+            </div>
+
+            <!-- Sticky Bottom Self Rank Bar -->
+            <div id="leaderboard-self-bar" class="leaderboard-self-bar">
+                <div id="self-rank-badge" class="self-rank-badge">#---</div>
+                <div class="self-info-col">
+                    <span id="self-name-tag" class="self-name-tag">SİZ: ---#----</span>
+                    <span id="self-title-badge" class="self-title-badge">🛡️ Yükselen Yıldız</span>
+                </div>
+                <div id="self-score-val" class="self-score-val">0 Puan</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Player Profile Card Summary Modal Screen -->
+    <div id="modal-player-profile" class="modal-overlay hidden" style="z-index: 99985;">
+        <div class="modal-card player-profile-card">
+            <button id="btn-close-player-profile" class="btn-close-x">✕</button>
+            
+            <div class="profile-header-box">
+                <div id="profile-avatar-frame" class="profile-avatar-frame">👑</div>
+                <h2 id="profile-name-tag" class="profile-name-tag">Oyuncu#0000</h2>
+                <span id="profile-title-badge" class="profile-tier-badge">👑 Kozmik İlah</span>
+                <span id="profile-global-rank" class="profile-global-rank">Küresel Sıralama: #1</span>
+            </div>
+
+            <div class="profile-stats-grid">
+                <div class="profile-stat-box">
+                    <span class="stat-icon">🎮</span>
+                    <span class="stat-label">Klasik Mod</span>
+                    <span id="profile-classic-level" class="stat-val">Seviye 1</span>
+                    <span id="profile-classic-score" class="stat-sub">0 Puan</span>
+                </div>
+
+                <div class="profile-stat-box">
+                    <span class="stat-icon">⚡</span>
+                    <span class="stat-label">Zamana Karşı</span>
+                    <span id="profile-timetrial-level" class="stat-val">Seviye 1</span>
+                    <span id="profile-timetrial-score" class="stat-sub">0 Puan</span>
+                </div>
+
+                <div class="profile-stat-box full-width-stat">
+                    <span class="stat-icon">🧩</span>
+                    <span class="stat-label">Yapboz Koleksiyonu</span>
+                    <span id="profile-puzzle-count" class="stat-val">0 / 12 Tamamlandı</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Register PWA Service Worker for PWABuilder -->
     <script>
       if ('serviceWorker' in navigator) {
@@ -569,6 +673,6 @@
         <span id="toast-text">Yetersiz Altın!</span>
     </div>
 
-    <script src="game.js?v=8.9.25" defer></script>
+    <script src="game.js?v=8.9.26" defer></script>
 </body>
 </html>
