@@ -2085,6 +2085,22 @@ body {
     box-shadow: 0 4px 12px rgba(56, 189, 248, 0.4);
 }
 
+.puzzle-pct-badge {
+    background: rgba(251, 191, 36, 0.18);
+    border: 1px solid rgba(251, 191, 36, 0.6);
+    color: #fbbf24;
+    padding: 1px 6px;
+    border-radius: 8px;
+    font-size: 10px;
+    font-weight: 900;
+}
+
+.puzzle-tab-btn.active .puzzle-pct-badge {
+    background: rgba(255, 255, 255, 0.25);
+    border-color: #ffffff;
+    color: #ffffff;
+}
+
 .puzzle-board-wrapper {
     position: relative;
     margin: 6px auto;

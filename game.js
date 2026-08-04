@@ -3953,11 +3953,12 @@ class TileMatchingGame {
             tabsContainer.innerHTML = '';
             for (const puzzle of this.puzzlesCatalog) {
                 const placed = this.placedPuzzlePieces[puzzle.id] || [];
+                const pct = Math.round((placed.length / 12) * 100);
                 const isComplete = placed.length === 12;
 
                 const btn = document.createElement('button');
                 btn.className = `puzzle-tab-btn ${puzzle.id === this.activePuzzleId ? 'active' : ''}`;
-                btn.innerHTML = `<span>${puzzle.name}</span> <span>${isComplete ? '🏆' : `${placed.length}/12`}</span>`;
+                btn.innerHTML = `<span>${puzzle.name}</span> <span class="puzzle-pct-badge">${isComplete ? '🏆 %100' : `%${pct}`}</span>`;
                 btn.addEventListener('click', () => {
                     this.activePuzzleId = puzzle.id;
                     this.renderPuzzleGalleryModal();
@@ -3968,9 +3969,11 @@ class TileMatchingGame {
 
         const activeIdx = this.puzzlesCatalog.findIndex(p => p.id === this.activePuzzleId);
         const activePuzzle = this.puzzlesCatalog[activeIdx >= 0 ? activeIdx : 0] || this.puzzlesCatalog[0];
+        const placedPieces = this.placedPuzzlePieces[activePuzzle.id] || [];
+        const activePct = Math.round((placedPieces.length / 12) * 100);
         
         const titleEl = document.getElementById('journal-picture-title');
-        if (titleEl) titleEl.innerText = activePuzzle.name;
+        if (titleEl) titleEl.innerText = `${activePuzzle.name} (%${activePct})`;
 
         const pageNumEl = document.getElementById('journal-page-num');
         if (pageNumEl) pageNumEl.innerText = `Sayfa ${activeIdx + 1} / ${this.puzzlesCatalog.length}`;
