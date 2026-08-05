@@ -3407,7 +3407,15 @@ class TileMatchingGame {
     }
 
     useExtraSlotBooster() {
-        const dict = this.i18n[this.settings.lang];
+        const dict = this.i18n[this.settings.lang] || this.i18n.tr;
+
+        // SLOT VARKEN PUANLA TEKRAR ALINAMAZ! (Yokken her bittiğinde tekrar alınabilir)
+        if (this.hasTemporaryExtraSlot || this.maxSlotCapacity > 5) {
+            this.sound.playLockThud();
+            this.triggerVibration();
+            this.showToast(dict.slotAlreadyActiveToast || '🚨 +1 Ekstra Slot zaten aktif! Kullanılıp kapandığında tekrar alabilirsiniz.');
+            return;
+        }
 
         if (this.score < this.slotCost) {
             this.sound.playLockThud();
