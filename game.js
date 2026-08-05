@@ -579,13 +579,13 @@ class TileMatchingGame {
         this.hasTemporaryExtraSlot = false;
         this.extraSlotWasUsed = false;
 
-        // Dynamic In-Level Cost System (%100 Cost Increase on each use in same level)
+        // Dynamic In-Level Cost System (%100 Cost Increase / x2 on each use in same level)
         this.baseHintCost = 300;
-        this.baseSlotCost = 1000;
+        this.baseSlotCost = 3000;
         this.baseShuffleCost = 5000;
 
         this.hintCost = 300;
-        this.slotCost = 1000;
+        this.slotCost = 3000;
         this.shuffleCost = 5000;
 
         // Active Game Mode State: 'classic' vs 'timetrial'
@@ -2388,16 +2388,16 @@ class TileMatchingGame {
             });
         }
 
-        // REWARDED AD DEFEAT REVIVE CLICK (MAX 2 PER LEVEL)
+        // REWARDED AD DEFEAT REVIVE CLICK (STRICT MAX 1 PER LEVEL)
         const btnAdRevive = document.getElementById('btn-ad-revive');
         if (btnAdRevive) {
             btnAdRevive.addEventListener('click', () => {
-                if (this.levelAdReviveCount >= 2) {
+                if (this.levelAdReviveCount >= 1) {
                     this.sound.playLockThud();
                     btnAdRevive.classList.add('shaking');
                     setTimeout(() => btnAdRevive.classList.remove('shaking'), 250);
                     const dict = this.i18n[this.settings.lang] || this.i18n.tr;
-                    this.showToast(dict.adReviveLimitReached || '⚠️ Bu Bölümdeki Reklamla Devam Etme Hakkınız Bitti! (2/2)');
+                    this.showToast(dict.adReviveLimitReached || '⚠️ Bu Bölümdeki Reklamla Devam Etme Hakkınız Bitti! (1/1)');
                     return;
                 }
 
@@ -2407,7 +2407,7 @@ class TileMatchingGame {
                     this.levelAdReviveCount = (this.levelAdReviveCount || 0) + 1;
                     document.getElementById('modal-gameover').classList.add('hidden');
                     
-                    // Revive: Unlock emergency 6th slot & return 2 tiles back to board to free space
+                    // Revive: Unlock emergency 6th slot & return 2 tiles back to board to free space (STRICT MAX 6 SLOTS)
                     this.maxSlotCapacity = 6;
                     this.hasTemporaryExtraSlot = true;
                     const floatSlot = document.getElementById('floating-extra-slot');
@@ -2416,9 +2416,8 @@ class TileMatchingGame {
                     // Safely return 2 non-matching tiles from tray to board (NO TILES DELETED)
                     this.returnTrayTilesToBoard(2);
 
-                    const remainingRevives = Math.max(0, 2 - this.levelAdReviveCount);
                     const dict = this.i18n[this.settings.lang] || this.i18n.tr;
-                    this.showToast(`🚨 ${dict.reviveUsedToast || 'Canlı Hak Kullanıldı! 2 Kart Tahtaya Dönüştü!'} (${this.levelAdReviveCount}/2)`);
+                    this.showToast(`🚨 ${dict.reviveUsedToast || 'Canlı Hak Kullanıldı! 2 Kart Tahtaya Dönüştü!'} (1/1)`);
                     this.checkDeadlockAndAutoShuffle();
                 });
             });
@@ -2978,13 +2977,13 @@ class TileMatchingGame {
         const positions = this.generateLayoutPositions(formationType, safeBoardW, safeBoardH);
 
         // EXACT USER PROGRESSION RULE:
-        // Level 1 starts at EXACTLY 14 pairs (28 tiles).
-        // Every 10 levels adds +2 pairs (+4 tiles), capping strictly at 32 pairs (64 tiles) at Level 90+.
-        // Unlimited / Endless Levels!
-        const basePairs = 14;
-        const extraPairs = Math.floor((this.level - 1) / 10) * 2;
-        const totalPairs = Math.min(32, basePairs + extraPairs);
-        const totalTilesNeeded = totalPairs * 2;
+        // STRICT 100% SOLVABLE TRIPLE MATCHING RULE:
+        // Oyun 3'lü eşleme oyunudur! Tepside 3 aynı kart birleşince patlar.
+        // Bu yüzden tahtadaki tüm kartlar MUTLAKA 3'erli gruplar halinde üretilmelidir!
+        const baseTriplets = 10;
+        const extraTriplets = Math.floor((this.level - 1) / 10) * 2;
+        const totalTriplets = Math.min(20, baseTriplets + extraTriplets);
+        const totalTilesNeeded = totalTriplets * 3;
 
         const cardW = this.cardW || 48;
         const cardH = this.cardH || 60;
@@ -3007,12 +3006,12 @@ class TileMatchingGame {
         }
 
         const pool = [];
-
-        for (let i = 0; i < totalPairs; i++) {
-            const activeTypesCount = Math.min(this.types.length, 5 + Math.floor((this.level - 1) / 10) * 2);
+        const activeTypesCount = Math.min(this.types.length, 5 + Math.floor((this.level - 1) / 10) * 2);
         const activeTypes = this.types.slice(0, activeTypesCount);
-        const typeObj = activeTypes[i % activeTypes.length];
-            pool.push(typeObj, typeObj);
+
+        for (let i = 0; i < totalTriplets; i++) {
+            const typeObj = activeTypes[i % activeTypes.length];
+            pool.push(typeObj, typeObj, typeObj); // HER KARTTAN EXACTLY 3 TANE!
         }
 
         this.shuffleArray(pool);
@@ -3113,10 +3112,10 @@ class TileMatchingGame {
                 const btnAdRevive = document.getElementById('btn-ad-revive');
                 if (btnAdRevive) {
                     const count = this.levelAdReviveCount || 0;
-                    const remaining = Math.max(0, 2 - count);
+                    const remaining = Math.max(0, 1 - count);
                     if (remaining > 0) {
                         btnAdRevive.style.display = 'block';
-                        btnAdRevive.querySelector('span').innerText = `📺 ${dict.adReviveBtn || 'REKLAM İZLE & DEVAM ET'} (${remaining}/2 HAK)`;
+                        btnAdRevive.querySelector('span').innerText = `📺 ${dict.adReviveBtn || 'REKLAM İZLE & DEVAM ET'} (${remaining}/1 HAK)`;
                     } else {
                         btnAdRevive.style.display = 'none';
                     }
@@ -3732,11 +3731,11 @@ class TileMatchingGame {
             const btnAdRevive = document.getElementById('btn-ad-revive');
             if (btnAdRevive) {
                 const count = this.levelAdReviveCount || 0;
-                const remaining = Math.max(0, 2 - count);
+                const remaining = Math.max(0, 1 - count);
                 const dict = this.i18n[this.settings.lang] || this.i18n.tr;
                 if (remaining > 0) {
                     btnAdRevive.style.display = 'block';
-                    btnAdRevive.querySelector('span').innerText = `📺 ${dict.adReviveBtn || 'REKLAM İZLE & DEVAM ET'} (${remaining}/2 HAK)`;
+                    btnAdRevive.querySelector('span').innerText = `📺 ${dict.adReviveBtn || 'REKLAM İZLE & DEVAM ET'} (${remaining}/1 HAK)`;
                 } else {
                     btnAdRevive.style.display = 'none';
                 }
