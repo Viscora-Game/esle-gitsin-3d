@@ -1611,20 +1611,18 @@ class TileMatchingGame {
         this.loadGameProgress();
         this.loadPlayerProfile();
         this.loadCloudLeaderboardCache();
+        this.syncCloudLeaderboard(); // Auto-push pre-existing local scores to cloud DB on startup!
         this.initUI();
         this.initBackgroundMusic();
         this.checkFirstTimeTutorial();
         this.checkFirstTimeRegistration();
         } catch (e) {
-            // CRITICAL ERROR BOUNDARY: If constructor crashes, ensure menu stays interactive
             console.error('[EsleGitsin3D] Init error:', e);
-            // Force all modal overlays hidden so nothing blocks the screen
             document.querySelectorAll('.modal-overlay').forEach(el => {
                 el.classList.add('hidden');
                 el.style.display = 'none';
                 el.style.pointerEvents = 'none';
             });
-            // Ensure main menu is visible and clickable
             const mainMenu = document.getElementById('main-menu');
             if (mainMenu) {
                 mainMenu.classList.remove('hidden');
@@ -1637,7 +1635,6 @@ class TileMatchingGame {
 
     loadGameProgress() {
         try {
-            // Load Primary Classic Progress with Backup Recovery
             let savedClassic = localStorage.getItem('tile_game_classic');
             if (!savedClassic) savedClassic = localStorage.getItem('tile_game_classic_backup');
             
@@ -1648,7 +1645,6 @@ class TileMatchingGame {
                 }
             }
 
-            // Load Primary Time Trial Progress with Backup Recovery
             let savedTimeTrial = localStorage.getItem('tile_game_timetrial');
             if (!savedTimeTrial) savedTimeTrial = localStorage.getItem('tile_game_timetrial_backup');
             
@@ -1675,7 +1671,6 @@ class TileMatchingGame {
 
     saveGameProgress(isVictoryUnlock = false) {
         try {
-            // ALWAYS save puzzle inventory, placed puzzle pieces & gold coins
             const puzzleData = {
                 goldCoins: this.goldCoins,
                 puzzleInventory: this.puzzleInventory,
@@ -1685,42 +1680,43 @@ class TileMatchingGame {
             const goldEl = document.getElementById('gold-val');
             if (goldEl) goldEl.innerText = this.goldCoins;
 
-            if (!this.level || this.level < 1) return;
+            if (this.level && this.level >= 1) {
+                const targetSaveLevel = isVictoryUnlock ? (this.level + 1) : this.level;
 
-            // Target level to record (If victory unlock, advance to next level!)
-            const targetSaveLevel = isVictoryUnlock ? (this.level + 1) : this.level;
+                if (this.currentMode === 'classic') {
+                    const currentHighest = (this.classicProgress && typeof this.classicProgress.level === 'number') ? this.classicProgress.level : 1;
+                    const safeLevel = Math.max(currentHighest, targetSaveLevel);
+                    const safeScore = Math.max((this.classicProgress && this.classicProgress.score) || 0, this.score || 0);
+                    
+                    const data = {
+                        level: safeLevel,
+                        score: safeScore,
+                        timestamp: Date.now()
+                    };
 
-            if (this.currentMode === 'classic') {
-                const currentHighest = (this.classicProgress && typeof this.classicProgress.level === 'number') ? this.classicProgress.level : 1;
-                const safeLevel = Math.max(currentHighest, targetSaveLevel);
-                
-                const data = {
-                    level: safeLevel,
-                    score: this.score,
-                    timestamp: Date.now()
-                };
+                    this.classicProgress = data;
+                    const jsonStr = JSON.stringify(data);
+                    localStorage.setItem('tile_game_classic', jsonStr);
+                    localStorage.setItem('tile_game_classic_backup', jsonStr);
+                } else {
+                    const currentHighest = (this.timeTrialProgress && typeof this.timeTrialProgress.level === 'number') ? this.timeTrialProgress.level : 1;
+                    const safeLevel = Math.max(currentHighest, targetSaveLevel);
+                    const safeScore = Math.max((this.timeTrialProgress && this.timeTrialProgress.score) || 0, this.score || 0);
 
-                this.classicProgress = data;
-                const jsonStr = JSON.stringify(data);
-                localStorage.setItem('tile_game_classic', jsonStr);
-                localStorage.setItem('tile_game_classic_backup', jsonStr);
-            } else {
-                const currentHighest = (this.timeTrialProgress && typeof this.timeTrialProgress.level === 'number') ? this.timeTrialProgress.level : 1;
-                const safeLevel = Math.max(currentHighest, targetSaveLevel);
+                    const data = {
+                        level: safeLevel,
+                        score: safeScore,
+                        timestamp: Date.now()
+                    };
 
-                const data = {
-                    level: safeLevel,
-                    score: this.score,
-                    timestamp: Date.now()
-                };
-
-                this.timeTrialProgress = data;
-                const jsonStr = JSON.stringify(data);
-                localStorage.setItem('tile_game_timetrial', jsonStr);
-                localStorage.setItem('tile_game_timetrial_backup', jsonStr);
+                    this.timeTrialProgress = data;
+                    const jsonStr = JSON.stringify(data);
+                    localStorage.setItem('tile_game_timetrial', jsonStr);
+                    localStorage.setItem('tile_game_timetrial_backup', jsonStr);
+                }
             }
 
-            // Sync scores to live cloud database
+            // Sync scores to live cloud database unconditionally!
             this.syncCloudLeaderboard();
         } catch (e) {}
     }
@@ -5103,9 +5099,17 @@ class TileMatchingGame {
         const myFullTag = `${myName}#${myTag}`;
 
         const myClassicLvl = (this.classicProgress && this.classicProgress.level) || 1;
-        const myClassicScore = (this.classicProgress && this.classicProgress.score) || 0;
+        let myClassicScore = (this.classicProgress && typeof this.classicProgress.score === 'number') ? this.classicProgress.score : 0;
+        if (this.currentMode === 'classic' && typeof this.score === 'number') {
+            myClassicScore = Math.max(myClassicScore, this.score);
+        }
+
         const myTtLvl = (this.timeTrialProgress && this.timeTrialProgress.level) || 1;
-        const myTtScore = (this.timeTrialProgress && this.timeTrialProgress.score) || 0;
+        let myTtScore = (this.timeTrialProgress && typeof this.timeTrialProgress.score === 'number') ? this.timeTrialProgress.score : 0;
+        if (this.currentMode === 'timetrial' && typeof this.score === 'number') {
+            myTtScore = Math.max(myTtScore, this.score);
+        }
+
         const myOverallScore = myClassicScore + myTtScore;
 
         const countPlacedPuzzles = () => {
@@ -5138,16 +5142,21 @@ class TileMatchingGame {
             for (const cp of this.latestCloudDataset) {
                 if (cp && cp.fullTag && cp.fullTag.toLowerCase() !== myFullTag.toLowerCase()) {
                     const existingIdx = list.findIndex(item => item.fullTag.toLowerCase() === cp.fullTag.toLowerCase());
+
+                    const cpClassicScore = (typeof cp.classicScore === 'number' && cp.classicScore > 0) ? cp.classicScore : Math.max(0, (cp.overallScore || 0) - (cp.ttScore || 0));
+                    const cpTtScore = (typeof cp.ttScore === 'number' && cp.ttScore > 0) ? cp.ttScore : Math.max(0, (cp.overallScore || 0) - (cp.classicScore || 0));
+                    const cpOverallScore = Math.max(cp.overallScore || 0, cpClassicScore + cpTtScore);
+
                     const cloudPlayer = {
                         isSelf: false,
                         name: cp.name || cp.fullTag.split('#')[0],
                         tag: cp.tag || '0000',
                         fullTag: cp.fullTag,
                         classicLvl: cp.classicLvl || 1,
-                        classicScore: cp.classicScore || 0,
+                        classicScore: cpClassicScore,
                         ttLvl: cp.ttLvl || 1,
-                        ttScore: cp.ttScore || 0,
-                        overallScore: cp.overallScore || ((cp.classicScore || 0) + (cp.ttScore || 0)),
+                        ttScore: cpTtScore,
+                        overallScore: cpOverallScore,
                         puzzles: cp.puzzles || 0
                     };
                     if (existingIdx >= 0) {
@@ -5191,9 +5200,16 @@ class TileMatchingGame {
             const myFullTag = `${myName}#${myTag}`;
             
             const myClassicLvl = (this.classicProgress && this.classicProgress.level) || 1;
-            const myClassicScore = (this.classicProgress && this.classicProgress.score) || 0;
+            let myClassicScore = (this.classicProgress && typeof this.classicProgress.score === 'number') ? this.classicProgress.score : 0;
+            if (this.currentMode === 'classic' && typeof this.score === 'number') {
+                myClassicScore = Math.max(myClassicScore, this.score);
+            }
+
             const myTtLvl = (this.timeTrialProgress && this.timeTrialProgress.level) || 1;
-            const myTtScore = (this.timeTrialProgress && this.timeTrialProgress.score) || 0;
+            let myTtScore = (this.timeTrialProgress && typeof this.timeTrialProgress.score === 'number') ? this.timeTrialProgress.score : 0;
+            if (this.currentMode === 'timetrial' && typeof this.score === 'number') {
+                myTtScore = Math.max(myTtScore, this.score);
+            }
             
             let myPuzzleCount = 0;
             for (const pId in this.placedPuzzlePieces) {
