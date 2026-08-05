@@ -5143,21 +5143,21 @@ class TileMatchingGame {
                 if (cp && cp.fullTag && cp.fullTag.toLowerCase() !== myFullTag.toLowerCase()) {
                     const existingIdx = list.findIndex(item => item.fullTag.toLowerCase() === cp.fullTag.toLowerCase());
 
-                    const cpClassicScore = (typeof cp.classicScore === 'number' && cp.classicScore > 0) ? cp.classicScore : Math.max(0, (cp.overallScore || 0) - (cp.ttScore || 0));
-                    const cpTtScore = (typeof cp.ttScore === 'number' && cp.ttScore > 0) ? cp.ttScore : Math.max(0, (cp.overallScore || 0) - (cp.classicScore || 0));
-                    const cpOverallScore = Math.max(cp.overallScore || 0, cpClassicScore + cpTtScore);
+                    const cpClassicScore = (typeof cp.classicScore === 'number' && cp.classicScore >= 0) ? cp.classicScore : 0;
+                    const cpTtScore = (typeof cp.ttScore === 'number' && cp.ttScore >= 0) ? cp.ttScore : 0;
+                    const cpOverallScore = (typeof cp.overallScore === 'number' && cp.overallScore >= 0) ? cp.overallScore : (cpClassicScore + cpTtScore);
 
                     const cloudPlayer = {
                         isSelf: false,
                         name: cp.name || cp.fullTag.split('#')[0],
                         tag: cp.tag || '0000',
                         fullTag: cp.fullTag,
-                        classicLvl: cp.classicLvl || 1,
+                        classicLvl: (typeof cp.classicLvl === 'number' && cp.classicLvl >= 1) ? cp.classicLvl : 1,
                         classicScore: cpClassicScore,
-                        ttLvl: cp.ttLvl || 1,
+                        ttLvl: (typeof cp.ttLvl === 'number' && cp.ttLvl >= 1) ? cp.ttLvl : 1,
                         ttScore: cpTtScore,
                         overallScore: cpOverallScore,
-                        puzzles: cp.puzzles || 0
+                        puzzles: (typeof cp.puzzles === 'number' && cp.puzzles >= 0) ? cp.puzzles : 0
                     };
                     if (existingIdx >= 0) {
                         list[existingIdx] = cloudPlayer;
