@@ -5274,17 +5274,35 @@ class TileMatchingGame {
             };
 
             const cloudUrl = 'https://jsonblob.com/api/jsonBlob/019fcf1b-1d53-7a58-bad9-de2b58944893';
+            const mongoApiUrl = 'https://esle-gitsin-3d.vercel.app/api';
 
+            // 1. Primary Sync: Atomic update to MongoDB Atlas Database!
+            try {
+                const mongoResp = await fetch(mongoApiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(myEntry)
+                });
+                if (mongoResp.ok) {
+                    const mongoData = await mongoResp.json();
+                    if (mongoData && Array.isArray(mongoData.players)) {
+                        this.latestCloudDataset = mongoData.players;
+                        try {
+                            localStorage.setItem('tile_game_cloud_lb_cache', JSON.stringify(mongoData.players));
+                        } catch (cErr) {}
+                    }
+                }
+            } catch (mongoErr) {}
+
+            // 2. Dual Backup Sync: JSONBlob Cloud Storage
             const playerMap = new Map();
 
-            // 1. First preserve all locally cached players to ensure zero data loss
             if (this.latestCloudDataset && Array.isArray(this.latestCloudDataset)) {
                 for (const p of this.latestCloudDataset) {
                     if (p && p.fullTag) playerMap.set(p.fullTag.toLowerCase(), p);
                 }
             }
 
-            // 2. Fetch live Cloud DB players
             try {
                 const resp = await fetch(cloudUrl);
                 if (resp.ok) {
@@ -5303,7 +5321,6 @@ class TileMatchingGame {
                 }
             } catch (fetchErr) {}
 
-            // 3. Always update current player's latest score
             playerMap.set(myFullTag.toLowerCase(), myEntry);
 
             const updatedPlayers = Array.from(playerMap.values());
@@ -5316,7 +5333,6 @@ class TileMatchingGame {
                 localStorage.setItem('tile_game_cloud_lb_cache', JSON.stringify(finalPlayers));
             } catch (cacheErr) {}
 
-            // 4. Send merged complete list back to Cloud
             await fetch(cloudUrl, {
                 method: 'PUT',
                 headers: { 'Content-Type': 'application/json' },
@@ -5330,6 +5346,17 @@ class TileMatchingGame {
     async fetchCloudLeaderboardData() {
         if (typeof navigator !== 'undefined' && !navigator.onLine) return null;
         try {
+            const mongoApiUrl = 'https://esle-gitsin-3d.vercel.app/api';
+            try {
+                const mResp = await fetch(mongoApiUrl);
+                if (mResp.ok) {
+                    const mData = await mResp.json();
+                    if (mData && Array.isArray(mData.players)) {
+                        return mData.players;
+                    }
+                }
+            } catch (mErr) {}
+
             const cloudUrl = 'https://jsonblob.com/api/jsonBlob/019fcf1b-1d53-7a58-bad9-de2b58944893';
             const resp = await fetch(cloudUrl);
             if (!resp.ok) return null;
