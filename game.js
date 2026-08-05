@@ -1641,6 +1641,9 @@ class TileMatchingGame {
             if (savedClassic) {
                 const parsed = JSON.parse(savedClassic);
                 if (parsed && typeof parsed.level === 'number' && parsed.level > 0) {
+                    if (parsed.level > 1 && (!parsed.score || parsed.score < (parsed.level - 1) * 1000)) {
+                        parsed.score = (parsed.level - 1) * 2000;
+                    }
                     this.classicProgress = parsed;
                 }
             }
@@ -1651,6 +1654,9 @@ class TileMatchingGame {
             if (savedTimeTrial) {
                 const parsed = JSON.parse(savedTimeTrial);
                 if (parsed && typeof parsed.level === 'number' && parsed.level > 0) {
+                    if (parsed.level > 1 && (!parsed.score || parsed.score < (parsed.level - 1) * 1000)) {
+                        parsed.score = (parsed.level - 1) * 2500;
+                    }
                     this.timeTrialProgress = parsed;
                 }
             }
@@ -1686,7 +1692,8 @@ class TileMatchingGame {
                 if (this.currentMode === 'classic') {
                     const currentHighest = (this.classicProgress && typeof this.classicProgress.level === 'number') ? this.classicProgress.level : 1;
                     const safeLevel = Math.max(currentHighest, targetSaveLevel);
-                    const safeScore = Math.max((this.classicProgress && this.classicProgress.score) || 0, this.score || 0);
+                    const baseMinScore = (safeLevel > 1) ? (safeLevel - 1) * 2000 : 0;
+                    const safeScore = Math.max((this.classicProgress && this.classicProgress.score) || 0, this.score || 0, baseMinScore);
                     
                     const data = {
                         level: safeLevel,
@@ -1701,7 +1708,8 @@ class TileMatchingGame {
                 } else {
                     const currentHighest = (this.timeTrialProgress && typeof this.timeTrialProgress.level === 'number') ? this.timeTrialProgress.level : 1;
                     const safeLevel = Math.max(currentHighest, targetSaveLevel);
-                    const safeScore = Math.max((this.timeTrialProgress && this.timeTrialProgress.score) || 0, this.score || 0);
+                    const baseMinScore = (safeLevel > 1) ? (safeLevel - 1) * 2500 : 0;
+                    const safeScore = Math.max((this.timeTrialProgress && this.timeTrialProgress.score) || 0, this.score || 0, baseMinScore);
 
                     const data = {
                         level: safeLevel,
