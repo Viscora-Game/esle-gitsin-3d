@@ -1661,7 +1661,8 @@ class TileMatchingGame {
                 }
             }
         
-            const savedPuzzleData = localStorage.getItem('tile_game_puzzle_data');
+            let savedPuzzleData = localStorage.getItem('tile_game_puzzle_data');
+            if (!savedPuzzleData) savedPuzzleData = localStorage.getItem('tile_game_puzzle_data_backup');
             if (savedPuzzleData) {
                 const pData = JSON.parse(savedPuzzleData);
                 if (pData) {
@@ -1682,7 +1683,9 @@ class TileMatchingGame {
                 puzzleInventory: this.puzzleInventory,
                 placedPuzzlePieces: this.placedPuzzlePieces
             };
-            localStorage.setItem('tile_game_puzzle_data', JSON.stringify(puzzleData));
+            const jsonPuzzleStr = JSON.stringify(puzzleData);
+            localStorage.setItem('tile_game_puzzle_data', jsonPuzzleStr);
+            localStorage.setItem('tile_game_puzzle_data_backup', jsonPuzzleStr);
             const goldEl = document.getElementById('gold-val');
             if (goldEl) goldEl.innerText = this.goldCoins;
 
@@ -5270,6 +5273,11 @@ class TileMatchingGame {
                 ttScore: myTtScore,
                 overallScore: myClassicScore + myTtScore,
                 puzzles: myPuzzleCount,
+                puzzleDataStr: JSON.stringify({
+                    goldCoins: this.goldCoins,
+                    puzzleInventory: this.puzzleInventory,
+                    placedPuzzlePieces: this.placedPuzzlePieces
+                }),
                 updatedAt: Date.now()
             };
 

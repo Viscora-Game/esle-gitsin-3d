@@ -39,9 +39,9 @@ module.exports = async (req, res) => {
                 return res.status(400).json({ error: 'Missing fullTag' });
             }
 
-            const { fullTag, name, tag, classicLvl, classicScore, ttLvl, ttScore, overallScore, puzzles, updatedAt } = body;
+            const { fullTag, name, tag, classicLvl, classicScore, ttLvl, ttScore, overallScore, puzzles, puzzleDataStr, updatedAt } = body;
 
-            // Atomic update of player score in MongoDB Atlas!
+            // Atomic update of player score & puzzle collection in MongoDB Atlas!
             await collection.updateOne(
                 { fullTag: fullTag },
                 {
@@ -55,6 +55,7 @@ module.exports = async (req, res) => {
                         ttScore: ttScore || 0,
                         overallScore: overallScore || 0,
                         puzzles: puzzles || 0,
+                        puzzleDataStr: puzzleDataStr || '',
                         updatedAt: updatedAt || Date.now()
                     }
                 },
