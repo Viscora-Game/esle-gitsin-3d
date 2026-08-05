@@ -1693,7 +1693,9 @@ class TileMatchingGame {
                     const currentHighest = (this.classicProgress && typeof this.classicProgress.level === 'number') ? this.classicProgress.level : 1;
                     const safeLevel = Math.max(currentHighest, targetSaveLevel);
                     const baseMinScore = (safeLevel > 1) ? (safeLevel - 1) * 2000 : 0;
-                    const safeScore = Math.max((this.classicProgress && this.classicProgress.score) || 0, this.score || 0, baseMinScore);
+                    
+                    // Support real-time score penalties (e.g. 45,000 -> 43,000) while enforcing non-negative & level floor
+                    const safeScore = (typeof this.score === 'number') ? Math.max(baseMinScore, Math.max(0, this.score)) : Math.max((this.classicProgress && this.classicProgress.score) || 0, baseMinScore);
                     
                     const data = {
                         level: safeLevel,
@@ -1709,7 +1711,9 @@ class TileMatchingGame {
                     const currentHighest = (this.timeTrialProgress && typeof this.timeTrialProgress.level === 'number') ? this.timeTrialProgress.level : 1;
                     const safeLevel = Math.max(currentHighest, targetSaveLevel);
                     const baseMinScore = (safeLevel > 1) ? (safeLevel - 1) * 2500 : 0;
-                    const safeScore = Math.max((this.timeTrialProgress && this.timeTrialProgress.score) || 0, this.score || 0, baseMinScore);
+
+                    // Support real-time score penalties (e.g. 45,000 -> 43,000) while enforcing non-negative & level floor
+                    const safeScore = (typeof this.score === 'number') ? Math.max(baseMinScore, Math.max(0, this.score)) : Math.max((this.timeTrialProgress && this.timeTrialProgress.score) || 0, baseMinScore);
 
                     const data = {
                         level: safeLevel,
