@@ -2440,6 +2440,12 @@ class TileMatchingGame {
                 this.saveGameProgress();
                 this.updateMainMenuButtons();
                 this.startWheelTimerLoop();
+                const gameContainer = document.getElementById('game-container');
+                if (gameContainer) gameContainer.classList.add('hidden');
+                const boardEl = document.getElementById('board');
+                if (boardEl) boardEl.innerHTML = '';
+                this.boardTiles = [];
+                this.slotTiles = [];
                 document.getElementById('main-menu').classList.remove('hidden');
                 this.showMainMenuBannerAd();
             }
@@ -2482,6 +2488,8 @@ class TileMatchingGame {
                 this.stopTimer();
                 this.updateMainMenuButtons();
                 this.startWheelTimerLoop();
+                const gameContainer = document.getElementById('game-container');
+                if (gameContainer) gameContainer.classList.add('hidden');
                 document.getElementById('main-menu').classList.remove('hidden');
                 this.showMainMenuBannerAd();
 
@@ -3687,7 +3695,9 @@ class TileMatchingGame {
                 tile.element.style.top = `${tile.y}px`;
                 tile.element.style.width = `${this.cardW}px`;
                 tile.element.style.height = `${this.cardH}px`;
-                tile.element.style.zIndex = tile.z || 10;
+                // Place returned tiles on top visual layer so they are 100% visible and easy to tap!
+                tile.layer = Math.max(tile.layer || 1, 2);
+                tile.element.style.zIndex = String(200 + (tile.index || 0));
             }
         });
 
