@@ -2258,6 +2258,14 @@ class TileMatchingGame {
             });
         }
 
+        const inputNickEl = document.getElementById('input-nickname');
+        if (inputNickEl) {
+            inputNickEl.addEventListener('input', () => {
+                // Strip emojis and non-alphanumeric special symbols automatically
+                inputNickEl.value = inputNickEl.value.replace(/[^a-zA-Z0-9çğışöüÇĞİŞÖÜ ]/g, '');
+            });
+        }
+
         const btnSaveNickname = document.getElementById('btn-save-nickname');
         if (btnSaveNickname) {
             btnSaveNickname.addEventListener('click', () => {
@@ -2272,6 +2280,17 @@ class TileMatchingGame {
                 if (!rawNick || rawNick.length < 2) {
                     if (errMsg) {
                         errMsg.innerText = '⚠️ KULLANICI ADI HATASI: İsim en az 2 karakter olmalıdır!';
+                        errMsg.classList.remove('hidden');
+                    }
+                    this.sound.playLockThud();
+                    if (inputNick) inputNick.focus();
+                    return;
+                }
+
+                const validNameRegex = /^[a-zA-Z0-9çğışöüÇĞİŞÖÜ ]+$/;
+                if (!validNameRegex.test(rawNick)) {
+                    if (errMsg) {
+                        errMsg.innerText = '⚠️ KULLANICI ADI HATASI: İsimde emoji veya özel sembol kullanılamaz! (Sadece harf ve rakam)';
                         errMsg.classList.remove('hidden');
                     }
                     this.sound.playLockThud();
@@ -2303,16 +2322,32 @@ class TileMatchingGame {
                 btnSaveNickname.disabled = true;
                 btnSaveNickname.innerText = '⏳ KONTROL EDİLİYOR...';
 
+                const myCurrentFullTag = (this.playerProfile && this.playerProfile.fullTag) ? this.playerProfile.fullTag.toLowerCase() : '';
+
+                const closeModal = () => {
+                    const modalNick = document.getElementById('modal-set-nickname');
+                    if (modalNick) {
+                        modalNick.classList.add('hidden');
+                        modalNick.style.display = 'none';
+                    }
+                };
+
                 // Asynchronously verify Tag/ID Uniqueness against live Cloud DB!
                 this.fetchCloudLeaderboardData().then(cloudPlayers => {
                     btnSaveNickname.disabled = false;
                     btnSaveNickname.innerText = 'KAYDET VE BAŞLA ✨';
 
                     if (cloudPlayers && Array.isArray(cloudPlayers)) {
-                        const isTaken = cloudPlayers.some(p => p && p.fullTag && p.fullTag.toLowerCase() === targetFullTag.toLowerCase());
+                        // Exclude current device's own existing fullTag from being marked as taken!
+                        const isTaken = cloudPlayers.some(p => {
+                            if (!p || !p.fullTag) return false;
+                            const tagLower = p.fullTag.toLowerCase();
+                            return tagLower === targetFullTag.toLowerCase() && tagLower !== myCurrentFullTag;
+                        });
+
                         if (isTaken) {
                             if (errMsg) {
-                                errMsg.innerText = `⚠️ ETİKET (ID) HATASI: "${targetFullTag}" etiketi başka bir oyuncu tarafından alınmış! Lütfen 4 haneli farklı bir etiket girin.`;
+                                errMsg.innerText = `⚠️ ETİKET (ID) HATASI: "${targetFullTag}" ad ve ID kombinasyonu başka bir oyuncu tarafından alınmış! Lütfen 4 haneli farklı bir etiket yazın.`;
                                 errMsg.classList.remove('hidden');
                             }
                             this.sound.playLockThud();
@@ -2323,8 +2358,7 @@ class TileMatchingGame {
 
                     if (errMsg) errMsg.classList.add('hidden');
                     this.savePlayerProfile(rawNick, rawTag);
-
-                    document.getElementById('modal-set-nickname').classList.add('hidden');
+                    closeModal();
                     this.showToast(`✨ Profil Kaydedildi: ${this.playerProfile.fullTag}`);
                     this.syncCloudLeaderboard();
                 }).catch(() => {
@@ -2332,7 +2366,7 @@ class TileMatchingGame {
                     btnSaveNickname.innerText = 'KAYDET VE BAŞLA ✨';
                     if (errMsg) errMsg.classList.add('hidden');
                     this.savePlayerProfile(rawNick, rawTag);
-                    document.getElementById('modal-set-nickname').classList.add('hidden');
+                    closeModal();
                     this.showToast(`✨ Profil Kaydedildi: ${this.playerProfile.fullTag}`);
                     this.syncCloudLeaderboard();
                 });
