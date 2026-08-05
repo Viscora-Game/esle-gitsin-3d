@@ -3300,8 +3300,8 @@ class TileMatchingGame {
 
     updateLockStates() {
         // STRICT ACCURATE VISIBILITY & CLICKABILITY RULE:
-        // A tile is UNLOCKED & CLICKABLE if it is not heavily covered by upper layers.
-        const cardArea = this.cardW * this.cardH;
+        // A tile is UNLOCKED & CLICKABLE if it is not heavily covered by upper layer cards.
+        const cardArea = (this.cardW || 48) * (this.cardH || 60);
 
         for (let i = 0; i < this.boardTiles.length; i++) {
             const tile = this.boardTiles[i];
@@ -3314,11 +3314,8 @@ class TileMatchingGame {
                 const candidateAbove = this.boardTiles[j];
                 if (candidateAbove.isInSlot) continue;
 
-                // candidateAbove is visually ON TOP if it is on a higher layer OR higher z-index on same layer
-                const isAbove = (candidateAbove.layer > tile.layer) ||
-                                (candidateAbove.layer === tile.layer && candidateAbove.index > tile.index);
-
-                if (isAbove) {
+                // candidateAbove is visually ON TOP only if it is on a strictly HIGHER layer
+                if (candidateAbove.layer > tile.layer) {
                     const overlapW = Math.max(0, this.cardW - Math.abs(tile.x - candidateAbove.x));
                     const overlapH = Math.max(0, this.cardH - Math.abs(tile.y - candidateAbove.y));
 
@@ -3331,8 +3328,8 @@ class TileMatchingGame {
 
             const coveredRatio = Math.min(1.0, totalCoveredArea / cardArea);
 
-            // A tile is UNLOCKED & CLICKABLE if less than 25% of its surface is covered by upper cards!
-            const isLocked = coveredRatio > 0.25;
+            // A tile is UNLOCKED & CLICKABLE if less than 40% of its surface is covered by upper layer cards!
+            const isLocked = coveredRatio > 0.40;
 
             tile.isLocked = isLocked;
             if (isLocked) {
@@ -3737,9 +3734,11 @@ class TileMatchingGame {
     // =========================================================
 
     checkDeadlockAndAutoShuffle() {
-        if (this.boardTiles.length === 0) return false;
+        if (this.isAutoShuffling) return false;
+        if (!this.boardTiles || this.boardTiles.length <= 1) return false;
 
         const clickableTiles = this.boardTiles.filter(t => !t.isLocked && !t.isInSlot);
+        if (clickableTiles.length === 0) return false;
 
         // Check if any 2 clickable tiles match each other
         for (let i = 0; i < clickableTiles.length; i++) {
@@ -3760,11 +3759,17 @@ class TileMatchingGame {
         }
 
         // DEADLOCK DETECTED!
+        this.isAutoShuffling = true;
         this.showToast('⚡ HAMLE KALMADI! Tahta Otomatik Karıştırılıyor...');
         this.sound.playBoosterChime();
-        this.fx.spawnBurst(window.innerWidth / 2, window.innerHeight / 2, 40);
+        const boardEl = document.getElementById('board');
+        if (boardEl) {
+            const rect = boardEl.getBoundingClientRect();
+            this.fx.spawnBurst(rect.left + rect.width / 2, rect.top + rect.height / 2, 40);
+        }
 
         this.autoShuffleBoard();
+        setTimeout(() => { this.isAutoShuffling = false; }, 600);
         return true;
     }
 
