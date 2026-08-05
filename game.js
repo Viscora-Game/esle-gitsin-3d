@@ -2323,6 +2323,7 @@ class TileMatchingGame {
                 btnSaveNickname.innerText = '⏳ KONTROL EDİLİYOR...';
 
                 const myCurrentFullTag = (this.playerProfile && this.playerProfile.fullTag) ? this.playerProfile.fullTag.toLowerCase() : '';
+                const myCurrentTag = (this.playerProfile && this.playerProfile.tag) ? this.playerProfile.tag.trim() : '';
 
                 const closeModal = () => {
                     const modalNick = document.getElementById('modal-set-nickname');
@@ -2332,22 +2333,28 @@ class TileMatchingGame {
                     }
                 };
 
-                // Asynchronously verify Tag/ID Uniqueness against live Cloud DB!
+                // Asynchronously verify 4-Digit Tag/ID Uniqueness against live Cloud DB!
                 this.fetchCloudLeaderboardData().then(cloudPlayers => {
                     btnSaveNickname.disabled = false;
                     btnSaveNickname.innerText = 'KAYDET VE BAŞLA ✨';
 
                     if (cloudPlayers && Array.isArray(cloudPlayers)) {
-                        // Exclude current device's own existing fullTag from being marked as taken!
-                        const isTaken = cloudPlayers.some(p => {
-                            if (!p || !p.fullTag) return false;
-                            const tagLower = p.fullTag.toLowerCase();
-                            return tagLower === targetFullTag.toLowerCase() && tagLower !== myCurrentFullTag;
+                        // Check if the 4-digit ID Tag is taken by ANY OTHER player in the cloud database!
+                        const isTagTaken = cloudPlayers.some(p => {
+                            if (!p) return false;
+                            const cloudTag = (p.tag || (p.fullTag && p.fullTag.includes('#') ? p.fullTag.split('#')[1] : '')).trim();
+                            const cloudFullTag = (p.fullTag || '').toLowerCase();
+                            
+                            // Exclude current device's own existing profile
+                            if (myCurrentTag && cloudTag === myCurrentTag) return false;
+                            if (myCurrentFullTag && cloudFullTag === myCurrentFullTag) return false;
+
+                            return cloudTag === rawTag || cloudFullTag.endsWith(`#${rawTag.toLowerCase()}`);
                         });
 
-                        if (isTaken) {
+                        if (isTagTaken) {
                             if (errMsg) {
-                                errMsg.innerText = `⚠️ ETİKET (ID) HATASI: "${targetFullTag}" ad ve ID kombinasyonu başka bir oyuncu tarafından alınmış! Lütfen 4 haneli farklı bir etiket yazın.`;
+                                errMsg.innerText = `⚠️ ETİKET (ID) HATASI: "#${rawTag}" etiketi (ID) başka bir oyuncu tarafından alınmış! Lütfen 4 haneli farklı bir etiket yazın.`;
                                 errMsg.classList.remove('hidden');
                             }
                             this.sound.playLockThud();
