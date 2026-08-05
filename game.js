@@ -2977,13 +2977,13 @@ class TileMatchingGame {
         const positions = this.generateLayoutPositions(formationType, safeBoardW, safeBoardH);
 
         // EXACT USER PROGRESSION RULE:
-        // STRICT 100% SOLVABLE TRIPLE MATCHING RULE:
-        // Oyun 3'lü eşleme oyunudur! Tepside 3 aynı kart birleşince patlar.
-        // Bu yüzden tahtadaki tüm kartlar MUTLAKA 3'erli gruplar halinde üretilmelidir!
-        const baseTriplets = 10;
-        const extraTriplets = Math.floor((this.level - 1) / 10) * 2;
-        const totalTriplets = Math.min(20, baseTriplets + extraTriplets);
-        const totalTilesNeeded = totalTriplets * 3;
+        // 2'Lİ EŞLEME SİSTEMİ (PAIR MATCHING):
+        // Oyun 2'li eşleme oyunudur! Tepside 2 aynı kart birleşince patlar.
+        // Bu yüzden tahtadaki tüm kartlar ÇİFTLER (Pairs) halinde üretilir!
+        const basePairs = 14;
+        const extraPairs = Math.floor((this.level - 1) / 10) * 2;
+        const totalPairs = Math.min(32, basePairs + extraPairs);
+        const totalTilesNeeded = totalPairs * 2;
 
         const cardW = this.cardW || 48;
         const cardH = this.cardH || 60;
@@ -3009,9 +3009,9 @@ class TileMatchingGame {
         const activeTypesCount = Math.min(this.types.length, 5 + Math.floor((this.level - 1) / 10) * 2);
         const activeTypes = this.types.slice(0, activeTypesCount);
 
-        for (let i = 0; i < totalTriplets; i++) {
+        for (let i = 0; i < totalPairs; i++) {
             const typeObj = activeTypes[i % activeTypes.length];
-            pool.push(typeObj, typeObj, typeObj); // HER KARTTAN EXACTLY 3 TANE!
+            pool.push(typeObj, typeObj); // HER KARTTAN ÇİFT (2 TANE)!
         }
 
         this.shuffleArray(pool);
@@ -3542,6 +3542,13 @@ class TileMatchingGame {
         }, 2200);
     }
 
+    getTileTypeId(tile) {
+        if (!tile) return '';
+        if (typeof tile.type === 'string') return tile.type;
+        if (tile.type && tile.type.id) return String(tile.type.id);
+        return String(tile.type || '');
+    }
+
     onTileClick(tile) {
         if (tile.isInSlot || tile.isProcessingClick) return;
 
@@ -3580,8 +3587,9 @@ class TileMatchingGame {
         }
 
         let insertIdx = this.slotTiles.length;
+        const currentTypeId = this.getTileTypeId(tile);
         for (let i = 0; i < this.slotTiles.length; i++) {
-            if (this.slotTiles[i].type === tile.type) {
+            if (this.getTileTypeId(this.slotTiles[i]) === currentTypeId) {
                 insertIdx = i + 1;
             }
         }
@@ -3710,11 +3718,14 @@ class TileMatchingGame {
             const tile = this.slotTiles[i];
             if (tile.isMatching) continue;
 
-            if (!group[tile.type]) group[tile.type] = [];
-            group[tile.type].push(tile);
+            const typeId = this.getTileTypeId(tile);
+            if (!typeId) continue;
 
-            if (group[tile.type].length >= 2) {
-                this.processPairMatch(group[tile.type][0], group[tile.type][1]);
+            if (!group[typeId]) group[typeId] = [];
+            group[typeId].push(tile);
+
+            if (group[typeId].length >= 2) {
+                this.processPairMatch(group[typeId][0], group[typeId][1]);
                 return;
             }
         }
@@ -3758,7 +3769,7 @@ class TileMatchingGame {
         // Check if any 2 clickable tiles match each other
         for (let i = 0; i < clickableTiles.length; i++) {
             for (let j = i + 1; j < clickableTiles.length; j++) {
-                if (clickableTiles[i].type.id === clickableTiles[j].type.id) {
+                if (this.getTileTypeId(clickableTiles[i]) === this.getTileTypeId(clickableTiles[j])) {
                     return false; // Valid move exists!
                 }
             }
@@ -3767,7 +3778,7 @@ class TileMatchingGame {
         // Check if any clickable tile matches a tile in slot tray
         for (const bTile of clickableTiles) {
             for (const sTile of this.slotTiles) {
-                if (bTile.type.id === sTile.type.id) {
+                if (this.getTileTypeId(bTile) === this.getTileTypeId(sTile)) {
                     return false; // Valid move exists!
                 }
             }
