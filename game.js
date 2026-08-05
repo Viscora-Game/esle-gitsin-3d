@@ -3477,59 +3477,13 @@ class TileMatchingGame {
         this.sound.playBoosterChime();
         this.triggerVibration();
 
-        // Collect all remaining active board tiles
-        const remainingTiles = this.boardTiles.filter(t => !t.isInSlot);
-        if (remainingTiles.length === 0) return;
-
-        // Extract type data & shuffle
-        const tileTypesData = remainingTiles.map(t => ({
-            type: t.type,
-            bg: t.bg,
-            imgSrc: t.imgSrc,
-            svg: t.svg,
-            name: t.name
-        }));
-
-        this.shuffleArray(tileTypesData);
-
-        // Re-assign shuffled types to existing tile elements with spin animation
-        for (let i = 0; i < remainingTiles.length; i++) {
-            const tile = remainingTiles[i];
-            const newTypeData = tileTypesData[i];
-
-            tile.type = newTypeData.type;
-            tile.bg = newTypeData.bg;
-            tile.imgSrc = newTypeData.imgSrc;
-            tile.svg = newTypeData.svg;
-            tile.name = newTypeData.name;
-
-            tile.element.style.background = tile.bg;
-            const iconContainer = tile.element.querySelector('.tile-icon');
-            iconContainer.innerHTML = '';
-
-            if (tile.imgSrc) {
-                const imgEl = document.createElement('img');
-                imgEl.className = 'tile-img';
-                imgEl.src = tile.imgSrc;
-                imgEl.alt = tile.name;
-                iconContainer.appendChild(imgEl);
-            } else if (tile.svg) {
-                iconContainer.innerHTML = tile.svg;
-            }
-
-            // Spin animation effect
-            tile.element.style.transition = 'transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)';
-            tile.element.style.transform = 'scale(1.2) rotate(360deg)';
-            setTimeout(() => {
-                tile.element.style.transform = '';
-            }, 320);
-        }
-
-        this.updateLockStates();
+        this.autoShuffleBoard();
 
         const boardEl = document.getElementById('board');
-        const rect = boardEl.getBoundingClientRect();
-        this.fx.spawnBurst(rect.left + rect.width / 2, rect.top + rect.height / 2, 45);
+        if (boardEl) {
+            const rect = boardEl.getBoundingClientRect();
+            this.fx.spawnBurst(rect.left + rect.width / 2, rect.top + rect.height / 2, 45);
+        }
 
         this.showToast(dict.shuffledMsg);
     }
@@ -3545,32 +3499,36 @@ class TileMatchingGame {
 
     showToast(msg) {
         const toast = document.getElementById('toast-msg');
-        document.getElementById('toast-text').innerText = msg;
-        toast.classList.remove('hidden');
+        if (toast) {
+            document.getElementById('toast-text').innerText = msg;
+            toast.classList.remove('hidden');
 
-        setTimeout(() => {
-            toast.classList.add('hidden');
-        }, 2200);
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 2200);
+        }
     }
 
     getTileTypeId(tile) {
         if (!tile) return '';
+        if (typeof tile === 'string') return tile;
         if (typeof tile.type === 'string') return tile.type;
-        if (tile.type && tile.type.id) return String(tile.type.id);
-        return String(tile.type || '');
+        if (tile.type && typeof tile.type === 'object' && tile.type.id) return String(tile.type.id);
+        if (tile.id && typeof tile.id === 'string' && !tile.id.startsWith('tile_')) return tile.id;
+        return String(tile.type || tile.name || '');
     }
 
     onTileClick(tile) {
         if (tile.isInSlot || tile.isProcessingClick) return;
 
         const now = Date.now();
-        if (this.lastTileClickTime && (now - this.lastTileClickTime < 110)) {
-            return; // Prevent phantom double-taps / synthetic click propagation
+        if (this.lastTileClickTime && (now - this.lastTileClickTime < 50)) {
+            return; // Fast tap throttle (50ms)
         }
         this.lastTileClickTime = now;
 
         tile.isProcessingClick = true;
-        setTimeout(() => { tile.isProcessingClick = false; }, 150);
+        setTimeout(() => { tile.isProcessingClick = false; }, 100);
 
         this.clearHintHighlights();
 
@@ -3612,7 +3570,10 @@ class TileMatchingGame {
 
         this.updateLockStates();
         this.rearrangeSlotTiles();
-        this.checkForMatches();
+        
+        // Loop match check to process any and all formed pairs immediately!
+        while (this.checkForMatches()) {}
+
         setTimeout(() => this.checkDeadlockAndAutoShuffle(), 300);
     }
 
@@ -3713,7 +3674,6 @@ class TileMatchingGame {
                 tile.element.style.top = `${tile.y}px`;
                 tile.element.style.width = `${this.cardW}px`;
                 tile.element.style.height = `${this.cardH}px`;
-                // Place returned tiles on top visual layer so they are 100% visible and easy to tap!
                 tile.layer = Math.max(tile.layer || 1, 2);
                 tile.element.style.zIndex = String(200 + (tile.index || 0));
             }
@@ -3724,10 +3684,12 @@ class TileMatchingGame {
     }
 
     checkForMatches() {
+        if (!this.slotTiles || this.slotTiles.length === 0) return false;
+
         const group = {};
         for (let i = 0; i < this.slotTiles.length; i++) {
             const tile = this.slotTiles[i];
-            if (tile.isMatching) continue;
+            if (!tile || tile.isMatching) continue;
 
             const typeId = this.getTileTypeId(tile);
             if (!typeId) continue;
@@ -3737,7 +3699,7 @@ class TileMatchingGame {
 
             if (group[typeId].length >= 2) {
                 this.processPairMatch(group[typeId][0], group[typeId][1]);
-                return;
+                return true;
             }
         }
 
@@ -3750,21 +3712,23 @@ class TileMatchingGame {
                     document.getElementById('defeat-title').innerText = dict.defeatTitle;
                     document.getElementById('defeat-desc').innerText = dict.defeatDesc;
                     document.getElementById('modal-gameover').classList.remove('hidden');
-            const btnAdRevive = document.getElementById('btn-ad-revive');
-            if (btnAdRevive) {
-                const count = this.levelAdReviveCount || 0;
-                const remaining = Math.max(0, 1 - count);
-                const dict = this.i18n[this.settings.lang] || this.i18n.tr;
-                if (remaining > 0) {
-                    btnAdRevive.style.display = 'block';
-                    btnAdRevive.querySelector('span').innerText = `📺 ${dict.adReviveBtn || 'REKLAM İZLE & DEVAM ET'} (${remaining}/1 HAK)`;
-                } else {
-                    btnAdRevive.style.display = 'none';
-                }
-            }
+                    const btnAdRevive = document.getElementById('btn-ad-revive');
+                    if (btnAdRevive) {
+                        const count = this.levelAdReviveCount || 0;
+                        const remaining = Math.max(0, 1 - count);
+                        const dict = this.i18n[this.settings.lang] || this.i18n.tr;
+                        if (remaining > 0) {
+                            btnAdRevive.style.display = 'block';
+                            btnAdRevive.querySelector('span').innerText = `📺 ${dict.adReviveBtn || 'REKLAM İZLE & DEVAM ET'} (${remaining}/1 HAK)`;
+                        } else {
+                            btnAdRevive.style.display = 'none';
+                        }
+                    }
                 }
             }, 250);
         }
+
+        return false;
     }
 
     
@@ -3805,25 +3769,122 @@ class TileMatchingGame {
     }
 
     autoShuffleBoard() {
-        if (this.boardTiles.length <= 1) return;
+        const remainingTiles = this.boardTiles.filter(t => !t.isInSlot);
+        if (remainingTiles.length <= 1) return;
 
-        const types = this.boardTiles.map(t => t.type);
-        for (let i = types.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            const temp = types[i];
-            types[i] = types[j];
-            types[j] = temp;
+        const tileTypesData = remainingTiles.map(t => ({
+            type: t.type,
+            bg: t.bg,
+            imgSrc: t.imgSrc,
+            svg: t.svg,
+            name: t.name
+        }));
+
+        this.shuffleArray(tileTypesData);
+
+        for (let i = 0; i < remainingTiles.length; i++) {
+            const tile = remainingTiles[i];
+            const newTypeData = tileTypesData[i];
+
+            tile.type = newTypeData.type;
+            tile.bg = newTypeData.bg;
+            tile.imgSrc = newTypeData.imgSrc;
+            tile.svg = newTypeData.svg;
+            tile.name = newTypeData.name;
+
+            tile.element.style.background = tile.bg;
+            const iconContainer = tile.element.querySelector('.tile-icon');
+            if (iconContainer) {
+                iconContainer.innerHTML = '';
+                if (tile.imgSrc) {
+                    const imgEl = document.createElement('img');
+                    imgEl.className = 'tile-img';
+                    imgEl.src = tile.imgSrc;
+                    imgEl.alt = tile.name || '';
+                    iconContainer.appendChild(imgEl);
+                } else if (tile.svg) {
+                    iconContainer.innerHTML = tile.svg;
+                }
+            }
+        }
+        this.updateLockStates();
+    }
+
+    processPairMatch(tileA, tileB) {
+        tileA.isMatching = true;
+        tileB.isMatching = true;
+
+        const idxA = this.slotTiles.indexOf(tileA);
+        if (idxA !== -1) this.slotTiles.splice(idxA, 1);
+
+        const idxB = this.slotTiles.indexOf(tileB);
+        if (idxB !== -1) this.slotTiles.splice(idxB, 1);
+
+        const rectA = tileA.element.getBoundingClientRect();
+        const midX = rectA.left + rectA.width / 2;
+        const midY = rectA.top + rectA.height / 2;
+
+        tileA.element.classList.add('matching');
+        tileB.element.classList.add('matching');
+
+        const now = Date.now();
+        if (now - this.lastMatchTime < 2800) {
+            this.comboCount++;
+        } else {
+            this.comboCount = 1;
+        }
+        this.lastMatchTime = now;
+
+        const points = 100 * this.comboCount;
+        this.score += points;
+        document.getElementById('score-val').innerText = this.score;
+
+        if (this.comboCount >= 2) {
+            const dict = (this.i18n && this.i18n[this.settings.lang]) ? this.i18n[this.settings.lang] : (this.i18n ? this.i18n.tr : {});
+            let title = dict.combo2x || '✨ HARİKA UYUM!';
+            if (this.comboCount === 3) title = dict.combo3x || '💖 MUHTEŞEM EŞLEŞME!';
+            else if (this.comboCount === 4) title = dict.combo4x || '🌟 SÜPER COMBO!';
+            else if (this.comboCount >= 5) title = dict.combo5x || '🌈 EFSANEVİ EŞLEŞME!';
+            
+            this.showComboBadge(`${title} (+${points})`);
         }
 
-        this.boardTiles.forEach((tile, idx) => {
-            tile.type = types[idx];
-            const img = tile.element.querySelector('.tile-character');
-            if (img) img.src = tile.type.imgSrc;
-            const bg = tile.element.querySelector('.tile-face');
-            if (bg) bg.style.background = tile.type.bg || '#ffffff';
-        });
+        if (this.currentMode === 'timetrial') {
+            this.remainingSeconds += 1;
+            const timerVal = document.getElementById('timer-val');
+            if (timerVal) timerVal.innerText = `${this.remainingSeconds}s`;
+        }
 
-        this.updateBoardTileStates();
+        this.sound.playMatchSound(this.comboCount);
+        this.fx.spawnBurst(midX, midY);
+
+        setTimeout(() => {
+            if (tileA.element && tileA.element.parentElement) tileA.element.parentElement.removeChild(tileA.element);
+            if (tileB.element && tileB.element.parentElement) tileB.element.parentElement.removeChild(tileB.element);
+
+            this.rearrangeSlotTiles();
+            this.updateLockStates();
+
+            // Run match check again in a loop after element removal to process any pending pairs
+            while (this.checkForMatches()) {}
+
+            // AUTO-CLOSE +1 EMERGENCY SLOT AS SOON AS IT IS USED ONCE & MATCHED
+            if (this.hasTemporaryExtraSlot && this.extraSlotWasUsed) {
+                this.hasTemporaryExtraSlot = false;
+                this.extraSlotWasUsed = false;
+                this.maxSlotCapacity = 5;
+                const floatSlot = document.getElementById('floating-extra-slot');
+                if (floatSlot) floatSlot.classList.add('hidden');
+                
+                const dict = (this.i18n && this.i18n[this.settings.lang]) ? this.i18n[this.settings.lang] : (this.i18n ? this.i18n.tr : {});
+                this.showToast(dict.slotUsedClosedToast || '🚨 +1 ACİL SLOT HAKKI KULLANILDI VE KAPANDI!');
+                this.updateBoosterBadgesUI();
+            }
+
+            if (this.boardTiles.length === 0 && this.slotTiles.length === 0) {
+                this.handleLevelVictory();
+            }
+        }, 220);
     }
 
 
