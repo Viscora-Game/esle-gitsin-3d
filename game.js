@@ -759,7 +759,7 @@ class TileMatchingGame {
                 bonusChestStarTitle: "🏆 BONUS {stars} YILDIZLI SANDIK! 🎁",
                 chestInitialDesc: "Bölüm Başarısı! Ödüllerinizi görmek için aşağıdaki ÖDÜLLERİ AL butonuna basın!",
                 chestGoldRewardText: "+{gold} ALTIN",
-                duplicatePieceConverted: "(Varolan {name} #{idx} Dönüştü!)",
+                duplicatePieceConverted: "✨ (Varolan {name} Parçası #{idx} 50 Altına Dönüştü! 🪙)",
                 puzzlePieceEarned: "{name} Parçası #{idx}",
                 adFullTag: "DOLDU",
                 adChestLimitReached: "⚠️ Bugünkü Ücretsiz Reklam Sandığı Hakkınız Bitti! (0/3 - Yarın Tekrar Gel 🎁)",
