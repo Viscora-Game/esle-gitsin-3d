@@ -3289,9 +3289,8 @@ class TileMatchingGame {
     }
 
     updateLockStates() {
-        // STRICT 60% VISIBILITY CLICKABILITY RULE:
-        // A tile is UNLOCKED & CLICKABLE if at least 60% of its surface is visible (coveredRatio <= 0.40).
-        // It is locked ONLY if covered by more than 40% (coveredRatio > 0.40).
+        // STRICT ACCURATE VISIBILITY & CLICKABILITY RULE:
+        // A tile is UNLOCKED & CLICKABLE if it is not heavily covered by upper layers.
         const cardArea = this.cardW * this.cardH;
 
         for (let i = 0; i < this.boardTiles.length; i++) {
@@ -3305,7 +3304,7 @@ class TileMatchingGame {
                 const candidateAbove = this.boardTiles[j];
                 if (candidateAbove.isInSlot) continue;
 
-                // candidateAbove is visually ON TOP if it is on a higher layer OR higher z-index (index) on same layer
+                // candidateAbove is visually ON TOP if it is on a higher layer OR higher z-index on same layer
                 const isAbove = (candidateAbove.layer > tile.layer) ||
                                 (candidateAbove.layer === tile.layer && candidateAbove.index > tile.index);
 
@@ -3322,16 +3321,19 @@ class TileMatchingGame {
 
             const coveredRatio = Math.min(1.0, totalCoveredArea / cardArea);
 
-            // STRICT 60% VISIBILITY RULE:
-            // If at least 60% of tile surface is visible (coveredRatio <= 0.40), it is UNLOCKED & CLICKABLE!
-            // It is locked ONLY if covered by more than 40% by upper tiles (coveredRatio > 0.40).
-            const isLocked = coveredRatio > 0.40;
+            // A tile is UNLOCKED & CLICKABLE if less than 25% of its surface is covered by upper cards!
+            const isLocked = coveredRatio > 0.25;
 
             tile.isLocked = isLocked;
             if (isLocked) {
                 tile.element.classList.add('locked');
+                tile.element.classList.remove('unlocked-pop');
+                tile.element.style.zIndex = String(10 * tile.layer + (tile.index || 0));
             } else {
                 tile.element.classList.remove('locked');
+                tile.element.classList.add('unlocked-pop');
+                // ELEVATE UNLOCKED CLICKABLE TILES TO THE TOP VISUAL FOREGROUND FOREVER!
+                tile.element.style.zIndex = String(5000 + 10 * tile.layer + (tile.index || 0));
             }
         }
     }
