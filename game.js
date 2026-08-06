@@ -5151,6 +5151,13 @@ class TileMatchingGame {
 
     loadCloudLeaderboardCache() {
         try {
+            const cacheVer = localStorage.getItem('tile_game_lb_cache_version');
+            if (cacheVer !== 'v8.9.65') {
+                localStorage.removeItem('tile_game_cloud_lb_cache');
+                localStorage.setItem('tile_game_lb_cache_version', 'v8.9.65');
+                this.latestCloudDataset = [];
+                return;
+            }
             const raw = localStorage.getItem('tile_game_cloud_lb_cache');
             if (raw) {
                 const parsed = JSON.parse(raw);
@@ -5159,6 +5166,71 @@ class TileMatchingGame {
                 }
             }
         } catch (e) {}
+    }
+
+    async fetchCloudLeaderboardData() {
+        if (typeof navigator !== 'undefined' && !navigator.onLine) return null;
+        try {
+            const cloudUrl = 'https://jsonblob.com/api/jsonBlob/019fd8e7-e1ac-7a47-aa9f-df3231a31d7f';
+            const resp = await fetch(cloudUrl + '?t=' + Date.now(), {
+                cache: 'no-store',
+                headers: {
+                    'Cache-Control': 'no-cache, no-store, must-revalidate',
+                    'Pragma': 'no-cache'
+                }
+            });
+            if (!resp.ok) return null;
+            const data = await resp.json();
+            if (data && Array.isArray(data.players)) {
+                this.latestCloudDataset = data.players;
+                try {
+                    localStorage.setItem('tile_game_cloud_lb_cache', JSON.stringify(data.players));
+                } catch (e) {}
+                return data.players;
+            }
+            return null;
+        } catch (e) {
+            return null;
+        }
+    }
+
+    async openLeaderboardModal(activeCategory = 'overall') {
+        this.sound.playClick();
+
+        if (!navigator.onLine) {
+            this.sound.playLockThud();
+            this.showToast('🌐 Liderlik Tablosunu Görebilmek İçin İnternet Bağlantınızı Kontrol Edin!');
+            return;
+        }
+
+        const modal = document.getElementById('modal-leaderboard');
+        if (!modal) return;
+
+        this.currentLeaderboardCategory = activeCategory;
+
+        document.querySelectorAll('.lb-tab-btn').forEach(btn => {
+            if (btn.getAttribute('data-lb-tab') === activeCategory) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        });
+
+        // 1. Fetch fresh live cloud dataset FIRST (NO STALE CACHE DISPLAY)
+        const freshCloudList = await this.fetchCloudLeaderboardData();
+        if (freshCloudList && Array.isArray(freshCloudList)) {
+            this.latestCloudDataset = freshCloudList;
+        }
+
+        // 2. Render clean live dataset
+        this.renderLeaderboardList(activeCategory);
+
+        modal.classList.remove('hidden');
+        modal.style.display = 'flex';
+
+        // 3. Sync player profile and re-render
+        await this.syncCloudLeaderboard();
+        this.renderLeaderboardList(activeCategory);
     }
 
     savePlayerProfile(nickname, tag) {
@@ -5492,79 +5564,7 @@ class TileMatchingGame {
         }
     }
 
-    async fetchCloudLeaderboardData() {
-        if (typeof navigator !== 'undefined' && !navigator.onLine) return null;
-        try {
-            const cloudUrl = 'https://jsonblob.com/api/jsonBlob/019fd8e7-e1ac-7a47-aa9f-df3231a31d7f';
-            const resp = await fetch(cloudUrl + '?t=' + Date.now());
-            if (!resp.ok) return null;
-            const data = await resp.json();
-            if (data && Array.isArray(data.players)) {
-                return data.players;
-            }
-            return null;
-        } catch (e) {
-            return null;
-        }
-    }
 
-    async openLeaderboardModal(activeCategory = 'overall') {
-        this.sound.playClick();
-
-        if (!navigator.onLine) {
-            this.sound.playLockThud();
-            this.showToast('🌐 Liderlik Tablosunu Görebilmek İçin İnternet Bağlantınızı Kontrol Edin!');
-            return;
-        }
-
-        const modal = document.getElementById('modal-leaderboard');
-        if (!modal) return;
-
-        this.currentLeaderboardCategory = activeCategory;
-
-        document.querySelectorAll('.lb-tab-btn').forEach(btn => {
-            if (btn.getAttribute('data-lb-tab') === activeCategory) {
-                btn.classList.add('active');
-            } else {
-                btn.classList.remove('active');
-            }
-        });
-
-        // 1. Instantly render local dataset for zero latency
-        this.renderLeaderboardList(activeCategory);
-
-        modal.classList.remove('hidden');
-        modal.style.display = 'flex';
-
-        // 2. Fetch fresh live cloud dataset & sync current player profile
-        const freshCloudList = await this.fetchCloudLeaderboardData();
-        if (freshCloudList && Array.isArray(freshCloudList)) {
-            this.latestCloudDataset = freshCloudList;
-            try {
-                localStorage.setItem('tile_game_cloud_lb_cache', JSON.stringify(freshCloudList));
-            } catch (cErr) {}
-            this.renderLeaderboardList(activeCategory);
-        }
-
-        await this.syncCloudLeaderboard();
-        this.renderLeaderboardList(activeCategory);
-
-        // 3. Auto Live Polling while modal is visible (every 8s)
-        if (this.leaderboardPollInterval) clearInterval(this.leaderboardPollInterval);
-        this.leaderboardPollInterval = setInterval(async () => {
-            if (modal.classList.contains('hidden') || modal.style.display === 'none') {
-                clearInterval(this.leaderboardPollInterval);
-                return;
-            }
-            const liveList = await this.fetchCloudLeaderboardData();
-            if (liveList && Array.isArray(liveList)) {
-                this.latestCloudDataset = liveList;
-                this.renderLeaderboardList(this.currentLeaderboardCategory);
-            }
-            await this.syncCloudLeaderboard();
-            this.renderLeaderboardList(this.currentLeaderboardCategory);
-        }, 8000);
-    }
 
     renderLeaderboardList(category = 'overall') {
         const listContainer = document.getElementById('leaderboard-list-container');
