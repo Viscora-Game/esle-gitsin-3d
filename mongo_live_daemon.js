@@ -21,7 +21,7 @@ async function runDaemon() {
         setInterval(async () => {
             try {
                 // 1. Fetch JSONBlob dataset
-                const blobResp = await fetch(CLOUD_URL);
+                const blobResp = await fetch(CLOUD_URL + '?t=' + Date.now());
                 if (blobResp.ok) {
                     const blobData = await blobResp.json();
                     if (blobData && Array.isArray(blobData.players)) {

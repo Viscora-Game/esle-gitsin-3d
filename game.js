@@ -1611,7 +1611,17 @@ class TileMatchingGame {
         this.loadGameProgress();
         this.loadPlayerProfile();
         this.loadCloudLeaderboardCache();
-        this.syncCloudLeaderboard(); // Auto-push pre-existing local scores to cloud DB on startup!
+        this.fetchCloudLeaderboardData().then(freshData => {
+            if (freshData && Array.isArray(freshData)) {
+                this.latestCloudDataset = freshData;
+                try {
+                    localStorage.setItem('tile_game_cloud_lb_cache', JSON.stringify(freshData));
+                } catch (e) {}
+            }
+            this.syncCloudLeaderboard();
+        }).catch(() => {
+            this.syncCloudLeaderboard();
+        });
         this.initUI();
         this.initBackgroundMusic();
         this.checkFirstTimeTutorial();
