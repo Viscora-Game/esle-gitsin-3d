@@ -6,7 +6,7 @@ const { MongoClient } = require('mongodb');
 const uri = 'mongodb+srv://eslesme_game:HamzaKa@hamza.55azmjw.mongodb.net/EsleGitsin3D?retryWrites=true&w=majority&appName=Hamza';
 const client = new MongoClient(uri);
 
-const CLOUD_URL = 'https://jsonblob.com/api/jsonBlob/019fcf1b-1d53-7a58-bad9-de2b58944893';
+const CLOUD_URL = 'https://jsonblob.com/api/jsonBlob/019fd8e7-e1ac-7a47-aa9f-df3231a31d7f';
 
 async function runDaemon() {
     console.log('[MongoDaemon] Connecting to MongoDB Atlas...');
