@@ -3795,25 +3795,31 @@ class TileMatchingGame {
         const clickableTiles = this.boardTiles.filter(t => !t.isLocked && !t.isInSlot);
         if (clickableTiles.length === 0) return false;
 
-        // Check if any 2 clickable tiles match each other
+        // 1. Check if any 2 clickable tiles match each other directly
         for (let i = 0; i < clickableTiles.length; i++) {
             for (let j = i + 1; j < clickableTiles.length; j++) {
                 if (this.getTileTypeId(clickableTiles[i]) === this.getTileTypeId(clickableTiles[j])) {
-                    return false; // Valid move exists!
+                    return false; // Direct match on top layer exists!
                 }
             }
         }
 
-        // Check if any clickable tile matches a tile in slot tray
+        // 2. Check if any clickable tile matches a tile in slot tray
         for (const bTile of clickableTiles) {
             for (const sTile of this.slotTiles) {
                 if (this.getTileTypeId(bTile) === this.getTileTypeId(sTile)) {
-                    return false; // Valid move exists!
+                    return false; // Match with slot tile exists!
                 }
             }
         }
 
-        // DEADLOCK DETECTED!
+        // 3. If slot tray still has 2 or more free spaces, player can safely pick tiles to reveal lower layer cards!
+        const remainingSlotSpace = (this.maxSlotCapacity || 5) - this.slotTiles.length;
+        if (remainingSlotSpace >= 2) {
+            return false; // Safe to keep playing without forced shuffle!
+        }
+
+        // 4. TRUE DEADLOCK DETECTED (Slot nearly full and zero matches on top)!
         this.isAutoShuffling = true;
         this.showToast('⚡ HAMLE KALMADI! Tahta Otomatik Karıştırılıyor...');
         this.sound.playBoosterChime();
@@ -3832,6 +3838,7 @@ class TileMatchingGame {
         const remainingTiles = this.boardTiles.filter(t => !t.isInSlot);
         if (remainingTiles.length <= 1) return;
 
+        // Collect all type data objects
         const tileTypesData = remainingTiles.map(t => ({
             type: t.type,
             bg: t.bg,
@@ -3842,6 +3849,26 @@ class TileMatchingGame {
 
         this.shuffleArray(tileTypesData);
 
+        // Find unlocked (top clickable) tiles
+        const unlockedIndices = [];
+        for (let i = 0; i < remainingTiles.length; i++) {
+            if (!remainingTiles[i].isLocked) {
+                unlockedIndices.push(i);
+            }
+        }
+
+        // GUARANTEE MATCH: Ensure at least 2 unlocked tiles share the exact same card type!
+        if (unlockedIndices.length >= 2) {
+            const targetType = tileTypesData[unlockedIndices[0]].type;
+            const matchingDataIdx = tileTypesData.findIndex((td, idx) => idx !== unlockedIndices[0] && td.type === targetType);
+            if (matchingDataIdx !== -1 && matchingDataIdx !== unlockedIndices[1]) {
+                const temp = tileTypesData[unlockedIndices[1]];
+                tileTypesData[unlockedIndices[1]] = tileTypesData[matchingDataIdx];
+                tileTypesData[matchingDataIdx] = temp;
+            }
+        }
+
+        // Apply new shuffled types to tiles
         for (let i = 0; i < remainingTiles.length; i++) {
             const tile = remainingTiles[i];
             const newTypeData = tileTypesData[i];
