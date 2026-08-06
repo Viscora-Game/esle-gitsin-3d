@@ -5477,19 +5477,8 @@ class TileMatchingGame {
     async fetchCloudLeaderboardData() {
         if (typeof navigator !== 'undefined' && !navigator.onLine) return null;
         try {
-            const mongoApiUrl = 'https://esle-gitsin-3d.vercel.app/api';
-            try {
-                const mResp = await fetch(mongoApiUrl);
-                if (mResp.ok) {
-                    const mData = await mResp.json();
-                    if (mData && Array.isArray(mData.players)) {
-                        return mData.players;
-                    }
-                }
-            } catch (mErr) {}
-
             const cloudUrl = 'https://jsonblob.com/api/jsonBlob/019fcf1b-1d53-7a58-bad9-de2b58944893';
-            const resp = await fetch(cloudUrl);
+            const resp = await fetch(cloudUrl + '?t=' + Date.now());
             if (!resp.ok) return null;
             const data = await resp.json();
             if (data && Array.isArray(data.players)) {
