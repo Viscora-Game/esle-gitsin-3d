@@ -2344,25 +2344,38 @@ class TileMatchingGame {
                     }
                 };
 
-                // Guarantee 100% smooth registration: If rawTag is already used by another player with same nickname, pick a fresh unique tag
+                // Asynchronously verify 4-Digit Tag/ID Uniqueness against live Cloud DB!
                 this.fetchCloudLeaderboardData().then(cloudPlayers => {
                     btnSaveNickname.disabled = false;
                     btnSaveNickname.innerText = 'KAYDET VE BAŞLA ✨';
 
-                    let finalTag = rawTag;
                     if (cloudPlayers && Array.isArray(cloudPlayers)) {
-                        let attempts = 0;
-                        while (attempts < 50) {
-                            const candidateFullTag = `${rawNick}#${finalTag}`.toLowerCase();
-                            const isExactFullTagTaken = cloudPlayers.some(p => p && p.fullTag && p.fullTag.toLowerCase() === candidateFullTag && candidateFullTag !== myCurrentFullTag);
-                            if (!isExactFullTagTaken) break;
-                            finalTag = this.getRandomTagSuggestion();
-                            attempts++;
+                        // Check if the 4-digit ID Tag is taken by ANY OTHER player in the cloud database!
+                        const isTagTaken = cloudPlayers.some(p => {
+                            if (!p) return false;
+                            const cloudTag = (p.tag || (p.fullTag && p.fullTag.includes('#') ? p.fullTag.split('#')[1] : '')).trim();
+                            const cloudFullTag = (p.fullTag || '').toLowerCase();
+                            
+                            // Exclude current device's own existing profile
+                            if (myCurrentTag && cloudTag === myCurrentTag) return false;
+                            if (myCurrentFullTag && cloudFullTag === myCurrentFullTag) return false;
+
+                            return cloudTag === rawTag || cloudFullTag.endsWith(`#${rawTag.toLowerCase()}`);
+                        });
+
+                        if (isTagTaken) {
+                            if (errMsg) {
+                                errMsg.innerText = `⚠️ ETİKET (ID) HATASI: "#${rawTag}" etiketi (ID) başka bir oyuncu tarafından alınmış! Lütfen 4 haneli farklı bir etiket yazın.`;
+                                errMsg.classList.remove('hidden');
+                            }
+                            this.sound.playLockThud();
+                            if (inputTag) inputTag.focus();
+                            return;
                         }
                     }
 
                     if (errMsg) errMsg.classList.add('hidden');
-                    this.savePlayerProfile(rawNick, finalTag);
+                    this.savePlayerProfile(rawNick, rawTag);
                     closeModal();
                     this.showToast(`✨ Profil Kaydedildi: ${this.playerProfile.fullTag}`);
                     this.syncCloudLeaderboard();
@@ -5375,8 +5388,22 @@ class TileMatchingGame {
                             if (p && p.fullTag) {
                                 const key = p.fullTag.toLowerCase();
                                 const existing = playerMap.get(key);
-                                if (!existing || (p.updatedAt || 0) >= (existing.updatedAt || 0)) {
+                                if (!existing) {
                                     playerMap.set(key, p);
+                                } else {
+                                    // Merge intelligently preserving highest scores & max progression!
+                                    const merged = {
+                                        ...existing,
+                                        ...p,
+                                        classicLvl: Math.max(existing.classicLvl || 1, p.classicLvl || 1),
+                                        classicScore: Math.max(existing.classicScore || 0, p.classicScore || 0),
+                                        ttLvl: Math.max(existing.ttLvl || 1, p.ttLvl || 1),
+                                        ttScore: Math.max(existing.ttScore || 0, p.ttScore || 0),
+                                        puzzles: Math.max(existing.puzzles || 0, p.puzzles || 0),
+                                        updatedAt: Math.max(existing.updatedAt || 0, p.updatedAt || 0)
+                                    };
+                                    merged.overallScore = merged.classicScore + merged.ttScore;
+                                    playerMap.set(key, merged);
                                 }
                             }
                         }
@@ -5384,7 +5411,18 @@ class TileMatchingGame {
                 }
             } catch (fetchErr) {}
 
-            playerMap.set(myFullTag.toLowerCase(), myEntry);
+            // Merge current player's entry safely with Math.max so local progress is never lost
+            const myKey = myFullTag.toLowerCase();
+            const existingMyData = playerMap.get(myKey);
+            if (existingMyData) {
+                myEntry.classicLvl = Math.max(existingMyData.classicLvl || 1, myEntry.classicLvl || 1);
+                myEntry.classicScore = Math.max(existingMyData.classicScore || 0, myEntry.classicScore || 0);
+                myEntry.ttLvl = Math.max(existingMyData.ttLvl || 1, myEntry.ttLvl || 1);
+                myEntry.ttScore = Math.max(existingMyData.ttScore || 0, myEntry.ttScore || 0);
+                myEntry.puzzles = Math.max(existingMyData.puzzles || 0, myEntry.puzzles || 0);
+                myEntry.overallScore = myEntry.classicScore + myEntry.ttScore;
+            }
+            playerMap.set(myKey, myEntry);
 
             const updatedPlayers = Array.from(playerMap.values());
             updatedPlayers.sort((a, b) => (b.overallScore || 0) - (a.overallScore || 0));
