@@ -1,4 +1,4 @@
-const CACHE_NAME = 'esle-gitsin-3d-v8.9.60';
+const CACHE_NAME = 'esle-gitsin-3d-v8.9.61';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -54,6 +54,12 @@ self.addEventListener('activate', (event) => {
 // Fetch Event - Network First with Instant Cache Fallback for 100% Offline Gameplay
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
+
+  const reqUrl = event.request.url.toLowerCase();
+  // EXPLICITLY BYPASS SERVICE WORKER CACHE FOR LIVE CLOUD DATABASE API REQUESTS!
+  if (reqUrl.includes('jsonblob') || reqUrl.includes('mongodb') || reqUrl.includes('api')) {
+    return;
+  }
 
   event.respondWith(
     fetch(event.request)

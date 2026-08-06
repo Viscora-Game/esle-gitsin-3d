@@ -5410,7 +5410,7 @@ class TileMatchingGame {
             }
 
             try {
-                const resp = await fetch(cloudUrl);
+                const resp = await fetch(cloudUrl + '?t=' + Date.now());
                 if (resp.ok) {
                     const parsed = await resp.json();
                     if (parsed && Array.isArray(parsed.players)) {
@@ -5518,20 +5518,34 @@ class TileMatchingGame {
         modal.classList.remove('hidden');
         modal.style.display = 'flex';
 
-        // 2. Perform atomic cloud sync & render stable merged list
+        // 2. Fetch fresh live cloud dataset & sync current player profile
+        const freshCloudList = await this.fetchCloudLeaderboardData();
+        if (freshCloudList && Array.isArray(freshCloudList)) {
+            this.latestCloudDataset = freshCloudList;
+            try {
+                localStorage.setItem('tile_game_cloud_lb_cache', JSON.stringify(freshCloudList));
+            } catch (cErr) {}
+            this.renderLeaderboardList(activeCategory);
+        }
+
         await this.syncCloudLeaderboard();
         this.renderLeaderboardList(activeCategory);
 
-        // 3. Auto Live Polling while modal is visible (every 15s)
+        // 3. Auto Live Polling while modal is visible (every 8s)
         if (this.leaderboardPollInterval) clearInterval(this.leaderboardPollInterval);
         this.leaderboardPollInterval = setInterval(async () => {
             if (modal.classList.contains('hidden') || modal.style.display === 'none') {
                 clearInterval(this.leaderboardPollInterval);
                 return;
             }
+            const liveList = await this.fetchCloudLeaderboardData();
+            if (liveList && Array.isArray(liveList)) {
+                this.latestCloudDataset = liveList;
+                this.renderLeaderboardList(this.currentLeaderboardCategory);
+            }
             await this.syncCloudLeaderboard();
             this.renderLeaderboardList(this.currentLeaderboardCategory);
-        }, 15000);
+        }, 8000);
     }
 
     renderLeaderboardList(category = 'overall') {
