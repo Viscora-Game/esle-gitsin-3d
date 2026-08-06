@@ -2344,38 +2344,25 @@ class TileMatchingGame {
                     }
                 };
 
-                // Asynchronously verify 4-Digit Tag/ID Uniqueness against live Cloud DB!
+                // Guarantee 100% smooth registration: If rawTag is already used by another player with same nickname, pick a fresh unique tag
                 this.fetchCloudLeaderboardData().then(cloudPlayers => {
                     btnSaveNickname.disabled = false;
                     btnSaveNickname.innerText = 'KAYDET VE BAŞLA ✨';
 
+                    let finalTag = rawTag;
                     if (cloudPlayers && Array.isArray(cloudPlayers)) {
-                        // Check if the 4-digit ID Tag is taken by ANY OTHER player in the cloud database!
-                        const isTagTaken = cloudPlayers.some(p => {
-                            if (!p) return false;
-                            const cloudTag = (p.tag || (p.fullTag && p.fullTag.includes('#') ? p.fullTag.split('#')[1] : '')).trim();
-                            const cloudFullTag = (p.fullTag || '').toLowerCase();
-                            
-                            // Exclude current device's own existing profile
-                            if (myCurrentTag && cloudTag === myCurrentTag) return false;
-                            if (myCurrentFullTag && cloudFullTag === myCurrentFullTag) return false;
-
-                            return cloudTag === rawTag || cloudFullTag.endsWith(`#${rawTag.toLowerCase()}`);
-                        });
-
-                        if (isTagTaken) {
-                            if (errMsg) {
-                                errMsg.innerText = `⚠️ ETİKET (ID) HATASI: "#${rawTag}" etiketi (ID) başka bir oyuncu tarafından alınmış! Lütfen 4 haneli farklı bir etiket yazın.`;
-                                errMsg.classList.remove('hidden');
-                            }
-                            this.sound.playLockThud();
-                            if (inputTag) inputTag.focus();
-                            return;
+                        let attempts = 0;
+                        while (attempts < 50) {
+                            const candidateFullTag = `${rawNick}#${finalTag}`.toLowerCase();
+                            const isExactFullTagTaken = cloudPlayers.some(p => p && p.fullTag && p.fullTag.toLowerCase() === candidateFullTag && candidateFullTag !== myCurrentFullTag);
+                            if (!isExactFullTagTaken) break;
+                            finalTag = this.getRandomTagSuggestion();
+                            attempts++;
                         }
                     }
 
                     if (errMsg) errMsg.classList.add('hidden');
-                    this.savePlayerProfile(rawNick, rawTag);
+                    this.savePlayerProfile(rawNick, finalTag);
                     closeModal();
                     this.showToast(`✨ Profil Kaydedildi: ${this.playerProfile.fullTag}`);
                     this.syncCloudLeaderboard();
@@ -5103,7 +5090,9 @@ class TileMatchingGame {
         } catch (e) {}
 
         if (!this.playerProfile || !this.playerProfile.nickname) {
-            this.playerProfile = null;
+            const defaultNick = this.getRandomNicknameSuggestion();
+            const defaultTag = this.getRandomTagSuggestion();
+            this.savePlayerProfile(defaultNick, defaultTag);
         }
     }
 
