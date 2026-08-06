@@ -2241,6 +2241,21 @@ class TileMatchingGame {
             });
         }
 
+        const btnRefreshLb = document.getElementById('btn-refresh-leaderboard');
+        if (btnRefreshLb) {
+            btnRefreshLb.addEventListener('click', async () => {
+                this.sound.playClick();
+                btnRefreshLb.classList.add('spinning');
+                await this.fetchCloudLeaderboardData();
+                await this.syncCloudLeaderboard();
+                this.renderLeaderboardList(this.currentLeaderboardCategory || 'overall');
+                setTimeout(() => {
+                    btnRefreshLb.classList.remove('spinning');
+                }, 600);
+                this.lbCountdownRemaining = 5;
+            });
+        }
+
         const btnCloseProfile = document.getElementById('btn-close-player-profile');
         if (btnCloseProfile) {
             btnCloseProfile.addEventListener('click', () => {
@@ -3883,6 +3898,7 @@ class TileMatchingGame {
         const points = 100 * this.comboCount;
         this.score += points;
         document.getElementById('score-val').innerText = this.score;
+        this.saveGameProgress();
 
         if (this.comboCount >= 2) {
             const dict = (this.i18n && this.i18n[this.settings.lang]) ? this.i18n[this.settings.lang] : (this.i18n ? this.i18n.tr : {});
@@ -3961,6 +3977,7 @@ class TileMatchingGame {
         const points = 100 * this.comboCount;
         this.score += points;
         document.getElementById('score-val').innerText = this.score;
+        this.saveGameProgress();
 
         if (this.comboCount >= 2) {
             const dict = (this.i18n && this.i18n[this.settings.lang]) ? this.i18n[this.settings.lang] : (this.i18n ? this.i18n.tr : {});
@@ -5231,6 +5248,44 @@ class TileMatchingGame {
         // 3. Sync player profile and re-render
         await this.syncCloudLeaderboard();
         this.renderLeaderboardList(activeCategory);
+
+        // 4. Auto Live Polling & 5-Second Visible Countdown Timer
+        if (this.leaderboardPollInterval) clearInterval(this.leaderboardPollInterval);
+        this.lbCountdownRemaining = 5;
+
+        const updateTimerUI = () => {
+            const timerEl = document.getElementById('lb-timer-countdown');
+            if (timerEl) {
+                timerEl.innerText = `⏱️ Otomatik Yenileme: ${this.lbCountdownRemaining}s`;
+            }
+        };
+        updateTimerUI();
+
+        this.leaderboardPollInterval = setInterval(async () => {
+            if (modal.classList.contains('hidden') || modal.style.display === 'none') {
+                clearInterval(this.leaderboardPollInterval);
+                return;
+            }
+
+            this.lbCountdownRemaining--;
+            if (this.lbCountdownRemaining <= 0) {
+                this.lbCountdownRemaining = 5;
+                const btnRefreshLb = document.getElementById('btn-refresh-leaderboard');
+                if (btnRefreshLb) btnRefreshLb.classList.add('spinning');
+                
+                const liveList = await this.fetchCloudLeaderboardData();
+                if (liveList && Array.isArray(liveList)) {
+                    this.latestCloudDataset = liveList;
+                }
+                await this.syncCloudLeaderboard();
+                this.renderLeaderboardList(this.currentLeaderboardCategory || 'overall');
+
+                if (btnRefreshLb) {
+                    setTimeout(() => btnRefreshLb.classList.remove('spinning'), 500);
+                }
+            }
+            updateTimerUI();
+        }, 1000);
     }
 
     savePlayerProfile(nickname, tag) {

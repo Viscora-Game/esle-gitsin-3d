@@ -3065,3 +3065,63 @@ body {
         padding-bottom: calc(20px + env(safe-area-inset-bottom));
     }
 }
+
+/* =========================================================
+   LIVE LEADERBOARD REFRESH CONTROLS & COUNTDOWN TIMER STYLES
+   ========================================================= */
+.lb-live-controls {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 8px;
+    padding: 6px 12px;
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+}
+
+.btn-refresh-lb {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: #ffffff;
+    font-weight: 800;
+    font-size: 12px;
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid #34d399;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);
+    transition: all 0.2s ease;
+}
+
+.btn-refresh-lb:active {
+    transform: scale(0.94);
+}
+
+.btn-refresh-lb .refresh-icon {
+    font-size: 14px;
+    display: inline-block;
+    transition: transform 0.5s ease;
+}
+
+.btn-refresh-lb.spinning .refresh-icon {
+    animation: spinIcon 0.6s linear infinite;
+}
+
+@keyframes spinIcon {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+}
+
+.lb-timer-countdown {
+    font-size: 11px;
+    font-weight: 700;
+    color: #38bdf8;
+    background: rgba(56, 189, 248, 0.12);
+    padding: 4px 10px;
+    border-radius: 12px;
+    border: 1px solid rgba(56, 189, 248, 0.25);
+}
