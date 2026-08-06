@@ -5249,43 +5249,21 @@ class TileMatchingGame {
         await this.syncCloudLeaderboard();
         this.renderLeaderboardList(activeCategory);
 
-        // 4. Auto Live Polling & 5-Second Visible Countdown Timer
+        // 4. Silent 5-Second Live Background Refresh
         if (this.leaderboardPollInterval) clearInterval(this.leaderboardPollInterval);
-        this.lbCountdownRemaining = 5;
-
-        const updateTimerUI = () => {
-            const timerEl = document.getElementById('lb-timer-countdown');
-            if (timerEl) {
-                timerEl.innerText = `⏱️ Otomatik Yenileme: ${this.lbCountdownRemaining}s`;
-            }
-        };
-        updateTimerUI();
-
         this.leaderboardPollInterval = setInterval(async () => {
             if (modal.classList.contains('hidden') || modal.style.display === 'none') {
                 clearInterval(this.leaderboardPollInterval);
                 return;
             }
 
-            this.lbCountdownRemaining--;
-            if (this.lbCountdownRemaining <= 0) {
-                this.lbCountdownRemaining = 5;
-                const btnRefreshLb = document.getElementById('btn-refresh-leaderboard');
-                if (btnRefreshLb) btnRefreshLb.classList.add('spinning');
-                
-                const liveList = await this.fetchCloudLeaderboardData();
-                if (liveList && Array.isArray(liveList)) {
-                    this.latestCloudDataset = liveList;
-                }
-                await this.syncCloudLeaderboard();
-                this.renderLeaderboardList(this.currentLeaderboardCategory || 'overall');
-
-                if (btnRefreshLb) {
-                    setTimeout(() => btnRefreshLb.classList.remove('spinning'), 500);
-                }
+            const liveList = await this.fetchCloudLeaderboardData();
+            if (liveList && Array.isArray(liveList)) {
+                this.latestCloudDataset = liveList;
             }
-            updateTimerUI();
-        }, 1000);
+            await this.syncCloudLeaderboard();
+            this.renderLeaderboardList(this.currentLeaderboardCategory || 'overall');
+        }, 5000);
     }
 
     savePlayerProfile(nickname, tag) {
