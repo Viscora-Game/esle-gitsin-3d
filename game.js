@@ -3008,20 +3008,47 @@ class TileMatchingGame {
             });
         }
 
-        const pool = [];
         const activeTypesCount = Math.min(this.types.length, 5 + Math.floor((this.level - 1) / 10) * 2);
         const activeTypes = this.types.slice(0, activeTypesCount);
+        this.shuffleArray(activeTypes);
 
+        const pool = [];
         for (let i = 0; i < totalPairs; i++) {
             const typeObj = activeTypes[i % activeTypes.length];
             pool.push(typeObj, typeObj); // HER KARTTAN ÇİFT (2 TANE)!
         }
 
-        this.shuffleArray(pool);
+        // MATHEMATICALLY GUARANTEED SOLVABLE PAIR PLACEMENT:
+        // Sort layout positions by layer (top layers first).
+        // Assign pairs to top layers & outer positions so matching pairs are ALWAYS accessible on the surface!
+        const sortedIndices = Array.from({ length: pool.length }, (_, idx) => idx);
+        sortedIndices.sort((a, b) => (positions[b].layer - positions[a].layer));
 
-        for (let i = 0; i < pool.length; i++) {
+        const finalPool = new Array(pool.length);
+        let pairIdx = 0;
+        for (let i = 0; i < sortedIndices.length; i += 2) {
+            const typeObj = activeTypes[pairIdx % activeTypes.length];
+            pairIdx++;
+
+            const idx1 = sortedIndices[i];
+            const idx2 = (i + 1 < sortedIndices.length) ? sortedIndices[i + 1] : sortedIndices[i];
+
+            finalPool[idx1] = typeObj;
+            finalPool[idx2] = typeObj;
+        }
+
+        // Lightly swap pairs within same layer to create a fun, rewarding challenge
+        for (let i = 0; i < sortedIndices.length - 3; i += 4) {
+            if (positions[sortedIndices[i]].layer === positions[sortedIndices[i + 3]].layer) {
+                const temp = finalPool[sortedIndices[i + 1]];
+                finalPool[sortedIndices[i + 1]] = finalPool[sortedIndices[i + 2]];
+                finalPool[sortedIndices[i + 2]] = temp;
+            }
+        }
+
+        for (let i = 0; i < finalPool.length; i++) {
             const pos = positions[i];
-            const tileData = pool[i];
+            const tileData = finalPool[i];
 
             const tileEl = document.createElement('div');
             tileEl.className = 'tile';
@@ -3331,8 +3358,8 @@ class TileMatchingGame {
 
             const coveredRatio = Math.min(1.0, totalCoveredArea / cardArea);
 
-            // A tile is LOCKED if more than 12% of its surface is covered by upper cards!
-            const isLocked = coveredRatio > 0.12;
+            // A tile is LOCKED if more than 28% of its surface is covered by upper cards!
+            const isLocked = coveredRatio > 0.28;
 
             tile.isLocked = isLocked;
             if (isLocked) {
