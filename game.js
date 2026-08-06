@@ -5412,44 +5412,49 @@ class TileMatchingGame {
 
             // 2. Dual Backup Sync: JSONBlob Cloud Storage
             const playerMap = new Map();
-
-            if (this.latestCloudDataset && Array.isArray(this.latestCloudDataset)) {
-                for (const p of this.latestCloudDataset) {
-                    if (p && p.fullTag) playerMap.set(p.fullTag.toLowerCase(), p);
-                }
-            }
+            let cloudFetchSuccess = false;
 
             try {
                 const resp = await fetch(cloudUrl + '?t=' + Date.now());
                 if (resp.ok) {
                     const parsed = await resp.json();
-                    if (parsed && Array.isArray(parsed.players)) {
+                    if (parsed && Array.isArray(parsed.players) && parsed.players.length > 0) {
+                        cloudFetchSuccess = true;
                         for (const p of parsed.players) {
                             if (p && p.fullTag) {
                                 const key = p.fullTag.toLowerCase();
-                                const existing = playerMap.get(key);
-                                if (!existing) {
-                                    playerMap.set(key, p);
-                                } else {
-                                    // Merge intelligently preserving highest scores & max progression!
-                                    const merged = {
-                                        ...existing,
-                                        ...p,
-                                        classicLvl: Math.max(existing.classicLvl || 1, p.classicLvl || 1),
-                                        classicScore: Math.max(existing.classicScore || 0, p.classicScore || 0),
-                                        ttLvl: Math.max(existing.ttLvl || 1, p.ttLvl || 1),
-                                        ttScore: Math.max(existing.ttScore || 0, p.ttScore || 0),
-                                        puzzles: Math.max(existing.puzzles || 0, p.puzzles || 0),
-                                        updatedAt: Math.max(existing.updatedAt || 0, p.updatedAt || 0)
-                                    };
-                                    merged.overallScore = merged.classicScore + merged.ttScore;
-                                    playerMap.set(key, merged);
-                                }
+                                playerMap.set(key, p);
                             }
                         }
                     }
                 }
             } catch (fetchErr) {}
+
+            // Merge local cached dataset if available
+            if (this.latestCloudDataset && Array.isArray(this.latestCloudDataset)) {
+                for (const p of this.latestCloudDataset) {
+                    if (p && p.fullTag) {
+                        const key = p.fullTag.toLowerCase();
+                        const existing = playerMap.get(key);
+                        if (!existing) {
+                            playerMap.set(key, p);
+                        } else {
+                            const merged = {
+                                ...existing,
+                                ...p,
+                                classicLvl: Math.max(existing.classicLvl || 1, p.classicLvl || 1),
+                                classicScore: Math.max(existing.classicScore || 0, p.classicScore || 0),
+                                ttLvl: Math.max(existing.ttLvl || 1, p.ttLvl || 1),
+                                ttScore: Math.max(existing.ttScore || 0, p.ttScore || 0),
+                                puzzles: Math.max(existing.puzzles || 0, p.puzzles || 0),
+                                updatedAt: Math.max(existing.updatedAt || 0, p.updatedAt || 0)
+                            };
+                            merged.overallScore = merged.classicScore + merged.ttScore;
+                            playerMap.set(key, merged);
+                        }
+                    }
+                }
+            }
 
             // Merge current player's entry safely with Math.max so local progress is never lost
             const myKey = myFullTag.toLowerCase();
@@ -5474,11 +5479,14 @@ class TileMatchingGame {
                 localStorage.setItem('tile_game_cloud_lb_cache', JSON.stringify(finalPlayers));
             } catch (cacheErr) {}
 
-            await fetch(cloudUrl, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ players: finalPlayers })
-            });
+            // SAFETY GUARD: Only PUT back to cloud if cloud fetch succeeded OR if dataset has all players (>= 2)
+            if (cloudFetchSuccess || finalPlayers.length >= 2) {
+                await fetch(cloudUrl, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ players: finalPlayers })
+                });
+            }
         } catch (e) {
             console.log('[CloudSync] Exception:', e);
         }
