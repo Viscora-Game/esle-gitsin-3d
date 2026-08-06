@@ -5185,12 +5185,6 @@ class TileMatchingGame {
                 this.playerProfile = JSON.parse(saved);
             }
         } catch (e) {}
-
-        if (!this.playerProfile || !this.playerProfile.nickname) {
-            const defaultNick = this.getRandomNicknameSuggestion();
-            const defaultTag = this.getRandomTagSuggestion();
-            this.savePlayerProfile(defaultNick, defaultTag);
-        }
     }
 
     loadCloudLeaderboardCache() {
@@ -5508,6 +5502,12 @@ class TileMatchingGame {
                 }
             }
 
+            const myOverallScore = myClassicScore + myTtScore;
+
+            if (myOverallScore <= 0 && myClassicScore <= 0 && myTtScore <= 0) {
+                return; // Do not sync 0-score unplayed profiles to cloud!
+            }
+
             const myEntry = {
                 fullTag: myFullTag,
                 name: myName,
@@ -5516,7 +5516,7 @@ class TileMatchingGame {
                 classicScore: myClassicScore,
                 ttLvl: myTtLvl,
                 ttScore: myTtScore,
-                overallScore: myClassicScore + myTtScore,
+                overallScore: myOverallScore,
                 puzzles: myPuzzleCount,
                 puzzleDataStr: JSON.stringify({
                     goldCoins: this.goldCoins,
