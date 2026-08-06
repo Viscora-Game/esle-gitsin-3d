@@ -5399,11 +5399,16 @@ class TileMatchingGame {
         if (this.latestCloudDataset && Array.isArray(this.latestCloudDataset)) {
             for (const cp of this.latestCloudDataset) {
                 if (cp && cp.fullTag && cp.fullTag.toLowerCase() !== myFullTag.toLowerCase()) {
-                    const existingIdx = list.findIndex(item => item.fullTag.toLowerCase() === cp.fullTag.toLowerCase());
-
                     const cpClassicScore = (typeof cp.classicScore === 'number' && cp.classicScore >= 0) ? cp.classicScore : 0;
                     const cpTtScore = (typeof cp.ttScore === 'number' && cp.ttScore >= 0) ? cp.ttScore : 0;
                     const cpOverallScore = (typeof cp.overallScore === 'number' && cp.overallScore >= 0) ? cp.overallScore : (cpClassicScore + cpTtScore);
+
+                    // IGNORE 0-SCORE BOT / PLACEHOLDER ACCOUNTS FOR CLEAN LEADERBOARD
+                    if (cpOverallScore <= 0 && cpClassicScore <= 0 && cpTtScore <= 0) {
+                        continue;
+                    }
+
+                    const existingIdx = list.findIndex(item => item.fullTag.toLowerCase() === cp.fullTag.toLowerCase());
 
                     const cloudPlayer = {
                         isSelf: false,
