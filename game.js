@@ -840,7 +840,7 @@ class TileMatchingGame {
                 prevPageBtn: "◀ ÖNCEKİ SAYFA",
                 nextPageBtn: "SONRAKİ SAYFA ▶",
                 completedBadge: "TAMAMLANDI! 🌟",
-                forceUpdateBtn: "⚡ CANLI GÜNCELLEMEYİ YÜKLE (v8.9.76)",
+                forceUpdateBtn: "⚡ CANLI GÜNCELLEMEYİ YÜKLE (v8.9.77)",
                 resetModalTitle: "🔄 HANGİ MOD SIFIRLANSIN?",
                 resetModalDesc: "Sıfırlamak istediğiniz oyun modunu seçin:",
                 resetClassicBtn: "🎮 KLASİK MODU SIFIRLA",
@@ -977,7 +977,7 @@ class TileMatchingGame {
                 prevPageBtn: "◀ PREVIOUS PAGE",
                 nextPageBtn: "NEXT PAGE ▶",
                 completedBadge: "COMPLETED! 🌟",
-                forceUpdateBtn: "⚡ INSTALL LIVE UPDATE (v8.9.76)",
+                forceUpdateBtn: "⚡ INSTALL LIVE UPDATE (v8.9.77)",
                 resetModalTitle: "🔄 RESET WHICH MODE?",
                 resetModalDesc: "Select game mode to reset progress:",
                 resetClassicBtn: "🎮 RESET CLASSIC MODE",
@@ -1114,7 +1114,7 @@ class TileMatchingGame {
                 prevPageBtn: "◀ VORHERIGE SEITE",
                 nextPageBtn: "NÄCHSTE SEITE ▶",
                 completedBadge: "ABGESCHLOSSEN! 🌟",
-                forceUpdateBtn: "⚡ LIVE-UPDATE INSTALLIEREN (v8.9.76)",
+                forceUpdateBtn: "⚡ LIVE-UPDATE INSTALLIEREN (v8.9.77)",
                 resetModalTitle: "🔄 WELCHEN MODUS ZURÜCKSETZEN?",
                 resetModalDesc: "Wähle den Spielmodus zum Zurücksetzen:",
                 resetClassicBtn: "🎮 KLASSISCHEN MODUS ZURÜCKSETZEN",
@@ -1251,7 +1251,7 @@ class TileMatchingGame {
                 prevPageBtn: "◀ PAGE PRÉCÉDENTE",
                 nextPageBtn: "PAGE SUIVANTE ▶",
                 completedBadge: "TERMINÉ! 🌟",
-                forceUpdateBtn: "⚡ INSTALLER MISE À JOUR (v8.9.76)",
+                forceUpdateBtn: "⚡ INSTALLER MISE À JOUR (v8.9.77)",
                 resetModalTitle: "🔄 RÉINITIALISER QUEL MODE?",
                 resetModalDesc: "Sélectionnez le mode à réinitialiser:",
                 resetClassicBtn: "🎮 RÉINIT. CLASSIQUE",
@@ -1388,7 +1388,7 @@ class TileMatchingGame {
                 prevPageBtn: "◀ PAGINA PRECEDENTE",
                 nextPageBtn: "PAGINA SUCCESSIVA ▶",
                 completedBadge: "COMPLETATO! 🌟",
-                forceUpdateBtn: "⚡ INSTALLA AGGIORNAMENTO (v8.9.76)",
+                forceUpdateBtn: "⚡ INSTALLA AGGIORNAMENTO (v8.9.77)",
                 resetModalTitle: "🔄 RESETTA QUALE MODALITÀ?",
                 resetModalDesc: "Seleziona la modalità da resettare:",
                 resetClassicBtn: "🎮 RESETTA CLASSICA",
@@ -1500,7 +1500,7 @@ class TileMatchingGame {
                 prevPageBtn: "◀ PÁGINA ANTERIOR",
                 nextPageBtn: "PÁGINA SIGUIENTE ▶",
                 completedBadge: "¡COMPLETADO! 🌟",
-                forceUpdateBtn: "⚡ INSTALAR ACTUALIZACIÓN (v8.9.76)",
+                forceUpdateBtn: "⚡ INSTALAR ACTUALIZACIÓN (v8.9.77)",
                 resetModalTitle: "🔄 ¿REINICIAR QUÉ MODO?",
                 resetModalDesc: "Selecciona el modo para reiniciar progreso:",
                 resetClassicBtn: "🎮 REINICIAR MODO CLÁSICO",
@@ -1637,7 +1637,7 @@ class TileMatchingGame {
                 prevPageBtn: "◀ PÁGINA ANTERIOR",
                 nextPageBtn: "PRÓXIMA PÁGINA ▶",
                 completedBadge: "CONCLUÍDO! 🌟",
-                forceUpdateBtn: "⚡ INSTALAR ATUALIZAÇÃO (v8.9.76)",
+                forceUpdateBtn: "⚡ INSTALAR ATUALIZAÇÃO (v8.9.77)",
                 resetModalTitle: "🔄 REINICIAR QUAL MODO?",
                 resetModalDesc: "Selecione o modo para reiniciar progresso:",
                 resetClassicBtn: "🎮 REINICIAR MODO CLÁSSICO",
@@ -1744,6 +1744,11 @@ class TileMatchingGame {
             }
             const goldEl = document.getElementById('gold-val');
             if (goldEl) goldEl.innerText = this.goldCoins;
+
+            // Automatically restore cloud puzzle data from MongoDB Atlas if needed
+            setTimeout(() => {
+                this.restoreCloudPuzzleData();
+            }, 600);
         } catch (e) {}
     }
 
@@ -2846,33 +2851,20 @@ class TileMatchingGame {
             btnCollectChest.onclick = () => {
                 try { this.sound.playClick(); } catch (e) {}
                 
-                // Claim exact displayed rewards when clicking Envantere Ekle ve Devam Et!
-                if (this.pendingChestReward) {
-                    if (this.pendingTotalGoldReward > 0) {
-                        this.goldCoins += this.pendingTotalGoldReward;
-                    }
-                    if (this.pendingAwardedPieces && this.pendingAwardedPieces.length > 0) {
-                        for (const piece of this.pendingAwardedPieces) {
-                            this.puzzleInventory.push({
-                                id: `piece_${Date.now()}_${Math.random()}`,
-                                puzzleId: piece.puzzleId,
-                                puzzleName: piece.puzzleName,
-                                pieceIndex: piece.pieceIndex
-                            });
-                        }
-                    }
-                    const goldEl = document.getElementById('gold-val');
-                    if (goldEl) goldEl.innerText = this.goldCoins;
-
-                    this.pendingChestReward = null;
-                    this.pendingAwardedPieces = null;
-                    this.pendingTotalGoldReward = 0;
-                    this.saveGameProgress();
-                }
+                // Clear pending reward references (rewards were already safely added and saved upon opening!)
+                this.pendingChestReward = null;
+                this.pendingAwardedPieces = null;
+                this.pendingTotalGoldReward = 0;
+                this.saveGameProgress();
 
                 const modalChest = document.getElementById('modal-chest');
                 if (modalChest) modalChest.classList.add('hidden');
-                this.startLevel(this.level + 1, false, this.currentMode);
+
+                // If chest was opened from the main menu (daily ad chest / wheel), stay on menu; otherwise advance to next level!
+                const isMenuVisible = !document.getElementById('main-menu').classList.contains('hidden');
+                if (!isMenuVisible) {
+                    this.startLevel(this.level + 1, false, this.currentMode);
+                }
             };
         }
 
@@ -4404,6 +4396,12 @@ class TileMatchingGame {
                     if (rewardListEl) rewardListEl.appendChild(item);
                 } else {
                     this.pendingAwardedPieces.push(pieceData);
+                    this.puzzleInventory.push({
+                        id: `piece_${Date.now()}_${Math.random()}`,
+                        puzzleId: pieceData.puzzleId,
+                        puzzleName: pieceData.puzzleName,
+                        pieceIndex: pieceData.pieceIndex
+                    });
                     const item = document.createElement('div');
                     item.className = 'chest-reward-item';
                     const pNameLoc = this.getLocalizedPuzzleName(pieceData.puzzleId);
@@ -4425,6 +4423,17 @@ class TileMatchingGame {
         }
 
         this.pendingTotalGoldReward = totalGold;
+        if (totalGold > 0) {
+            this.goldCoins += totalGold;
+            const goldEl = document.getElementById('gold-val');
+            if (goldEl) goldEl.innerText = this.goldCoins;
+            const goldPuzzleEl = document.getElementById('gold-val-puzzle');
+            if (goldPuzzleEl) goldPuzzleEl.innerText = this.goldCoins;
+        }
+
+        // Instant safe persistence to localStorage & cloud sync: zero loss even if modal is dismissed early!
+        this.saveGameProgress();
+        this.debouncedSyncCloudLeaderboard();
 
         const chestBox = document.getElementById('chest-box');
         if (chestBox) chestBox.innerText = '✨';
@@ -4547,6 +4556,7 @@ class TileMatchingGame {
         const msg = (dict.pieceBought || '🎉 1 Parça Alındı: {name} (#{idx})!').replace('{name}', pNameLoc).replace('{idx}', added.pieceIndex + 1);
         this.showToast(msg);
         this.saveGameProgress();
+        this.debouncedSyncCloudLeaderboard();
         this.renderPuzzleGalleryModal();
     }
 
@@ -4557,6 +4567,7 @@ class TileMatchingGame {
     openPuzzleGalleryModal() {
         document.getElementById('modal-puzzle-gallery').classList.remove('hidden');
         this.renderPuzzleGalleryModal();
+        this.restoreCloudPuzzleData();
     }
 
     renderPuzzleGalleryModal() {
@@ -4770,6 +4781,7 @@ class TileMatchingGame {
         }
 
         this.saveGameProgress();
+        this.debouncedSyncCloudLeaderboard();
         this.renderPuzzleGalleryModal();
     }
 
@@ -5159,18 +5171,41 @@ class TileMatchingGame {
             if (starDisp) starDisp.innerText = '🎡 🪙 🎡';
             if (titleEl) titleEl.innerText = dict.wheelRewardTitle || '🎡 ŞANS ÇARKI ÖDÜLÜ! 🎉';
             if (descEl) descEl.innerText = dict.wheelRewardDesc || '🏆 Çarktan Çıkan Ödülleriniz:';
-            this.pendingChestReward = { gold: seg.amount, pieces: [] };
+            const goldWon = seg.amount || 0;
+            this.goldCoins += goldWon;
+            const goldEl = document.getElementById('gold-val');
+            if (goldEl) goldEl.innerText = this.goldCoins;
+            const goldPuzzleEl = document.getElementById('gold-val-puzzle');
+            if (goldPuzzleEl) goldPuzzleEl.innerText = this.goldCoins;
+            this.pendingChestReward = { gold: goldWon, pieces: [] };
+            this.saveGameProgress();
+            this.debouncedSyncCloudLeaderboard();
         } else {
             if (starDisp) starDisp.innerText = '🎡 🧩 🎡';
             if (titleEl) titleEl.innerText = dict.wheelRewardTitle || '🎡 ŞANS ÇARKI ÖDÜLÜ! 🎉';
             if (descEl) descEl.innerText = dict.wheelRewardDesc || '🏆 Çarktan Çıkan Ödülleriniz:';
             
             const awardedPieces = [];
+            let duplicateGold = 0;
             for (let i = 0; i < seg.count; i++) {
                 const piece = this.awardRandomMissingPuzzlePiece();
-                if (piece) awardedPieces.push(piece);
+                if (piece) {
+                    awardedPieces.push(piece);
+                } else {
+                    // All 144 puzzle pieces are already collected! Award 100 bonus gold instead!
+                    duplicateGold += 100;
+                }
             }
-            this.pendingChestReward = { gold: 0, pieces: awardedPieces };
+            if (duplicateGold > 0) {
+                this.goldCoins += duplicateGold;
+                const goldEl = document.getElementById('gold-val');
+                if (goldEl) goldEl.innerText = this.goldCoins;
+                const goldPuzzleEl = document.getElementById('gold-val-puzzle');
+                if (goldPuzzleEl) goldPuzzleEl.innerText = this.goldCoins;
+            }
+            this.pendingChestReward = { gold: duplicateGold, pieces: awardedPieces };
+            this.saveGameProgress();
+            this.debouncedSyncCloudLeaderboard();
         }
 
         if (btnOpenChest) {
@@ -5516,6 +5551,8 @@ class TileMatchingGame {
                             const cLvl = Number(avatarParts[1]) || 1;
                             const ttLvl = Number(avatarParts[2]) || 1;
                             const puz = Number(avatarParts[3]) || 0;
+                            const placedCount = Number(avatarParts[4]) || (puz * 12);
+                            const invCount = Number(avatarParts[5]) || 0;
 
                             parsedPlayers.push({
                                 fullTag: `${name}#${tag}`,
@@ -5527,6 +5564,8 @@ class TileMatchingGame {
                                 classicLvl: cLvl,
                                 ttLvl: ttLvl,
                                 puzzles: puz,
+                                placedPiecesCount: placedCount,
+                                inventoryCount: invCount,
                                 updatedAt: u.lastUpdated ? new Date(u.lastUpdated).getTime() : Date.now()
                             });
                         }
@@ -5648,6 +5687,9 @@ class TileMatchingGame {
         } catch (e) {}
 
         this.registerSelfIntoCloudDataset();
+        setTimeout(() => {
+            this.restoreCloudPuzzleData(true);
+        }, 300);
     }
 
     checkFirstTimeRegistration() {
@@ -5763,6 +5805,13 @@ class TileMatchingGame {
         };
         const myPuzzleCount = countPlacedPuzzles();
 
+        let myTotalPlacedPieces = 0;
+        for (const pId in this.placedPuzzlePieces) {
+            const arr = this.placedPuzzlePieces[pId];
+            if (Array.isArray(arr)) myTotalPlacedPieces += arr.length;
+        }
+        const myInventoryCount = (this.puzzleInventory && Array.isArray(this.puzzleInventory)) ? this.puzzleInventory.length : 0;
+
         const list = [];
         list.push({
             isSelf: true,
@@ -5774,7 +5823,9 @@ class TileMatchingGame {
             ttLvl: myTtLvl,
             ttScore: myTtScore,
             overallScore: myOverallScore,
-            puzzles: myPuzzleCount
+            puzzles: myPuzzleCount,
+            placedPiecesCount: myTotalPlacedPieces,
+            inventoryCount: myInventoryCount
         });
 
         // MERGE REAL LIVE ONLINE PLAYERS FROM CLOUD DATABASE
@@ -5801,7 +5852,9 @@ class TileMatchingGame {
                         ttLvl: (typeof cp.ttLvl === 'number' && cp.ttLvl >= 1) ? cp.ttLvl : 1,
                         ttScore: cpTtScore,
                         overallScore: cpOverallScore,
-                        puzzles: (typeof cp.puzzles === 'number' && cp.puzzles >= 0) ? cp.puzzles : 0
+                        puzzles: (typeof cp.puzzles === 'number' && cp.puzzles >= 0) ? cp.puzzles : 0,
+                        placedPiecesCount: (typeof cp.placedPiecesCount === 'number' && cp.placedPiecesCount >= 0) ? cp.placedPiecesCount : ((cp.puzzles || 0) * 12),
+                        inventoryCount: (typeof cp.inventoryCount === 'number' && cp.inventoryCount >= 0) ? cp.inventoryCount : 0
                     };
                     if (existingIdx >= 0) {
                         list[existingIdx] = cloudPlayer;
@@ -5855,11 +5908,17 @@ class TileMatchingGame {
             }
             
             let myPuzzleCount = 0;
+            let myTotalPlacedPieces = 0;
             for (const pId in this.placedPuzzlePieces) {
-                if (this.placedPuzzlePieces[pId] && this.placedPuzzlePieces[pId].length === 12) {
-                    myPuzzleCount++;
+                const arr = this.placedPuzzlePieces[pId];
+                if (Array.isArray(arr)) {
+                    myTotalPlacedPieces += arr.length;
+                    if (arr.length === 12) {
+                        myPuzzleCount++;
+                    }
                 }
             }
+            const myInventoryCount = (this.puzzleInventory && Array.isArray(this.puzzleInventory)) ? this.puzzleInventory.length : 0;
 
             const myOverallScore = myClassicScore + myTtScore;
 
@@ -5874,6 +5933,8 @@ class TileMatchingGame {
                 ttScore: myTtScore,
                 overallScore: myOverallScore,
                 puzzles: myPuzzleCount,
+                placedPiecesCount: myTotalPlacedPieces,
+                inventoryCount: myInventoryCount,
                 puzzleDataStr: JSON.stringify({
                     goldCoins: this.goldCoins,
                     puzzleInventory: this.puzzleInventory,
@@ -5895,17 +5956,25 @@ class TileMatchingGame {
                         authorName: myFullTag,
                         totalCrystals: myOverallScore,
                         spentCrystals: myClassicScore,
-                        avatar: `${myTtScore}_${myClassicLvl}_${myTtLvl}_${myPuzzleCount}`
+                        avatar: `${myTtScore}_${myClassicLvl}_${myTtLvl}_${myPuzzleCount}_${myTotalPlacedPieces}_${myInventoryCount}`,
+                        goldCoins: this.goldCoins,
+                        puzzleDataStr: myEntry.puzzleDataStr
                     },
                     force: true
                 };
 
                 try {
-                    await this.fetchWithTimeout(userSyncUrl, {
+                    const syncResp = await this.fetchWithTimeout(userSyncUrl, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(syncPayload)
                     }, 3000);
+                    if (syncResp && syncResp.ok) {
+                        const syncJson = await syncResp.json().catch(() => null);
+                        if (syncJson && syncJson.syncCode) {
+                            localStorage.setItem('tile_game_sync_code', syncJson.syncCode);
+                        }
+                    }
                 } catch (userSyncErr) {}
 
                 // Dedicated endpoint fallback (if deployed)
@@ -5927,6 +5996,134 @@ class TileMatchingGame {
         } catch (e) {
             console.log('[CloudSync] Exception:', e);
         }
+    }
+
+    async restoreCloudPuzzleData(force = false) {
+        if (!this.playerProfile || !this.playerProfile.nickname || this.playerProfile.nickname === 'Siz') return;
+        if (typeof navigator !== 'undefined' && !navigator.onLine) return;
+
+        try {
+            const myFullTag = this.playerProfile.fullTag || `${this.playerProfile.nickname}#${this.playerProfile.tag || '0001'}`;
+            const safeUserId = 'esle_' + myFullTag.replace(/[^a-zA-Z0-9çğışöüÇĞİŞÖÜ]/g, '_');
+            
+            let syncCode = localStorage.getItem('tile_game_sync_code');
+
+            // If syncCode is missing locally, resolve it dynamically from MongoDB Atlas debug_users
+            if (!syncCode) {
+                try {
+                    const dbUsersResp = await this.fetchWithTimeout('https://viscora.onrender.com/api/debug_users?t=' + Date.now(), { cache: 'no-store' }, 2500);
+                    if (dbUsersResp && dbUsersResp.ok) {
+                        const users = await dbUsersResp.json();
+                        if (Array.isArray(users)) {
+                            const found = users.find(u => u.userId === safeUserId || (u.authorName && u.authorName.toLowerCase() === myFullTag.toLowerCase()));
+                            if (found && found.syncCode) {
+                                syncCode = found.syncCode;
+                                localStorage.setItem('tile_game_sync_code', syncCode);
+                            }
+                        }
+                    }
+                } catch (e) {}
+            }
+
+            if (!syncCode) return;
+
+            // Fetch full verified save data from MongoDB Atlas via /api/user/restore
+            const restoreResp = await this.fetchWithTimeout('https://viscora.onrender.com/api/user/restore', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ syncCode: syncCode.trim().toUpperCase() })
+            }, 3000);
+
+            if (!restoreResp || !restoreResp.ok) return;
+
+            const restoreData = await restoreResp.json();
+            if (restoreData && restoreData.status === 'success' && restoreData.saveData) {
+                const sData = restoreData.saveData;
+                let hasChanges = false;
+
+                // 1. Restore/Merge Puzzle Data (Zero Data Loss Monotonic Union)
+                if (sData.puzzleDataStr) {
+                    try {
+                        const remotePuzzle = JSON.parse(sData.puzzleDataStr);
+                        if (remotePuzzle) {
+                            // Merge Gold (always keep the higher balance)
+                            const rGold = remotePuzzle.goldCoins || sData.goldCoins || 0;
+                            if (rGold > this.goldCoins) {
+                                this.goldCoins = rGold;
+                                hasChanges = true;
+                            }
+
+                            // Merge Placed Puzzle Pieces (union of placed piece indexes per puzzle)
+                            if (remotePuzzle.placedPuzzlePieces && typeof remotePuzzle.placedPuzzlePieces === 'object') {
+                                for (const pId in remotePuzzle.placedPuzzlePieces) {
+                                    const rList = remotePuzzle.placedPuzzlePieces[pId];
+                                    if (Array.isArray(rList) && rList.length > 0) {
+                                        if (!this.placedPuzzlePieces[pId]) this.placedPuzzlePieces[pId] = [];
+                                        const beforeLen = this.placedPuzzlePieces[pId].length;
+                                        this.placedPuzzlePieces[pId] = [...new Set([...this.placedPuzzlePieces[pId], ...rList])].sort((a, b) => a - b);
+                                        if (this.placedPuzzlePieces[pId].length !== beforeLen) {
+                                            hasChanges = true;
+                                        }
+                                    }
+                                }
+                            }
+
+                            // Merge Puzzle Inventory (add any unplaced missing pieces)
+                            if (Array.isArray(remotePuzzle.puzzleInventory)) {
+                                for (const rPiece of remotePuzzle.puzzleInventory) {
+                                    if (!rPiece || !rPiece.puzzleId || typeof rPiece.pieceIndex !== 'number') continue;
+                                    const placed = this.placedPuzzlePieces[rPiece.puzzleId] || [];
+                                    if (placed.includes(rPiece.pieceIndex)) continue; // already placed!
+                                    const inInv = this.puzzleInventory.some(p => p.puzzleId === rPiece.puzzleId && p.pieceIndex === rPiece.pieceIndex);
+                                    if (!inInv) {
+                                        this.puzzleInventory.push(rPiece);
+                                        hasChanges = true;
+                                    }
+                                }
+                            }
+                        }
+                    } catch (pErr) {}
+                }
+
+                // 2. Restore Classic & TimeTrial Progress if remote levels/scores are higher
+                if (sData.avatar) {
+                    const parts = sData.avatar.split('_');
+                    const rTtScore = Number(parts[0]) || 0;
+                    const rCLvl = Number(parts[1]) || 1;
+                    const rTtLvl = Number(parts[2]) || 1;
+                    const rCScore = (typeof sData.spentCrystals === 'number') ? sData.spentCrystals : 0;
+
+                    if (!this.classicProgress || (rCScore > (this.classicProgress.score || 0))) {
+                        this.classicProgress = {
+                            level: Math.max(rCLvl, (this.classicProgress && this.classicProgress.level) || 1),
+                            score: Math.max(rCScore, (this.classicProgress && this.classicProgress.score) || 0)
+                        };
+                        hasChanges = true;
+                    }
+
+                    if (!this.timeTrialProgress || (rTtScore > (this.timeTrialProgress.score || 0))) {
+                        this.timeTrialProgress = {
+                            level: Math.max(rTtLvl, (this.timeTrialProgress && this.timeTrialProgress.level) || 1),
+                            score: Math.max(rTtScore, (this.timeTrialProgress && this.timeTrialProgress.score) || 0)
+                        };
+                        hasChanges = true;
+                    }
+                }
+
+                if (hasChanges || force) {
+                    this.saveGameProgress();
+                    const goldEl = document.getElementById('gold-val');
+                    if (goldEl) goldEl.innerText = this.goldCoins;
+                    const goldPuzzleEl = document.getElementById('gold-val-puzzle');
+                    if (goldPuzzleEl) goldPuzzleEl.innerText = this.goldCoins;
+                    
+                    const modalPuzzle = document.getElementById('modal-puzzle-gallery');
+                    if (modalPuzzle && !modalPuzzle.classList.contains('hidden')) {
+                        this.renderPuzzleGalleryModal();
+                    }
+                }
+            }
+        } catch (e) {}
     }
 
     renderLeaderboardList(category = 'overall') {
@@ -6032,7 +6229,25 @@ class TileMatchingGame {
         if (ttLvl) ttLvl.innerText = `Seviye ${player.ttLvl || 1}`;
         if (ttScore) ttScore.innerText = `${(player.ttScore || 0).toLocaleString()} Puan`;
 
-        if (puzzleCount) puzzleCount.innerText = `${player.puzzles || 0} / 12 Tamamlandı`;
+        if (puzzleCount) {
+            if (player && player.isSelf) {
+                let totalPlaced = 0;
+                let completed = 0;
+                for (const pId in this.placedPuzzlePieces) {
+                    const arr = this.placedPuzzlePieces[pId];
+                    if (Array.isArray(arr)) {
+                        totalPlaced += arr.length;
+                        if (arr.length === 12) completed++;
+                    }
+                }
+                const invCount = (this.puzzleInventory && Array.isArray(this.puzzleInventory)) ? this.puzzleInventory.length : 0;
+                puzzleCount.innerHTML = `<strong>${completed} / 12</strong> Tamamlandı <span style="display:block; font-size:11px; color:#fbbf24; margin-top:2px;">(${totalPlaced} / 144 Parça Yerleştirildi • ${invCount} Envanterde)</span>`;
+            } else {
+                const completed = player.puzzles || 0;
+                const placed = (typeof player.placedPiecesCount === 'number') ? player.placedPiecesCount : (completed * 12);
+                puzzleCount.innerHTML = `<strong>${completed} / 12</strong> Tamamlandı <span style="display:block; font-size:11px; color:#fbbf24; margin-top:2px;">(${placed} / 144 Parça Yerleştirildi)</span>`;
+            }
+        }
 
         modal.classList.remove('hidden');
         modal.style.display = 'flex';
