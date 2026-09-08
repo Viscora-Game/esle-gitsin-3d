@@ -626,8 +626,8 @@ class TileMatchingGame {
         this.levelStartScore = 0;
 
         // Auto-Update Engine State
-        this.currentVersion = '8.9.86';
-        this.currentBuild = 118;
+        this.currentVersion = '8.9.87';
+        this.currentBuild = 119;
         this.hasPendingUpdate = null;
         this.isUpdatingNow = false;
 
@@ -6017,17 +6017,19 @@ class TileMatchingGame {
 
     getTierTitleAndAvatar(rankNum) {
         if (rankNum === 1) {
-            return { title: '👑 Kozmik İlah', avatar: '👑', cssClass: 'top-1' };
+            return { title: '👑 Kozmik Hükümdar 🔥', avatar: '👑', cssClass: 'top-1' };
         } else if (rankNum === 2) {
-            return { title: '🥈 Efsanevi Usta', avatar: '🥈', cssClass: 'top-2' };
+            return { title: '🥈 Gümüş Muhafız', avatar: '🥈', cssClass: 'top-2' };
         } else if (rankNum === 3) {
-            return { title: '🥉 Ejder Şampiyonu', avatar: '🥉', cssClass: 'top-3' };
+            return { title: '🥉 Bronz Gladyatör', avatar: '🥉', cssClass: 'top-3' };
         } else if (rankNum >= 4 && rankNum <= 10) {
-            return { title: '⭐ Elit Usta', avatar: '⭐', cssClass: 'top-10' };
-        } else if (rankNum >= 11 && rankNum <= 100) {
-            return { title: '💎 Elmas Oyuncu', avatar: '💎', cssClass: 'top-100' };
+            return { title: '💎 Elit Elmas Usta', avatar: '💎', cssClass: 'top-10' };
+        } else if (rankNum >= 11 && rankNum <= 50) {
+            return { title: '🔮 Ametist Şampiyon', avatar: '🔮', cssClass: 'top-50' };
+        } else if (rankNum >= 51 && rankNum <= 100) {
+            return { title: '🌟 Parlayan Yıldız', avatar: '🌟', cssClass: 'top-100' };
         } else {
-            return { title: '🛡️ Yükselen Yıldız', avatar: '🛡️', cssClass: 'top-1000' };
+            return { title: '🛡️ Cesur Savaşçı', avatar: '🛡️', cssClass: 'top-1000' };
         }
     }
 
@@ -6432,10 +6434,24 @@ class TileMatchingGame {
             const safeTag = String(player.fullTag).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
             const safeTitle = String(tierInfo.title).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
+            let rankBadgeHtml = `<div class="lb-rank-num">#${player.rank}</div>`;
+            let nameTagExtra = '';
+
+            if (player.rank === 1) {
+                rankBadgeHtml = `<div class="lb-rank-num rank-1-badge"><span class="rank-crown">👑</span><span class="rank-digit">1</span></div>`;
+                nameTagExtra = `<span class="king-fire-pill">🔥 ZİRVEDE</span>`;
+            } else if (player.rank === 2) {
+                rankBadgeHtml = `<div class="lb-rank-num rank-2-badge"><span class="rank-medal">🥈</span><span class="rank-digit">2</span></div>`;
+            } else if (player.rank === 3) {
+                rankBadgeHtml = `<div class="lb-rank-num rank-3-badge"><span class="rank-medal">🥉</span><span class="rank-digit">3</span></div>`;
+            } else if (player.rank <= 10) {
+                rankBadgeHtml = `<div class="lb-rank-num rank-10-badge"><span class="rank-diamond">💎</span><span class="rank-digit">${player.rank}</span></div>`;
+            }
+
             rowEl.innerHTML = `
-                <div class="lb-rank-num">#${player.rank}</div>
+                ${rankBadgeHtml}
                 <div class="lb-player-info">
-                    <span class="lb-name-tag">${safeTag} ${player.isSelf ? '(Siz)' : ''}</span>
+                    <span class="lb-name-tag">${safeTag} ${player.isSelf ? '(Siz)' : ''} ${nameTagExtra}</span>
                     <span class="lb-tier-badge">${safeTitle}</span>
                 </div>
                 <div class="lb-score-val">${displayScore.toLocaleString()} Puan</div>
@@ -6456,7 +6472,13 @@ class TileMatchingGame {
 
         if (selfItem) {
             const selfTier = this.getTierTitleAndAvatar(selfItem.rank);
-            if (selfRankBadge) selfRankBadge.innerText = `#${selfItem.rank}`;
+            if (selfRankBadge) {
+                if (selfItem.rank === 1) selfRankBadge.innerHTML = '👑 1 🔥';
+                else if (selfItem.rank === 2) selfRankBadge.innerHTML = '🥈 2';
+                else if (selfItem.rank === 3) selfRankBadge.innerHTML = '🥉 3';
+                else if (selfItem.rank <= 10) selfRankBadge.innerHTML = `💎 #${selfItem.rank}`;
+                else selfRankBadge.innerText = `#${selfItem.rank}`;
+            }
             if (selfNameTag) selfNameTag.innerText = `SİZ: ${selfItem.fullTag}`;
             if (selfTitleBadge) selfTitleBadge.innerText = selfTier.title;
             
@@ -6496,7 +6518,14 @@ class TileMatchingGame {
         const ttScore = document.getElementById('profile-timetrial-score');
         const puzzleCount = document.getElementById('profile-puzzle-count');
 
-        if (avatarFrame) avatarFrame.innerText = tierInfo.avatar;
+        if (avatarFrame) {
+            avatarFrame.innerText = tierInfo.avatar;
+            avatarFrame.classList.remove('king-avatar-glow', 'silver-avatar-glow', 'bronze-avatar-glow', 'diamond-avatar-glow');
+            if (player.rank === 1) avatarFrame.classList.add('king-avatar-glow');
+            else if (player.rank === 2) avatarFrame.classList.add('silver-avatar-glow');
+            else if (player.rank === 3) avatarFrame.classList.add('bronze-avatar-glow');
+            else if (player.rank <= 10) avatarFrame.classList.add('diamond-avatar-glow');
+        }
         if (nameTag) nameTag.innerText = player.fullTag;
         if (titleBadge) titleBadge.innerText = tierInfo.title;
         if (rankText) rankText.innerText = `Küresel Sıralama: #${player.rank || 1}`;
