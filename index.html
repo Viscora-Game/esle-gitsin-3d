@@ -34,7 +34,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700;900&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=113">
+    <link rel="stylesheet" href="styles.css?v=114">
 </head>
 <body oncontextmenu="return false;" onselectstart="return false;" ondragstart="return false;">
     <div id="app-wrapper">
@@ -323,7 +323,7 @@
 
                                 <!-- Force Update & Clear Cache Button -->
                                 <button id="btn-force-update" class="settings-list-btn btn-update">
-                                    <span data-i18n="forceUpdateBtn">⚡ CANLI GÜNCELLEMEYİ YÜKLE (v8.9.87)</span>
+                                    <span data-i18n="forceUpdateBtn">⚡ CANLI GÜNCELLEMEYİ YÜKLE (v8.9.88)</span>
                                     <span class="btn-chevron">↻</span>
                                 </button>
 
@@ -639,10 +639,10 @@
         <div class="modal-card leaderboard-modal-card">
             <button id="btn-close-leaderboard" class="btn-close-x">✕</button>
             <div class="leaderboard-header">
-                <h2 class="modal-title">🏆 KÜRESEL LİDERLİK TABLOSU</h2>
-                <div class="lb-live-controls">
-                    <button id="btn-refresh-leaderboard" class="btn-refresh-lb">
-                        <span class="refresh-icon">🔄</span> CANLI YENİLE
+                <div class="lb-header-title-row">
+                    <h2 class="modal-title" style="margin: 0; font-size: 19px;">🏆 LİDERLİK TABLOSU</h2>
+                    <button id="btn-refresh-leaderboard" class="btn-refresh-lb" title="Sıralamayı Yenile">
+                        <span class="refresh-icon">🔄</span>
                     </button>
                 </div>
             </div>
@@ -763,7 +763,7 @@
         });
 
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./sw.js?v=8.9.87').then((reg) => {
+          navigator.serviceWorker.register('./sw.js?v=8.9.88').then((reg) => {
             // Immediate update check on launch
             reg.update();
 
@@ -797,6 +797,6 @@
         <span id="toast-text">Yetersiz Altın!</span>
     </div>
 
-    <script src="game.js?v=8.9.87" defer></script>
+    <script src="game.js?v=8.9.88" defer></script>
 </body>
 </html>
