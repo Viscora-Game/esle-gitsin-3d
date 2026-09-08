@@ -221,96 +221,123 @@
                 </div>
             </div>
 
-            <!-- Settings Modal Screen -->
+            <!-- Modern Settings Modal Screen -->
             <div id="modal-settings" class="modal-overlay hidden">
                 <div class="modal-card settings-card">
-                    <div class="modal-header-row">
-                        <h2 class="modal-title" data-i18n="settingsTitle">⚙️ AYARLAR</h2>
-                        <button id="btn-close-settings" class="btn-close-x">✕</button>
+                    <!-- Modal Header -->
+                    <div class="modal-header-row settings-header">
+                        <div class="settings-title-group">
+                            <span class="settings-title-icon">⚙️</span>
+                            <h2 class="modal-title" data-i18n="settingsTitle">AYARLAR</h2>
+                        </div>
+                        <button id="btn-close-settings" class="btn-close-x" aria-label="Kapat">✕</button>
                     </div>
 
-                    <!-- Volume Setting -->
-                    <div class="setting-row">
-                        <div class="setting-info">
-                            <span class="setting-label" data-i18n="volLabel">🔊 Ses Düzeyi</span>
-                            <span id="vol-val-text" class="setting-val">80%</span>
+                    <!-- Scrollable Settings Content -->
+                    <div class="settings-body-scroll">
+                        <!-- Section 1: Ses & Müzik (Audio & Haptics) -->
+                        <div class="settings-group-card">
+                            <div class="settings-group-header">
+                                <span class="settings-group-title">🔊 SES & TİTREŞİM</span>
+                            </div>
+
+                            <!-- Sound FX Volume Setting -->
+                            <div class="setting-row">
+                                <div class="setting-info">
+                                    <span class="setting-label" data-i18n="volLabel">🔊 Ses Düzeyi</span>
+                                    <span id="vol-val-text" class="setting-val">80%</span>
+                                </div>
+                                <input type="range" id="slider-volume" min="0" max="100" value="80" class="setting-slider">
+                            </div>
+
+                            <!-- Background Music Volume Setting -->
+                            <div class="setting-row">
+                                <div class="setting-info">
+                                    <span class="setting-label" data-i18n="musicLabel">🎵 Müzik Sesi</span>
+                                    <span id="music-val-text" class="setting-val">30%</span>
+                                </div>
+                                <input type="range" id="slider-music" min="0" max="100" value="30" class="setting-slider">
+                            </div>
+
+                            <!-- Music Song Track Selector -->
+                            <div class="setting-row">
+                                <div class="setting-info">
+                                    <span class="setting-label" data-i18n="trackLabel">🎶 Müzik Seçimi</span>
+                                </div>
+                                <div class="track-grid-selector">
+                                    <button id="btn-track-carefree" class="lang-btn track-btn active" data-i18n="trackCarefree">🌸 Carefree</button>
+                                    <button id="btn-track-duck" class="lang-btn track-btn" data-i18n="trackDuck">🦆 Ördekçik</button>
+                                    <button id="btn-track-monkeys" class="lang-btn track-btn" data-i18n="trackMarimba">🐒 Marimba</button>
+                                </div>
+                            </div>
+
+                            <!-- Vibration Setting -->
+                            <div class="setting-row setting-row-switch">
+                                <span class="setting-label" data-i18n="vibLabel">📳 Titreşim</span>
+                                <button id="btn-toggle-vib" class="toggle-btn active">
+                                    <span id="vib-btn-text">AÇIK</span>
+                                </button>
+                            </div>
                         </div>
-                        <input type="range" id="slider-volume" min="0" max="100" value="80" class="setting-slider">
+
+                        <!-- Section 2: Dil Seçimi (Language Support) -->
+                        <div class="settings-group-card">
+                            <div class="settings-group-header">
+                                <span class="settings-group-title">🌐 DİL SEÇİMİ</span>
+                            </div>
+                            <div class="lang-grid-selector">
+                                <button id="btn-lang-tr" class="lang-btn active">🇹🇷 TR</button>
+                                <button id="btn-lang-en" class="lang-btn">🇬🇧 EN</button>
+                                <button id="btn-lang-de" class="lang-btn">🇩🇪 DE</button>
+                                <button id="btn-lang-fr" class="lang-btn">🇫🇷 FR</button>
+                                <button id="btn-lang-it" class="lang-btn">🇮🇹 IT</button>
+                                <button id="btn-lang-es" class="lang-btn">🇪🇸 ES</button>
+                                <button id="btn-lang-pt" class="lang-btn">🇵🇹 PT</button>
+                            </div>
+                        </div>
+
+                        <!-- Section 3: Oyun & Hesap Yönetimi (Game Actions) -->
+                        <div class="settings-group-card">
+                            <div class="settings-group-header">
+                                <span class="settings-group-title">🎮 OYUN & HESAP</span>
+                            </div>
+
+                            <div class="settings-buttons-list">
+                                <!-- Change Nickname / Profile Button -->
+                                <button id="btn-settings-edit-profile" class="settings-list-btn btn-profile">
+                                    <span data-i18n="editProfileBtnText">👤 KULLANICI ADINI DEĞİŞTİR</span>
+                                    <span class="btn-chevron">›</span>
+                                </button>
+
+                                <!-- Replay Tutorial Button -->
+                                <button id="btn-menu-tutorial" class="settings-list-btn">
+                                    <span data-i18n="howToPlayBtnText">📖 NASIL OYNANIR? (REHBER)</span>
+                                    <span class="btn-chevron">›</span>
+                                </button>
+
+                                <!-- Privacy Policy Button -->
+                                <a id="btn-privacy-policy" href="privacy.html" target="_blank" class="settings-list-btn btn-link">
+                                    <span data-i18n="privacyPolicyBtnText">🛡️ GİZLİLİK POLİTİKASI</span>
+                                    <span class="btn-chevron">↗</span>
+                                </a>
+
+                                <!-- Force Update & Clear Cache Button -->
+                                <button id="btn-force-update" class="settings-list-btn btn-update">
+                                    <span data-i18n="forceUpdateBtn">⚡ CANLI GÜNCELLEMEYİ YÜKLE (v8.9.81)</span>
+                                    <span class="btn-chevron">↻</span>
+                                </button>
+
+                                <!-- Reset Game Progress Button -->
+                                <button id="btn-menu-newgame" class="settings-list-btn btn-danger">
+                                    <span data-i18n="newGameBtn">🔄 SIFIRLA VE YENİ OYUN BAŞLAT</span>
+                                    <span class="btn-chevron">⚠️</span>
+                                </button>
+                            </div>
+                        </div>
                     </div>
 
-                    <!-- Background Music Volume Slider Setting -->
-                    <div class="setting-row">
-                        <div class="setting-info">
-                            <span class="setting-label" data-i18n="musicLabel">🎵 Müzik Sesi</span>
-                            <span id="music-val-text" class="setting-val">30%</span>
-                        </div>
-                        <input type="range" id="slider-music" min="0" max="100" value="30" class="setting-slider">
-                    </div>
-
-                    <!-- Music Song Track Selector -->
-                    <div class="setting-row setting-row-lang">
-                        <div class="setting-info">
-                            <span class="setting-label" data-i18n="trackLabel">🎶 Müzik Seçimi</span>
-                        </div>
-                        <div class="lang-grid-selector">
-                            <button id="btn-track-carefree" class="lang-btn active" data-i18n="trackCarefree">🌸 Carefree</button>
-                            <button id="btn-track-duck" class="lang-btn" data-i18n="trackDuck">🦆 Ördekçik</button>
-                            <button id="btn-track-monkeys" class="lang-btn" data-i18n="trackMarimba">🐒 Marimba</button>
-                        </div>
-                    </div>
-
-                    <!-- Vibration Setting -->
-                    <div class="setting-row">
-                        <div class="setting-info">
-                            <span class="setting-label" data-i18n="vibLabel">📳 Titreşim</span>
-                        </div>
-                        <button id="btn-toggle-vib" class="toggle-btn active">
-                            <span id="vib-btn-text">AÇIK</span>
-                        </button>
-                    </div>
-
-                    <!-- Language Setting (7 Languages on 1 Row) -->
-                    <div class="setting-row setting-row-lang">
-                        <div class="setting-info">
-                            <span class="setting-label" data-i18n="langLabel">🌐 Dil Desteği</span>
-                        </div>
-                        <div class="lang-grid-selector">
-                            <button id="btn-lang-tr" class="lang-btn active">🇹🇷 TR</button>
-                            <button id="btn-lang-en" class="lang-btn">🇬🇧 EN</button>
-                            <button id="btn-lang-de" class="lang-btn">🇩🇪 DE</button>
-                            <button id="btn-lang-fr" class="lang-btn">🇫🇷 FR</button>
-                            <button id="btn-lang-it" class="lang-btn">🇮🇹 IT</button>
-                            <button id="btn-lang-es" class="lang-btn">🇪🇸 ES</button>
-                            <button id="btn-lang-pt" class="lang-btn">🇵🇹 PT</button>
-                        </div>
-                    </div>
-
-                    <!-- Replay How-to-Play Tutorial Button inside Settings -->
-                    <button id="btn-menu-tutorial" class="btn-secondary settings-full-btn">
-                        <span data-i18n="howToPlayBtnText">📖 NASIL OYNANIR? (REHBER)</span>
-                    </button>
-
-                    <!-- Privacy Policy Button (Google Play Store Compliance) -->
-                    <a id="btn-privacy-policy" href="privacy.html" target="_blank" class="btn-secondary settings-full-btn" style="text-decoration: none; display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.07); border: 1px solid rgba(255, 255, 255, 0.15); color: #cbd5e1; font-weight: 700; margin-top: 8px;">
-                        <span data-i18n="privacyPolicyBtnText">🛡️ GİZLİLİK POLİTİKASI</span>
-                    </a>
-
-                    <!-- Change Nickname / Profile Button -->
-                    <button id="btn-settings-edit-profile" class="btn-secondary settings-full-btn" style="background: rgba(251, 191, 36, 0.12); border: 1px solid rgba(251, 191, 36, 0.4); color: #fbbf24; font-weight: 700; margin-top: 8px;">
-                        <span data-i18n="editProfileBtnText">👤 KULLANICI ADINI DEĞİŞTİR</span>
-                    </button>
-
-                    <!-- Reset & New Game inside Settings -->
-                    <button id="btn-menu-newgame" class="btn-danger-reset">
-                        <span data-i18n="newGameBtn">🔄 SIFIRLA VE YENİ OYUN BAŞLAT</span>
-                    </button>
-
-                    <!-- Force Update & Clear Cache Button -->
-                    <button id="btn-force-update" class="btn-secondary settings-full-btn" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff; font-weight: 700; margin-top: 8px;">
-                        <span data-i18n="forceUpdateBtn">⚡ CANLI GÜNCELLEMEYİ YÜKLE (v8.9.80)</span>
-                    </button>
-
-                    <button id="btn-save-settings" class="btn-primary" data-i18n="saveBtn">KAYDET VE KAPAT</button>
+                    <!-- Pinned Footer Save Button -->
+                    <button id="btn-save-settings" class="btn-primary settings-save-btn" data-i18n="saveBtn">KAYDET VE KAPAT</button>
                 </div>
             </div>
 
@@ -374,28 +401,28 @@
                 <!-- Bottom Row 2: Spacious & Bold Booster Buttons Bar -->
                 <div class="hud-bottom-boosters">
                     <!-- Undo Last Move Booster Button (500 Score Base) -->
-                    <button id="btn-undo" class="booster-pill undo-pill" title="Son Kartı Geri Al">
+                    <button id="btn-undo" class="booster-pill undo-pill" title="Son Kartı Geri Al" aria-label="Geri Al">
                         <span class="booster-icon">↩️</span>
                         <span class="booster-text" data-i18n="undoBtnLabel">GERİ AL</span>
                         <span id="undo-cost-badge" class="cost-badge cost-emerald">500</span>
                     </button>
 
                     <!-- Smart Hint Button (300 Score Base) -->
-                    <button id="btn-hint" class="booster-pill hint-pill" title="Akıllı İpucu">
+                    <button id="btn-hint" class="booster-pill hint-pill" title="Akıllı İpucu" aria-label="İpucu">
                         <span class="booster-icon">💡</span>
                         <span class="booster-text" data-i18n="hintLabel">İPUCU</span>
-                        <span id="hint-cost-badge" class="cost-badge">300</span>
+                        <span id="hint-cost-badge" class="cost-badge cost-sky">300</span>
                     </button>
 
                     <!-- Extra Slot Booster Button (1000 Score Base) -->
-                    <button id="btn-extra-slot" class="booster-pill slot-pill" title="Ek Slot Hakkı">
+                    <button id="btn-extra-slot" class="booster-pill slot-pill" title="Ek Slot Hakkı" aria-label="+1 Slot">
                         <span class="booster-icon">➕</span>
                         <span class="booster-text" data-i18n="slotBtnLabel">+1 SLOT</span>
                         <span id="slot-cost-badge" class="cost-badge cost-gold">1000</span>
                     </button>
 
                     <!-- Shuffle Board Booster Button (5000 Score Base) -->
-                    <button id="btn-shuffle" class="booster-pill shuffle-pill" title="Kartları Karıştır">
+                    <button id="btn-shuffle" class="booster-pill shuffle-pill" title="Kartları Karıştır" aria-label="Karıştır">
                         <span class="booster-icon">🔀</span>
                         <span class="booster-text" data-i18n="shuffleBtnLabel">KARIŞTIR</span>
                         <span id="shuffle-cost-badge" class="cost-badge cost-purple">5000</span>
@@ -723,7 +750,7 @@
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./sw.js?v=8.9.80').then((reg) => {
+          navigator.serviceWorker.register('./sw.js?v=8.9.81').then((reg) => {
             reg.update();
           }).catch(err => console.log('SW Registration error:', err));
         });
@@ -734,6 +761,6 @@
         <span id="toast-text">Yetersiz Altın!</span>
     </div>
 
-    <script src="game.js?v=8.9.80" defer></script>
+    <script src="game.js?v=8.9.81" defer></script>
 </body>
 </html>
