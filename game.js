@@ -77,8 +77,14 @@ const FORMATION_GRIDS = {
     ]
 };
 
+function normalizeFullTag(tag) {
+    if (!tag) return '';
+    return String(tag).trim().normalize('NFC').toLocaleLowerCase('tr-TR');
+}
+
 const DEFAULT_LEADERBOARD_SEED = [
-    { name: "HamzaXd", tag: "6734", fullTag: "HamzaXd#6734", classicLvl: 17, classicScore: 57700, ttLvl: 11, ttScore: 158200, overallScore: 215900, puzzles: 0 },
+    { name: "NİNJA", tag: "0456", fullTag: "NİNJA#0456", classicLvl: 34, classicScore: 261200, ttLvl: 2, ttScore: 11500, overallScore: 272700, puzzles: 0 },
+    { name: "HamzaXd", tag: "6734", fullTag: "HamzaXd#6734", classicLvl: 22, classicScore: 101500, ttLvl: 11, ttScore: 158200, overallScore: 259700, puzzles: 0 },
     { name: "HamSu", tag: "0228", fullTag: "HamSu#0228", classicLvl: 27, classicScore: 62000, ttLvl: 13, ttScore: 108100, overallScore: 170100, puzzles: 0 },
     { name: "Sudiş", tag: "2802", fullTag: "Sudiş#2802", classicLvl: 22, classicScore: 44200, ttLvl: 12, ttScore: 105800, overallScore: 150000, puzzles: 2 },
     { name: "Mert", tag: "1042", fullTag: "Mert#1042", classicLvl: 18, classicScore: 48500, ttLvl: 7, ttScore: 65400, overallScore: 113900, puzzles: 1 },
@@ -1745,9 +1751,11 @@ class TileMatchingGame {
             const goldEl = document.getElementById('gold-val');
             if (goldEl) goldEl.innerText = this.goldCoins;
 
-            // Automatically restore cloud puzzle data from MongoDB Atlas if needed
+            // Automatically restore cloud puzzle data and sync leaderboard on game startup
             setTimeout(() => {
                 this.restoreCloudPuzzleData();
+                this.syncCloudLeaderboard();
+                this.fetchCloudLeaderboardData();
             }, 600);
         } catch (e) {}
     }
@@ -1831,8 +1839,12 @@ class TileMatchingGame {
             // Immediately register own score to local dataset so leaderboard is 0ms up to date
             this.registerSelfIntoCloudDataset();
 
-            // Sync scores to live cloud database
-            this.debouncedSyncCloudLeaderboard();
+            // Sync scores to live cloud database: Immediate on level win or penalty, debounced on incremental clicks
+            if (isVictoryUnlock || allowDecrease) {
+                this.syncCloudLeaderboard();
+            } else {
+                this.debouncedSyncCloudLeaderboard();
+            }
         } catch (e) {}
     }
 
@@ -2389,8 +2401,8 @@ class TileMatchingGame {
                 this.sound.playClick();
                 btnRefreshLb.classList.add('spinning');
                 this.registerSelfIntoCloudDataset();
-                await this.fetchCloudLeaderboardData();
                 await this.syncCloudLeaderboard();
+                await this.fetchCloudLeaderboardData();
                 this.renderLeaderboardList(this.currentLeaderboardCategory || 'overall');
                 setTimeout(() => {
                     btnRefreshLb.classList.remove('spinning');
@@ -5391,11 +5403,17 @@ class TileMatchingGame {
         }
 
         let myPuzzleCount = 0;
+        let myTotalPlacedPieces = 0;
         for (const pId in this.placedPuzzlePieces) {
-            if (this.placedPuzzlePieces[pId] && this.placedPuzzlePieces[pId].length === 12) {
-                myPuzzleCount++;
+            const arr = this.placedPuzzlePieces[pId];
+            if (Array.isArray(arr)) {
+                myTotalPlacedPieces += arr.length;
+                if (arr.length === 12) {
+                    myPuzzleCount++;
+                }
             }
         }
+        const myInventoryCount = (this.puzzleInventory && Array.isArray(this.puzzleInventory)) ? this.puzzleInventory.length : 0;
 
         const myOverallScore = myClassicScore + myTtScore;
 
@@ -5410,6 +5428,8 @@ class TileMatchingGame {
             ttScore: myTtScore,
             overallScore: myOverallScore,
             puzzles: myPuzzleCount,
+            placedPiecesCount: myTotalPlacedPieces,
+            inventoryCount: myInventoryCount,
             updatedAt: Date.now()
         };
 
@@ -5424,9 +5444,9 @@ class TileMatchingGame {
                 if (parsed && Array.isArray(parsed) && parsed.length > 0) {
                     this.latestCloudDataset = parsed;
                     // Ensure seed champions are always included even in older cached data
-                    const existingTags = new Set(parsed.map(p => (p && p.fullTag ? p.fullTag.toLowerCase() : '')));
+                    const existingTags = new Set(parsed.map(p => (p && p.fullTag ? normalizeFullTag(p.fullTag) : '')));
                     for (const seedP of DEFAULT_LEADERBOARD_SEED) {
-                        if (!existingTags.has(seedP.fullTag.toLowerCase())) {
+                        if (!existingTags.has(normalizeFullTag(seedP.fullTag))) {
                             this.latestCloudDataset.push({ ...seedP });
                         }
                     }
@@ -5440,30 +5460,37 @@ class TileMatchingGame {
     mergeAndSaveCloudDataset(incomingPlayers) {
         if (!Array.isArray(incomingPlayers) || incomingPlayers.length === 0) return;
         const playerMap = new Map();
+        const myFullTag = (this.playerProfile && this.playerProfile.nickname && this.playerProfile.nickname !== 'Siz')
+            ? `${this.playerProfile.nickname}#${this.playerProfile.tag || '0001'}`
+            : '';
+        const myKey = normalizeFullTag(myFullTag);
 
         // 1. Seed fallback players
         for (const seedP of DEFAULT_LEADERBOARD_SEED) {
-            playerMap.set(seedP.fullTag.toLowerCase(), { ...seedP });
+            playerMap.set(normalizeFullTag(seedP.fullTag), { ...seedP });
         }
 
         // 2. Existing local dataset
         if (this.latestCloudDataset && Array.isArray(this.latestCloudDataset)) {
             for (const p of this.latestCloudDataset) {
                 if (p && p.fullTag) {
-                    const key = p.fullTag.toLowerCase();
+                    const key = normalizeFullTag(p.fullTag);
                     const ex = playerMap.get(key);
+                    const isMe = (myKey && key === myKey) || p.isSelf || false;
                     if (!ex) {
-                        playerMap.set(key, { ...p });
+                        playerMap.set(key, { ...p, isSelf: isMe });
                     } else {
                         const merged = {
                             ...ex,
                             ...p,
-                            isSelf: ex.isSelf || p.isSelf || false,
+                            isSelf: isMe || ex.isSelf || false,
                             classicLvl: Math.max(ex.classicLvl || 1, p.classicLvl || 1),
                             classicScore: Math.max(ex.classicScore || 0, p.classicScore || 0),
                             ttLvl: Math.max(ex.ttLvl || 1, p.ttLvl || 1),
                             ttScore: Math.max(ex.ttScore || 0, p.ttScore || 0),
                             puzzles: Math.max(ex.puzzles || 0, p.puzzles || 0),
+                            placedPiecesCount: Math.max(ex.placedPiecesCount || 0, p.placedPiecesCount || 0),
+                            inventoryCount: Math.max(ex.inventoryCount || 0, p.inventoryCount || 0),
                             updatedAt: Math.max(ex.updatedAt || 0, p.updatedAt || 0)
                         };
                         merged.overallScore = merged.classicScore + merged.ttScore;
@@ -5476,20 +5503,23 @@ class TileMatchingGame {
         // 3. Merge incoming cloud players
         for (const p of incomingPlayers) {
             if (p && p.fullTag) {
-                const key = p.fullTag.toLowerCase();
+                const key = normalizeFullTag(p.fullTag);
                 const ex = playerMap.get(key);
+                const isMe = (myKey && key === myKey) || p.isSelf || false;
                 if (!ex) {
-                    playerMap.set(key, { ...p });
+                    playerMap.set(key, { ...p, isSelf: isMe });
                 } else {
                     const merged = {
                         ...ex,
                         ...p,
-                        isSelf: ex.isSelf || p.isSelf || false,
+                        isSelf: isMe || ex.isSelf || false,
                         classicLvl: Math.max(ex.classicLvl || 1, p.classicLvl || 1),
                         classicScore: Math.max(ex.classicScore || 0, p.classicScore || 0),
                         ttLvl: Math.max(ex.ttLvl || 1, p.ttLvl || 1),
                         ttScore: Math.max(ex.ttScore || 0, p.ttScore || 0),
                         puzzles: Math.max(ex.puzzles || 0, p.puzzles || 0),
+                        placedPiecesCount: Math.max(ex.placedPiecesCount || 0, p.placedPiecesCount || 0),
+                        inventoryCount: Math.max(ex.inventoryCount || 0, p.inventoryCount || 0),
                         updatedAt: Math.max(ex.updatedAt || 0, p.updatedAt || 0)
                     };
                     merged.overallScore = merged.classicScore + merged.ttScore;
@@ -5529,15 +5559,22 @@ class TileMatchingGame {
                     'Cache-Control': 'no-cache, no-store, must-revalidate',
                     'Pragma': 'no-cache'
                 }
-            }, 2500);
+            }, 6000);
 
             if (resp && resp.ok) {
                 const debugUsers = await resp.json();
                 if (Array.isArray(debugUsers) && debugUsers.length > 0) {
                     const parsedPlayers = [];
                     for (const u of debugUsers) {
-                        if (u && u.userId && u.userId.startsWith('esle_')) {
-                            const fullTag = u.authorName || u.userId.replace('esle_', '').replace(/_/g, '#');
+                        if (!u) continue;
+                        const hasEsleId = typeof u.userId === 'string' && u.userId.startsWith('esle_');
+                        const hasHashAuthor = typeof u.authorName === 'string' && u.authorName.includes('#');
+                        if (hasEsleId || hasHashAuthor) {
+                            let fullTag = typeof u.authorName === 'string' ? u.authorName : '';
+                            if (!fullTag && hasEsleId) {
+                                fullTag = u.userId.replace('esle_', '').replace(/_/g, '#');
+                            }
+                            if (!fullTag || typeof fullTag !== 'string' || !fullTag.includes('#')) continue;
                             const parts = fullTag.split('#');
                             const name = parts[0] || 'Oyuncu';
                             const tag = parts[1] || '0001';
@@ -5583,7 +5620,7 @@ class TileMatchingGame {
         try {
             const dedicatedResp = await this.fetchWithTimeout('https://viscora.onrender.com/api/esle-gitsin/leaderboard?t=' + Date.now(), {
                 cache: 'no-store'
-            }, 1800);
+            }, 3000);
             if (dedicatedResp && dedicatedResp.ok) {
                 const data = await dedicatedResp.json();
                 const list = Array.isArray(data) ? data : (data && Array.isArray(data.players) ? data.players : null);
@@ -5594,20 +5631,22 @@ class TileMatchingGame {
             }
         } catch (e) {}
 
-        // 3. Fallback: GitHub Raw CDN
-        try {
-            const ghResp = await this.fetchWithTimeout('https://raw.githubusercontent.com/Viscora-Game/esle-gitsin-3d/main/leaderboard.json?t=' + Date.now(), {
-                cache: 'no-store'
-            }, 2000);
-            if (ghResp && ghResp.ok) {
-                const data = await ghResp.json();
-                const list = Array.isArray(data) ? data : (data && Array.isArray(data.players) ? data.players : null);
-                if (list && list.length > 0) {
-                    this.mergeAndSaveCloudDataset(list);
-                    return this.latestCloudDataset;
+        // 3. Fallback: GitHub Raw CDN (only if we have no live cloud data at all)
+        if (!this.latestCloudDataset || this.latestCloudDataset.length <= DEFAULT_LEADERBOARD_SEED.length) {
+            try {
+                const ghResp = await this.fetchWithTimeout('https://raw.githubusercontent.com/Viscora-Game/esle-gitsin-3d/main/leaderboard.json?t=' + Date.now(), {
+                    cache: 'no-store'
+                }, 2000);
+                if (ghResp && ghResp.ok) {
+                    const data = await ghResp.json();
+                    const list = Array.isArray(data) ? data : (data && Array.isArray(data.players) ? data.players : null);
+                    if (list && list.length > 0) {
+                        this.mergeAndSaveCloudDataset(list);
+                        return this.latestCloudDataset;
+                    }
                 }
-            }
-        } catch (e) {}
+            } catch (e) {}
+        }
 
         return this.latestCloudDataset;
     }
@@ -5642,13 +5681,11 @@ class TileMatchingGame {
             return;
         }
 
-        // 2. High-speed parallel cloud sync & cloud fetch (~200ms)
+        // 2. High-speed sequenced cloud sync & cloud fetch
         (async () => {
             try {
-                await Promise.allSettled([
-                    this.syncCloudLeaderboard(),
-                    this.fetchCloudLeaderboardData()
-                ]);
+                await this.syncCloudLeaderboard();
+                await this.fetchCloudLeaderboardData();
                 this.registerSelfIntoCloudDataset();
                 if (!modal.classList.contains('hidden') && modal.style.display !== 'none') {
                     this.renderLeaderboardList(this.currentLeaderboardCategory || 'overall');
@@ -5687,6 +5724,7 @@ class TileMatchingGame {
         } catch (e) {}
 
         this.registerSelfIntoCloudDataset();
+        this.syncCloudLeaderboard();
         setTimeout(() => {
             this.restoreCloudPuzzleData(true);
         }, 300);
@@ -5829,38 +5867,53 @@ class TileMatchingGame {
         });
 
         // MERGE REAL LIVE ONLINE PLAYERS FROM CLOUD DATABASE
+        const myKey = normalizeFullTag(myFullTag);
+
         if (this.latestCloudDataset && Array.isArray(this.latestCloudDataset)) {
             for (const cp of this.latestCloudDataset) {
-                if (cp && cp.fullTag && cp.fullTag.toLowerCase() !== myFullTag.toLowerCase()) {
-                    if (!cp.fullTag || cp.fullTag.length < 3) {
-                        continue;
+                if (!cp || !cp.fullTag || cp.fullTag.length < 3) continue;
+                const cpKey = normalizeFullTag(cp.fullTag);
+
+                if (myKey && cpKey === myKey) {
+                    // Update self player with any higher cloud numbers or verified puzzle count
+                    const selfItem = list[0];
+                    if (selfItem) {
+                        selfItem.classicScore = Math.max(selfItem.classicScore || 0, cp.classicScore || 0);
+                        selfItem.classicLvl = Math.max(selfItem.classicLvl || 1, cp.classicLvl || 1);
+                        selfItem.ttScore = Math.max(selfItem.ttScore || 0, cp.ttScore || 0);
+                        selfItem.ttLvl = Math.max(selfItem.ttLvl || 1, cp.ttLvl || 1);
+                        selfItem.overallScore = selfItem.classicScore + selfItem.ttScore;
+                        selfItem.puzzles = Math.max(selfItem.puzzles || 0, cp.puzzles || 0);
+                        selfItem.placedPiecesCount = Math.max(selfItem.placedPiecesCount || 0, cp.placedPiecesCount || 0);
+                        selfItem.inventoryCount = Math.max(selfItem.inventoryCount || 0, cp.inventoryCount || 0);
                     }
+                    continue;
+                }
 
-                    const cpClassicScore = (typeof cp.classicScore === 'number' && cp.classicScore >= 0) ? cp.classicScore : 0;
-                    const cpTtScore = (typeof cp.ttScore === 'number' && cp.ttScore >= 0) ? cp.ttScore : 0;
-                    const cpOverallScore = (typeof cp.overallScore === 'number' && cp.overallScore >= 0) ? cp.overallScore : (cpClassicScore + cpTtScore);
+                const cpClassicScore = (typeof cp.classicScore === 'number' && cp.classicScore >= 0) ? cp.classicScore : 0;
+                const cpTtScore = (typeof cp.ttScore === 'number' && cp.ttScore >= 0) ? cp.ttScore : 0;
+                const cpOverallScore = (typeof cp.overallScore === 'number' && cp.overallScore >= 0) ? cp.overallScore : (cpClassicScore + cpTtScore);
 
-                    const existingIdx = list.findIndex(item => item.fullTag.toLowerCase() === cp.fullTag.toLowerCase());
+                const existingIdx = list.findIndex(item => normalizeFullTag(item.fullTag) === cpKey);
 
-                    const cloudPlayer = {
-                        isSelf: false,
-                        name: cp.name || cp.fullTag.split('#')[0],
-                        tag: cp.tag || '0000',
-                        fullTag: cp.fullTag,
-                        classicLvl: (typeof cp.classicLvl === 'number' && cp.classicLvl >= 1) ? cp.classicLvl : 1,
-                        classicScore: cpClassicScore,
-                        ttLvl: (typeof cp.ttLvl === 'number' && cp.ttLvl >= 1) ? cp.ttLvl : 1,
-                        ttScore: cpTtScore,
-                        overallScore: cpOverallScore,
-                        puzzles: (typeof cp.puzzles === 'number' && cp.puzzles >= 0) ? cp.puzzles : 0,
-                        placedPiecesCount: (typeof cp.placedPiecesCount === 'number' && cp.placedPiecesCount >= 0) ? cp.placedPiecesCount : ((cp.puzzles || 0) * 12),
-                        inventoryCount: (typeof cp.inventoryCount === 'number' && cp.inventoryCount >= 0) ? cp.inventoryCount : 0
-                    };
-                    if (existingIdx >= 0) {
-                        list[existingIdx] = cloudPlayer;
-                    } else {
-                        list.push(cloudPlayer);
-                    }
+                const cloudPlayer = {
+                    isSelf: false,
+                    name: cp.name || cp.fullTag.split('#')[0],
+                    tag: cp.tag || '0000',
+                    fullTag: cp.fullTag,
+                    classicLvl: (typeof cp.classicLvl === 'number' && cp.classicLvl >= 1) ? cp.classicLvl : 1,
+                    classicScore: cpClassicScore,
+                    ttLvl: (typeof cp.ttLvl === 'number' && cp.ttLvl >= 1) ? cp.ttLvl : 1,
+                    ttScore: cpTtScore,
+                    overallScore: cpOverallScore,
+                    puzzles: (typeof cp.puzzles === 'number' && cp.puzzles >= 0) ? cp.puzzles : 0,
+                    placedPiecesCount: (typeof cp.placedPiecesCount === 'number' && cp.placedPiecesCount >= 0) ? cp.placedPiecesCount : ((cp.puzzles || 0) * 12),
+                    inventoryCount: (typeof cp.inventoryCount === 'number' && cp.inventoryCount >= 0) ? cp.inventoryCount : 0
+                };
+                if (existingIdx > 0) {
+                    list[existingIdx] = cloudPlayer;
+                } else if (existingIdx === -1) {
+                    list.push(cloudPlayer);
                 }
             }
         }
@@ -6011,11 +6064,11 @@ class TileMatchingGame {
             // If syncCode is missing locally, resolve it dynamically from MongoDB Atlas debug_users
             if (!syncCode) {
                 try {
-                    const dbUsersResp = await this.fetchWithTimeout('https://viscora.onrender.com/api/debug_users?t=' + Date.now(), { cache: 'no-store' }, 2500);
+                    const dbUsersResp = await this.fetchWithTimeout('https://viscora.onrender.com/api/debug_users?t=' + Date.now(), { cache: 'no-store' }, 6000);
                     if (dbUsersResp && dbUsersResp.ok) {
                         const users = await dbUsersResp.json();
                         if (Array.isArray(users)) {
-                            const found = users.find(u => u.userId === safeUserId || (u.authorName && u.authorName.toLowerCase() === myFullTag.toLowerCase()));
+                            const found = users.find(u => u && (u.userId === safeUserId || (typeof u.authorName === 'string' && normalizeFullTag(u.authorName) === normalizeFullTag(myFullTag))));
                             if (found && found.syncCode) {
                                 syncCode = found.syncCode;
                                 localStorage.setItem('tile_game_sync_code', syncCode);
