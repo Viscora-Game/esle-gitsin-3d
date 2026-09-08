@@ -3634,6 +3634,11 @@ class TileMatchingGame {
         if (this.score < this.undoCost) {
             this.sound.playLockThud();
             this.triggerVibration();
+            const btnUndo = document.getElementById('btn-undo');
+            if (btnUndo) {
+                btnUndo.classList.add('shaking');
+                setTimeout(() => btnUndo.classList.remove('shaking'), 250);
+            }
             this.showToast((dict.noScoreUndo || 'Yetersiz Skor! ({cost} Puan Gerekli)').replace('{cost}', this.undoCost));
             return;
         }
@@ -3644,6 +3649,12 @@ class TileMatchingGame {
 
         this.undoCost *= 2;
         this.updateBoosterBadgesUI();
+
+        const btnUndo = document.getElementById('btn-undo');
+        if (btnUndo) {
+            btnUndo.classList.add('activated');
+            setTimeout(() => btnUndo.classList.remove('activated'), 400);
+        }
 
         this.returnTrayTilesToBoard(1);
 
@@ -3665,6 +3676,11 @@ class TileMatchingGame {
         if (this.score < this.hintCost) {
             this.sound.playLockThud();
             this.triggerVibration();
+            const btnHint = document.getElementById('btn-hint');
+            if (btnHint) {
+                btnHint.classList.add('shaking');
+                setTimeout(() => btnHint.classList.remove('shaking'), 250);
+            }
             this.showToast(dict.noScoreHint.replace('{cost}', this.hintCost));
             return;
         }
@@ -3704,6 +3720,12 @@ class TileMatchingGame {
             this.hintCost *= 2;
             this.updateBoosterBadgesUI();
 
+            const btnHint = document.getElementById('btn-hint');
+            if (btnHint) {
+                btnHint.classList.add('activated');
+                setTimeout(() => btnHint.classList.remove('activated'), 400);
+            }
+
             this.sound.playHintChime();
             this.triggerVibration();
 
@@ -3734,6 +3756,11 @@ class TileMatchingGame {
         if (this.score < this.slotCost) {
             this.sound.playLockThud();
             this.triggerVibration();
+            const btnSlot = document.getElementById('btn-extra-slot');
+            if (btnSlot) {
+                btnSlot.classList.add('shaking');
+                setTimeout(() => btnSlot.classList.remove('shaking'), 250);
+            }
             this.showToast(dict.noScoreSlot.replace('{cost}', this.slotCost));
             return;
         }
@@ -3745,6 +3772,12 @@ class TileMatchingGame {
         // Double the cost for next use in current level (%100 Increase!)
         this.slotCost *= 2;
         this.updateBoosterBadgesUI();
+
+        const btnSlot = document.getElementById('btn-extra-slot');
+        if (btnSlot) {
+            btnSlot.classList.add('activated');
+            setTimeout(() => btnSlot.classList.remove('activated'), 400);
+        }
 
         // Reveal Floating Emergency Slot Holder directly above Center Slot (Index 2)
         this.hasTemporaryExtraSlot = true;
@@ -3773,6 +3806,11 @@ class TileMatchingGame {
         if (this.score < this.shuffleCost) {
             this.sound.playLockThud();
             this.triggerVibration();
+            const btnShuffle = document.getElementById('btn-shuffle');
+            if (btnShuffle) {
+                btnShuffle.classList.add('shaking');
+                setTimeout(() => btnShuffle.classList.remove('shaking'), 250);
+            }
             this.showToast(dict.noScoreShuffle.replace('{cost}', this.shuffleCost));
             return;
         }
@@ -3784,6 +3822,12 @@ class TileMatchingGame {
         // Double the cost for next use in current level (5000 -> 10000 -> 20000...)
         this.shuffleCost *= 2;
         this.updateBoosterBadgesUI();
+
+        const btnShuffle = document.getElementById('btn-shuffle');
+        if (btnShuffle) {
+            btnShuffle.classList.add('activated');
+            setTimeout(() => btnShuffle.classList.remove('activated'), 400);
+        }
 
         this.sound.playBoosterChime();
         this.triggerVibration();

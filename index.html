@@ -323,7 +323,7 @@
 
                                 <!-- Force Update & Clear Cache Button -->
                                 <button id="btn-force-update" class="settings-list-btn btn-update">
-                                    <span data-i18n="forceUpdateBtn">⚡ CANLI GÜNCELLEMEYİ YÜKLE (v8.9.81)</span>
+                                    <span data-i18n="forceUpdateBtn">⚡ CANLI GÜNCELLEMEYİ YÜKLE (v8.9.82)</span>
                                     <span class="btn-chevron">↻</span>
                                 </button>
 
@@ -750,7 +750,7 @@
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./sw.js?v=8.9.81').then((reg) => {
+          navigator.serviceWorker.register('./sw.js?v=8.9.82').then((reg) => {
             reg.update();
           }).catch(err => console.log('SW Registration error:', err));
         });
@@ -761,6 +761,6 @@
         <span id="toast-text">Yetersiz Altın!</span>
     </div>
 
-    <script src="game.js?v=8.9.81" defer></script>
+    <script src="game.js?v=8.9.82" defer></script>
 </body>
 </html>

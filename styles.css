@@ -1131,20 +1131,21 @@ body {
    ========================================================= */
 
 #hud-header {
-    padding: 10px 14px 10px 14px;
-    background: rgba(0, 0, 0, 0.35);
+    padding: 8px 12px 10px 12px;
+    background: linear-gradient(180deg, rgba(12, 16, 33, 0.88) 0%, rgba(15, 23, 42, 0.72) 100%);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    gap: 7px;
     z-index: 1000;
-    border-bottom: 2px solid rgba(251, 191, 36, 0.4);
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    border-bottom: 1.5px solid rgba(251, 191, 36, 0.35);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5), inset 0 -1px 0 rgba(255, 255, 255, 0.06);
     width: 100%;
+    box-sizing: border-box;
 }
 
-/* Row 1: Home, Level, Timer, Score, Settings */
+/* Row 1: Home, Level, Timer, Score, Gold, Gallery, Settings */
 .hud-top-row {
     display: flex;
     justify-content: space-between;
@@ -1155,29 +1156,30 @@ body {
 .hud-info-group {
     display: flex;
     align-items: center;
-    gap: 6px;
+    gap: 5px;
 }
 
 .hud-icon-btn {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%);
-    border: 1.5px solid rgba(251, 191, 36, 0.5);
+    background: linear-gradient(135deg, rgba(30, 41, 59, 0.8) 0%, rgba(15, 23, 42, 0.9) 100%);
+    border: 1.5px solid rgba(251, 191, 36, 0.55);
     color: #ffffff;
-    width: 38px;
-    height: 38px;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
-    font-size: 17px;
+    font-size: 16px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
     flex-shrink: 0;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
-    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.2s ease;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.18s ease, box-shadow 0.18s ease;
 }
 
 .hud-icon-btn:hover {
     transform: translateY(-2px) scale(1.08);
-    background: linear-gradient(135deg, rgba(251, 191, 36, 0.3) 0%, rgba(245, 158, 11, 0.15) 100%);
+    background: linear-gradient(135deg, rgba(251, 191, 36, 0.35) 0%, rgba(245, 158, 11, 0.2) 100%);
+    box-shadow: 0 6px 16px rgba(245, 158, 11, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.35);
 }
 
 .hud-icon-btn:active {
@@ -1185,35 +1187,37 @@ body {
 }
 
 .hud-item {
-    padding: 5px 9px;
-    border-radius: 14px;
+    padding: 4px 8px;
+    border-radius: 12px;
     display: flex;
     align-items: center;
     gap: 4px;
     flex-shrink: 1;
     min-width: 0;
     white-space: nowrap;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
 }
 
 .badge-level {
-    background: rgba(56, 189, 248, 0.12);
-    border: 1.5px solid rgba(56, 189, 248, 0.6);
+    background: linear-gradient(135deg, rgba(56, 189, 248, 0.18) 0%, rgba(14, 165, 233, 0.08) 100%);
+    border: 1.5px solid rgba(56, 189, 248, 0.65);
 }
 
 .badge-score {
-    background: rgba(52, 211, 153, 0.12);
-    border: 1.5px solid rgba(52, 211, 153, 0.6);
+    background: linear-gradient(135deg, rgba(52, 211, 153, 0.18) 0%, rgba(16, 185, 129, 0.08) 100%);
+    border: 1.5px solid rgba(52, 211, 153, 0.65);
 }
 
 .badge-gold {
-    background: rgba(251, 191, 36, 0.15);
-    border: 1.5px solid rgba(251, 191, 36, 0.6);
+    background: linear-gradient(135deg, rgba(251, 191, 36, 0.2) 0%, rgba(217, 119, 6, 0.1) 100%);
+    border: 1.5px solid rgba(251, 191, 36, 0.65);
 }
 
 .badge-timer {
-    background: rgba(248, 113, 113, 0.18);
-    border: 1.5px solid #f87171;
+    background: linear-gradient(135deg, rgba(239, 68, 68, 0.25) 0%, rgba(220, 38, 38, 0.12) 100%);
+    border: 1.5px solid #ef4444;
 }
 
 .badge-timer.hidden {
@@ -1228,7 +1232,7 @@ body {
 
 @keyframes timerPulse {
     0% { transform: scale(1); box-shadow: 0 0 8px #ef4444; }
-    100% { transform: scale(1.12); box-shadow: 0 0 20px #ef4444, 0 0 30px #dc2626; }
+    100% { transform: scale(1.1); box-shadow: 0 0 20px #ef4444, 0 0 30px #dc2626; }
 }
 
 .timer-icon {
@@ -1236,18 +1240,18 @@ body {
 }
 
 .hud-label {
-    font-size: 10px;
+    font-size: 9.5px;
     font-weight: 800;
-    color: #e2e8f0;
+    color: #cbd5e1;
     letter-spacing: 0.4px;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
 }
 
 .hud-val {
-    font-size: 14px;
+    font-size: 13.5px;
     font-weight: 900;
     color: #ffffff;
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7);
 }
 
 .badge-gold .hud-val {
@@ -1262,25 +1266,35 @@ body {
     color: #34d399;
 }
 
-/* Row 2: Modern Icon-First Booster Buttons Bar */
+/* =========================================================
+   ROW 2: ULTRA-MODERN DOCKED IN-GAME BOOSTER FEATURES BAR
+   ========================================================= */
 .hud-bottom-boosters {
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 6px;
     width: 100%;
-    max-width: 480px;
+    max-width: 440px;
     margin: 0 auto;
-    overflow: hidden;
-    padding: 2px;
+    padding: 4px 6px;
+    background: linear-gradient(180deg, rgba(15, 23, 42, 0.8) 0%, rgba(8, 12, 24, 0.92) 100%);
+    border: 1.5px solid rgba(255, 255, 255, 0.12);
+    border-radius: 18px;
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.6), 0 4px 16px rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
     box-sizing: border-box;
+    overflow: hidden;
 }
 
+/* Tactile 3D Arcade Booster Action Pills */
 .booster-pill {
     flex: 1 1 0;
     min-width: 0;
     padding: 6px 4px;
-    border-radius: 14px;
+    min-height: 38px;
+    border-radius: 13px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1288,60 +1302,103 @@ body {
     font-size: clamp(10px, 2.7vw, 12.5px);
     font-weight: 900;
     cursor: pointer;
-    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2);
-    transition: transform 0.16s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.16s ease, filter 0.16s ease;
+    position: relative;
     overflow: hidden;
     user-select: none;
     -webkit-user-select: none;
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    transition: transform 0.15s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.15s ease, filter 0.15s ease;
 }
 
+/* Subtle glossy glass reflection highlight */
+.booster-pill::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 46%;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0) 100%);
+    border-radius: 12px 12px 3px 3px;
+    pointer-events: none;
+}
+
+/* Distinct Booster Themes with 3D Depth & Radiant Aura */
 .undo-pill {
-    background: linear-gradient(135deg, rgba(16, 185, 129, 0.25) 0%, rgba(5, 150, 105, 0.14) 100%);
-    border: 1.5px solid rgba(52, 211, 153, 0.75);
+    background: linear-gradient(180deg, rgba(16, 185, 129, 0.35) 0%, rgba(5, 150, 105, 0.18) 100%);
+    border: 1.5px solid rgba(52, 211, 153, 0.85);
     color: #34d399;
+    box-shadow: 0 3px 0 #065f46, 0 6px 14px rgba(16, 185, 129, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.35);
 }
 
 .hint-pill {
-    background: linear-gradient(135deg, rgba(56, 189, 248, 0.25) 0%, rgba(14, 165, 233, 0.14) 100%);
-    border: 1.5px solid rgba(56, 189, 248, 0.75);
+    background: linear-gradient(180deg, rgba(56, 189, 248, 0.35) 0%, rgba(14, 165, 233, 0.18) 100%);
+    border: 1.5px solid rgba(56, 189, 248, 0.85);
     color: #38bdf8;
+    box-shadow: 0 3px 0 #0369a1, 0 6px 14px rgba(14, 165, 233, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.35);
 }
 
 .slot-pill {
-    background: linear-gradient(135deg, rgba(245, 158, 11, 0.25) 0%, rgba(217, 119, 6, 0.14) 100%);
-    border: 1.5px solid rgba(251, 191, 36, 0.75);
+    background: linear-gradient(180deg, rgba(251, 191, 36, 0.35) 0%, rgba(217, 119, 6, 0.18) 100%);
+    border: 1.5px solid rgba(251, 191, 36, 0.9);
     color: #fbbf24;
+    box-shadow: 0 3px 0 #92400e, 0 6px 14px rgba(245, 158, 11, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.35);
 }
 
 .shuffle-pill {
-    background: linear-gradient(135deg, rgba(192, 132, 252, 0.25) 0%, rgba(147, 51, 234, 0.14) 100%);
-    border: 1.5px solid rgba(192, 132, 252, 0.75);
+    background: linear-gradient(180deg, rgba(192, 132, 252, 0.35) 0%, rgba(147, 51, 234, 0.18) 100%);
+    border: 1.5px solid rgba(192, 132, 252, 0.9);
     color: #c084fc;
+    box-shadow: 0 3px 0 #6b21a8, 0 6px 14px rgba(147, 51, 234, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.35);
 }
 
 .booster-pill:hover {
-    transform: translateY(-2px) scale(1.04);
-    filter: brightness(1.15);
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    transform: translateY(-2px);
+    filter: brightness(1.16);
 }
 
 .booster-pill:active {
-    transform: scale(0.94);
+    transform: translateY(2px) scale(0.95);
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.4), 0 2px 6px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.booster-pill.shaking {
+    animation: boosterErrorShake 0.25s ease-in-out;
+}
+
+@keyframes boosterErrorShake {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-5px); }
+    40% { transform: translateX(5px); }
+    60% { transform: translateX(-4px); }
+    80% { transform: translateX(4px); }
+}
+
+.booster-pill.activated {
+    animation: boosterActivatePulse 0.38s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes boosterActivatePulse {
+    0% { transform: scale(0.92); }
+    50% { transform: scale(1.1); filter: brightness(1.35); }
+    100% { transform: scale(1); filter: brightness(1); }
 }
 
 .booster-icon {
-    font-size: 15px;
+    font-size: 16px;
     line-height: 1;
     display: inline-flex;
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.35));
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5));
+    transition: transform 0.15s ease;
 }
 
-/* Icon-First Strategy: text hidden on compact mobile screens to prevent overflow/clipping */
+.booster-pill:hover .booster-icon {
+    transform: scale(1.12);
+}
+
+/* Icon-First Strategy: text hidden on mobile screens to prevent overflow */
 .booster-text {
     display: none;
     font-size: clamp(8.5px, 2.2vw, 10.5px);
@@ -1356,7 +1413,7 @@ body {
 /* Tablets & wider screens: show booster label */
 @media (min-width: 480px) {
     .booster-pill {
-        padding: 7px 8px;
+        padding: 6px 8px;
         gap: 6px;
     }
     .booster-text {
@@ -1365,12 +1422,14 @@ body {
     }
 }
 
+/* Luminous Capsule Cost Badges */
 .cost-badge {
-    font-size: clamp(8.5px, 2.2vw, 10.5px);
+    font-size: clamp(9px, 2.3vw, 10.5px);
     font-weight: 900;
-    padding: 2px 5px;
-    border-radius: 7px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.35);
+    padding: 2px 6px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.45);
     flex-shrink: 0;
     white-space: nowrap;
     line-height: 1.15;
@@ -1379,13 +1438,15 @@ body {
 }
 
 .cost-emerald {
-    background: linear-gradient(135deg, #34d399 0%, #059669 100%);
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
     color: #ffffff;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
 }
 
 .cost-sky {
     background: linear-gradient(135deg, #38bdf8 0%, #0284c7 100%);
     color: #ffffff;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
 }
 
 .cost-gold {
@@ -1396,6 +1457,7 @@ body {
 .cost-purple {
     background: linear-gradient(135deg, #c084fc 0%, #9333ea 100%);
     color: #ffffff;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
 }
 
 /* Toast Alert Notification (Z-Index 999999 - Above ALL Modals & Overlays!) */
