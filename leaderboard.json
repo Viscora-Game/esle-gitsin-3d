@@ -1,0 +1,49 @@
+{
+  "updatedAt": 1786054903103,
+  "players": [
+    {
+      "name": "HamzaXd",
+      "tag": "6734",
+      "fullTag": "HamzaXd#6734",
+      "classicLvl": 17,
+      "classicScore": 57700,
+      "ttLvl": 11,
+      "ttScore": 158200,
+      "overallScore": 215900,
+      "puzzles": 0
+    },
+    {
+      "name": "HamSu",
+      "tag": "0228",
+      "fullTag": "HamSu#0228",
+      "classicLvl": 27,
+      "classicScore": 62000,
+      "ttLvl": 13,
+      "ttScore": 108100,
+      "overallScore": 170100,
+      "puzzles": 0
+    },
+    {
+      "name": "Sudiş",
+      "tag": "2802",
+      "fullTag": "Sudiş#2802",
+      "classicLvl": 22,
+      "classicScore": 44200,
+      "ttLvl": 12,
+      "ttScore": 105800,
+      "overallScore": 150000,
+      "puzzles": 2
+    },
+    {
+      "name": "HamzaKa",
+      "tag": "6734",
+      "fullTag": "HamzaKa#6734",
+      "classicLvl": 22,
+      "classicScore": 53500,
+      "ttLvl": 4,
+      "ttScore": 28600,
+      "overallScore": 82100,
+      "puzzles": 0
+    }
+  ]
+}

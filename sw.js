@@ -1,9 +1,10 @@
-const CACHE_NAME = 'esle-gitsin-3d-v8.9.71';
+const CACHE_NAME = 'esle-gitsin-3d-v8.9.72';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
   './styles.css',
   './game.js',
+  './leaderboard.json',
   './manifest.json',
   './favicon.ico',
   './favicon.png',

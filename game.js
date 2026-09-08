@@ -77,6 +77,13 @@ const FORMATION_GRIDS = {
     ]
 };
 
+const DEFAULT_LEADERBOARD_SEED = [
+    { name: "HamzaXd", tag: "6734", fullTag: "HamzaXd#6734", classicLvl: 17, classicScore: 57700, ttLvl: 11, ttScore: 158200, overallScore: 215900, puzzles: 0 },
+    { name: "HamSu", tag: "0228", fullTag: "HamSu#0228", classicLvl: 27, classicScore: 62000, ttLvl: 13, ttScore: 108100, overallScore: 170100, puzzles: 0 },
+    { name: "Sudiş", tag: "2802", fullTag: "Sudiş#2802", classicLvl: 22, classicScore: 44200, ttLvl: 12, ttScore: 105800, overallScore: 150000, puzzles: 2 },
+    { name: "HamzaKa", tag: "6734", fullTag: "HamzaKa#6734", classicLvl: 22, classicScore: 53500, ttLvl: 4, ttScore: 28600, overallScore: 82100, puzzles: 0 }
+];
+
 /**
  * Tile Club / GamoVation Style Mobile Stack Tile Pairing Game Engine
  * Features:
@@ -815,7 +822,7 @@ class TileMatchingGame {
                 prevPageBtn: "◀ ÖNCEKİ SAYFA",
                 nextPageBtn: "SONRAKİ SAYFA ▶",
                 completedBadge: "TAMAMLANDI! 🌟",
-                forceUpdateBtn: "⚡ CANLI GÜNCELLEMEYİ YÜKLE (v8.9.71)",
+                forceUpdateBtn: "⚡ CANLI GÜNCELLEMEYİ YÜKLE (v8.9.72)",
                 resetModalTitle: "🔄 HANGİ MOD SIFIRLANSIN?",
                 resetModalDesc: "Sıfırlamak istediğiniz oyun modunu seçin:",
                 resetClassicBtn: "🎮 KLASİK MODU SIFIRLA",
@@ -946,7 +953,7 @@ class TileMatchingGame {
                 prevPageBtn: "◀ PREVIOUS PAGE",
                 nextPageBtn: "NEXT PAGE ▶",
                 completedBadge: "COMPLETED! 🌟",
-                forceUpdateBtn: "⚡ INSTALL LIVE UPDATE (v8.9.71)",
+                forceUpdateBtn: "⚡ INSTALL LIVE UPDATE (v8.9.72)",
                 resetModalTitle: "🔄 RESET WHICH MODE?",
                 resetModalDesc: "Select game mode to reset progress:",
                 resetClassicBtn: "🎮 RESET CLASSIC MODE",
@@ -1077,7 +1084,7 @@ class TileMatchingGame {
                 prevPageBtn: "◀ VORHERIGE SEITE",
                 nextPageBtn: "NÄCHSTE SEITE ▶",
                 completedBadge: "ABGESCHLOSSEN! 🌟",
-                forceUpdateBtn: "⚡ LIVE-UPDATE INSTALLIEREN (v8.9.71)",
+                forceUpdateBtn: "⚡ LIVE-UPDATE INSTALLIEREN (v8.9.72)",
                 resetModalTitle: "🔄 WELCHEN MODUS ZURÜCKSETZEN?",
                 resetModalDesc: "Wähle den Spielmodus zum Zurücksetzen:",
                 resetClassicBtn: "🎮 KLASSISCHEN MODUS ZURÜCKSETZEN",
@@ -1208,7 +1215,7 @@ class TileMatchingGame {
                 prevPageBtn: "◀ PAGE PRÉCÉDENTE",
                 nextPageBtn: "PAGE SUIVANTE ▶",
                 completedBadge: "TERMINÉ! 🌟",
-                forceUpdateBtn: "⚡ INSTALLER MISE À JOUR (v8.9.71)",
+                forceUpdateBtn: "⚡ INSTALLER MISE À JOUR (v8.9.72)",
                 resetModalTitle: "🔄 RÉINITIALISER QUEL MODE?",
                 resetModalDesc: "Sélectionnez le mode à réinitialiser:",
                 resetClassicBtn: "🎮 RÉINIT. CLASSIQUE",
@@ -1339,7 +1346,7 @@ class TileMatchingGame {
                 prevPageBtn: "◀ PAGINA PRECEDENTE",
                 nextPageBtn: "PAGINA SUCCESSIVA ▶",
                 completedBadge: "COMPLETATO! 🌟",
-                forceUpdateBtn: "⚡ INSTALLA AGGIORNAMENTO (v8.9.71)",
+                forceUpdateBtn: "⚡ INSTALLA AGGIORNAMENTO (v8.9.72)",
                 resetModalTitle: "🔄 RESETTA QUALE MODALITÀ?",
                 resetModalDesc: "Seleziona la modalità da resettare:",
                 resetClassicBtn: "🎮 RESETTA CLASSICA",
@@ -1445,7 +1452,7 @@ class TileMatchingGame {
                 prevPageBtn: "◀ PÁGINA ANTERIOR",
                 nextPageBtn: "PÁGINA SIGUIENTE ▶",
                 completedBadge: "¡COMPLETADO! 🌟",
-                forceUpdateBtn: "⚡ INSTALAR ACTUALIZACIÓN (v8.9.71)",
+                forceUpdateBtn: "⚡ INSTALAR ACTUALIZACIÓN (v8.9.72)",
                 resetModalTitle: "🔄 ¿REINICIAR QUÉ MODO?",
                 resetModalDesc: "Selecciona el modo para reiniciar progreso:",
                 resetClassicBtn: "🎮 REINICIAR MODO CLÁSICO",
@@ -1576,7 +1583,7 @@ class TileMatchingGame {
                 prevPageBtn: "◀ PÁGINA ANTERIOR",
                 nextPageBtn: "PRÓXIMA PÁGINA ▶",
                 completedBadge: "CONCLUÍDO! 🌟",
-                forceUpdateBtn: "⚡ INSTALAR ATUALIZAÇÃO (v8.9.71)",
+                forceUpdateBtn: "⚡ INSTALAR ATUALIZAÇÃO (v8.9.72)",
                 resetModalTitle: "🔄 REINICIAR QUAL MODO?",
                 resetModalDesc: "Selecione o modo para reiniciar progresso:",
                 resetClassicBtn: "🎮 REINICIAR MODO CLÁSSICO",
@@ -5189,20 +5196,90 @@ class TileMatchingGame {
 
     loadCloudLeaderboardCache() {
         try {
-            const cacheVer = localStorage.getItem('tile_game_lb_cache_version');
-            if (cacheVer !== 'v8.9.65') {
-                localStorage.removeItem('tile_game_cloud_lb_cache');
-                localStorage.setItem('tile_game_lb_cache_version', 'v8.9.65');
-                this.latestCloudDataset = [];
-                return;
-            }
             const raw = localStorage.getItem('tile_game_cloud_lb_cache');
             if (raw) {
                 const parsed = JSON.parse(raw);
-                if (parsed && Array.isArray(parsed)) {
+                if (parsed && Array.isArray(parsed) && parsed.length > 0) {
                     this.latestCloudDataset = parsed;
+                    // Ensure seed champions are always included even in older cached data
+                    const existingTags = new Set(parsed.map(p => (p && p.fullTag ? p.fullTag.toLowerCase() : '')));
+                    for (const seedP of DEFAULT_LEADERBOARD_SEED) {
+                        if (!existingTags.has(seedP.fullTag.toLowerCase())) {
+                            this.latestCloudDataset.push({ ...seedP });
+                        }
+                    }
+                    return;
                 }
             }
+        } catch (e) {}
+        this.latestCloudDataset = JSON.parse(JSON.stringify(DEFAULT_LEADERBOARD_SEED));
+    }
+
+    mergeAndSaveCloudDataset(incomingPlayers) {
+        if (!Array.isArray(incomingPlayers) || incomingPlayers.length === 0) return;
+        const playerMap = new Map();
+
+        // 1. Seed fallback players
+        for (const seedP of DEFAULT_LEADERBOARD_SEED) {
+            playerMap.set(seedP.fullTag.toLowerCase(), { ...seedP });
+        }
+
+        // 2. Existing local dataset
+        if (this.latestCloudDataset && Array.isArray(this.latestCloudDataset)) {
+            for (const p of this.latestCloudDataset) {
+                if (p && p.fullTag) {
+                    const key = p.fullTag.toLowerCase();
+                    const ex = playerMap.get(key);
+                    if (!ex) {
+                        playerMap.set(key, { ...p });
+                    } else {
+                        const merged = {
+                            ...ex,
+                            ...p,
+                            classicLvl: Math.max(ex.classicLvl || 1, p.classicLvl || 1),
+                            classicScore: Math.max(ex.classicScore || 0, p.classicScore || 0),
+                            ttLvl: Math.max(ex.ttLvl || 1, p.ttLvl || 1),
+                            ttScore: Math.max(ex.ttScore || 0, p.ttScore || 0),
+                            puzzles: Math.max(ex.puzzles || 0, p.puzzles || 0),
+                            updatedAt: Math.max(ex.updatedAt || 0, p.updatedAt || 0)
+                        };
+                        merged.overallScore = merged.classicScore + merged.ttScore;
+                        playerMap.set(key, merged);
+                    }
+                }
+            }
+        }
+
+        // 3. Merge incoming cloud players
+        for (const p of incomingPlayers) {
+            if (p && p.fullTag) {
+                const key = p.fullTag.toLowerCase();
+                const ex = playerMap.get(key);
+                if (!ex) {
+                    playerMap.set(key, { ...p });
+                } else {
+                    const merged = {
+                        ...ex,
+                        ...p,
+                        classicLvl: Math.max(ex.classicLvl || 1, p.classicLvl || 1),
+                        classicScore: Math.max(ex.classicScore || 0, p.classicScore || 0),
+                        ttLvl: Math.max(ex.ttLvl || 1, p.ttLvl || 1),
+                        ttScore: Math.max(ex.ttScore || 0, p.ttScore || 0),
+                        puzzles: Math.max(ex.puzzles || 0, p.puzzles || 0),
+                        updatedAt: Math.max(ex.updatedAt || 0, p.updatedAt || 0)
+                    };
+                    merged.overallScore = merged.classicScore + merged.ttScore;
+                    playerMap.set(key, merged);
+                }
+            }
+        }
+
+        const mergedList = Array.from(playerMap.values());
+        mergedList.sort((a, b) => (b.overallScore || 0) - (a.overallScore || 0));
+        this.latestCloudDataset = mergedList.slice(0, 1000);
+
+        try {
+            localStorage.setItem('tile_game_cloud_lb_cache', JSON.stringify(this.latestCloudDataset));
         } catch (e) {}
     }
 
@@ -5214,39 +5291,39 @@ class TileMatchingGame {
     }
 
     async fetchCloudLeaderboardData() {
-        if (typeof navigator !== 'undefined' && !navigator.onLine) return null;
-        try {
-            const cloudUrl = 'https://jsonblob.com/api/jsonBlob/019fd8e7-e1ac-7a47-aa9f-df3231a31d7f';
-            const resp = await this.fetchWithTimeout(cloudUrl + '?t=' + Date.now(), {
-                cache: 'no-store',
-                headers: {
-                    'Cache-Control': 'no-cache, no-store, must-revalidate',
-                    'Pragma': 'no-cache'
+        // Multi-stage cloud fetch with automatic fallback:
+        // 1. Live Render Backend (/api/esle-gitsin/leaderboard)
+        // 2. Global GitHub Raw CDN (leaderboard.json)
+        // 3. Fallback to cached & seed dataset
+        const endpoints = [
+            'https://viscora.onrender.com/api/esle-gitsin/leaderboard?t=' + Date.now(),
+            'https://raw.githubusercontent.com/Viscora-Game/esle-gitsin-3d/main/leaderboard.json?t=' + Date.now()
+        ];
+
+        for (const ep of endpoints) {
+            try {
+                const resp = await this.fetchWithTimeout(ep, {
+                    cache: 'no-store',
+                    headers: {
+                        'Cache-Control': 'no-cache, no-store, must-revalidate',
+                        'Pragma': 'no-cache'
+                    }
+                }, 3000);
+                if (resp && resp.ok) {
+                    const data = await resp.json();
+                    const list = Array.isArray(data) ? data : (data && Array.isArray(data.players) ? data.players : null);
+                    if (list && list.length > 0) {
+                        this.mergeAndSaveCloudDataset(list);
+                        return this.latestCloudDataset;
+                    }
                 }
-            }, 3500);
-            if (!resp.ok) return null;
-            const data = await resp.json();
-            if (data && Array.isArray(data.players)) {
-                this.latestCloudDataset = data.players;
-                try {
-                    localStorage.setItem('tile_game_cloud_lb_cache', JSON.stringify(data.players));
-                } catch (e) {}
-                return data.players;
-            }
-            return null;
-        } catch (e) {
-            return null;
+            } catch (e) {}
         }
+        return this.latestCloudDataset;
     }
 
     async openLeaderboardModal(activeCategory = 'overall') {
         this.sound.playClick();
-
-        if (!navigator.onLine) {
-            this.sound.playLockThud();
-            this.showToast('🌐 Liderlik Tablosunu Görebilmek İçin İnternet Bağlantınızı Kontrol Edin!');
-            return;
-        }
 
         const modal = document.getElementById('modal-leaderboard');
         if (!modal) return;
@@ -5261,37 +5338,42 @@ class TileMatchingGame {
             }
         });
 
-        // 1. Fetch fresh live cloud dataset FIRST (NO STALE CACHE DISPLAY)
-        const freshCloudList = await this.fetchCloudLeaderboardData();
-        if (freshCloudList && Array.isArray(freshCloudList)) {
-            this.latestCloudDataset = freshCloudList;
+        // 1. STALE-WHILE-REVALIDATE: 0ms INSTANT MODAL OPEN WITH CACHED / SEEDED DATA
+        if (!this.latestCloudDataset || this.latestCloudDataset.length === 0) {
+            this.loadCloudLeaderboardCache();
         }
-
-        // 2. Render clean live dataset
         this.renderLeaderboardList(activeCategory);
-
         modal.classList.remove('hidden');
         modal.style.display = 'flex';
 
-        // 3. Sync player profile and re-render
-        await this.syncCloudLeaderboard();
-        this.renderLeaderboardList(activeCategory);
+        if (typeof navigator !== 'undefined' && !navigator.onLine) {
+            this.showToast('🌐 Çevrimdışı Mod - Kayıtlı sıralama verileri gösteriliyor');
+            return;
+        }
 
-        // 4. Silent 5-Second Live Background Refresh
+        // 2. Non-blocking asynchronous background refresh and sync
+        (async () => {
+            try {
+                await this.syncCloudLeaderboard();
+                await this.fetchCloudLeaderboardData();
+                if (!modal.classList.contains('hidden') && modal.style.display !== 'none') {
+                    this.renderLeaderboardList(this.currentLeaderboardCategory || 'overall');
+                }
+            } catch (e) {}
+        })();
+
+        // 3. Silent 8-Second Live Background Refresh while modal is open
         if (this.leaderboardPollInterval) clearInterval(this.leaderboardPollInterval);
         this.leaderboardPollInterval = setInterval(async () => {
             if (modal.classList.contains('hidden') || modal.style.display === 'none') {
                 clearInterval(this.leaderboardPollInterval);
                 return;
             }
-
-            const liveList = await this.fetchCloudLeaderboardData();
-            if (liveList && Array.isArray(liveList)) {
-                this.latestCloudDataset = liveList;
+            if (typeof navigator !== 'undefined' && navigator.onLine) {
+                await this.fetchCloudLeaderboardData();
+                this.renderLeaderboardList(this.currentLeaderboardCategory || 'overall');
             }
-            await this.syncCloudLeaderboard();
-            this.renderLeaderboardList(this.currentLeaderboardCategory || 'overall');
-        }, 5000);
+        }, 8000);
     }
 
     savePlayerProfile(nickname, tag) {
@@ -5482,7 +5564,6 @@ class TileMatchingGame {
     }
 
     async syncCloudLeaderboard() {
-        if (typeof navigator !== 'undefined' && !navigator.onLine) return;
         if (!this.playerProfile || !this.playerProfile.nickname) return;
 
         try {
@@ -5533,103 +5614,25 @@ class TileMatchingGame {
                 updatedAt: Date.now()
             };
 
-            const cloudUrl = 'https://jsonblob.com/api/jsonBlob/019fd8e7-e1ac-7a47-aa9f-df3231a31d7f';
-            const mongoApiUrl = 'https://esle-gitsin-3d.vercel.app/api';
+            // 1. Immediately update local dataset so the player's own score reflects instantly
+            this.mergeAndSaveCloudDataset([myEntry]);
 
-            // 1. Primary Sync: Atomic update to MongoDB Atlas Database!
-            try {
-                const mongoResp = await this.fetchWithTimeout(mongoApiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(myEntry)
-                }, 3500);
-                if (mongoResp.ok) {
-                    const mongoData = await mongoResp.json();
-                    if (mongoData && Array.isArray(mongoData.players)) {
-                        this.latestCloudDataset = mongoData.players;
-                        try {
-                            localStorage.setItem('tile_game_cloud_lb_cache', JSON.stringify(mongoData.players));
-                        } catch (cErr) {}
-                    }
-                }
-            } catch (mongoErr) {}
-
-            // 2. Dual Backup Sync: JSONBlob Cloud Storage
-            const playerMap = new Map();
-            let cloudFetchSuccess = false;
-
-            try {
-                const resp = await this.fetchWithTimeout(cloudUrl + '?t=' + Date.now(), {}, 3500);
-                if (resp.ok) {
-                    const parsed = await resp.json();
-                    if (parsed && Array.isArray(parsed.players) && parsed.players.length > 0) {
-                        cloudFetchSuccess = true;
-                        for (const p of parsed.players) {
-                            if (p && p.fullTag) {
-                                const key = p.fullTag.toLowerCase();
-                                playerMap.set(key, p);
-                            }
+            // 2. Sync to Render / MongoDB backend if online
+            if (typeof navigator !== 'undefined' && navigator.onLine) {
+                const mongoApiUrl = 'https://viscora.onrender.com/api/esle-gitsin/sync';
+                try {
+                    const mongoResp = await this.fetchWithTimeout(mongoApiUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(myEntry)
+                    }, 4000);
+                    if (mongoResp && mongoResp.ok) {
+                        const mongoData = await mongoResp.json();
+                        if (mongoData && Array.isArray(mongoData.players) && mongoData.players.length > 0) {
+                            this.mergeAndSaveCloudDataset(mongoData.players);
                         }
                     }
-                }
-            } catch (fetchErr) {}
-
-            // Merge local cached dataset if available
-            if (this.latestCloudDataset && Array.isArray(this.latestCloudDataset)) {
-                for (const p of this.latestCloudDataset) {
-                    if (p && p.fullTag) {
-                        const key = p.fullTag.toLowerCase();
-                        const existing = playerMap.get(key);
-                        if (!existing) {
-                            playerMap.set(key, p);
-                        } else {
-                            const merged = {
-                                ...existing,
-                                ...p,
-                                classicLvl: Math.max(existing.classicLvl || 1, p.classicLvl || 1),
-                                classicScore: Math.max(existing.classicScore || 0, p.classicScore || 0),
-                                ttLvl: Math.max(existing.ttLvl || 1, p.ttLvl || 1),
-                                ttScore: Math.max(existing.ttScore || 0, p.ttScore || 0),
-                                puzzles: Math.max(existing.puzzles || 0, p.puzzles || 0),
-                                updatedAt: Math.max(existing.updatedAt || 0, p.updatedAt || 0)
-                            };
-                            merged.overallScore = merged.classicScore + merged.ttScore;
-                            playerMap.set(key, merged);
-                        }
-                    }
-                }
-            }
-
-            // Merge current player's entry safely with Math.max so local progress is never lost
-            const myKey = myFullTag.toLowerCase();
-            const existingMyData = playerMap.get(myKey);
-            if (existingMyData) {
-                myEntry.classicLvl = Math.max(existingMyData.classicLvl || 1, myEntry.classicLvl || 1);
-                myEntry.classicScore = Math.max(existingMyData.classicScore || 0, myEntry.classicScore || 0);
-                myEntry.ttLvl = Math.max(existingMyData.ttLvl || 1, myEntry.ttLvl || 1);
-                myEntry.ttScore = Math.max(existingMyData.ttScore || 0, myEntry.ttScore || 0);
-                myEntry.puzzles = Math.max(existingMyData.puzzles || 0, myEntry.puzzles || 0);
-                myEntry.overallScore = myEntry.classicScore + myEntry.ttScore;
-            }
-            playerMap.set(myKey, myEntry);
-
-            const updatedPlayers = Array.from(playerMap.values());
-            updatedPlayers.sort((a, b) => (b.overallScore || 0) - (a.overallScore || 0));
-
-            const finalPlayers = updatedPlayers.slice(0, 1000);
-            this.latestCloudDataset = finalPlayers;
-
-            try {
-                localStorage.setItem('tile_game_cloud_lb_cache', JSON.stringify(finalPlayers));
-            } catch (cacheErr) {}
-
-            // SAFETY GUARD: Only PUT back to cloud if cloud fetch succeeded OR if dataset has all players (>= 2)
-            if (cloudFetchSuccess || finalPlayers.length >= 2) {
-                await this.fetchWithTimeout(cloudUrl, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ players: finalPlayers })
-                }, 3500);
+                } catch (mongoErr) {}
             }
         } catch (e) {
             console.log('[CloudSync] Exception:', e);
