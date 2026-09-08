@@ -689,7 +689,7 @@ class TileMatchingGame {
             { id: 'dragon', name: 'Deniz Ejderhası', bg: '#f0f9ff', imgSrc: 'images/dragon.jpg' },
             { id: 'shiba', name: 'Shiba Inu', bg: '#fefce8', imgSrc: 'images/shiba.jpg' },
             { id: 'unicorn', name: 'Büyülü Tekboynuz', bg: '#fae8ff', imgSrc: 'images/unicorn.jpg' },
-            { id: 'lion', name: 'Kral Aslan', bg: '#fffbebf', imgSrc: 'images/lion.jpg' },
+            { id: 'lion', name: 'Kral Aslan', bg: '#fffbeb', imgSrc: 'images/lion.jpg' },
             { id: 'bunny', name: 'Sihirli Tavşan', bg: '#fdf2f8', imgSrc: 'images/bunny.jpg' },
             { id: 'owl', name: 'Bilge Baykuş', bg: '#f1f5f9', imgSrc: 'images/owl.jpg' },
             { id: 'red_panda', name: 'Kızıl Panda', bg: '#fff2e6', imgSrc: 'images/red_panda.jpg' },
@@ -2404,6 +2404,11 @@ class TileMatchingGame {
             btnCloseLeaderboard.addEventListener('click', () => {
                 this.sound.playClick();
                 document.getElementById('modal-leaderboard').classList.add('hidden');
+                // Immediately stop background polling when modal closes
+                if (this.leaderboardPollInterval) {
+                    clearInterval(this.leaderboardPollInterval);
+                    this.leaderboardPollInterval = null;
+                }
             });
         }
 
@@ -2914,7 +2919,7 @@ class TileMatchingGame {
     updateMainMenuButtons() {
         const txtClassic = document.getElementById('txt-classic-btn');
         const txtTimeTrial = document.getElementById('txt-timetrial-btn');
-        const dict = this.i18n[this.settings.lang];
+        const dict = this.i18n[this.settings.lang] || this.i18n.tr;
 
         const classicLvl = (this.classicProgress && this.classicProgress.level) ? this.classicProgress.level : 1;
         const timeTrialLvl = (this.timeTrialProgress && this.timeTrialProgress.level) ? this.timeTrialProgress.level : 1;
@@ -3075,14 +3080,29 @@ class TileMatchingGame {
     updateBoosterBadgesUI() {
         const undoBadge = document.getElementById('undo-cost-badge');
         if (undoBadge) undoBadge.innerText = this.undoCost;
-        document.getElementById('hint-cost-badge').innerText = this.hintCost;
-        document.getElementById('slot-cost-badge').innerText = this.slotCost;
-        document.getElementById('shuffle-cost-badge').innerText = this.shuffleCost;
+        const hintBadge = document.getElementById('hint-cost-badge');
+        if (hintBadge) hintBadge.innerText = this.hintCost;
+        const slotBadge = document.getElementById('slot-cost-badge');
+        if (slotBadge) slotBadge.innerText = this.slotCost;
+        const shuffleBadge = document.getElementById('shuffle-cost-badge');
+        if (shuffleBadge) shuffleBadge.innerText = this.shuffleCost;
     }
 
     startLevel(lvl, isNewGame = false, mode = 'classic') {
         this.hideMainMenuBannerAd();
         this.levelAdReviveCount = 0;
+
+        // Clear any stale timeouts from previous level to prevent ghost callbacks
+        this.stopTimer();
+        if (this.comboTimer) { clearTimeout(this.comboTimer); this.comboTimer = null; }
+        if (this.deadlockCheckTimeout) { clearTimeout(this.deadlockCheckTimeout); this.deadlockCheckTimeout = null; }
+        if (this.autoShuffleTimeout) { clearTimeout(this.autoShuffleTimeout); this.autoShuffleTimeout = null; }
+        if (this.pairMatchTimeout) { clearTimeout(this.pairMatchTimeout); this.pairMatchTimeout = null; }
+
+        // Reset combo state so previous level's last match doesn't count
+        this.comboCount = 1;
+        this.lastMatchTime = 0;
+
         this.boardTiles = [];
         this.slotTiles = [];
 
@@ -3640,7 +3660,7 @@ class TileMatchingGame {
     }
 
     useSmartHint() {
-        const dict = this.i18n[this.settings.lang];
+        const dict = this.i18n[this.settings.lang] || this.i18n.tr;
 
         if (this.score < this.hintCost) {
             this.sound.playLockThud();
@@ -3748,7 +3768,7 @@ class TileMatchingGame {
 
     // SHUFFLE BOARD BOOSTER (5000 Base Score, 2x Double Cost on Each Use)
     useShuffleBooster() {
-        const dict = this.i18n[this.settings.lang];
+        const dict = this.i18n[this.settings.lang] || this.i18n.tr;
 
         if (this.score < this.shuffleCost) {
             this.sound.playLockThud();
@@ -3855,6 +3875,11 @@ class TileMatchingGame {
         }
 
         this.slotTiles.splice(insertIdx, 0, tile);
+
+        // Mark extra slot as "used" when 6th tile enters tray — it will auto-close after next match
+        if (this.hasTemporaryExtraSlot && this.slotTiles.length >= 6) {
+            this.extraSlotWasUsed = true;
+        }
 
         const slotLayer = document.getElementById('slot-tiles-layer');
         slotLayer.appendChild(tile.element);
@@ -3998,7 +4023,7 @@ class TileMatchingGame {
         if (this.slotTiles.length >= this.maxSlotCapacity) {
             setTimeout(() => {
                 if (this.slotTiles.length >= this.maxSlotCapacity) {
-                    const dict = this.i18n[this.settings.lang];
+                    const dict = this.i18n[this.settings.lang] || this.i18n.tr;
                     this.stopTimer();
                     document.getElementById('defeat-icon').innerText = '💔';
                     document.getElementById('defeat-title').innerText = dict.defeatTitle;
