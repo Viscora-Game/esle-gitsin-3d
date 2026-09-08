@@ -626,8 +626,8 @@ class TileMatchingGame {
         this.levelStartScore = 0;
 
         // Auto-Update Engine State
-        this.currentVersion = '8.9.85';
-        this.currentBuild = 117;
+        this.currentVersion = '8.9.86';
+        this.currentBuild = 118;
         this.hasPendingUpdate = null;
         this.isUpdatingNow = false;
 
@@ -3055,6 +3055,12 @@ class TileMatchingGame {
             }
         });
 
+        // Re-render force update button label with exact current version
+        const forceUpdateSpan = document.querySelector('[data-i18n="forceUpdateBtn"]');
+        if (forceUpdateSpan && dict.forceUpdateBtn) {
+            forceUpdateSpan.innerText = dict.forceUpdateBtn.replace(/v\d+\.\d+\.\d+/, `v${this.currentVersion}`);
+        }
+
         // Re-render vibration button text in active language
         this.updateVibBtnUI();
 
@@ -4079,7 +4085,14 @@ class TileMatchingGame {
                 tile.element.style.zIndex = 200 + i;
             } else {
                 let centerX, centerY, targetW, targetH;
-                if (layerRect && markers[2] && markers[2].getBoundingClientRect) {
+                const extraSlotBox = document.querySelector('.extra-slot-box');
+                if (layerRect && extraSlotBox && extraSlotBox.getBoundingClientRect) {
+                    const eRect = extraSlotBox.getBoundingClientRect();
+                    centerX = Math.round(eRect.left - layerRect.left);
+                    centerY = Math.round(eRect.top - layerRect.top);
+                    targetW = Math.round(eRect.width);
+                    targetH = Math.round(eRect.height);
+                } else if (layerRect && markers[2] && markers[2].getBoundingClientRect) {
                     const mRect = markers[2].getBoundingClientRect();
                     centerX = Math.round(mRect.left - layerRect.left);
                     centerY = Math.round((mRect.top - layerRect.top) - (mRect.height + 15));

@@ -1679,10 +1679,11 @@ body {
     75% { transform: translateX(8px); }
 }
 
-/* Floating Top Emergency 6th Slot Holder (Positioned EXACTLY ABOVE THE CENTER SLOT #3) */
+/* Floating Top Emergency 6th Slot Holder (Positioned cleanly above bottom booster dock) */
 .floating-extra-slot {
     position: absolute;
-    bottom: 195px;
+    bottom: 245px;
+    bottom: calc(var(--tray-h, 108px) + 138px);
     left: 50%;
     transform: translateX(-50%);
     display: flex;
