@@ -1,4 +1,4 @@
-const CACHE_NAME = 'esle-gitsin-3d-v8.9.72';
+const CACHE_NAME = 'esle-gitsin-3d-v8.9.73';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -13,8 +13,6 @@ const ASSETS_TO_CACHE = [
   './icons/app-maskable-512.png',
   './icons/app-apple-icon.png',
   './audio/cybercore_sound_2_hollywood.wav',
-  './audio/bgm_cute.mp3',
-  './audio/bgm_cute.wav',
   './audio/carefree.mp3',
   './audio/fluffing_a_duck.mp3',
   './audio/monkeys.mp3',

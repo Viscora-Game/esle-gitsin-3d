@@ -587,10 +587,12 @@ class TileMatchingGame {
         this.extraSlotWasUsed = false;
 
         // Dynamic In-Level Cost System (%100 Cost Increase / x2 on each use in same level)
+        this.baseUndoCost = 500;
         this.baseHintCost = 300;
         this.baseSlotCost = 3000;
         this.baseShuffleCost = 5000;
 
+        this.undoCost = 500;
         this.hintCost = 300;
         this.slotCost = 3000;
         this.shuffleCost = 5000;
@@ -782,6 +784,7 @@ class TileMatchingGame {
                 timetrialBtnText: "⏱️ ZAMANA KARŞI MOD (SEVİYE {lvl})",
                 journalBtnText: "📖 YAPBOZ GÜNLÜĞÜ",
                 howToPlayBtnText: "📖 NASIL OYNANIR? (REHBER)",
+                privacyPolicyBtnText: "🛡️ GİZLİLİK POLİTİKASI",
                 newGameBtn: "🔄 SIFIRLA VE YENİ OYUN BAŞLAT",
                 settingsTitle: "⚙️ AYARLAR",
                 volLabel: "🔊 Ses Düzeyi",
@@ -789,6 +792,7 @@ class TileMatchingGame {
                 langLabel: "🌐 Dil Desteği",
                 saveBtn: "KAYDET VE KAPAT",
                 levelLabel: "SEVİYE",
+                undoBtnLabel: "GERİ AL",
                 hintLabel: "İPUCU",
                 slotBtnLabel: "+1 SLOT",
                 shuffleBtnLabel: "KARIŞTIR",
@@ -801,10 +805,13 @@ class TileMatchingGame {
                 defeatDesc: "Tepside boş alan kalmadı ve eşleşen kart bulunamadı.",
                 timeUpTitle: "SÜRE BİTTİ!",
                 timeUpDesc: "Zamana karşı yarışta süre doldu!",
-                penaltyText: "CEZA: -2000 Puan",
-                retryBtn: "TEKRAR DENE (-2000 PUAN)",
+                penaltyText: "Bölüm puanı sıfırlandı",
+                retryBtn: "🔄 TEKRAR DENE",
                 vibOn: "AÇIK",
                 vibOff: "KAPALI",
+                noUndoTiles: "↩️ Tepside geri alınacak kart bulunmuyor!",
+                noScoreUndo: "Yetersiz Skor! ({cost} Puan Gerekli)",
+                undoSuccessMsg: "↩️ 1 Kart Tahtaya Geri Alındı!",
                 noScoreHint: "Yetersiz Skor! ({cost} Puan Gerekli)",
                 noScoreSlot: "Yetersiz Skor! ({cost} Puan Gerekli)",
                 noScoreShuffle: "Yetersiz Skor! ({cost} Puan Gerekli)",
@@ -822,7 +829,7 @@ class TileMatchingGame {
                 prevPageBtn: "◀ ÖNCEKİ SAYFA",
                 nextPageBtn: "SONRAKİ SAYFA ▶",
                 completedBadge: "TAMAMLANDI! 🌟",
-                forceUpdateBtn: "⚡ CANLI GÜNCELLEMEYİ YÜKLE (v8.9.72)",
+                forceUpdateBtn: "⚡ CANLI GÜNCELLEMEYİ YÜKLE (v8.9.73)",
                 resetModalTitle: "🔄 HANGİ MOD SIFIRLANSIN?",
                 resetModalDesc: "Sıfırlamak istediğiniz oyun modunu seçin:",
                 resetClassicBtn: "🎮 KLASİK MODU SIFIRLA",
@@ -913,6 +920,7 @@ class TileMatchingGame {
                 timetrialBtnText: "⏱️ TIME TRIAL MODE (LEVEL {lvl})",
                 journalBtnText: "📖 PUZZLE JOURNAL",
                 howToPlayBtnText: "📖 HOW TO PLAY (GUIDE)",
+                privacyPolicyBtnText: "🛡️ PRIVACY POLICY",
                 newGameBtn: "🔄 RESET & START NEW GAME",
                 settingsTitle: "⚙️ SETTINGS",
                 volLabel: "🔊 Sound Volume",
@@ -920,6 +928,7 @@ class TileMatchingGame {
                 langLabel: "🌐 Language",
                 saveBtn: "SAVE & CLOSE",
                 levelLabel: "LEVEL",
+                undoBtnLabel: "UNDO",
                 hintLabel: "HINT",
                 slotBtnLabel: "+1 SLOT",
                 shuffleBtnLabel: "SHUFFLE",
@@ -932,10 +941,13 @@ class TileMatchingGame {
                 defeatDesc: "No empty slot available and no pairs found.",
                 timeUpTitle: "TIME'S UP!",
                 timeUpDesc: "Time ran out in the time trial!",
-                penaltyText: "PENALTY: -2000 Points",
-                retryBtn: "RETRY (-2000 PTS)",
+                penaltyText: "Level points reset",
+                retryBtn: "🔄 RETRY",
                 vibOn: "ON",
                 vibOff: "OFF",
+                noUndoTiles: "↩️ No tiles in tray to undo!",
+                noScoreUndo: "Insufficient Score! ({cost} Points Needed)",
+                undoSuccessMsg: "↩️ 1 Tile Returned to Board!",
                 noScoreHint: "Not Enough Score! ({cost} Pts Needed)",
                 noScoreSlot: "Not Enough Score! ({cost} Pts Needed)",
                 noScoreShuffle: "Not Enough Score! ({cost} Pts Needed)",
@@ -953,7 +965,7 @@ class TileMatchingGame {
                 prevPageBtn: "◀ PREVIOUS PAGE",
                 nextPageBtn: "NEXT PAGE ▶",
                 completedBadge: "COMPLETED! 🌟",
-                forceUpdateBtn: "⚡ INSTALL LIVE UPDATE (v8.9.72)",
+                forceUpdateBtn: "⚡ INSTALL LIVE UPDATE (v8.9.73)",
                 resetModalTitle: "🔄 RESET WHICH MODE?",
                 resetModalDesc: "Select game mode to reset progress:",
                 resetClassicBtn: "🎮 RESET CLASSIC MODE",
@@ -1044,6 +1056,7 @@ class TileMatchingGame {
                 timetrialBtnText: "⏱️ ZEITRENNEN (LEVEL {lvl})",
                 journalBtnText: "📖 PUZZLE-TAGEBUCH",
                 howToPlayBtnText: "📖 ANLEITUNG (HILFE)",
+                privacyPolicyBtnText: "🛡️ DATENSCHUTZRICHTLINIE",
                 newGameBtn: "🔄 NEUES SPIEL STARTEN",
                 settingsTitle: "⚙️ EINSTELLUNGEN",
                 volLabel: "🔊 Lautstärke",
@@ -1051,6 +1064,7 @@ class TileMatchingGame {
                 langLabel: "🌐 Sprache",
                 saveBtn: "SPEICHERN & SCHLIESSEN",
                 levelLabel: "LEVEL",
+                undoBtnLabel: "RÜCKGÄNGIG",
                 hintLabel: "HINWEIS",
                 slotBtnLabel: "+1 SLOT",
                 shuffleBtnLabel: "MISCHEN",
@@ -1063,10 +1077,13 @@ class TileMatchingGame {
                 defeatDesc: "Kein Platz mehr auf der Ablage vorhanden.",
                 timeUpTitle: "ZEIT ABGELAUFEN!",
                 timeUpDesc: "Die Zeit ist im Zeitrennen abgelaufen!",
-                penaltyText: "STRAFE: -2000 Punkte",
-                retryBtn: "ERNEUT VERSUCHEN (-2000 PKT)",
+                penaltyText: "Level-Punkte zurückgesetzt",
+                retryBtn: "🔄 ERNEUT VERSUCHEN",
                 vibOn: "AN",
                 vibOff: "AUS",
+                noUndoTiles: "↩️ Keine Karten in der Leiste zum Rückgängigmachen!",
+                noScoreUndo: "Unzureichende Punktzahl! ({cost} Punkte erforderlich)",
+                undoSuccessMsg: "↩️ 1 Karte auf das Spielfeld zurückgelegt!",
                 noScoreHint: "Nicht genug Punkte! ({cost} benötigt)",
                 noScoreSlot: "Nicht genug Punkte! ({cost} benötigt)",
                 noScoreShuffle: "Nicht genug Punkte! ({cost} benötigt)",
@@ -1084,7 +1101,7 @@ class TileMatchingGame {
                 prevPageBtn: "◀ VORHERIGE SEITE",
                 nextPageBtn: "NÄCHSTE SEITE ▶",
                 completedBadge: "ABGESCHLOSSEN! 🌟",
-                forceUpdateBtn: "⚡ LIVE-UPDATE INSTALLIEREN (v8.9.72)",
+                forceUpdateBtn: "⚡ LIVE-UPDATE INSTALLIEREN (v8.9.73)",
                 resetModalTitle: "🔄 WELCHEN MODUS ZURÜCKSETZEN?",
                 resetModalDesc: "Wähle den Spielmodus zum Zurücksetzen:",
                 resetClassicBtn: "🎮 KLASSISCHEN MODUS ZURÜCKSETZEN",
@@ -1175,6 +1192,7 @@ class TileMatchingGame {
                 timetrialBtnText: "⏱️ CONTRE-LA-MONTRE (NIVEAU {lvl})",
                 journalBtnText: "📖 JOURNAL DE PUZZLE",
                 howToPlayBtnText: "📖 COMMENT JOUER (GUIDE)",
+                privacyPolicyBtnText: "🛡️ POLITIQUE DE CONFIDENTIALITÉ",
                 newGameBtn: "🔄 NOUVELLE PARTIE",
                 settingsTitle: "⚙️ PARAMÈTRES",
                 volLabel: "🔊 Volume du son",
@@ -1182,6 +1200,7 @@ class TileMatchingGame {
                 langLabel: "🌐 Langue",
                 saveBtn: "SAUVEGARDER & FERMER",
                 levelLabel: "NIVEAU",
+                undoBtnLabel: "ANNULER",
                 hintLabel: "INDICE",
                 slotBtnLabel: "+1 EMPLACEMENT",
                 shuffleBtnLabel: "MÉLANGER",
@@ -1194,10 +1213,13 @@ class TileMatchingGame {
                 defeatDesc: "Plus d'espace disponible sur le plateau.",
                 timeUpTitle: "TEMPS ÉCOULÉ!",
                 timeUpDesc: "Le temps s'est écoulé dans le contre-la-montre!",
-                penaltyText: "PÉNALITÉ: -2000 Points",
-                retryBtn: "RÉESSAYER (-2000 PTS)",
+                penaltyText: "Points du niveau réinitialisés",
+                retryBtn: "🔄 RÉESSAYER",
                 vibOn: "ACTIVÉ",
                 vibOff: "DÉSACTIVÉ",
+                noUndoTiles: "↩️ Aucune carte sur le plateau à annuler !",
+                noScoreUndo: "Score insuffisant ! ({cost} points nécessaires)",
+                undoSuccessMsg: "↩️ 1 carte retournée sur le plateau !",
                 noScoreHint: "Score insuffisant! ({cost} pts requis)",
                 noScoreSlot: "Score insuffisant! ({cost} pts requis)",
                 noScoreShuffle: "Score insuffisant! ({cost} pts requis)",
@@ -1215,7 +1237,7 @@ class TileMatchingGame {
                 prevPageBtn: "◀ PAGE PRÉCÉDENTE",
                 nextPageBtn: "PAGE SUIVANTE ▶",
                 completedBadge: "TERMINÉ! 🌟",
-                forceUpdateBtn: "⚡ INSTALLER MISE À JOUR (v8.9.72)",
+                forceUpdateBtn: "⚡ INSTALLER MISE À JOUR (v8.9.73)",
                 resetModalTitle: "🔄 RÉINITIALISER QUEL MODE?",
                 resetModalDesc: "Sélectionnez le mode à réinitialiser:",
                 resetClassicBtn: "🎮 RÉINIT. CLASSIQUE",
@@ -1306,6 +1328,7 @@ class TileMatchingGame {
                 timetrialBtnText: "⏱️ CRONOMETRO (LIVELLO {lvl})",
                 journalBtnText: "📖 DIARIO DI PUZZLE",
                 howToPlayBtnText: "📖 COME GIOCARE (GUIDA)",
+                privacyPolicyBtnText: "🛡️ INFORMATIVA SULLA PRIVACY",
                 newGameBtn: "🔄 NUOVA PARTITA",
                 settingsTitle: "⚙️ IMPOSTAZIONI",
                 volLabel: "🔊 Volume Audio",
@@ -1313,6 +1336,7 @@ class TileMatchingGame {
                 langLabel: "🌐 Lingua",
                 saveBtn: "SALVA & CHIUDI",
                 levelLabel: "LIVELLO",
+                undoBtnLabel: "ANNULLA",
                 hintLabel: "SUGGERIM.",
                 slotBtnLabel: "+1 SLOT",
                 shuffleBtnLabel: "MESCOLA",
@@ -1325,10 +1349,13 @@ class TileMatchingGame {
                 defeatDesc: "Nessuno spazio rimasto nel supporto.",
                 timeUpTitle: "TEMPO SCADUTO!",
                 timeUpDesc: "Il tempo è scaduto nella modalità cronometro!",
-                penaltyText: "PENALITÀ: -2000 Punti",
-                retryBtn: "RIPROVA (-2000 PT)",
+                penaltyText: "Punti del livello azzerati",
+                retryBtn: "🔄 RIPROVA",
                 vibOn: "ATTIVO",
                 vibOff: "DISATTIVO",
+                noUndoTiles: "↩️ Nessuna tessera nel vassoio da annullare!",
+                noScoreUndo: "Punteggio insufficiente! (Servono {cost} punti)",
+                undoSuccessMsg: "↩️ 1 tessera riportata sul tabellone!",
                 noScoreHint: "Punteggio insufficiente! ({cost} pt richiesti)",
                 noScoreSlot: "Punteggio insufficiente! ({cost} pt richiesti)",
                 noScoreShuffle: "Punteggio insufficiente! ({cost} pt richiesti)",
@@ -1346,7 +1373,7 @@ class TileMatchingGame {
                 prevPageBtn: "◀ PAGINA PRECEDENTE",
                 nextPageBtn: "PAGINA SUCCESSIVA ▶",
                 completedBadge: "COMPLETATO! 🌟",
-                forceUpdateBtn: "⚡ INSTALLA AGGIORNAMENTO (v8.9.72)",
+                forceUpdateBtn: "⚡ INSTALLA AGGIORNAMENTO (v8.9.73)",
                 resetModalTitle: "🔄 RESETTA QUALE MODALITÀ?",
                 resetModalDesc: "Seleziona la modalità da resettare:",
                 resetClassicBtn: "🎮 RESETTA CLASSICA",
@@ -1412,6 +1439,7 @@ class TileMatchingGame {
                 timetrialBtnText: "⏱️ MODO CONTRARELOJ (NIVEL {lvl})",
                 journalBtnText: "📖 DIARIO DE PUZZLE",
                 howToPlayBtnText: "📖 CÓMO JUGAR (GUÍA)",
+                privacyPolicyBtnText: "🛡️ POLÍTICA DE PRIVACIDAD",
                 newGameBtn: "🔄 REINICIAR Y NUEVO JUEGO",
                 settingsTitle: "⚙️ AJUSTES",
                 volLabel: "🔊 Volumen Sonido",
@@ -1419,6 +1447,7 @@ class TileMatchingGame {
                 langLabel: "🌐 Idioma",
                 saveBtn: "GUARDAR Y CERRAR",
                 levelLabel: "NIVEL",
+                undoBtnLabel: "DESHACER",
                 hintLabel: "PISTA",
                 slotBtnLabel: "+1 SLOT",
                 shuffleBtnLabel: "MEZCLAR",
@@ -1431,10 +1460,13 @@ class TileMatchingGame {
                 defeatDesc: "No queda espacio libre en el soporte.",
                 timeUpTitle: "¡TIEMPO AGOTADO!",
                 timeUpDesc: "¡Se agotó el tiempo en el modo contrareloj!",
-                penaltyText: "PENALIZACIÓN: -2000 Puntos",
-                retryBtn: "REINTENTAR (-2000 PTS)",
+                penaltyText: "Puntos del nivel restablecidos",
+                retryBtn: "🔄 REINTENTAR",
                 vibOn: "ACTIVADO",
                 vibOff: "DESACTIVADO",
+                noUndoTiles: "↩️ ¡No hay cartas en la bandeja para deshacer!",
+                noScoreUndo: "¡Puntuación insuficiente! (Se necesitan {cost} puntos)",
+                undoSuccessMsg: "↩️ ¡1 carta devuelta al tablero!",
                 noScoreHint: "¡Puntos insuficientes! ({cost} pts requeridos)",
                 noScoreSlot: "¡Puntos insuficientes! ({cost} pts requeridos)",
                 noScoreShuffle: "¡Puntos insuficientes! ({cost} pts requeridos)",
@@ -1452,7 +1484,7 @@ class TileMatchingGame {
                 prevPageBtn: "◀ PÁGINA ANTERIOR",
                 nextPageBtn: "PÁGINA SIGUIENTE ▶",
                 completedBadge: "¡COMPLETADO! 🌟",
-                forceUpdateBtn: "⚡ INSTALAR ACTUALIZACIÓN (v8.9.72)",
+                forceUpdateBtn: "⚡ INSTALAR ACTUALIZACIÓN (v8.9.73)",
                 resetModalTitle: "🔄 ¿REINICIAR QUÉ MODO?",
                 resetModalDesc: "Selecciona el modo para reiniciar progreso:",
                 resetClassicBtn: "🎮 REINICIAR MODO CLÁSICO",
@@ -1543,6 +1575,7 @@ class TileMatchingGame {
                 timetrialBtnText: "⏱️ CONTRA O TEMPO (NÍVEL {lvl})",
                 journalBtnText: "📖 DIÁRIO DE PUZZLE",
                 howToPlayBtnText: "📖 COMO JOGAR (GUIA)",
+                privacyPolicyBtnText: "🛡️ POLÍTICA DE PRIVACIDADE",
                 newGameBtn: "🔄 REINICIAR E NOVO JOGO",
                 settingsTitle: "⚙️ CONFIGURAÇÕES",
                 volLabel: "🔊 Volume de Som",
@@ -1550,6 +1583,7 @@ class TileMatchingGame {
                 langLabel: "🌐 Idioma",
                 saveBtn: "SALVAR E FECHAR",
                 levelLabel: "NÍVEL",
+                undoBtnLabel: "DESFAZER",
                 hintLabel: "DICA",
                 slotBtnLabel: "+1 SLOT",
                 shuffleBtnLabel: "EMBARALHAR",
@@ -1562,10 +1596,13 @@ class TileMatchingGame {
                 defeatDesc: "Nenhum espaço disponível no suporte.",
                 timeUpTitle: "TEMPO ESGOTADO!",
                 timeUpDesc: "O tempo acabou no modo contra o tempo!",
-                penaltyText: "PENALIDADE: -2000 Pontos",
-                retryBtn: "TENTAR NOVAMENTE (-2000 PTS)",
+                penaltyText: "Pontos do nível redefinidos",
+                retryBtn: "🔄 TENTAR NOVAMENTE",
                 vibOn: "LIGADO",
                 vibOff: "DESLIGADO",
+                noUndoTiles: "↩️ Nenhuma carta na bandeja para desfazer!",
+                noScoreUndo: "Pontuação insuficiente! (Necessários {cost} pontos)",
+                undoSuccessMsg: "↩️ 1 carta retornada ao tabuleiro!",
                 noScoreHint: "Pontos insuficientes! ({cost} pts necessários)",
                 noScoreSlot: "Pontos insuficientes! ({cost} pts necessários)",
                 noScoreShuffle: "Pontos insuficientes! ({cost} pts necessários)",
@@ -1583,7 +1620,7 @@ class TileMatchingGame {
                 prevPageBtn: "◀ PÁGINA ANTERIOR",
                 nextPageBtn: "PRÓXIMA PÁGINA ▶",
                 completedBadge: "CONCLUÍDO! 🌟",
-                forceUpdateBtn: "⚡ INSTALAR ATUALIZAÇÃO (v8.9.72)",
+                forceUpdateBtn: "⚡ INSTALAR ATUALIZAÇÃO (v8.9.73)",
                 resetModalTitle: "🔄 REINICIAR QUAL MODO?",
                 resetModalDesc: "Selecione o modo para reiniciar progresso:",
                 resetClassicBtn: "🎮 REINICIAR MODO CLÁSSICO",
@@ -2669,6 +2706,8 @@ class TileMatchingGame {
         });
 
         // Boosters Click Handlers
+        const btnUndo = document.getElementById('btn-undo');
+        if (btnUndo) btnUndo.addEventListener('click', () => this.useUndoBooster());
         document.getElementById('btn-hint').addEventListener('click', () => this.useSmartHint());
         document.getElementById('btn-extra-slot').addEventListener('click', () => this.useExtraSlotBooster());
         document.getElementById('btn-shuffle').addEventListener('click', () => this.useShuffleBooster());
@@ -2751,11 +2790,11 @@ class TileMatchingGame {
             this.startLevel(this.level + 1, false, this.currentMode);
         });
 
-        // RETRY BUTTON DEFEAT PENALTY LOGIC (-2000 SCORE & CANCEL EARNED LEVEL POINTS)
+        // RETRY BUTTON LOGIC (RESET TO LEVEL START SCORE WITHOUT HARSH PENALTY)
         document.getElementById('btn-retry').addEventListener('click', () => {
             document.getElementById('modal-gameover').classList.add('hidden');
 
-            this.score = Math.max(0, this.levelStartScore - 2000);
+            this.score = this.levelStartScore;
             document.getElementById('score-val').innerText = this.score;
             this.saveGameProgress();
 
@@ -2927,6 +2966,8 @@ class TileMatchingGame {
     }
 
     updateBoosterBadgesUI() {
+        const undoBadge = document.getElementById('undo-cost-badge');
+        if (undoBadge) undoBadge.innerText = this.undoCost;
         document.getElementById('hint-cost-badge').innerText = this.hintCost;
         document.getElementById('slot-cost-badge').innerText = this.slotCost;
         document.getElementById('shuffle-cost-badge').innerText = this.shuffleCost;
@@ -2968,6 +3009,7 @@ class TileMatchingGame {
         this.hasMovedAnyTileInCurrentLevel = false;
 
         // Reset Level Costs & Capacity to Base
+        this.undoCost = this.baseUndoCost;
         this.hintCost = this.baseHintCost;
         this.slotCost = this.baseSlotCost;
         this.shuffleCost = this.baseShuffleCost;
@@ -3405,6 +3447,44 @@ class TileMatchingGame {
                 tile.element.style.zIndex = String(2000 + 10 * tile.layer + (tile.index || 0));
             }
         }
+    }
+
+    useUndoBooster() {
+        const dict = this.i18n[this.settings.lang] || this.i18n.tr;
+
+        if (!this.slotTiles || this.slotTiles.length === 0) {
+            this.sound.playLockThud();
+            this.triggerVibration();
+            this.showToast(dict.noUndoTiles || '↩️ Tepside geri alınacak kart bulunmuyor!');
+            return;
+        }
+
+        if (this.score < this.undoCost) {
+            this.sound.playLockThud();
+            this.triggerVibration();
+            this.showToast((dict.noScoreUndo || 'Yetersiz Skor! ({cost} Puan Gerekli)').replace('{cost}', this.undoCost));
+            return;
+        }
+
+        this.score -= this.undoCost;
+        document.getElementById('score-val').innerText = this.score;
+        this.saveGameProgress();
+
+        this.undoCost *= 2;
+        this.updateBoosterBadgesUI();
+
+        this.returnTrayTilesToBoard(1);
+
+        this.sound.playBoosterChime();
+        this.triggerVibration();
+
+        const trayEl = document.getElementById('slot-tray-bg');
+        if (trayEl) {
+            const rect = trayEl.getBoundingClientRect();
+            this.fx.spawnBurst(rect.left + rect.width / 2, rect.top + rect.height / 2, 30);
+        }
+
+        this.showToast(dict.undoSuccessMsg || '↩️ 1 Kart Tahtaya Geri Alındı!');
     }
 
     useSmartHint() {

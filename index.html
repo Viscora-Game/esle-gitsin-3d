@@ -290,6 +290,11 @@
                         <span data-i18n="howToPlayBtnText">📖 NASIL OYNANIR? (REHBER)</span>
                     </button>
 
+                    <!-- Privacy Policy Button (Google Play Store Compliance) -->
+                    <a id="btn-privacy-policy" href="privacy.html" target="_blank" class="btn-secondary settings-full-btn" style="text-decoration: none; display: flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, 0.07); border: 1px solid rgba(255, 255, 255, 0.15); color: #cbd5e1; font-weight: 700; margin-top: 8px;">
+                        <span data-i18n="privacyPolicyBtnText">🛡️ GİZLİLİK POLİTİKASI</span>
+                    </a>
+
                     <!-- Reset & New Game inside Settings -->
                     <button id="btn-menu-newgame" class="btn-danger-reset">
                         <span data-i18n="newGameBtn">🔄 SIFIRLA VE YENİ OYUN BAŞLAT</span>
@@ -297,7 +302,7 @@
 
                     <!-- Force Update & Clear Cache Button -->
                     <button id="btn-force-update" class="btn-secondary settings-full-btn" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff; font-weight: 700; margin-top: 8px;">
-                        <span data-i18n="forceUpdateBtn">⚡ CANLI GÜNCELLEMEYİ YÜKLE (v8.9.72)</span>
+                        <span data-i18n="forceUpdateBtn">⚡ CANLI GÜNCELLEMEYİ YÜKLE (v8.9.73)</span>
                     </button>
 
                     <button id="btn-save-settings" class="btn-primary" data-i18n="saveBtn">KAYDET VE KAPAT</button>
@@ -363,6 +368,13 @@
 
                 <!-- Bottom Row 2: Spacious & Bold Booster Buttons Bar -->
                 <div class="hud-bottom-boosters">
+                    <!-- Undo Last Move Booster Button (500 Score Base) -->
+                    <button id="btn-undo" class="booster-pill undo-pill" title="Son Kartı Geri Al">
+                        <span class="booster-icon">↩️</span>
+                        <span class="booster-text" data-i18n="undoBtnLabel">GERİ AL</span>
+                        <span id="undo-cost-badge" class="cost-badge cost-emerald">500</span>
+                    </button>
+
                     <!-- Smart Hint Button (300 Score Base) -->
                     <button id="btn-hint" class="booster-pill hint-pill" title="Akıllı İpucu">
                         <span class="booster-icon">💡</span>
@@ -533,17 +545,17 @@
                 <h2 class="modal-title" id="defeat-title" data-i18n="defeatTitle">SLOT DOLDU!</h2>
                 <p class="modal-desc" id="defeat-desc" data-i18n="defeatDesc">Tepside boş alan kalmadı ve eşleşen kart bulunamadı.</p>
                 
-                <!-- Defeat Penalty Info Badge -->
-                <div class="penalty-badge">
-                    <span class="penalty-icon">⚠️</span>
-                    <span id="penalty-text" data-i18n="penaltyText">CEZA: -2000 Puan (Kazanılan puanlar silindi)</span>
+                <!-- Defeat Info Badge -->
+                <div class="penalty-badge" style="background: rgba(239, 68, 68, 0.15); border-color: rgba(239, 68, 68, 0.4);">
+                    <span class="penalty-icon">ℹ️</span>
+                    <span id="penalty-text" data-i18n="penaltyText">Bölüm puanı sıfırlandı</span>
                 </div>
 
                 <button id="btn-ad-revive" class="btn-primary btn-ad-revive" style="background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); border-color: #a78bfa; margin-bottom: 10px;">
                     <span data-i18n="adReviveBtn">📺 REKLAM İZLE & +1 SLOT İLE DEVAM ET</span>
                 </button>
 
-                <button id="btn-retry" class="btn-primary" data-i18n="retryBtn">TEKRAR DENE (-2000 PUAN)</button>
+                <button id="btn-retry" class="btn-primary" data-i18n="retryBtn">🔄 TEKRAR DENE</button>
             </div>
         </div>
 
@@ -699,7 +711,7 @@
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./sw.js?v=8.9.72').then((reg) => {
+          navigator.serviceWorker.register('./sw.js?v=8.9.73').then((reg) => {
             reg.update();
           }).catch(err => console.log('SW Registration error:', err));
         });
@@ -710,6 +722,6 @@
         <span id="toast-text">Yetersiz Altın!</span>
     </div>
 
-    <script src="game.js?v=8.9.72" defer></script>
+    <script src="game.js?v=8.9.73" defer></script>
 </body>
 </html>
