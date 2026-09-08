@@ -323,7 +323,7 @@
 
                                 <!-- Force Update & Clear Cache Button -->
                                 <button id="btn-force-update" class="settings-list-btn btn-update">
-                                    <span data-i18n="forceUpdateBtn">⚡ CANLI GÜNCELLEMEYİ YÜKLE (v8.9.82)</span>
+                                    <span data-i18n="forceUpdateBtn">⚡ CANLI GÜNCELLEMEYİ YÜKLE (v8.9.83)</span>
                                     <span class="btn-chevron">↻</span>
                                 </button>
 
@@ -746,12 +746,49 @@
         </div>
     </div>
 
-    <!-- Register PWA Service Worker for PWABuilder -->
+    <!-- Register PWA Service Worker with Automatic Live Update Detection -->
     <script>
       if ('serviceWorker' in navigator) {
+        let swRefreshing = false;
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+          if (!swRefreshing) {
+            swRefreshing = true;
+            console.log('[PWA] New Service Worker active, checking if safe to auto-reload...');
+            const isPlaying = window.gameInstance && typeof window.gameInstance.isPlayerInGame === 'function' && window.gameInstance.isPlayerInGame();
+            if (!isPlaying) {
+              window.location.reload();
+            } else if (window.gameInstance) {
+              window.gameInstance.hasPendingUpdate = true;
+            }
+          }
+        });
+
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./sw.js?v=8.9.82').then((reg) => {
+          navigator.serviceWorker.register('./sw.js?v=8.9.83').then((reg) => {
+            // Immediate update check on launch
             reg.update();
+
+            reg.addEventListener('updatefound', () => {
+              const newWorker = reg.installing;
+              if (newWorker) {
+                newWorker.addEventListener('statechange', () => {
+                  if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                    console.log('[PWA] New version ready in background.');
+                    const isPlaying = window.gameInstance && typeof window.gameInstance.isPlayerInGame === 'function' && window.gameInstance.isPlayerInGame();
+                    if (!isPlaying) {
+                      window.location.reload();
+                    } else if (window.gameInstance) {
+                      window.gameInstance.hasPendingUpdate = true;
+                    }
+                  }
+                });
+              }
+            });
+
+            // Check periodically every 10 minutes
+            setInterval(() => {
+              if (navigator.onLine) reg.update();
+            }, 10 * 60 * 1000);
           }).catch(err => console.log('SW Registration error:', err));
         });
       }
@@ -761,6 +798,6 @@
         <span id="toast-text">Yetersiz Altın!</span>
     </div>
 
-    <script src="game.js?v=8.9.82" defer></script>
+    <script src="game.js?v=8.9.83" defer></script>
 </body>
 </html>

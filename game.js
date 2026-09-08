@@ -625,6 +625,12 @@ class TileMatchingGame {
         this.score = 0;
         this.levelStartScore = 0;
 
+        // Auto-Update Engine State
+        this.currentVersion = '8.9.83';
+        this.currentBuild = 115;
+        this.hasPendingUpdate = null;
+        this.isUpdatingNow = false;
+
         // Time Trial Countdown Timer State
         this.timerInterval = null;
         this.remainingSeconds = 0;
@@ -1697,6 +1703,8 @@ class TileMatchingGame {
         }
         this.checkFirstTimeTutorial();
         this.checkFirstTimeRegistration();
+        this.checkForLiveUpdate();
+        setInterval(() => this.checkForLiveUpdate(), 10 * 60 * 1000);
         } catch (e) {
             console.error('[EsleGitsin3D] Init error:', e);
             document.querySelectorAll('.modal-overlay').forEach(el => {
@@ -2650,6 +2658,11 @@ class TileMatchingGame {
                 this.startWheelTimerLoop();
                 document.getElementById('main-menu').classList.remove('hidden');
                 this.showMainMenuBannerAd();
+
+                if (this.hasPendingUpdate) {
+                    this.applyLiveAutoUpdate(this.hasPendingUpdate);
+                    return;
+                }
             }
         });
 
@@ -2690,6 +2703,11 @@ class TileMatchingGame {
                 this.showMainMenuBannerAd();
 
                 this.showToast('⚠️ Bölümden ayrıldınız! (-500 Puan Cezası Kesildi)');
+
+                if (this.hasPendingUpdate) {
+                    this.applyLiveAutoUpdate(this.hasPendingUpdate);
+                    return;
+                }
             });
         }
 
@@ -2739,6 +2757,7 @@ class TileMatchingGame {
                     this.isTimerPausedForBackground = false;
                     this.startTimer();
                 }
+                this.checkForLiveUpdate();
             }
         });
 
@@ -2892,19 +2911,33 @@ class TileMatchingGame {
                 // If chest was opened from the main menu (daily ad chest / wheel), stay on menu; otherwise advance to next level!
                 const isMenuVisible = !document.getElementById('main-menu').classList.contains('hidden');
                 if (!isMenuVisible) {
+                    if (this.hasPendingUpdate) {
+                        this.applyLiveAutoUpdate(this.hasPendingUpdate);
+                        return;
+                    }
                     this.startLevel(this.level + 1, false, this.currentMode);
+                } else if (this.hasPendingUpdate) {
+                    this.applyLiveAutoUpdate(this.hasPendingUpdate);
                 }
             };
         }
 
         document.getElementById('btn-next-level').addEventListener('click', () => {
             document.getElementById('modal-victory').classList.add('hidden');
+            if (this.hasPendingUpdate) {
+                this.applyLiveAutoUpdate(this.hasPendingUpdate);
+                return;
+            }
             this.startLevel(this.level + 1, false, this.currentMode);
         });
 
         // RETRY BUTTON LOGIC (RESET TO LEVEL START SCORE WITHOUT HARSH PENALTY)
         document.getElementById('btn-retry').addEventListener('click', () => {
             document.getElementById('modal-gameover').classList.add('hidden');
+            if (this.hasPendingUpdate) {
+                this.applyLiveAutoUpdate(this.hasPendingUpdate);
+                return;
+            }
 
             this.score = this.levelStartScore;
             document.getElementById('score-val').innerText = this.score;
@@ -2926,6 +2959,58 @@ class TileMatchingGame {
 
         txtClassic.innerText = dict.classicBtnText.replace('{lvl}', classicLvl);
         txtTimeTrial.innerText = dict.timetrialBtnText.replace('{lvl}', timeTrialLvl);
+    }
+
+    isPlayerInGame() {
+        const mainMenu = document.getElementById('main-menu');
+        const isMenuOpen = mainMenu && !mainMenu.classList.contains('hidden');
+        return !isMenuOpen && this.boardTiles && this.boardTiles.length > 0;
+    }
+
+    async checkForLiveUpdate() {
+        if (!navigator.onLine) return;
+        try {
+            const res = await fetch('./version.json?_t=' + Date.now(), {
+                cache: 'no-store',
+                headers: { 'Cache-Control': 'no-cache, no-store, must-revalidate' }
+            });
+            if (!res.ok) return;
+            const remote = await res.json();
+            if (remote && typeof remote.build === 'number' && remote.build > this.currentBuild) {
+                console.log(`[AutoUpdate] Yeni sürüm tespit edildi: v${remote.version} (Build ${remote.build}) > Mevcut: v${this.currentVersion} (Build ${this.currentBuild})`);
+                if (!this.isPlayerInGame()) {
+                    this.applyLiveAutoUpdate(remote.version);
+                } else {
+                    this.hasPendingUpdate = remote.version;
+                }
+            }
+        } catch (err) {
+            console.warn('[AutoUpdate] Güncelleme denetimi atlandı (çevrimdışı/ağ hatası):', err);
+        }
+    }
+
+    async applyLiveAutoUpdate(newVer) {
+        if (this.isUpdatingNow) return;
+        this.isUpdatingNow = true;
+
+        this.showToast(`⚡ Yeni Güncelleme (v${newVer || ''}) Yükleniyor...`);
+
+        try {
+            if ('caches' in window) {
+                const keys = await caches.keys();
+                await Promise.all(keys.map(k => caches.delete(k)));
+            }
+            if ('serviceWorker' in navigator) {
+                const regs = await navigator.serviceWorker.getRegistrations();
+                await Promise.all(regs.map(r => r.unregister()));
+            }
+        } catch (e) {
+            console.error('[AutoUpdate] Önbellek temizleme hatası:', e);
+        }
+
+        setTimeout(() => {
+            window.location.href = window.location.origin + window.location.pathname + '?nocache=' + Date.now();
+        }, 750);
     }
 
     openSettings() {

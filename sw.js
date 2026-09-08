@@ -1,4 +1,4 @@
-const CACHE_NAME = 'esle-gitsin-3d-v8.9.82';
+const CACHE_NAME = 'esle-gitsin-3d-v8.9.83';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -74,8 +74,8 @@ self.addEventListener('fetch', (event) => {
 
   const reqUrl = event.request.url.toLowerCase();
 
-  // EXPLICITLY BYPASS SERVICE WORKER CACHE FOR LIVE CLOUD DATABASE API REQUESTS!
-  if (reqUrl.includes('jsonblob') || reqUrl.includes('mongodb') || reqUrl.includes('/api/')) {
+  // EXPLICITLY BYPASS SERVICE WORKER CACHE FOR LIVE CLOUD DATABASE API REQUESTS & VERSION CHECK!
+  if (reqUrl.includes('jsonblob') || reqUrl.includes('mongodb') || reqUrl.includes('/api/') || reqUrl.includes('version.json')) {
     return;
   }
 
@@ -110,9 +110,13 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Static Assets & Cross-Origin Fonts: Cache-First with ignoreSearch
+  // Static Assets & Cross-Origin Fonts:
+  // For JS and CSS, respect version query parameters (?v=...) to ensure live updates download immediately!
+  const isScriptOrStyle = reqUrl.includes('.js') || reqUrl.includes('.css');
+  const matchOptions = isScriptOrStyle ? {} : { ignoreSearch: true };
+
   event.respondWith(
-    caches.match(event.request, { ignoreSearch: true }).then((cachedResponse) => {
+    caches.match(event.request, matchOptions).then((cachedResponse) => {
       if (cachedResponse) {
         // Stale-While-Revalidate in background if online
         if (navigator.onLine) {
