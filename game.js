@@ -1690,7 +1690,11 @@ class TileMatchingGame {
             this.syncCloudLeaderboard();
         });
         this.initUI();
-        this.initBackgroundMusic();
+        // Only start BGM immediately if intro is already finished (no intro stage);
+        // otherwise setupStudioIntro's dismiss callback will start BGM after chime ends
+        if (this.introFinished) {
+            this.initBackgroundMusic();
+        }
         this.checkFirstTimeTutorial();
         this.checkFirstTimeRegistration();
         } catch (e) {
@@ -2035,9 +2039,14 @@ class TileMatchingGame {
 
     setupStudioIntro() {
         const introStage = document.getElementById('cybercore-intro-stage');
-        if (!introStage) return;
+        if (!introStage) {
+            // No intro stage found, BGM can start immediately
+            this.introFinished = true;
+            return;
+        }
 
         this.introActive = true;
+        this.introFinished = false;
 
         let audioPlayed = false;
         const playChime = () => {
@@ -2079,6 +2088,9 @@ class TileMatchingGame {
                 if (introStage && introStage.parentNode) {
                     introStage.parentNode.removeChild(introStage);
                 }
+                // Mark intro as finished and start BGM only after intro fully fades out
+                this.introFinished = true;
+                this.initBackgroundMusic();
             }, 500);
         };
 
