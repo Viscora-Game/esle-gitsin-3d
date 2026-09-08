@@ -626,8 +626,8 @@ class TileMatchingGame {
         this.levelStartScore = 0;
 
         // Auto-Update Engine State
-        this.currentVersion = '8.9.83';
-        this.currentBuild = 115;
+        this.currentVersion = '8.9.84';
+        this.currentBuild = 116;
         this.hasPendingUpdate = null;
         this.isUpdatingNow = false;
 
@@ -5608,9 +5608,18 @@ class TileMatchingGame {
             if (raw) {
                 const parsed = JSON.parse(raw);
                 if (parsed && Array.isArray(parsed) && parsed.length > 0) {
-                    this.latestCloudDataset = parsed;
+                    // Filter out contaminated or 0-point bot users from cache!
+                    const cleaned = parsed.filter(p => {
+                        if (!p || !p.fullTag) return false;
+                        if (p.isSelf) return true;
+                        const score = p.overallScore || ((p.classicScore || 0) + (p.ttScore || 0));
+                        if (score <= 0) return false;
+                        if (typeof p.fullTag === 'string' && p.fullTag.startsWith('Oyuncu #')) return false;
+                        return true;
+                    });
+                    this.latestCloudDataset = cleaned;
                     // Ensure seed champions are always included even in older cached data
-                    const existingTags = new Set(parsed.map(p => (p && p.fullTag ? normalizeFullTag(p.fullTag) : '')));
+                    const existingTags = new Set(cleaned.map(p => (p && p.fullTag ? normalizeFullTag(p.fullTag) : '')));
                     for (const seedP of DEFAULT_LEADERBOARD_SEED) {
                         if (!existingTags.has(normalizeFullTag(seedP.fullTag))) {
                             this.latestCloudDataset.push({ ...seedP });
@@ -5636,13 +5645,24 @@ class TileMatchingGame {
             playerMap.set(normalizeFullTag(seedP.fullTag), { ...seedP });
         }
 
+        // Helper filter for real active players (exclude 0-point bots)
+        const isLegitPlayer = (p, isMe) => {
+            if (isMe) return true;
+            if (!p || !p.fullTag) return false;
+            if (typeof p.fullTag === 'string' && p.fullTag.startsWith('Oyuncu #')) return false;
+            const score = p.overallScore || ((p.classicScore || 0) + (p.ttScore || 0));
+            return score > 0;
+        };
+
         // 2. Existing local dataset
         if (this.latestCloudDataset && Array.isArray(this.latestCloudDataset)) {
             for (const p of this.latestCloudDataset) {
                 if (p && p.fullTag) {
                     const key = normalizeFullTag(p.fullTag);
-                    const ex = playerMap.get(key);
                     const isMe = (myKey && key === myKey) || p.isSelf || false;
+                    if (!isLegitPlayer(p, isMe)) continue;
+
+                    const ex = playerMap.get(key);
                     if (!ex) {
                         playerMap.set(key, { ...p, isSelf: isMe });
                     } else {
@@ -5670,8 +5690,10 @@ class TileMatchingGame {
         for (const p of incomingPlayers) {
             if (p && p.fullTag) {
                 const key = normalizeFullTag(p.fullTag);
-                const ex = playerMap.get(key);
                 const isMe = (myKey && key === myKey) || p.isSelf || false;
+                if (!isLegitPlayer(p, isMe)) continue;
+
+                const ex = playerMap.get(key);
                 if (!ex) {
                     playerMap.set(key, { ...p, isSelf: isMe });
                 } else {
@@ -5734,19 +5756,25 @@ class TileMatchingGame {
                     for (const u of debugUsers) {
                         if (!u) continue;
                         const hasEsleId = typeof u.userId === 'string' && u.userId.startsWith('esle_');
-                        const hasHashAuthor = typeof u.authorName === 'string' && u.authorName.includes('#');
-                        if (hasEsleId || hasHashAuthor) {
-                            let fullTag = typeof u.authorName === 'string' ? u.authorName : '';
-                            if (!fullTag && hasEsleId) {
-                                fullTag = u.userId.replace('esle_', '').replace(/_/g, '#');
-                            }
-                            if (!fullTag || typeof fullTag !== 'string' || !fullTag.includes('#')) continue;
-                            const parts = fullTag.split('#');
-                            const name = parts[0] || 'Oyuncu';
-                            const tag = parts[1] || '0001';
+                        // STRICT: Only genuine Eşle Gitsin players starting with esle_ prefix
+                        if (!hasEsleId) continue;
 
-                            const overall = typeof u.totalCrystals === 'number' ? u.totalCrystals : 0;
-                            const classic = typeof u.spentCrystals === 'number' ? u.spentCrystals : 0;
+                        let fullTag = typeof u.authorName === 'string' ? u.authorName : '';
+                        if (!fullTag) {
+                            fullTag = u.userId.replace('esle_', '').replace(/_/g, '#');
+                        }
+                        if (!fullTag || typeof fullTag !== 'string' || !fullTag.includes('#')) continue;
+                        if (fullTag.startsWith('Oyuncu #')) continue;
+
+                        const overall = typeof u.totalCrystals === 'number' ? u.totalCrystals : 0;
+                        const classic = typeof u.spentCrystals === 'number' ? u.spentCrystals : 0;
+                        
+                        // Strict zero-score filter: Must have earned at least 1 point
+                        if (overall <= 0 && classic <= 0) continue;
+
+                        const parts = fullTag.split('#');
+                        const name = parts[0] || 'Oyuncu';
+                        const tag = parts[1] || '0001';
                             
                             const avatarStr = u.avatar || '';
                             const avatarParts = avatarStr.split('_');
@@ -5771,7 +5799,6 @@ class TileMatchingGame {
                                 inventoryCount: invCount,
                                 updatedAt: u.lastUpdated ? new Date(u.lastUpdated).getTime() : Date.now()
                             });
-                        }
                     }
 
                     if (parsedPlayers.length > 0) {
@@ -6059,6 +6086,10 @@ class TileMatchingGame {
                 const cpClassicScore = (typeof cp.classicScore === 'number' && cp.classicScore >= 0) ? cp.classicScore : 0;
                 const cpTtScore = (typeof cp.ttScore === 'number' && cp.ttScore >= 0) ? cp.ttScore : 0;
                 const cpOverallScore = (typeof cp.overallScore === 'number' && cp.overallScore >= 0) ? cp.overallScore : (cpClassicScore + cpTtScore);
+
+                // STRICT BOT & ZERO-SCORE FILTER:
+                if (typeof cp.fullTag === 'string' && cp.fullTag.startsWith('Oyuncu #')) continue;
+                if (cpOverallScore <= 0 && cpClassicScore <= 0 && cpTtScore <= 0) continue;
 
                 const existingIdx = list.findIndex(item => normalizeFullTag(item.fullTag) === cpKey);
 
@@ -6369,6 +6400,9 @@ class TileMatchingGame {
             if (category === 'classic') displayScore = player.classicScore;
             else if (category === 'timetrial') displayScore = player.ttScore;
             else displayScore = player.overallScore;
+
+            // STRICT ZERO-SCORE BOT FILTER: Never render 0-point bots/inactive accounts (unless it's self viewing their own status)
+            if (!player.isSelf && displayScore <= 0) continue;
 
             const safeTag = String(player.fullTag).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
             const safeTitle = String(tierInfo.title).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
