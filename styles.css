@@ -2114,6 +2114,24 @@ body {
     color: #fbbf24;
 }
 
+.btn-edit-nick-pill {
+    background: rgba(251, 191, 36, 0.2);
+    border: 1px solid rgba(251, 191, 36, 0.6);
+    color: #fbbf24;
+    border-radius: 8px;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 7px;
+    cursor: pointer;
+    transition: transform 0.15s, background 0.15s;
+    line-height: 1.2;
+}
+
+.btn-edit-nick-pill:active {
+    transform: scale(0.92);
+    background: rgba(251, 191, 36, 0.45);
+}
+
 /* PLAYER PROFILE CARD MODAL STYLES */
 .player-profile-card {
     max-width: 380px;

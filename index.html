@@ -295,6 +295,11 @@
                         <span data-i18n="privacyPolicyBtnText">🛡️ GİZLİLİK POLİTİKASI</span>
                     </a>
 
+                    <!-- Change Nickname / Profile Button -->
+                    <button id="btn-settings-edit-profile" class="btn-secondary settings-full-btn" style="background: rgba(251, 191, 36, 0.12); border: 1px solid rgba(251, 191, 36, 0.4); color: #fbbf24; font-weight: 700; margin-top: 8px;">
+                        <span data-i18n="editProfileBtnText">👤 KULLANICI ADINI DEĞİŞTİR</span>
+                    </button>
+
                     <!-- Reset & New Game inside Settings -->
                     <button id="btn-menu-newgame" class="btn-danger-reset">
                         <span data-i18n="newGameBtn">🔄 SIFIRLA VE YENİ OYUN BAŞLAT</span>
@@ -302,7 +307,7 @@
 
                     <!-- Force Update & Clear Cache Button -->
                     <button id="btn-force-update" class="btn-secondary settings-full-btn" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: #ffffff; font-weight: 700; margin-top: 8px;">
-                        <span data-i18n="forceUpdateBtn">⚡ CANLI GÜNCELLEMEYİ YÜKLE (v8.9.73)</span>
+                        <span data-i18n="forceUpdateBtn">⚡ CANLI GÜNCELLEMEYİ YÜKLE (v8.9.74)</span>
                     </button>
 
                     <button id="btn-save-settings" class="btn-primary" data-i18n="saveBtn">KAYDET VE KAPAT</button>
@@ -573,13 +578,14 @@
         </div>
     </div>
 
-    <!-- First-Time Nickname & 4-Digit Tag Registration Modal -->
+    <!-- First-Time / Edit Nickname & 4-Digit Tag Registration Modal -->
     <div id="modal-set-nickname" class="modal-overlay hidden" style="z-index: 99990;">
-        <div class="modal-card nickname-card">
+        <div class="modal-card nickname-card" style="position: relative;">
+            <button id="btn-close-nickname" class="btn-close-x" style="position: absolute; right: 14px; top: 14px;">✕</button>
             <div class="modal-header-row">
-                <h2 class="modal-title">👤 PROFİLİNİ OLUŞTUR</h2>
+                <h2 class="modal-title" id="nickname-modal-title">👤 PROFİLİNİ OLUŞTUR</h2>
             </div>
-            <p class="nickname-subtext">Liderlik tablosunda görünecek adınızı (Maks 10 Karakter) ve 4 haneli etiketinizi belirleyin!</p>
+            <p class="nickname-subtext" id="nickname-modal-subtext">Liderlik tablosunda görünecek adınızı (Maks 10 Karakter) ve 4 haneli etiketinizi belirleyin!</p>
             
             <div class="nickname-form-group">
                 <label class="nickname-label">Kullanıcı Adı (Maks 10 Harf):</label>
@@ -598,7 +604,7 @@
                 <span id="nickname-error-msg" class="nickname-error hidden">⚠️ Lütfen uygun bir kullanıcı adı girin!</span>
             </div>
 
-            <button id="btn-save-nickname" class="btn-primary nickname-submit-btn">✨ PROFİLİ KAYDET VE OYUNA BAŞLA</button>
+            <button id="btn-save-nickname" class="btn-primary nickname-submit-btn">✨ PROFİLİ KAYDET VE KATIL</button>
         </div>
     </div>
 
@@ -631,7 +637,10 @@
             <div id="leaderboard-self-bar" class="leaderboard-self-bar">
                 <div id="self-rank-badge" class="self-rank-badge">#---</div>
                 <div class="self-info-col">
-                    <span id="self-name-tag" class="self-name-tag">SİZ: ---#----</span>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span id="self-name-tag" class="self-name-tag">SİZ: ---#----</span>
+                        <button id="btn-edit-lb-nickname" class="btn-edit-nick-pill" title="İsmini Değiştir">✏️ Değiştir</button>
+                    </div>
                     <span id="self-title-badge" class="self-title-badge">🛡️ Yükselen Yıldız</span>
                 </div>
                 <div id="self-score-val" class="self-score-val">0 Puan</div>
@@ -678,7 +687,10 @@
             
             <div class="profile-header-box">
                 <div id="profile-avatar-frame" class="profile-avatar-frame">👑</div>
-                <h2 id="profile-name-tag" class="profile-name-tag">Oyuncu#0000</h2>
+                <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    <h2 id="profile-name-tag" class="profile-name-tag">Oyuncu#0000</h2>
+                    <button id="btn-profile-edit-name" class="btn-edit-nick-pill hidden" title="İsmini Değiştir">✏️ Değiştir</button>
+                </div>
                 <span id="profile-title-badge" class="profile-tier-badge">👑 Kozmik İlah</span>
                 <span id="profile-global-rank" class="profile-global-rank">Küresel Sıralama: #1</span>
             </div>
@@ -711,7 +723,7 @@
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./sw.js?v=8.9.73').then((reg) => {
+          navigator.serviceWorker.register('./sw.js?v=8.9.74').then((reg) => {
             reg.update();
           }).catch(err => console.log('SW Registration error:', err));
         });
@@ -722,6 +734,6 @@
         <span id="toast-text">Yetersiz Altın!</span>
     </div>
 
-    <script src="game.js?v=8.9.73" defer></script>
+    <script src="game.js?v=8.9.74" defer></script>
 </body>
 </html>

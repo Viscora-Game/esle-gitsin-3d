@@ -81,7 +81,17 @@ const DEFAULT_LEADERBOARD_SEED = [
     { name: "HamzaXd", tag: "6734", fullTag: "HamzaXd#6734", classicLvl: 17, classicScore: 57700, ttLvl: 11, ttScore: 158200, overallScore: 215900, puzzles: 0 },
     { name: "HamSu", tag: "0228", fullTag: "HamSu#0228", classicLvl: 27, classicScore: 62000, ttLvl: 13, ttScore: 108100, overallScore: 170100, puzzles: 0 },
     { name: "Sudiş", tag: "2802", fullTag: "Sudiş#2802", classicLvl: 22, classicScore: 44200, ttLvl: 12, ttScore: 105800, overallScore: 150000, puzzles: 2 },
-    { name: "HamzaKa", tag: "6734", fullTag: "HamzaKa#6734", classicLvl: 22, classicScore: 53500, ttLvl: 4, ttScore: 28600, overallScore: 82100, puzzles: 0 }
+    { name: "Mert", tag: "1042", fullTag: "Mert#1042", classicLvl: 18, classicScore: 48500, ttLvl: 7, ttScore: 65400, overallScore: 113900, puzzles: 1 },
+    { name: "Gökhan", tag: "7968", fullTag: "Gökhan#7968", classicLvl: 16, classicScore: 41200, ttLvl: 6, ttScore: 54100, overallScore: 95300, puzzles: 1 },
+    { name: "HamzaKa", tag: "6734", fullTag: "HamzaKa#6734", classicLvl: 22, classicScore: 53500, ttLvl: 4, ttScore: 28600, overallScore: 82100, puzzles: 0 },
+    { name: "Taha", tag: "4412", fullTag: "Taha#4412", classicLvl: 15, classicScore: 38900, ttLvl: 5, ttScore: 42300, overallScore: 81200, puzzles: 0 },
+    { name: "The Grace", tag: "7701", fullTag: "The Grace#7701", classicLvl: 14, classicScore: 36500, ttLvl: 5, ttScore: 39800, overallScore: 76300, puzzles: 1 },
+    { name: "Ensar", tag: "3309", fullTag: "Ensar#3309", classicLvl: 13, classicScore: 33400, ttLvl: 4, ttScore: 31200, overallScore: 64600, puzzles: 0 },
+    { name: "Melek", tag: "9021", fullTag: "Melek#9021", classicLvl: 12, classicScore: 30100, ttLvl: 4, ttScore: 28900, overallScore: 59000, puzzles: 0 },
+    { name: "Ayse", tag: "5512", fullTag: "Ayse#5512", classicLvl: 11, classicScore: 26800, ttLvl: 3, ttScore: 24500, overallScore: 51300, puzzles: 0 },
+    { name: "Grey", tag: "1184", fullTag: "Grey#1184", classicLvl: 10, classicScore: 23500, ttLvl: 3, ttScore: 21000, overallScore: 44500, puzzles: 0 },
+    { name: "OsmanaGİ", tag: "6219", fullTag: "OsmanaGİ#6219", classicLvl: 9, classicScore: 19800, ttLvl: 2, ttScore: 16400, overallScore: 36200, puzzles: 0 },
+    { name: "Bero", tag: "8834", fullTag: "Bero#8834", classicLvl: 8, classicScore: 16200, ttLvl: 2, ttScore: 14100, overallScore: 30300, puzzles: 0 }
 ];
 
 /**
@@ -785,6 +795,7 @@ class TileMatchingGame {
                 journalBtnText: "📖 YAPBOZ GÜNLÜĞÜ",
                 howToPlayBtnText: "📖 NASIL OYNANIR? (REHBER)",
                 privacyPolicyBtnText: "🛡️ GİZLİLİK POLİTİKASI",
+                editProfileBtnText: "👤 KULLANICI ADINI DEĞİŞTİR",
                 newGameBtn: "🔄 SIFIRLA VE YENİ OYUN BAŞLAT",
                 settingsTitle: "⚙️ AYARLAR",
                 volLabel: "🔊 Ses Düzeyi",
@@ -829,7 +840,7 @@ class TileMatchingGame {
                 prevPageBtn: "◀ ÖNCEKİ SAYFA",
                 nextPageBtn: "SONRAKİ SAYFA ▶",
                 completedBadge: "TAMAMLANDI! 🌟",
-                forceUpdateBtn: "⚡ CANLI GÜNCELLEMEYİ YÜKLE (v8.9.73)",
+                forceUpdateBtn: "⚡ CANLI GÜNCELLEMEYİ YÜKLE (v8.9.74)",
                 resetModalTitle: "🔄 HANGİ MOD SIFIRLANSIN?",
                 resetModalDesc: "Sıfırlamak istediğiniz oyun modunu seçin:",
                 resetClassicBtn: "🎮 KLASİK MODU SIFIRLA",
@@ -921,6 +932,7 @@ class TileMatchingGame {
                 journalBtnText: "📖 PUZZLE JOURNAL",
                 howToPlayBtnText: "📖 HOW TO PLAY (GUIDE)",
                 privacyPolicyBtnText: "🛡️ PRIVACY POLICY",
+                editProfileBtnText: "👤 CHANGE USERNAME",
                 newGameBtn: "🔄 RESET & START NEW GAME",
                 settingsTitle: "⚙️ SETTINGS",
                 volLabel: "🔊 Sound Volume",
@@ -965,7 +977,7 @@ class TileMatchingGame {
                 prevPageBtn: "◀ PREVIOUS PAGE",
                 nextPageBtn: "NEXT PAGE ▶",
                 completedBadge: "COMPLETED! 🌟",
-                forceUpdateBtn: "⚡ INSTALL LIVE UPDATE (v8.9.73)",
+                forceUpdateBtn: "⚡ INSTALL LIVE UPDATE (v8.9.74)",
                 resetModalTitle: "🔄 RESET WHICH MODE?",
                 resetModalDesc: "Select game mode to reset progress:",
                 resetClassicBtn: "🎮 RESET CLASSIC MODE",
@@ -1057,6 +1069,7 @@ class TileMatchingGame {
                 journalBtnText: "📖 PUZZLE-TAGEBUCH",
                 howToPlayBtnText: "📖 ANLEITUNG (HILFE)",
                 privacyPolicyBtnText: "🛡️ DATENSCHUTZRICHTLINIE",
+                editProfileBtnText: "👤 BENUTZERNAME ÄNDERN",
                 newGameBtn: "🔄 NEUES SPIEL STARTEN",
                 settingsTitle: "⚙️ EINSTELLUNGEN",
                 volLabel: "🔊 Lautstärke",
@@ -1101,7 +1114,7 @@ class TileMatchingGame {
                 prevPageBtn: "◀ VORHERIGE SEITE",
                 nextPageBtn: "NÄCHSTE SEITE ▶",
                 completedBadge: "ABGESCHLOSSEN! 🌟",
-                forceUpdateBtn: "⚡ LIVE-UPDATE INSTALLIEREN (v8.9.73)",
+                forceUpdateBtn: "⚡ LIVE-UPDATE INSTALLIEREN (v8.9.74)",
                 resetModalTitle: "🔄 WELCHEN MODUS ZURÜCKSETZEN?",
                 resetModalDesc: "Wähle den Spielmodus zum Zurücksetzen:",
                 resetClassicBtn: "🎮 KLASSISCHEN MODUS ZURÜCKSETZEN",
@@ -1193,6 +1206,7 @@ class TileMatchingGame {
                 journalBtnText: "📖 JOURNAL DE PUZZLE",
                 howToPlayBtnText: "📖 COMMENT JOUER (GUIDE)",
                 privacyPolicyBtnText: "🛡️ POLITIQUE DE CONFIDENTIALITÉ",
+                editProfileBtnText: "👤 MODIFIER LE NOM D'UTILISATEUR",
                 newGameBtn: "🔄 NOUVELLE PARTIE",
                 settingsTitle: "⚙️ PARAMÈTRES",
                 volLabel: "🔊 Volume du son",
@@ -1237,7 +1251,7 @@ class TileMatchingGame {
                 prevPageBtn: "◀ PAGE PRÉCÉDENTE",
                 nextPageBtn: "PAGE SUIVANTE ▶",
                 completedBadge: "TERMINÉ! 🌟",
-                forceUpdateBtn: "⚡ INSTALLER MISE À JOUR (v8.9.73)",
+                forceUpdateBtn: "⚡ INSTALLER MISE À JOUR (v8.9.74)",
                 resetModalTitle: "🔄 RÉINITIALISER QUEL MODE?",
                 resetModalDesc: "Sélectionnez le mode à réinitialiser:",
                 resetClassicBtn: "🎮 RÉINIT. CLASSIQUE",
@@ -1329,6 +1343,7 @@ class TileMatchingGame {
                 journalBtnText: "📖 DIARIO DI PUZZLE",
                 howToPlayBtnText: "📖 COME GIOCARE (GUIDA)",
                 privacyPolicyBtnText: "🛡️ INFORMATIVA SULLA PRIVACY",
+                editProfileBtnText: "👤 MODIFICA NOME UTENTE",
                 newGameBtn: "🔄 NUOVA PARTITA",
                 settingsTitle: "⚙️ IMPOSTAZIONI",
                 volLabel: "🔊 Volume Audio",
@@ -1373,7 +1388,7 @@ class TileMatchingGame {
                 prevPageBtn: "◀ PAGINA PRECEDENTE",
                 nextPageBtn: "PAGINA SUCCESSIVA ▶",
                 completedBadge: "COMPLETATO! 🌟",
-                forceUpdateBtn: "⚡ INSTALLA AGGIORNAMENTO (v8.9.73)",
+                forceUpdateBtn: "⚡ INSTALLA AGGIORNAMENTO (v8.9.74)",
                 resetModalTitle: "🔄 RESETTA QUALE MODALITÀ?",
                 resetModalDesc: "Seleziona la modalità da resettare:",
                 resetClassicBtn: "🎮 RESETTA CLASSICA",
@@ -1440,6 +1455,7 @@ class TileMatchingGame {
                 journalBtnText: "📖 DIARIO DE PUZZLE",
                 howToPlayBtnText: "📖 CÓMO JUGAR (GUÍA)",
                 privacyPolicyBtnText: "🛡️ POLÍTICA DE PRIVACIDAD",
+                editProfileBtnText: "👤 CAMBIAR NOMBRE DE USUARIO",
                 newGameBtn: "🔄 REINICIAR Y NUEVO JUEGO",
                 settingsTitle: "⚙️ AJUSTES",
                 volLabel: "🔊 Volumen Sonido",
@@ -1484,7 +1500,7 @@ class TileMatchingGame {
                 prevPageBtn: "◀ PÁGINA ANTERIOR",
                 nextPageBtn: "PÁGINA SIGUIENTE ▶",
                 completedBadge: "¡COMPLETADO! 🌟",
-                forceUpdateBtn: "⚡ INSTALAR ACTUALIZACIÓN (v8.9.73)",
+                forceUpdateBtn: "⚡ INSTALAR ACTUALIZACIÓN (v8.9.74)",
                 resetModalTitle: "🔄 ¿REINICIAR QUÉ MODO?",
                 resetModalDesc: "Selecciona el modo para reiniciar progreso:",
                 resetClassicBtn: "🎮 REINICIAR MODO CLÁSICO",
@@ -1576,6 +1592,7 @@ class TileMatchingGame {
                 journalBtnText: "📖 DIÁRIO DE PUZZLE",
                 howToPlayBtnText: "📖 COMO JOGAR (GUIA)",
                 privacyPolicyBtnText: "🛡️ POLÍTICA DE PRIVACIDADE",
+                editProfileBtnText: "👤 ALTERAR NOME DE USUÁRIO",
                 newGameBtn: "🔄 REINICIAR E NOVO JOGO",
                 settingsTitle: "⚙️ CONFIGURAÇÕES",
                 volLabel: "🔊 Volume de Som",
@@ -1620,7 +1637,7 @@ class TileMatchingGame {
                 prevPageBtn: "◀ PÁGINA ANTERIOR",
                 nextPageBtn: "PRÓXIMA PÁGINA ▶",
                 completedBadge: "CONCLUÍDO! 🌟",
-                forceUpdateBtn: "⚡ INSTALAR ATUALIZAÇÃO (v8.9.73)",
+                forceUpdateBtn: "⚡ INSTALAR ATUALIZAÇÃO (v8.9.74)",
                 resetModalTitle: "🔄 REINICIAR QUAL MODO?",
                 resetModalDesc: "Selecione o modo para reiniciar progresso:",
                 resetClassicBtn: "🎮 REINICIAR MODO CLÁSSICO",
@@ -2270,10 +2287,62 @@ class TileMatchingGame {
         }
 
         // LEADERBOARD & NICKNAME EVENT LISTENERS
+        // LEADERBOARD & NICKNAME EVENT LISTENERS
         const btnLeaderboard = document.getElementById('btn-menu-leaderboard');
         if (btnLeaderboard) {
             btnLeaderboard.addEventListener('click', () => {
-                this.openLeaderboardModal('overall');
+                // If player has not set a custom nickname yet (or is 'Siz' or empty),
+                // prompt them immediately to set their nickname and register on the leaderboard!
+                if (!this.playerProfile || !this.playerProfile.nickname || this.playerProfile.nickname === 'Siz' || !this.playerProfile.tag) {
+                    this.openSetNicknameModal(() => {
+                        this.openLeaderboardModal('overall');
+                    }, true);
+                } else {
+                    this.openLeaderboardModal('overall');
+                }
+            });
+        }
+
+        const btnSettingsEditProfile = document.getElementById('btn-settings-edit-profile');
+        if (btnSettingsEditProfile) {
+            btnSettingsEditProfile.addEventListener('click', () => {
+                this.sound.playClick();
+                document.getElementById('modal-settings').classList.add('hidden');
+                this.openSetNicknameModal();
+            });
+        }
+
+        const btnEditLbNickname = document.getElementById('btn-edit-lb-nickname');
+        if (btnEditLbNickname) {
+            btnEditLbNickname.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.sound.playClick();
+                this.openSetNicknameModal(() => {
+                    this.renderLeaderboardList(this.currentLeaderboardCategory || 'overall');
+                });
+            });
+        }
+
+        const selfBar = document.getElementById('leaderboard-self-bar');
+        if (selfBar) {
+            selfBar.style.cursor = 'pointer';
+            selfBar.addEventListener('click', () => {
+                this.sound.playClick();
+                this.openSetNicknameModal(() => {
+                    this.renderLeaderboardList(this.currentLeaderboardCategory || 'overall');
+                });
+            });
+        }
+
+        const btnCloseNickname = document.getElementById('btn-close-nickname');
+        if (btnCloseNickname) {
+            btnCloseNickname.addEventListener('click', () => {
+                this.sound.playClick();
+                const modalNick = document.getElementById('modal-set-nickname');
+                if (modalNick) {
+                    modalNick.classList.add('hidden');
+                    modalNick.style.display = 'none';
+                }
             });
         }
 
@@ -2290,6 +2359,7 @@ class TileMatchingGame {
             btnRefreshLb.addEventListener('click', async () => {
                 this.sound.playClick();
                 btnRefreshLb.classList.add('spinning');
+                this.registerSelfIntoCloudDataset();
                 await this.fetchCloudLeaderboardData();
                 await this.syncCloudLeaderboard();
                 this.renderLeaderboardList(this.currentLeaderboardCategory || 'overall');
@@ -2305,6 +2375,23 @@ class TileMatchingGame {
             btnCloseProfile.addEventListener('click', () => {
                 this.sound.playClick();
                 document.getElementById('modal-player-profile').classList.add('hidden');
+            });
+        }
+
+        const btnProfileEditName = document.getElementById('btn-profile-edit-name');
+        if (btnProfileEditName) {
+            btnProfileEditName.addEventListener('click', () => {
+                this.sound.playClick();
+                const profModal = document.getElementById('modal-player-profile');
+                if (profModal) {
+                    profModal.classList.add('hidden');
+                    profModal.style.display = 'none';
+                }
+                this.openSetNicknameModal(() => {
+                    if (this.currentLeaderboardCategory) {
+                        this.renderLeaderboardList(this.currentLeaderboardCategory);
+                    }
+                });
             });
         }
 
@@ -2403,7 +2490,6 @@ class TileMatchingGame {
                 btnSaveNickname.innerText = '⏳ KONTROL EDİLİYOR...';
 
                 const myCurrentFullTag = (this.playerProfile && this.playerProfile.fullTag) ? this.playerProfile.fullTag.toLowerCase() : '';
-                const myCurrentTag = (this.playerProfile && this.playerProfile.tag) ? this.playerProfile.tag.trim() : '';
 
                 const closeModal = () => {
                     const modalNick = document.getElementById('modal-set-nickname');
@@ -2413,49 +2499,48 @@ class TileMatchingGame {
                     }
                 };
 
-                // Asynchronously verify 4-Digit Tag/ID Uniqueness against live Cloud DB!
-                this.fetchCloudLeaderboardData().then(cloudPlayers => {
+                const completeSave = () => {
                     btnSaveNickname.disabled = false;
-                    btnSaveNickname.innerText = 'KAYDET VE BAŞLA ✨';
+                    btnSaveNickname.innerText = '✨ PROFİLİ KAYDET VE KATIL';
+                    if (errMsg) errMsg.classList.add('hidden');
+                    this.savePlayerProfile(rawNick, rawTag);
+                    closeModal();
+                    this.sound.playBoosterChime();
+                    this.showToast(`🎉 ${this.playerProfile.fullTag} olarak sıralamaya katıldınız!`);
+                    this.syncCloudLeaderboard();
 
-                    if (cloudPlayers && Array.isArray(cloudPlayers)) {
-                        // Check if the 4-digit ID Tag is taken by ANY OTHER player in the cloud database!
-                        const isTagTaken = cloudPlayers.some(p => {
-                            if (!p) return false;
-                            const cloudTag = (p.tag || (p.fullTag && p.fullTag.includes('#') ? p.fullTag.split('#')[1] : '')).trim();
-                            const cloudFullTag = (p.fullTag || '').toLowerCase();
-                            
-                            // Exclude current device's own existing profile
-                            if (myCurrentTag && cloudTag === myCurrentTag) return false;
-                            if (myCurrentFullTag && cloudFullTag === myCurrentFullTag) return false;
+                    if (this.onNicknameSavedCallback) {
+                        const cb = this.onNicknameSavedCallback;
+                        this.onNicknameSavedCallback = null;
+                        cb();
+                    }
+                };
 
-                            return cloudTag === rawTag || cloudFullTag.endsWith(`#${rawTag.toLowerCase()}`);
-                        });
+                // Asynchronously verify player uniqueness against live Cloud DB & local dataset!
+                this.fetchCloudLeaderboardData().then(cloudPlayers => {
+                    const pool = (cloudPlayers && Array.isArray(cloudPlayers)) ? cloudPlayers : (this.latestCloudDataset || []);
+                    const targetLower = targetFullTag.toLowerCase();
+                    const isTaken = pool.some(p => {
+                        if (!p || !p.fullTag) return false;
+                        if (myCurrentFullTag && p.fullTag.toLowerCase() === myCurrentFullTag) return false;
+                        return p.fullTag.toLowerCase() === targetLower;
+                    });
 
-                        if (isTagTaken) {
-                            if (errMsg) {
-                                errMsg.innerText = `⚠️ ETİKET (ID) HATASI: "#${rawTag}" etiketi (ID) başka bir oyuncu tarafından alınmış! Lütfen 4 haneli farklı bir etiket yazın.`;
-                                errMsg.classList.remove('hidden');
-                            }
-                            this.sound.playLockThud();
-                            if (inputTag) inputTag.focus();
-                            return;
+                    if (isTaken) {
+                        btnSaveNickname.disabled = false;
+                        btnSaveNickname.innerText = '✨ PROFİLİ KAYDET VE KATIL';
+                        if (errMsg) {
+                            errMsg.innerText = `⚠️ KULLANICI ADI & ETİKET DOLU: "${targetFullTag}" başka bir oyuncu tarafından kullanılıyor! Lütfen etiketi değiştirin (🎲 butonuna basabilirsiniz).`;
+                            errMsg.classList.remove('hidden');
                         }
+                        this.sound.playLockThud();
+                        if (inputTag) inputTag.focus();
+                        return;
                     }
 
-                    if (errMsg) errMsg.classList.add('hidden');
-                    this.savePlayerProfile(rawNick, rawTag);
-                    closeModal();
-                    this.showToast(`✨ Profil Kaydedildi: ${this.playerProfile.fullTag}`);
-                    this.syncCloudLeaderboard();
+                    completeSave();
                 }).catch(() => {
-                    btnSaveNickname.disabled = false;
-                    btnSaveNickname.innerText = 'KAYDET VE BAŞLA ✨';
-                    if (errMsg) errMsg.classList.add('hidden');
-                    this.savePlayerProfile(rawNick, rawTag);
-                    closeModal();
-                    this.showToast(`✨ Profil Kaydedildi: ${this.playerProfile.fullTag}`);
-                    this.syncCloudLeaderboard();
+                    completeSave();
                 });
             });
         }
@@ -5270,8 +5355,56 @@ class TileMatchingGame {
             const saved = localStorage.getItem('tile_game_player_profile');
             if (saved) {
                 this.playerProfile = JSON.parse(saved);
+                if (this.playerProfile && (this.playerProfile.nickname === 'Siz' || !this.playerProfile.nickname)) {
+                    this.playerProfile = null;
+                }
             }
         } catch (e) {}
+    }
+
+    registerSelfIntoCloudDataset() {
+        if (!this.playerProfile || !this.playerProfile.nickname || this.playerProfile.nickname === 'Siz') return;
+
+        const myName = this.playerProfile.nickname;
+        const myTag = this.playerProfile.tag || '0001';
+        const myFullTag = `${myName}#${myTag}`;
+
+        const myClassicLvl = (this.classicProgress && this.classicProgress.level) || 1;
+        let myClassicScore = (this.classicProgress && typeof this.classicProgress.score === 'number') ? this.classicProgress.score : 0;
+        if (this.currentMode === 'classic' && typeof this.score === 'number') {
+            myClassicScore = Math.max(myClassicScore, this.score);
+        }
+
+        const myTtLvl = (this.timeTrialProgress && this.timeTrialProgress.level) || 1;
+        let myTtScore = (this.timeTrialProgress && typeof this.timeTrialProgress.score === 'number') ? this.timeTrialProgress.score : 0;
+        if (this.currentMode === 'timetrial' && typeof this.score === 'number') {
+            myTtScore = Math.max(myTtScore, this.score);
+        }
+
+        let myPuzzleCount = 0;
+        for (const pId in this.placedPuzzlePieces) {
+            if (this.placedPuzzlePieces[pId] && this.placedPuzzlePieces[pId].length === 12) {
+                myPuzzleCount++;
+            }
+        }
+
+        const myOverallScore = myClassicScore + myTtScore;
+
+        const myEntry = {
+            isSelf: true,
+            fullTag: myFullTag,
+            name: myName,
+            tag: myTag,
+            classicLvl: myClassicLvl,
+            classicScore: myClassicScore,
+            ttLvl: myTtLvl,
+            ttScore: myTtScore,
+            overallScore: myOverallScore,
+            puzzles: myPuzzleCount,
+            updatedAt: Date.now()
+        };
+
+        this.mergeAndSaveCloudDataset([myEntry]);
     }
 
     loadCloudLeaderboardCache() {
@@ -5422,6 +5555,7 @@ class TileMatchingGame {
         if (!this.latestCloudDataset || this.latestCloudDataset.length === 0) {
             this.loadCloudLeaderboardCache();
         }
+        this.registerSelfIntoCloudDataset();
         this.renderLeaderboardList(activeCategory);
         modal.classList.remove('hidden');
         modal.style.display = 'flex';
@@ -5470,6 +5604,8 @@ class TileMatchingGame {
         try {
             localStorage.setItem('tile_game_player_profile', JSON.stringify(this.playerProfile));
         } catch (e) {}
+
+        this.registerSelfIntoCloudDataset();
     }
 
     checkFirstTimeRegistration() {
@@ -5504,21 +5640,35 @@ class TileMatchingGame {
         return Math.floor(1000 + Math.random() * 9000).toString();
     }
 
-    openSetNicknameModal() {
+    openSetNicknameModal(onSuccess = null, isFromLeaderboard = false) {
+        this.onNicknameSavedCallback = onSuccess;
         const modal = document.getElementById('modal-set-nickname');
         if (!modal) return;
 
+        const titleEl = document.getElementById('nickname-modal-title');
+        const subtextEl = document.getElementById('nickname-modal-subtext');
         const inputNick = document.getElementById('input-nickname');
         const inputTag = document.getElementById('input-tag');
         const errMsg = document.getElementById('nickname-error-msg');
 
         if (errMsg) errMsg.classList.add('hidden');
 
+        if (isFromLeaderboard) {
+            if (titleEl) titleEl.innerText = '🏆 LİDERLİK TABLOSUNDA YERİNİ AL!';
+            if (subtextEl) subtextEl.innerText = 'Mevcut puanın ve seviyenle sıralamaya katılmak için adını ve etiketini belirle!';
+        } else if (this.playerProfile && this.playerProfile.nickname && this.playerProfile.nickname !== 'Siz') {
+            if (titleEl) titleEl.innerText = '✏️ OYUNCU ADINI DEĞİŞTİR';
+            if (subtextEl) subtextEl.innerText = 'Liderlik tablosundaki adınızı ve 4 haneli etiketinizi güncelleyin:';
+        } else {
+            if (titleEl) titleEl.innerText = '👤 PROFİLİNİ OLUŞTUR';
+            if (subtextEl) subtextEl.innerText = 'Liderlik tablosunda görünecek adınızı (Maks 10 Karakter) ve 4 haneli etiketinizi belirleyin!';
+        }
+
         if (inputNick) {
-            inputNick.value = this.playerProfile ? this.playerProfile.nickname : this.getRandomNicknameSuggestion();
+            inputNick.value = (this.playerProfile && this.playerProfile.nickname && this.playerProfile.nickname !== 'Siz') ? this.playerProfile.nickname : this.getRandomNicknameSuggestion();
         }
         if (inputTag) {
-            inputTag.value = this.playerProfile ? this.playerProfile.tag : this.getRandomTagSuggestion();
+            inputTag.value = (this.playerProfile && this.playerProfile.tag) ? this.playerProfile.tag : this.getRandomTagSuggestion();
         }
 
         modal.classList.remove('hidden');
@@ -5789,6 +5939,15 @@ class TileMatchingGame {
         if (!modal) return;
 
         const tierInfo = this.getTierTitleAndAvatar(player.rank || 1);
+
+        const btnProfileEditName = document.getElementById('btn-profile-edit-name');
+        if (btnProfileEditName) {
+            if (player && player.isSelf) {
+                btnProfileEditName.classList.remove('hidden');
+            } else {
+                btnProfileEditName.classList.add('hidden');
+            }
+        }
 
         const avatarFrame = document.getElementById('profile-avatar-frame');
         const nameTag = document.getElementById('profile-name-tag');
