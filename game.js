@@ -626,8 +626,8 @@ class TileMatchingGame {
         this.levelStartScore = 0;
 
         // Auto-Update Engine State
-        this.currentVersion = '8.9.84';
-        this.currentBuild = 116;
+        this.currentVersion = '8.9.85';
+        this.currentBuild = 117;
         this.hasPendingUpdate = null;
         this.isUpdatingNow = false;
 
@@ -3164,13 +3164,25 @@ class TileMatchingGame {
 
     updateBoosterBadgesUI() {
         const undoBadge = document.getElementById('undo-cost-badge');
-        if (undoBadge) undoBadge.innerText = this.undoCost;
+        if (undoBadge) undoBadge.innerText = `${this.undoCost} P`;
         const hintBadge = document.getElementById('hint-cost-badge');
-        if (hintBadge) hintBadge.innerText = this.hintCost;
+        if (hintBadge) hintBadge.innerText = `${this.hintCost} P`;
         const slotBadge = document.getElementById('slot-cost-badge');
-        if (slotBadge) slotBadge.innerText = this.slotCost;
+        if (slotBadge) slotBadge.innerText = `${this.slotCost} P`;
         const shuffleBadge = document.getElementById('shuffle-cost-badge');
-        if (shuffleBadge) shuffleBadge.innerText = this.shuffleCost;
+        if (shuffleBadge) shuffleBadge.innerText = `${this.shuffleCost} P`;
+
+        const btnUndo = document.getElementById('btn-undo');
+        if (btnUndo) {
+            const cannotUndo = (!this.slotTiles || this.slotTiles.length === 0) || (this.score < this.undoCost);
+            btnUndo.classList.toggle('disabled-cost', cannotUndo);
+        }
+        const btnHint = document.getElementById('btn-hint');
+        if (btnHint) btnHint.classList.toggle('disabled-cost', this.score < this.hintCost);
+        const btnSlot = document.getElementById('btn-extra-slot');
+        if (btnSlot) btnSlot.classList.toggle('disabled-cost', this.score < this.slotCost);
+        const btnShuffle = document.getElementById('btn-shuffle');
+        if (btnShuffle) btnShuffle.classList.toggle('disabled-cost', this.score < this.shuffleCost);
     }
 
     startLevel(lvl, isNewGame = false, mode = 'classic') {

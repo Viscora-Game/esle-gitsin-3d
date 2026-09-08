@@ -1131,32 +1131,36 @@ body {
    ========================================================= */
 
 #hud-header {
-    padding: 8px 12px 10px 12px;
-    background: linear-gradient(180deg, rgba(12, 16, 33, 0.88) 0%, rgba(15, 23, 42, 0.72) 100%);
+    padding: max(10px, env(safe-area-inset-top, 10px)) 12px 10px 12px;
+    background: linear-gradient(180deg, rgba(12, 16, 33, 0.94) 0%, rgba(15, 23, 42, 0.88) 100%);
     backdrop-filter: blur(20px);
     -webkit-backdrop-filter: blur(20px);
     display: flex;
-    flex-direction: column;
-    gap: 7px;
+    justify-content: space-between;
+    align-items: center;
     z-index: 1000;
     border-bottom: 1.5px solid rgba(251, 191, 36, 0.35);
-    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5), inset 0 -1px 0 rgba(255, 255, 255, 0.06);
+    box-shadow: 0 6px 22px rgba(0, 0, 0, 0.5), inset 0 -1px 0 rgba(255, 255, 255, 0.06);
     width: 100%;
     box-sizing: border-box;
 }
 
-/* Row 1: Home, Level, Timer, Score, Gold, Gallery, Settings */
+/* Single Clean Row: Home, Level, Timer (if TT), Score, Gold, Settings */
 .hud-top-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
     width: 100%;
+    gap: 6px;
 }
 
 .hud-info-group {
     display: flex;
     align-items: center;
-    gap: 5px;
+    justify-content: center;
+    gap: 6px;
+    flex: 1;
+    min-width: 0;
 }
 
 .hud-icon-btn {
@@ -1267,40 +1271,40 @@ body {
 }
 
 /* =========================================================
-   ROW 2: ULTRA-MODERN DOCKED IN-GAME BOOSTER FEATURES BAR
+   IN-GAME ERGONOMIC BOTTOM BOOSTER DOCK (Positioned above tray)
    ========================================================= */
 .hud-bottom-boosters {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    gap: 6px;
-    width: 100%;
+    gap: 8px;
+    width: calc(100% - 24px);
     max-width: 440px;
-    margin: 0 auto;
-    padding: 4px 6px;
-    background: linear-gradient(180deg, rgba(15, 23, 42, 0.8) 0%, rgba(8, 12, 24, 0.92) 100%);
-    border: 1.5px solid rgba(255, 255, 255, 0.12);
-    border-radius: 18px;
-    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.6), 0 4px 16px rgba(0, 0, 0, 0.35);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
+    margin: 0 auto 6px auto;
+    padding: 6px 10px;
+    background: linear-gradient(180deg, rgba(15, 23, 42, 0.88) 0%, rgba(8, 12, 24, 0.96) 100%);
+    border: 1.5px solid rgba(251, 191, 36, 0.3);
+    border-radius: 20px;
+    box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.6), 0 8px 24px rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
     box-sizing: border-box;
-    overflow: hidden;
+    z-index: 250;
+    flex-shrink: 0;
 }
 
 /* Tactile 3D Arcade Booster Action Pills */
 .booster-pill {
     flex: 1 1 0;
     min-width: 0;
-    padding: 6px 4px;
-    min-height: 38px;
-    border-radius: 13px;
+    padding: 6px 3px 5px 3px;
+    min-height: 52px;
+    border-radius: 14px;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 5px;
-    font-size: clamp(10px, 2.7vw, 12.5px);
-    font-weight: 900;
+    gap: 2px;
     cursor: pointer;
     position: relative;
     overflow: hidden;
@@ -1316,36 +1320,36 @@ body {
     top: 0;
     left: 0;
     right: 0;
-    height: 46%;
-    background: linear-gradient(180deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0) 100%);
+    height: 42%;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0) 100%);
     border-radius: 12px 12px 3px 3px;
     pointer-events: none;
 }
 
 /* Distinct Booster Themes with 3D Depth & Radiant Aura */
 .undo-pill {
-    background: linear-gradient(180deg, rgba(16, 185, 129, 0.35) 0%, rgba(5, 150, 105, 0.18) 100%);
+    background: linear-gradient(180deg, rgba(16, 185, 129, 0.35) 0%, rgba(5, 150, 105, 0.2) 100%);
     border: 1.5px solid rgba(52, 211, 153, 0.85);
     color: #34d399;
     box-shadow: 0 3px 0 #065f46, 0 6px 14px rgba(16, 185, 129, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.35);
 }
 
 .hint-pill {
-    background: linear-gradient(180deg, rgba(56, 189, 248, 0.35) 0%, rgba(14, 165, 233, 0.18) 100%);
+    background: linear-gradient(180deg, rgba(56, 189, 248, 0.35) 0%, rgba(14, 165, 233, 0.2) 100%);
     border: 1.5px solid rgba(56, 189, 248, 0.85);
     color: #38bdf8;
     box-shadow: 0 3px 0 #0369a1, 0 6px 14px rgba(14, 165, 233, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.35);
 }
 
 .slot-pill {
-    background: linear-gradient(180deg, rgba(251, 191, 36, 0.35) 0%, rgba(217, 119, 6, 0.18) 100%);
+    background: linear-gradient(180deg, rgba(251, 191, 36, 0.35) 0%, rgba(217, 119, 6, 0.2) 100%);
     border: 1.5px solid rgba(251, 191, 36, 0.9);
     color: #fbbf24;
     box-shadow: 0 3px 0 #92400e, 0 6px 14px rgba(245, 158, 11, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.35);
 }
 
 .shuffle-pill {
-    background: linear-gradient(180deg, rgba(192, 132, 252, 0.35) 0%, rgba(147, 51, 234, 0.18) 100%);
+    background: linear-gradient(180deg, rgba(192, 132, 252, 0.35) 0%, rgba(147, 51, 234, 0.2) 100%);
     border: 1.5px solid rgba(192, 132, 252, 0.9);
     color: #c084fc;
     box-shadow: 0 3px 0 #6b21a8, 0 6px 14px rgba(147, 51, 234, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.35);
@@ -1353,12 +1357,23 @@ body {
 
 .booster-pill:hover {
     transform: translateY(-2px);
-    filter: brightness(1.16);
+    filter: brightness(1.15);
 }
 
 .booster-pill:active {
     transform: translateY(2px) scale(0.95);
     box-shadow: 0 1px 0 rgba(0, 0, 0, 0.4), 0 2px 6px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+.booster-pill.disabled-cost {
+    opacity: 0.52;
+    filter: grayscale(0.45);
+    box-shadow: 0 1px 0 rgba(0, 0, 0, 0.3);
+}
+
+.booster-pill.disabled-cost:hover {
+    transform: none;
+    filter: grayscale(0.45);
 }
 
 .booster-pill.shaking {
@@ -1384,7 +1399,7 @@ body {
 }
 
 .booster-icon {
-    font-size: 16px;
+    font-size: 19px;
     line-height: 1;
     display: inline-flex;
     align-items: center;
@@ -1398,43 +1413,28 @@ body {
     transform: scale(1.12);
 }
 
-/* Icon-First Strategy: text hidden on mobile screens to prevent overflow */
-.booster-text {
-    display: none;
-    font-size: clamp(8.5px, 2.2vw, 10.5px);
+.booster-name {
+    font-size: clamp(9px, 2.4vw, 10.5px);
     font-weight: 800;
+    color: #f1f5f9;
     letter-spacing: 0.2px;
     white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    line-height: 1;
+    line-height: 1.1;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
 }
 
-/* Tablets & wider screens: show booster label */
-@media (min-width: 480px) {
-    .booster-pill {
-        padding: 6px 8px;
-        gap: 6px;
-    }
-    .booster-text {
-        display: inline-block;
-        max-width: 60px;
-    }
-}
-
-/* Luminous Capsule Cost Badges */
+/* Luminous Capsule Cost Badges with 'P' (Puan) Indicator */
 .cost-badge {
-    font-size: clamp(9px, 2.3vw, 10.5px);
+    font-size: clamp(8.5px, 2.2vw, 10px);
     font-weight: 900;
-    padding: 2px 6px;
+    padding: 1.5px 6px;
     border-radius: 999px;
-    border: 1px solid rgba(255, 255, 255, 0.25);
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.45);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.45);
     flex-shrink: 0;
     white-space: nowrap;
-    line-height: 1.15;
+    line-height: 1.1;
     letter-spacing: 0.2px;
-    transition: all 0.2s ease;
 }
 
 .cost-emerald {
@@ -1682,7 +1682,7 @@ body {
 /* Floating Top Emergency 6th Slot Holder (Positioned EXACTLY ABOVE THE CENTER SLOT #3) */
 .floating-extra-slot {
     position: absolute;
-    bottom: 138px;
+    bottom: 195px;
     left: 50%;
     transform: translateX(-50%);
     display: flex;

@@ -34,7 +34,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700;900&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=110">
+    <link rel="stylesheet" href="styles.css?v=111">
 </head>
 <body oncontextmenu="return false;" onselectstart="return false;" ondragstart="return false;">
     <div id="app-wrapper">
@@ -323,7 +323,7 @@
 
                                 <!-- Force Update & Clear Cache Button -->
                                 <button id="btn-force-update" class="settings-list-btn btn-update">
-                                    <span data-i18n="forceUpdateBtn">⚡ CANLI GÜNCELLEMEYİ YÜKLE (v8.9.84)</span>
+                                    <span data-i18n="forceUpdateBtn">⚡ CANLI GÜNCELLEMEYİ YÜKLE (v8.9.85)</span>
                                     <span class="btn-chevron">↻</span>
                                 </button>
 
@@ -365,9 +365,8 @@
                 </div>
             </div>
 
-            <!-- Top Navigation & HUD Bar (PRO 2-ROW RICH & SPACIOUS MOBILE LAYOUT) -->
+            <!-- Top Navigation & HUD Bar (CLEAN SINGLE-ROW MODERN MOBILE HUD) -->
             <header id="hud-header">
-                <!-- Top Row 1: Home, Level, Timer (Time Trial only), Score, Settings -->
                 <div class="hud-top-row">
                     <button id="btn-hud-home" class="hud-icon-btn" title="Ana Menü">🏠</button>
                     
@@ -387,46 +386,15 @@
                             <span class="hud-label" data-i18n="score">SKOR</span>
                             <span id="score-val" class="hud-val">0</span>
                         </div>
+
                         <div class="hud-item badge-gold">
                             <span class="hud-label" data-i18n="goldLabel">ALTIN</span>
                             <span class="gold-icon">🪙</span>
                             <span id="gold-val" class="hud-val">0</span>
                         </div>
-                        <button id="btn-open-gallery" class="hud-icon-btn" title="Bulmaca Galerisi">🧩</button>
                     </div>
 
                     <button id="btn-hud-settings" class="hud-icon-btn" title="Ayarlar">⚙️</button>
-                </div>
-
-                <!-- Bottom Row 2: Spacious & Bold Booster Buttons Bar -->
-                <div class="hud-bottom-boosters">
-                    <!-- Undo Last Move Booster Button (500 Score Base) -->
-                    <button id="btn-undo" class="booster-pill undo-pill" title="Son Kartı Geri Al" aria-label="Geri Al">
-                        <span class="booster-icon">↩️</span>
-                        <span class="booster-text" data-i18n="undoBtnLabel">GERİ AL</span>
-                        <span id="undo-cost-badge" class="cost-badge cost-emerald">500</span>
-                    </button>
-
-                    <!-- Smart Hint Button (300 Score Base) -->
-                    <button id="btn-hint" class="booster-pill hint-pill" title="Akıllı İpucu" aria-label="İpucu">
-                        <span class="booster-icon">💡</span>
-                        <span class="booster-text" data-i18n="hintLabel">İPUCU</span>
-                        <span id="hint-cost-badge" class="cost-badge cost-sky">300</span>
-                    </button>
-
-                    <!-- Extra Slot Booster Button (1000 Score Base) -->
-                    <button id="btn-extra-slot" class="booster-pill slot-pill" title="Ek Slot Hakkı" aria-label="+1 Slot">
-                        <span class="booster-icon">➕</span>
-                        <span class="booster-text" data-i18n="slotBtnLabel">+1 SLOT</span>
-                        <span id="slot-cost-badge" class="cost-badge cost-gold">1000</span>
-                    </button>
-
-                    <!-- Shuffle Board Booster Button (5000 Score Base) -->
-                    <button id="btn-shuffle" class="booster-pill shuffle-pill" title="Kartları Karıştır" aria-label="Karıştır">
-                        <span class="booster-icon">🔀</span>
-                        <span class="booster-text" data-i18n="shuffleBtnLabel">KARIŞTIR</span>
-                        <span id="shuffle-cost-badge" class="cost-badge cost-purple">5000</span>
-                    </button>
                 </div>
             </header>
 
@@ -451,6 +419,37 @@
             <div id="floating-extra-slot" class="floating-extra-slot hidden">
                 <div class="extra-slot-badge" data-i18n="emergencySlotTitle">🚨 ACİL SLOT</div>
                 <div class="extra-slot-box"></div>
+            </div>
+
+            <!-- In-Game Ergonomic Bottom Booster Dock (Directly accessible above tray) -->
+            <div id="in-game-boosters-dock" class="hud-bottom-boosters">
+                <!-- Undo Last Move Booster Button (500 Score Base) -->
+                <button id="btn-undo" class="booster-pill undo-pill" title="Son Kartı Geri Al" aria-label="Geri Al">
+                    <span class="booster-icon">↩️</span>
+                    <span class="booster-name" data-i18n="undoBtnLabel">Geri Al</span>
+                    <span id="undo-cost-badge" class="cost-badge cost-emerald">500 P</span>
+                </button>
+
+                <!-- Smart Hint Button (300 Score Base) -->
+                <button id="btn-hint" class="booster-pill hint-pill" title="Akıllı İpucu" aria-label="İpucu">
+                    <span class="booster-icon">💡</span>
+                    <span class="booster-name" data-i18n="hintLabel">İpucu</span>
+                    <span id="hint-cost-badge" class="cost-badge cost-sky">300 P</span>
+                </button>
+
+                <!-- Extra Slot Booster Button (1000 Score Base) -->
+                <button id="btn-extra-slot" class="booster-pill slot-pill" title="Ek Slot Hakkı" aria-label="+1 Slot">
+                    <span class="booster-icon">➕</span>
+                    <span class="booster-name" data-i18n="slotBtnLabel">+1 Slot</span>
+                    <span id="slot-cost-badge" class="cost-badge cost-gold">1000 P</span>
+                </button>
+
+                <!-- Shuffle Board Booster Button (5000 Score Base) -->
+                <button id="btn-shuffle" class="booster-pill shuffle-pill" title="Kartları Karıştır" aria-label="Karıştır">
+                    <span class="booster-icon">🔀</span>
+                    <span class="booster-name" data-i18n="shuffleBtnLabel">Karıştır</span>
+                    <span id="shuffle-cost-badge" class="cost-badge cost-purple">5000 P</span>
+                </button>
             </div>
 
             <!-- Bottom 5-Slot Fixed Tray Area -->
@@ -764,7 +763,7 @@
         });
 
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./sw.js?v=8.9.84').then((reg) => {
+          navigator.serviceWorker.register('./sw.js?v=8.9.85').then((reg) => {
             // Immediate update check on launch
             reg.update();
 
@@ -798,6 +797,6 @@
         <span id="toast-text">Yetersiz Altın!</span>
     </div>
 
-    <script src="game.js?v=8.9.84" defer></script>
+    <script src="game.js?v=8.9.85" defer></script>
 </body>
 </html>
