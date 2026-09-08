@@ -1,4 +1,4 @@
-const CACHE_NAME = 'esle-gitsin-3d-v8.9.70';
+const CACHE_NAME = 'esle-gitsin-3d-v8.9.71';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -7,10 +7,17 @@ const ASSETS_TO_CACHE = [
   './manifest.json',
   './favicon.ico',
   './favicon.png',
+  './icons/app-icon-192.png',
+  './icons/app-icon-512.png',
+  './icons/app-maskable-512.png',
+  './icons/app-apple-icon.png',
+  './audio/cybercore_sound_2_hollywood.wav',
   './audio/bgm_cute.mp3',
+  './audio/bgm_cute.wav',
   './audio/carefree.mp3',
   './audio/fluffing_a_duck.mp3',
   './audio/monkeys.mp3',
+  './images/app_hero_icon.png',
   './images/cat.jpg',
   './images/fox.jpg',
   './images/panda.jpg',
@@ -25,11 +32,22 @@ const ASSETS_TO_CACHE = [
   './images/penguin.jpg'
 ];
 
-// Install Event - Pre-cache core files & activate immediately
+// Install Event - Pre-cache core files with individual safety & activate immediately
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS_TO_CACHE);
+    caches.open(CACHE_NAME).then(async (cache) => {
+      await Promise.allSettled(
+        ASSETS_TO_CACHE.map(async (asset) => {
+          try {
+            const response = await fetch(asset, { cache: 'reload' });
+            if (response && response.ok) {
+              await cache.put(asset, response);
+            }
+          } catch (err) {
+            console.warn('[SW] Precache item failed:', asset, err);
+          }
+        })
+      );
     })
   );
   self.skipWaiting();
@@ -51,31 +69,81 @@ self.addEventListener('activate', (event) => {
   self.clients.claim();
 });
 
-// Fetch Event - Network First with Instant Cache Fallback for 100% Offline Gameplay
+// Fetch Event - Cache First with ignoreSearch for 100% Instant Offline Play
 self.addEventListener('fetch', (event) => {
   if (event.request.method !== 'GET') return;
 
   const reqUrl = event.request.url.toLowerCase();
+
   // EXPLICITLY BYPASS SERVICE WORKER CACHE FOR LIVE CLOUD DATABASE API REQUESTS!
-  if (reqUrl.includes('jsonblob') || reqUrl.includes('mongodb') || reqUrl.includes('api')) {
+  if (reqUrl.includes('jsonblob') || reqUrl.includes('mongodb') || reqUrl.includes('/api/')) {
     return;
   }
 
-  event.respondWith(
-    fetch(event.request)
-      .then((networkResponse) => {
-        if (networkResponse && networkResponse.status === 200) {
-          const responseToCache = networkResponse.clone();
-          caches.open(CACHE_NAME).then((cache) => {
-            cache.put(event.request, responseToCache);
-          });
+  // Navigation Request (Opening the page)
+  const isNavigation = event.request.mode === 'navigate' ||
+                       (event.request.headers.get('accept') && event.request.headers.get('accept').includes('text/html'));
+
+  if (isNavigation) {
+    event.respondWith(
+      caches.match('./index.html', { ignoreSearch: true }).then((cachedIndex) => {
+        // Fast network fetch with 1.2s timeout for online updates, fallback to cache
+        const networkFetch = fetch(event.request)
+          .then((networkResponse) => {
+            if (networkResponse && networkResponse.status === 200) {
+              const resClone = networkResponse.clone();
+              caches.open(CACHE_NAME).then((cache) => cache.put('./index.html', resClone));
+            }
+            return networkResponse;
+          })
+          .catch(() => cachedIndex);
+
+        // If we have a cached index, return it immediately if offline, or wait up to 1200ms
+        if (cachedIndex) {
+          return Promise.race([
+            networkFetch,
+            new Promise((resolve) => setTimeout(() => resolve(cachedIndex), 1200))
+          ]);
         }
-        return networkResponse;
+        return networkFetch;
       })
-      .catch(() => {
-        return caches.match(event.request).then((cachedResponse) => {
-          return cachedResponse || caches.match('./index.html');
+    );
+    return;
+  }
+
+  // Static Assets & Cross-Origin Fonts: Cache-First with ignoreSearch
+  event.respondWith(
+    caches.match(event.request, { ignoreSearch: true }).then((cachedResponse) => {
+      if (cachedResponse) {
+        // Stale-While-Revalidate in background if online
+        if (navigator.onLine) {
+          fetch(event.request)
+            .then((networkResponse) => {
+              if (networkResponse && networkResponse.status === 200) {
+                const resClone = networkResponse.clone();
+                caches.open(CACHE_NAME).then((cache) => cache.put(event.request, resClone));
+              }
+            })
+            .catch(() => {});
+        }
+        return cachedResponse;
+      }
+
+      // Not cached yet - fetch from network and store in cache
+      return fetch(event.request)
+        .then((networkResponse) => {
+          if (networkResponse && networkResponse.status === 200) {
+            const responseToCache = networkResponse.clone();
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(event.request, responseToCache);
+            });
+          }
+          return networkResponse;
+        })
+        .catch(() => {
+          // NEVER return index.html for non-navigation assets!
+          return new Response('', { status: 408, statusText: 'Offline Asset Unavailable' });
         });
-      })
+    })
   );
 });

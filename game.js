@@ -815,7 +815,7 @@ class TileMatchingGame {
                 prevPageBtn: "◀ ÖNCEKİ SAYFA",
                 nextPageBtn: "SONRAKİ SAYFA ▶",
                 completedBadge: "TAMAMLANDI! 🌟",
-                forceUpdateBtn: "⚡ CANLI GÜNCELLEMEYİ YÜKLE (v5.6.0)",
+                forceUpdateBtn: "⚡ CANLI GÜNCELLEMEYİ YÜKLE (v8.9.71)",
                 resetModalTitle: "🔄 HANGİ MOD SIFIRLANSIN?",
                 resetModalDesc: "Sıfırlamak istediğiniz oyun modunu seçin:",
                 resetClassicBtn: "🎮 KLASİK MODU SIFIRLA",
@@ -946,7 +946,7 @@ class TileMatchingGame {
                 prevPageBtn: "◀ PREVIOUS PAGE",
                 nextPageBtn: "NEXT PAGE ▶",
                 completedBadge: "COMPLETED! 🌟",
-                forceUpdateBtn: "⚡ INSTALL LIVE UPDATE (v5.6.0)",
+                forceUpdateBtn: "⚡ INSTALL LIVE UPDATE (v8.9.71)",
                 resetModalTitle: "🔄 RESET WHICH MODE?",
                 resetModalDesc: "Select game mode to reset progress:",
                 resetClassicBtn: "🎮 RESET CLASSIC MODE",
@@ -1077,7 +1077,7 @@ class TileMatchingGame {
                 prevPageBtn: "◀ VORHERIGE SEITE",
                 nextPageBtn: "NÄCHSTE SEITE ▶",
                 completedBadge: "ABGESCHLOSSEN! 🌟",
-                forceUpdateBtn: "⚡ LIVE-UPDATE INSTALLIEREN (v5.6.0)",
+                forceUpdateBtn: "⚡ LIVE-UPDATE INSTALLIEREN (v8.9.71)",
                 resetModalTitle: "🔄 WELCHEN MODUS ZURÜCKSETZEN?",
                 resetModalDesc: "Wähle den Spielmodus zum Zurücksetzen:",
                 resetClassicBtn: "🎮 KLASSISCHEN MODUS ZURÜCKSETZEN",
@@ -1208,7 +1208,7 @@ class TileMatchingGame {
                 prevPageBtn: "◀ PAGE PRÉCÉDENTE",
                 nextPageBtn: "PAGE SUIVANTE ▶",
                 completedBadge: "TERMINÉ! 🌟",
-                forceUpdateBtn: "⚡ INSTALLER MISE À JOUR (v5.6.0)",
+                forceUpdateBtn: "⚡ INSTALLER MISE À JOUR (v8.9.71)",
                 resetModalTitle: "🔄 RÉINITIALISER QUEL MODE?",
                 resetModalDesc: "Sélectionnez le mode à réinitialiser:",
                 resetClassicBtn: "🎮 RÉINIT. CLASSIQUE",
@@ -1339,7 +1339,7 @@ class TileMatchingGame {
                 prevPageBtn: "◀ PAGINA PRECEDENTE",
                 nextPageBtn: "PAGINA SUCCESSIVA ▶",
                 completedBadge: "COMPLETATO! 🌟",
-                forceUpdateBtn: "⚡ INSTALLA AGGIORNAMENTO (v5.6.0)",
+                forceUpdateBtn: "⚡ INSTALLA AGGIORNAMENTO (v8.9.71)",
                 resetModalTitle: "🔄 RESETTA QUALE MODALITÀ?",
                 resetModalDesc: "Seleziona la modalità da resettare:",
                 resetClassicBtn: "🎮 RESETTA CLASSICA",
@@ -1445,7 +1445,7 @@ class TileMatchingGame {
                 prevPageBtn: "◀ PÁGINA ANTERIOR",
                 nextPageBtn: "PÁGINA SIGUIENTE ▶",
                 completedBadge: "¡COMPLETADO! 🌟",
-                forceUpdateBtn: "⚡ INSTALAR ACTUALIZACIÓN (v5.6.0)",
+                forceUpdateBtn: "⚡ INSTALAR ACTUALIZACIÓN (v8.9.71)",
                 resetModalTitle: "🔄 ¿REINICIAR QUÉ MODO?",
                 resetModalDesc: "Selecciona el modo para reiniciar progreso:",
                 resetClassicBtn: "🎮 REINICIAR MODO CLÁSICO",
@@ -1576,7 +1576,7 @@ class TileMatchingGame {
                 prevPageBtn: "◀ PÁGINA ANTERIOR",
                 nextPageBtn: "PRÓXIMA PÁGINA ▶",
                 completedBadge: "CONCLUÍDO! 🌟",
-                forceUpdateBtn: "⚡ INSTALAR ATUALIZAÇÃO (v5.6.0)",
+                forceUpdateBtn: "⚡ INSTALAR ATUALIZAÇÃO (v8.9.71)",
                 resetModalTitle: "🔄 REINICIAR QUAL MODO?",
                 resetModalDesc: "Selecione o modo para reiniciar progresso:",
                 resetClassicBtn: "🎮 REINICIAR MODO CLÁSSICO",
@@ -5206,17 +5206,24 @@ class TileMatchingGame {
         } catch (e) {}
     }
 
+    fetchWithTimeout(url, options = {}, timeoutMs = 3500) {
+        const controller = new AbortController();
+        const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+        return fetch(url, { ...options, signal: controller.signal })
+            .finally(() => clearTimeout(timeoutId));
+    }
+
     async fetchCloudLeaderboardData() {
         if (typeof navigator !== 'undefined' && !navigator.onLine) return null;
         try {
             const cloudUrl = 'https://jsonblob.com/api/jsonBlob/019fd8e7-e1ac-7a47-aa9f-df3231a31d7f';
-            const resp = await fetch(cloudUrl + '?t=' + Date.now(), {
+            const resp = await this.fetchWithTimeout(cloudUrl + '?t=' + Date.now(), {
                 cache: 'no-store',
                 headers: {
                     'Cache-Control': 'no-cache, no-store, must-revalidate',
                     'Pragma': 'no-cache'
                 }
-            });
+            }, 3500);
             if (!resp.ok) return null;
             const data = await resp.json();
             if (data && Array.isArray(data.players)) {
@@ -5531,11 +5538,11 @@ class TileMatchingGame {
 
             // 1. Primary Sync: Atomic update to MongoDB Atlas Database!
             try {
-                const mongoResp = await fetch(mongoApiUrl, {
+                const mongoResp = await this.fetchWithTimeout(mongoApiUrl, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(myEntry)
-                });
+                }, 3500);
                 if (mongoResp.ok) {
                     const mongoData = await mongoResp.json();
                     if (mongoData && Array.isArray(mongoData.players)) {
@@ -5552,7 +5559,7 @@ class TileMatchingGame {
             let cloudFetchSuccess = false;
 
             try {
-                const resp = await fetch(cloudUrl + '?t=' + Date.now());
+                const resp = await this.fetchWithTimeout(cloudUrl + '?t=' + Date.now(), {}, 3500);
                 if (resp.ok) {
                     const parsed = await resp.json();
                     if (parsed && Array.isArray(parsed.players) && parsed.players.length > 0) {
@@ -5618,11 +5625,11 @@ class TileMatchingGame {
 
             // SAFETY GUARD: Only PUT back to cloud if cloud fetch succeeded OR if dataset has all players (>= 2)
             if (cloudFetchSuccess || finalPlayers.length >= 2) {
-                await fetch(cloudUrl, {
+                await this.fetchWithTimeout(cloudUrl, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ players: finalPlayers })
-                });
+                }, 3500);
             }
         } catch (e) {
             console.log('[CloudSync] Exception:', e);
