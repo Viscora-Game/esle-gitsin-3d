@@ -840,7 +840,7 @@ class TileMatchingGame {
                 prevPageBtn: "◀ ÖNCEKİ SAYFA",
                 nextPageBtn: "SONRAKİ SAYFA ▶",
                 completedBadge: "TAMAMLANDI! 🌟",
-                forceUpdateBtn: "⚡ CANLI GÜNCELLEMEYİ YÜKLE (v8.9.74)",
+                forceUpdateBtn: "⚡ CANLI GÜNCELLEMEYİ YÜKLE (v8.9.75)",
                 resetModalTitle: "🔄 HANGİ MOD SIFIRLANSIN?",
                 resetModalDesc: "Sıfırlamak istediğiniz oyun modunu seçin:",
                 resetClassicBtn: "🎮 KLASİK MODU SIFIRLA",
@@ -977,7 +977,7 @@ class TileMatchingGame {
                 prevPageBtn: "◀ PREVIOUS PAGE",
                 nextPageBtn: "NEXT PAGE ▶",
                 completedBadge: "COMPLETED! 🌟",
-                forceUpdateBtn: "⚡ INSTALL LIVE UPDATE (v8.9.74)",
+                forceUpdateBtn: "⚡ INSTALL LIVE UPDATE (v8.9.75)",
                 resetModalTitle: "🔄 RESET WHICH MODE?",
                 resetModalDesc: "Select game mode to reset progress:",
                 resetClassicBtn: "🎮 RESET CLASSIC MODE",
@@ -1114,7 +1114,7 @@ class TileMatchingGame {
                 prevPageBtn: "◀ VORHERIGE SEITE",
                 nextPageBtn: "NÄCHSTE SEITE ▶",
                 completedBadge: "ABGESCHLOSSEN! 🌟",
-                forceUpdateBtn: "⚡ LIVE-UPDATE INSTALLIEREN (v8.9.74)",
+                forceUpdateBtn: "⚡ LIVE-UPDATE INSTALLIEREN (v8.9.75)",
                 resetModalTitle: "🔄 WELCHEN MODUS ZURÜCKSETZEN?",
                 resetModalDesc: "Wähle den Spielmodus zum Zurücksetzen:",
                 resetClassicBtn: "🎮 KLASSISCHEN MODUS ZURÜCKSETZEN",
@@ -1251,7 +1251,7 @@ class TileMatchingGame {
                 prevPageBtn: "◀ PAGE PRÉCÉDENTE",
                 nextPageBtn: "PAGE SUIVANTE ▶",
                 completedBadge: "TERMINÉ! 🌟",
-                forceUpdateBtn: "⚡ INSTALLER MISE À JOUR (v8.9.74)",
+                forceUpdateBtn: "⚡ INSTALLER MISE À JOUR (v8.9.75)",
                 resetModalTitle: "🔄 RÉINITIALISER QUEL MODE?",
                 resetModalDesc: "Sélectionnez le mode à réinitialiser:",
                 resetClassicBtn: "🎮 RÉINIT. CLASSIQUE",
@@ -1388,7 +1388,7 @@ class TileMatchingGame {
                 prevPageBtn: "◀ PAGINA PRECEDENTE",
                 nextPageBtn: "PAGINA SUCCESSIVA ▶",
                 completedBadge: "COMPLETATO! 🌟",
-                forceUpdateBtn: "⚡ INSTALLA AGGIORNAMENTO (v8.9.74)",
+                forceUpdateBtn: "⚡ INSTALLA AGGIORNAMENTO (v8.9.75)",
                 resetModalTitle: "🔄 RESETTA QUALE MODALITÀ?",
                 resetModalDesc: "Seleziona la modalità da resettare:",
                 resetClassicBtn: "🎮 RESETTA CLASSICA",
@@ -1500,7 +1500,7 @@ class TileMatchingGame {
                 prevPageBtn: "◀ PÁGINA ANTERIOR",
                 nextPageBtn: "PÁGINA SIGUIENTE ▶",
                 completedBadge: "¡COMPLETADO! 🌟",
-                forceUpdateBtn: "⚡ INSTALAR ACTUALIZACIÓN (v8.9.74)",
+                forceUpdateBtn: "⚡ INSTALAR ACTUALIZACIÓN (v8.9.75)",
                 resetModalTitle: "🔄 ¿REINICIAR QUÉ MODO?",
                 resetModalDesc: "Selecciona el modo para reiniciar progreso:",
                 resetClassicBtn: "🎮 REINICIAR MODO CLÁSICO",
@@ -1637,7 +1637,7 @@ class TileMatchingGame {
                 prevPageBtn: "◀ PÁGINA ANTERIOR",
                 nextPageBtn: "PRÓXIMA PÁGINA ▶",
                 completedBadge: "CONCLUÍDO! 🌟",
-                forceUpdateBtn: "⚡ INSTALAR ATUALIZAÇÃO (v8.9.74)",
+                forceUpdateBtn: "⚡ INSTALAR ATUALIZAÇÃO (v8.9.75)",
                 resetModalTitle: "🔄 REINICIAR QUAL MODO?",
                 resetModalDesc: "Selecione o modo para reiniciar progresso:",
                 resetClassicBtn: "🎮 REINICIAR MODO CLÁSSICO",
@@ -2431,6 +2431,22 @@ class TileMatchingGame {
                 // Strip emojis and non-alphanumeric special symbols automatically
                 inputNickEl.value = inputNickEl.value.replace(/[^a-zA-Z0-9çğışöüÇĞİŞÖÜ ]/g, '');
             });
+            inputNickEl.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    const btn = document.getElementById('btn-save-nickname');
+                    if (btn) btn.click();
+                }
+            });
+        }
+
+        const inputTagEl = document.getElementById('input-tag');
+        if (inputTagEl) {
+            inputTagEl.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    const btn = document.getElementById('btn-save-nickname');
+                    if (btn) btn.click();
+                }
+            });
         }
 
         const btnSaveNickname = document.getElementById('btn-save-nickname');
@@ -2441,23 +2457,21 @@ class TileMatchingGame {
                 const inputTag = document.getElementById('input-tag');
                 const errMsg = document.getElementById('nickname-error-msg');
 
-                const rawNick = inputNick ? inputNick.value.trim() : '';
-                const rawTag = inputTag ? inputTag.value.trim() : '';
+                let rawNick = inputNick ? inputNick.value.trim() : '';
+                let rawTag = inputTag ? inputTag.value.trim().replace(/[^0-9]/g, '') : '';
+
+                // Smart auto-fix for tag: auto-generate or zero-pad
+                if (!rawTag) {
+                    rawTag = this.getRandomTagSuggestion();
+                    if (inputTag) inputTag.value = rawTag;
+                } else if (rawTag.length < 4) {
+                    rawTag = rawTag.padStart(4, '0');
+                    if (inputTag) inputTag.value = rawTag;
+                }
 
                 if (!rawNick || rawNick.length < 2) {
                     if (errMsg) {
                         errMsg.innerText = '⚠️ KULLANICI ADI HATASI: İsim en az 2 karakter olmalıdır!';
-                        errMsg.classList.remove('hidden');
-                    }
-                    this.sound.playLockThud();
-                    if (inputNick) inputNick.focus();
-                    return;
-                }
-
-                const validNameRegex = /^[a-zA-Z0-9çğışöüÇĞİŞÖÜ ]+$/;
-                if (!validNameRegex.test(rawNick)) {
-                    if (errMsg) {
-                        errMsg.innerText = '⚠️ KULLANICI ADI HATASI: İsimde emoji veya özel sembol kullanılamaz! (Sadece harf ve rakam)';
                         errMsg.classList.remove('hidden');
                     }
                     this.sound.playLockThud();
@@ -2475,73 +2489,53 @@ class TileMatchingGame {
                     return;
                 }
 
-                if (!rawTag || rawTag.length !== 4 || !/^\d{4}$/.test(rawTag)) {
+                const targetFullTag = `${rawNick}#${rawTag}`;
+                const targetLower = targetFullTag.toLowerCase();
+                const myCurrentFullTag = (this.playerProfile && this.playerProfile.fullTag) ? this.playerProfile.fullTag.toLowerCase() : '';
+
+                // Instant 0ms conflict check against loaded local community pool
+                const pool = (this.latestCloudDataset && Array.isArray(this.latestCloudDataset) && this.latestCloudDataset.length > 0)
+                    ? this.latestCloudDataset
+                    : (DEFAULT_LEADERBOARD_SEED || []);
+
+                const isTaken = pool.some(p => {
+                    if (!p || !p.fullTag) return false;
+                    if (myCurrentFullTag && p.fullTag.toLowerCase() === myCurrentFullTag) return false;
+                    return p.fullTag.toLowerCase() === targetLower;
+                });
+
+                if (isTaken) {
+                    const newTag = this.getRandomTagSuggestion();
+                    if (inputTag) inputTag.value = newTag;
                     if (errMsg) {
-                        errMsg.innerText = '⚠️ ETİKET (ID) HATASI: Etiket 4 haneli sayısal bir sayı olmalıdır! (Örn: 0001)';
+                        errMsg.innerText = `⚠️ KULLANICI ADI & ETİKET DOLU: "${targetFullTag}" başkası tarafından kullanılıyor. Yeni bir etiket (#${newTag}) önerildi, tekrar kaydet butonuna basabilirsiniz!`;
                         errMsg.classList.remove('hidden');
                     }
                     this.sound.playLockThud();
-                    if (inputTag) inputTag.focus();
                     return;
                 }
 
-                const targetFullTag = `${rawNick}#${rawTag}`;
-                btnSaveNickname.disabled = true;
-                btnSaveNickname.innerText = '⏳ KONTROL EDİLİYOR...';
+                // 100% INSTANT 0ms SAVE & MODAL CLOSE
+                if (errMsg) errMsg.classList.add('hidden');
+                this.savePlayerProfile(rawNick, rawTag);
 
-                const myCurrentFullTag = (this.playerProfile && this.playerProfile.fullTag) ? this.playerProfile.fullTag.toLowerCase() : '';
+                const modalNick = document.getElementById('modal-set-nickname');
+                if (modalNick) {
+                    modalNick.classList.add('hidden');
+                    modalNick.style.display = 'none';
+                }
 
-                const closeModal = () => {
-                    const modalNick = document.getElementById('modal-set-nickname');
-                    if (modalNick) {
-                        modalNick.classList.add('hidden');
-                        modalNick.style.display = 'none';
-                    }
-                };
+                this.sound.playBoosterChime();
+                this.showToast(`🎉 ${this.playerProfile.fullTag} olarak kaydedildi!`);
 
-                const completeSave = () => {
-                    btnSaveNickname.disabled = false;
-                    btnSaveNickname.innerText = '✨ PROFİLİ KAYDET VE KATIL';
-                    if (errMsg) errMsg.classList.add('hidden');
-                    this.savePlayerProfile(rawNick, rawTag);
-                    closeModal();
-                    this.sound.playBoosterChime();
-                    this.showToast(`🎉 ${this.playerProfile.fullTag} olarak sıralamaya katıldınız!`);
-                    this.syncCloudLeaderboard();
+                // Non-blocking background cloud sync
+                this.syncCloudLeaderboard();
 
-                    if (this.onNicknameSavedCallback) {
-                        const cb = this.onNicknameSavedCallback;
-                        this.onNicknameSavedCallback = null;
-                        cb();
-                    }
-                };
-
-                // Asynchronously verify player uniqueness against live Cloud DB & local dataset!
-                this.fetchCloudLeaderboardData().then(cloudPlayers => {
-                    const pool = (cloudPlayers && Array.isArray(cloudPlayers)) ? cloudPlayers : (this.latestCloudDataset || []);
-                    const targetLower = targetFullTag.toLowerCase();
-                    const isTaken = pool.some(p => {
-                        if (!p || !p.fullTag) return false;
-                        if (myCurrentFullTag && p.fullTag.toLowerCase() === myCurrentFullTag) return false;
-                        return p.fullTag.toLowerCase() === targetLower;
-                    });
-
-                    if (isTaken) {
-                        btnSaveNickname.disabled = false;
-                        btnSaveNickname.innerText = '✨ PROFİLİ KAYDET VE KATIL';
-                        if (errMsg) {
-                            errMsg.innerText = `⚠️ KULLANICI ADI & ETİKET DOLU: "${targetFullTag}" başka bir oyuncu tarafından kullanılıyor! Lütfen etiketi değiştirin (🎲 butonuna basabilirsiniz).`;
-                            errMsg.classList.remove('hidden');
-                        }
-                        this.sound.playLockThud();
-                        if (inputTag) inputTag.focus();
-                        return;
-                    }
-
-                    completeSave();
-                }).catch(() => {
-                    completeSave();
-                });
+                if (this.onNicknameSavedCallback) {
+                    const cb = this.onNicknameSavedCallback;
+                    this.onNicknameSavedCallback = null;
+                    cb();
+                }
             });
         }
 
@@ -2592,16 +2586,10 @@ class TileMatchingGame {
                 }
             } else {
                 // ZERO TILES MOVED: EXIT DIRECTLY WITH 0 PENALTY!
-                this.stopTimer();
+                this.cleanupCurrentGame();
                 this.saveGameProgress();
                 this.updateMainMenuButtons();
                 this.startWheelTimerLoop();
-                const gameContainer = document.getElementById('game-container');
-                if (gameContainer) gameContainer.classList.add('hidden');
-                const boardEl = document.getElementById('board');
-                if (boardEl) boardEl.innerHTML = '';
-                this.boardTiles = [];
-                this.slotTiles = [];
                 document.getElementById('main-menu').classList.remove('hidden');
                 this.showMainMenuBannerAd();
             }
@@ -2630,22 +2618,15 @@ class TileMatchingGame {
                 const scoreEl = document.getElementById('score-val');
                 if (scoreEl) scoreEl.innerText = this.score;
 
-                // 3. Reset level tiles
-                this.boardTiles = [];
-                this.slotTiles = [];
-                this.hintHighlights = [];
-                const boardContainer = document.getElementById('board');
-                if (boardContainer) boardContainer.innerHTML = '';
+                // 3. Fully cleanup game board, slot tray, timeouts & FX
+                this.cleanupCurrentGame();
 
                 // 4. Save progress & sync penalty to Cloud DB
                 this.saveGameProgress();
 
                 // 5. Return to main menu
-                this.stopTimer();
                 this.updateMainMenuButtons();
                 this.startWheelTimerLoop();
-                const gameContainer = document.getElementById('game-container');
-                if (gameContainer) gameContainer.classList.add('hidden');
                 document.getElementById('main-menu').classList.remove('hidden');
                 this.showMainMenuBannerAd();
 
@@ -3280,6 +3261,51 @@ class TileMatchingGame {
         }
     }
 
+    cleanupCurrentGame() {
+        this.stopTimer();
+
+        // 1. Clear any active timeouts/intervals that could manipulate tiles after exit
+        if (this.comboTimer) { clearTimeout(this.comboTimer); this.comboTimer = null; }
+        if (this.deadlockCheckTimeout) { clearTimeout(this.deadlockCheckTimeout); this.deadlockCheckTimeout = null; }
+        if (this.autoShuffleTimeout) { clearTimeout(this.autoShuffleTimeout); this.autoShuffleTimeout = null; }
+        if (this.pairMatchTimeout) { clearTimeout(this.pairMatchTimeout); this.pairMatchTimeout = null; }
+
+        // 2. Clear Board & Slot Tray DOM completely
+        const boardEl = document.getElementById('board');
+        if (boardEl) boardEl.innerHTML = '';
+
+        const slotLayerEl = document.getElementById('slot-tiles-layer');
+        if (slotLayerEl) slotLayerEl.innerHTML = '';
+
+        // 3. Hide HUD badges & in-game modals
+        const extraSlot = document.getElementById('floating-extra-slot');
+        if (extraSlot) extraSlot.classList.add('hidden');
+
+        const comboBadge = document.getElementById('combo-badge');
+        if (comboBadge) comboBadge.classList.add('hidden');
+
+        const modalGameOver = document.getElementById('modal-gameover');
+        if (modalGameOver) modalGameOver.classList.add('hidden');
+
+        const modalVictory = document.getElementById('modal-victory');
+        if (modalVictory) modalVictory.classList.add('hidden');
+
+        const modalQuit = document.getElementById('modal-confirm-quit');
+        if (modalQuit) modalQuit.classList.add('hidden');
+
+        // 4. Reset memory arrays and state flags
+        this.boardTiles = [];
+        this.slotTiles = [];
+        this.hintHighlights = [];
+        this.hasMovedAnyTileInCurrentLevel = false;
+        this.isAutoShuffling = false;
+
+        // 5. Clear Match FX particles if active
+        if (this.fx && typeof this.fx.clear === 'function') {
+            this.fx.clear();
+        }
+    }
+
     startTimer() {
         this.stopTimer();
         if (this.currentMode !== 'timetrial') return;
@@ -3528,8 +3554,8 @@ class TileMatchingGame {
             } else {
                 tile.element.classList.remove('locked');
                 tile.element.classList.add('unlocked-pop');
-                // ELEVATE UNLOCKED CLICKABLE TILES TO TOP VISUAL FOREGROUND
-                tile.element.style.zIndex = String(2000 + 10 * tile.layer + (tile.index || 0));
+                // ELEVATE UNLOCKED CLICKABLE TILES TO TOP VISUAL FOREGROUND WITHIN BOARD STACKING CONTEXT
+                tile.element.style.zIndex = String(100 + 10 * tile.layer + (tile.index || 0));
             }
         }
     }
@@ -3798,7 +3824,8 @@ class TileMatchingGame {
         // Loop match check to process any and all formed pairs immediately!
         while (this.checkForMatches()) {}
 
-        setTimeout(() => this.checkDeadlockAndAutoShuffle(), 300);
+        if (this.deadlockCheckTimeout) clearTimeout(this.deadlockCheckTimeout);
+        this.deadlockCheckTimeout = setTimeout(() => this.checkDeadlockAndAutoShuffle(), 300);
     }
 
     rearrangeSlotTiles() {
@@ -4118,88 +4145,10 @@ class TileMatchingGame {
         this.sound.playMatchSound(this.comboCount);
         this.fx.spawnBurst(midX, midY);
 
-        setTimeout(() => {
+        if (this.pairMatchTimeout) clearTimeout(this.pairMatchTimeout);
+        this.pairMatchTimeout = setTimeout(() => {
             if (tileA.element && tileA.element.parentElement) tileA.element.parentElement.removeChild(tileA.element);
             if (tileB.element && tileB.element.parentElement) tileB.element.parentElement.removeChild(tileB.element);
-
-            this.rearrangeSlotTiles();
-            this.updateLockStates();
-
-            // Run match check again in a loop after element removal to process any pending pairs
-            while (this.checkForMatches()) {}
-
-            // AUTO-CLOSE +1 EMERGENCY SLOT AS SOON AS IT IS USED ONCE & MATCHED
-            if (this.hasTemporaryExtraSlot && this.extraSlotWasUsed) {
-                this.hasTemporaryExtraSlot = false;
-                this.extraSlotWasUsed = false;
-                this.maxSlotCapacity = 5;
-                const floatSlot = document.getElementById('floating-extra-slot');
-                if (floatSlot) floatSlot.classList.add('hidden');
-                
-                const dict = (this.i18n && this.i18n[this.settings.lang]) ? this.i18n[this.settings.lang] : (this.i18n ? this.i18n.tr : {});
-                this.showToast(dict.slotUsedClosedToast || '🚨 +1 ACİL SLOT HAKKI KULLANILDI VE KAPANDI!');
-                this.updateBoosterBadgesUI();
-            }
-
-            if (this.boardTiles.length === 0 && this.slotTiles.length === 0) {
-                this.handleLevelVictory();
-            }
-        }, 220);
-    }
-
-
-    processPairMatch(tileA, tileB) {
-        tileA.isMatching = true;
-        tileB.isMatching = true;
-
-        const idxA = this.slotTiles.indexOf(tileA);
-        if (idxA !== -1) this.slotTiles.splice(idxA, 1);
-
-        const idxB = this.slotTiles.indexOf(tileB);
-        if (idxB !== -1) this.slotTiles.splice(idxB, 1);
-
-        const rectA = tileA.element.getBoundingClientRect();
-        const midX = rectA.left + rectA.width / 2;
-        const midY = rectA.top + rectA.height / 2;
-
-        tileA.element.classList.add('matching');
-        tileB.element.classList.add('matching');
-
-        const now = Date.now();
-        if (now - this.lastMatchTime < 2800) {
-            this.comboCount++;
-        } else {
-            this.comboCount = 1;
-        }
-        this.lastMatchTime = now;
-
-        const points = 100 * this.comboCount;
-        this.score += points;
-        document.getElementById('score-val').innerText = this.score;
-        this.saveGameProgress();
-
-        if (this.comboCount >= 2) {
-            const dict = (this.i18n && this.i18n[this.settings.lang]) ? this.i18n[this.settings.lang] : (this.i18n ? this.i18n.tr : {});
-            let title = dict.combo2x || '✨ HARİKA UYUM!';
-            if (this.comboCount === 3) title = dict.combo3x || '💖 MUHTEŞEM EŞLEŞME!';
-            else if (this.comboCount === 4) title = dict.combo4x || '🌟 SÜPER COMBO!';
-            else if (this.comboCount >= 5) title = dict.combo5x || '🌈 EFSANEVİ EŞLEŞME!';
-            
-            this.showComboBadge(`${title} (+${points})`);
-        }
-
-        if (this.currentMode === 'timetrial') {
-            this.remainingSeconds += 1;
-            const timerVal = document.getElementById('timer-val');
-            if (timerVal) timerVal.innerText = `${this.remainingSeconds}s`;
-        }
-
-        this.sound.playMatchSound(this.comboCount);
-        this.fx.spawnBurst(midX, midY);
-
-        setTimeout(() => {
-            if (tileA.element.parentElement) tileA.element.parentElement.removeChild(tileA.element);
-            if (tileB.element.parentElement) tileB.element.parentElement.removeChild(tileB.element);
 
             // AUTO-CLOSE +1 EMERGENCY SLOT AS SOON AS IT IS USED ONCE & MATCHED
             if (this.hasTemporaryExtraSlot && this.extraSlotWasUsed) {

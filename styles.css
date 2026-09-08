@@ -139,9 +139,12 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 2000;
+    z-index: 5000;
     transition: opacity 0.4s ease;
-    overflow: hidden;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 18px 10px;
+    box-sizing: border-box;
 }
 
 .menu-overlay.hidden {
@@ -151,7 +154,7 @@ body {
     display: none !important;
 }
 
-/* Rich Floating Background Character Cards (16 Characters Grid Layer) */
+/* Rich Floating Background Character Cards (Perimeter Only - Never in Center) */
 .menu-bg-characters {
     position: absolute;
     top: 0;
@@ -164,13 +167,13 @@ body {
 
 .bg-char {
     position: absolute;
-    width: 62px;
-    height: 62px;
+    width: 56px;
+    height: 56px;
     border-radius: 18px;
     background: #ffffff;
     padding: 3px;
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.35), inset 0 0 0 2px #ffffff;
-    opacity: 0.94;
+    opacity: 0.85;
     object-fit: cover;
     animation: floatCharacter 5s ease-in-out infinite alternate;
 }
@@ -187,48 +190,48 @@ body {
     height: 80%;
 }
 
-/* 16 Floating Grid Positions across entire screen */
-.char-1 { top: 4%; left: 6%; animation-delay: 0s; transform: rotate(-12deg); }
-.char-2 { top: 6%; right: 6%; animation-delay: 1.2s; transform: rotate(15deg); }
-.char-3 { top: 22%; left: 3%; animation-delay: 2.2s; transform: rotate(-8deg); }
-.char-4 { top: 24%; right: 4%; animation-delay: 0.6s; transform: rotate(10deg); }
-.char-5 { top: 42%; left: 2%; animation-delay: 1.6s; transform: rotate(14deg); }
-.char-6 { top: 44%; right: 3%; animation-delay: 2.8s; transform: rotate(-14deg); }
-.char-7 { bottom: 24%; left: 4%; animation-delay: 3.2s; transform: rotate(-10deg); }
-.char-8 { bottom: 26%; right: 5%; animation-delay: 1.9s; transform: rotate(12deg); }
-.char-9 { bottom: 6%; left: 8%; animation-delay: 0.8s; transform: rotate(8deg); }
-.char-10 { bottom: 8%; right: 8%; animation-delay: 2.4s; transform: rotate(-15deg); }
-.char-11 { top: 14%; left: 30%; animation-delay: 1.5s; opacity: 0.65; scale: 0.85; }
-.char-12 { top: 16%; right: 32%; animation-delay: 2.7s; opacity: 0.65; scale: 0.85; }
-.char-13 { bottom: 16%; left: 32%; animation-delay: 0.4s; opacity: 0.65; scale: 0.85; }
-.char-14 { bottom: 18%; right: 30%; animation-delay: 3.0s; opacity: 0.65; scale: 0.85; }
-.char-15 { top: 34%; left: 24%; animation-delay: 2.1s; opacity: 0.4; scale: 0.75; }
-.char-16 { bottom: 34%; right: 24%; animation-delay: 1.1s; opacity: 0.4; scale: 0.75; }
+/* Outer Perimeter Placement Only - Keeps Screen Center Clean */
+.char-1 { top: 3%; left: 4%; animation-delay: 0s; transform: rotate(-12deg); }
+.char-2 { top: 3%; right: 4%; animation-delay: 1.2s; transform: rotate(15deg); }
+.char-3 { top: 22%; left: 2%; animation-delay: 2.2s; transform: rotate(-8deg); }
+.char-4 { top: 24%; right: 2%; animation-delay: 0.6s; transform: rotate(10deg); }
+.char-5 { top: 46%; left: 1%; animation-delay: 1.6s; transform: rotate(14deg); }
+.char-6 { top: 48%; right: 1%; animation-delay: 2.8s; transform: rotate(-14deg); }
+.char-7 { bottom: 22%; left: 2%; animation-delay: 3.2s; transform: rotate(-10deg); }
+.char-8 { bottom: 24%; right: 2%; animation-delay: 1.9s; transform: rotate(12deg); }
+.char-9 { bottom: 3%; left: 4%; animation-delay: 0.8s; transform: rotate(8deg); }
+.char-10 { bottom: 3%; right: 4%; animation-delay: 2.4s; transform: rotate(-15deg); }
+.char-11 { top: 2%; left: 22%; animation-delay: 1.5s; opacity: 0.5; scale: 0.75; }
+.char-12 { top: 2%; right: 22%; animation-delay: 2.7s; opacity: 0.5; scale: 0.75; }
+.char-13 { bottom: 2%; left: 22%; animation-delay: 0.4s; opacity: 0.5; scale: 0.75; }
+.char-14 { bottom: 2%; right: 22%; animation-delay: 3.0s; opacity: 0.5; scale: 0.75; }
+.char-15 { top: 70%; left: 1%; animation-delay: 2.1s; opacity: 0.4; scale: 0.7; }
+.char-16 { bottom: 70%; right: 1%; animation-delay: 1.1s; opacity: 0.4; scale: 0.7; }
 
 @keyframes floatCharacter {
     0% { transform: translateY(0px) rotate(-10deg) scale(1); }
-    50% { transform: translateY(-16px) rotate(8deg) scale(1.08); }
-    100% { transform: translateY(12px) rotate(-6deg) scale(0.95); }
+    50% { transform: translateY(-14px) rotate(8deg) scale(1.05); }
+    100% { transform: translateY(10px) rotate(-6deg) scale(0.96); }
 }
 
-/* Frosted Glassmorphic Integrated Menu Card Panel */
+/* Opaque Solid-Backdrop Menu Card Panel (Zero bleed-through) */
 .menu-card {
     position: relative;
-    background: rgba(15, 23, 42, 0.65);
-    border: 2px solid rgba(251, 191, 36, 0.55);
-    border-radius: 36px;
-    padding: 36px 20px;
+    background: linear-gradient(180deg, #16193b 0%, #0d1226 100%);
+    border: 2.5px solid rgba(251, 191, 36, 0.6);
+    border-radius: 32px;
+    padding: 26px 18px;
     width: 92%;
-    max-width: 370px;
+    max-width: 360px;
     text-align: center;
-    backdrop-filter: blur(28px) saturate(180%);
-    -webkit-backdrop-filter: blur(28px) saturate(180%);
-    box-shadow: 0 30px 70px rgba(0, 0, 0, 0.65), 0 0 35px rgba(245, 158, 11, 0.3), inset 0 2px 0 rgba(255, 255, 255, 0.2);
+    box-shadow: 0 30px 70px rgba(0, 0, 0, 0.9), 0 0 35px rgba(245, 158, 11, 0.25), inset 0 2px 0 rgba(255, 255, 255, 0.15);
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 16px;
+    gap: 13px;
     z-index: 10;
+    margin: auto;
+    box-sizing: border-box;
 }
 
 /* Charming Heart-Shaped 3D Tile Logo Emblem Frame with Sunburst Aura & Crown */
@@ -676,7 +679,7 @@ body {
     border-radius: 16px;
 }
 
-/* Modals & Settings Overlay Screen (Z-Index 3000 - Above Main Menu & HUD!) */
+/* Modals & Settings Overlay Screen (Z-Index 6000 - Above Main Menu 5000 & All HUD) */
 .modal-overlay {
     position: absolute;
     top: 0;
@@ -687,9 +690,13 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 3000;
+    z-index: 6000;
     transition: opacity 0.18s cubic-bezier(0.4, 0, 0.2, 1);
     will-change: opacity;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 14px 8px;
+    box-sizing: border-box;
 }
 
 .modal-overlay.hidden {
@@ -703,21 +710,29 @@ body {
     background: linear-gradient(180deg, #1e1b4b 0%, #0f172a 100%);
     border: 2.5px solid var(--accent-gold);
     border-radius: 28px;
-    padding: 32px 28px;
-    width: 88%;
-    max-width: 340px;
+    padding: 24px 20px;
+    width: 90%;
+    max-width: 350px;
+    max-height: calc(100dvh - 28px);
+    max-height: calc(100vh - 28px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    box-sizing: border-box;
     text-align: center;
     box-shadow: 0 25px 60px rgba(0, 0, 0, 0.85);
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 16px;
+    gap: 14px;
+    margin: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(251, 191, 36, 0.4) transparent;
 }
 
 .settings-card {
     max-width: 370px;
-    gap: 16px;
-    padding: 24px 20px;
+    gap: 10px;
+    padding: 18px 14px;
 }
 
 .modal-header-row {
@@ -1216,6 +1231,8 @@ body {
 #board-container {
     flex: 1;
     position: relative;
+    z-index: 10;
+    contain: layout;
     width: 100%;
     display: flex;
     justify-content: center;
@@ -2963,6 +2980,59 @@ body {
     }
 }
 
+/* Compact Height Phones (< 740px viewport height, e.g. iPhone SE, 667px-740px) */
+@media (max-height: 740px) {
+    .menu-card {
+        padding: 16px 12px !important;
+        gap: 8px !important;
+    }
+    .menu-logo-frame {
+        width: 80px !important;
+        height: 80px !important;
+    }
+    .menu-hero-icon {
+        width: 60px !important;
+        height: 60px !important;
+    }
+    .menu-title {
+        font-size: 20px !important;
+    }
+    .menu-subtitle {
+        font-size: 11px !important;
+    }
+    .btn-menu {
+        padding: 9px 12px !important;
+        font-size: 12px !important;
+    }
+    .wheel-card {
+        padding: 14px 10px !important;
+        gap: 8px !important;
+    }
+    .wheel-wrapper {
+        width: 220px !important;
+        height: 220px !important;
+        margin: 6px auto !important;
+    }
+    #wheel-canvas {
+        width: 220px !important;
+        height: 220px !important;
+    }
+    .chest-card {
+        padding: 16px 12px !important;
+        gap: 8px !important;
+    }
+    .chest-reward-list {
+        max-height: 140px !important;
+    }
+    .settings-card {
+        padding: 14px 10px !important;
+        gap: 8px !important;
+    }
+    .setting-row {
+        padding: 6px 10px !important;
+    }
+}
+
 /* ================= =========================================
    CYBERCORE INTERACTIVE STUDIO INTRO STAGE (STANDALONE / COLD BOOT)
    ========================================================= */
@@ -3078,10 +3148,6 @@ body {
 @keyframes sweep {
     0% { left: -100%; }
     100% { left: 200%; }
-}
-        padding: 10px 12px !important;
-        font-size: 12px !important;
-    }
 }
 
 /* Safe Area Insets for Notched Phones */
