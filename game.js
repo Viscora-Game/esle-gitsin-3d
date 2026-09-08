@@ -626,14 +626,16 @@ class TileMatchingGame {
         this.levelStartScore = 0;
 
         // Auto-Update Engine State
-        this.currentVersion = '8.9.88';
-        this.currentBuild = 120;
+        this.currentVersion = '8.9.89';
+        this.currentBuild = 121;
         this.hasPendingUpdate = null;
         this.isUpdatingNow = false;
 
         // Time Trial Countdown Timer State
         this.timerInterval = null;
         this.remainingSeconds = 0;
+        this.isTimerPausedForModal = false;
+        this.isTimerPausedForBackground = false;
 
         // Tutorial Slide State
         this.currentTutStep = 0;
@@ -1703,6 +1705,8 @@ class TileMatchingGame {
         }
         this.checkFirstTimeTutorial();
         this.checkFirstTimeRegistration();
+        this.pingCloudServerWarmup();
+        this.flushPendingCloudSync();
         this.checkForLiveUpdate();
         setInterval(() => this.checkForLiveUpdate(), 10 * 60 * 1000);
         } catch (e) {
@@ -1765,6 +1769,8 @@ class TileMatchingGame {
 
             // Automatically restore cloud puzzle data and sync leaderboard on game startup
             setTimeout(() => {
+                this.pingCloudServerWarmup();
+                this.flushPendingCloudSync();
                 this.restoreCloudPuzzleData();
                 this.syncCloudLeaderboard();
                 this.fetchCloudLeaderboardData();
@@ -2426,6 +2432,7 @@ class TileMatchingGame {
                 this.sound.playClick();
                 btnRefreshLb.classList.add('spinning');
                 this.registerSelfIntoCloudDataset();
+                await this.flushPendingCloudSync();
                 await this.syncCloudLeaderboard();
                 await this.fetchCloudLeaderboardData();
                 this.renderLeaderboardList(this.currentLeaderboardCategory || 'overall');
@@ -2647,6 +2654,7 @@ class TileMatchingGame {
             if (this.boardTiles && this.boardTiles.length > 0 && this.hasMovedAnyTileInCurrentLevel) {
                 const modalQuit = document.getElementById('modal-confirm-quit');
                 if (modalQuit) {
+                    this.pauseTimer();
                     modalQuit.classList.remove('hidden');
                     modalQuit.style.display = 'flex';
                 }
@@ -2671,6 +2679,7 @@ class TileMatchingGame {
             btnCancelQuit.addEventListener('click', () => {
                 this.sound.playClick();
                 document.getElementById('modal-confirm-quit').classList.add('hidden');
+                this.resumeTimer();
             });
         }
 
@@ -2743,6 +2752,7 @@ class TileMatchingGame {
         }
 
         document.getElementById('btn-hud-settings').addEventListener('click', () => {
+            this.pauseTimer();
             this.openSettings();
         });
 
@@ -2755,19 +2765,30 @@ class TileMatchingGame {
             } else {
                 if (this.currentMode === 'timetrial' && this.isTimerPausedForBackground) {
                     this.isTimerPausedForBackground = false;
-                    this.startTimer();
+                    if (!this.isTimerPausedForModal) {
+                        this.startTimer();
+                    }
                 }
                 this.checkForLiveUpdate();
+                this.flushPendingCloudSync();
             }
+        });
+
+        window.addEventListener('online', () => {
+            console.log('[Network] Internet bağlantısı yeniden sağlandı. Çevrimdışı kuyruk iletiliyor...');
+            this.pingCloudServerWarmup();
+            this.flushPendingCloudSync();
         });
 
         document.getElementById('btn-close-settings').addEventListener('click', () => {
             document.getElementById('modal-settings').classList.add('hidden');
+            this.resumeTimer();
         });
 
         document.getElementById('btn-save-settings').addEventListener('click', () => {
             this.saveSettings();
             document.getElementById('modal-settings').classList.add('hidden');
+            this.resumeTimer();
         });
 
         // Settings Controls - Sound Effects Volume Slider
@@ -3193,6 +3214,7 @@ class TileMatchingGame {
 
     startLevel(lvl, isNewGame = false, mode = 'classic') {
         this.hideMainMenuBannerAd();
+        this.stopWheelTimerLoop();
         this.levelAdReviveCount = 0;
 
         // Clear any stale timeouts from previous level to prevent ghost callbacks
@@ -3425,8 +3447,32 @@ class TileMatchingGame {
         }
     }
 
+    pauseTimer() {
+        if (this.currentMode === 'timetrial' && this.timerInterval) {
+            clearInterval(this.timerInterval);
+            this.timerInterval = null;
+            this.isTimerPausedForModal = true;
+        }
+    }
+
+    resumeTimer() {
+        if (this.currentMode === 'timetrial' && this.isTimerPausedForModal) {
+            this.isTimerPausedForModal = false;
+            const modalGameOver = document.getElementById('modal-gameover');
+            const modalVictory = document.getElementById('modal-victory');
+            const isGameOver = modalGameOver && !modalGameOver.classList.contains('hidden');
+            const isVictory = modalVictory && !modalVictory.classList.contains('hidden');
+            if (!isGameOver && !isVictory && this.remainingSeconds > 0 && !this.isTimerPausedForBackground) {
+                this.startTimer();
+            }
+        }
+    }
+
     cleanupCurrentGame() {
         this.stopTimer();
+        this.isTimerPausedForModal = false;
+        this.isTimerPausedForBackground = false;
+        this.startWheelTimerLoop();
 
         // 1. Clear any active timeouts/intervals that could manipulate tiles after exit
         if (this.comboTimer) { clearTimeout(this.comboTimer); this.comboTimer = null; }
@@ -5188,6 +5234,13 @@ class TileMatchingGame {
         }, 1000);
     }
 
+    stopWheelTimerLoop() {
+        if (this.wheelTimerInterval) {
+            clearInterval(this.wheelTimerInterval);
+            this.wheelTimerInterval = null;
+        }
+    }
+
     getWheelSegments() {
         const dict = (this.i18n && this.i18n[this.settings.lang]) ? this.i18n[this.settings.lang] : (this.i18n ? this.i18n.tr : {});
         const pasLabel = dict.pasText || 'PAS ❌';
@@ -5260,6 +5313,7 @@ class TileMatchingGame {
         const disc = document.getElementById('wheel-disc');
         if (disc) disc.style.transform = 'rotate(0deg)';
 
+        this.startWheelTimerLoop();
         this.updateWheelTimerState();
         const modalWheel = document.getElementById('modal-wheel');
         if (modalWheel) modalWheel.classList.remove('hidden');
@@ -5902,6 +5956,7 @@ class TileMatchingGame {
         // 2. High-speed sequenced cloud sync & cloud fetch
         (async () => {
             try {
+                await this.flushPendingCloudSync();
                 await this.syncCloudLeaderboard();
                 await this.fetchCloudLeaderboardData();
                 this.registerSelfIntoCloudDataset();
@@ -6164,6 +6219,68 @@ class TileMatchingGame {
         return list;
     }
 
+    pingCloudServerWarmup() {
+        if (typeof navigator !== 'undefined' && !navigator.onLine) return;
+        try {
+            // Lightweight request to wake up Render container immediately from cold start
+            this.fetchWithTimeout('https://viscora.onrender.com/api/debug_users?warmup=1&t=' + Date.now(), {
+                cache: 'no-store'
+            }, 6000).then(() => {
+                console.log('[RenderWarmup] Cloud backend is active and warm.');
+                this.flushPendingCloudSync();
+            }).catch(() => {
+                // Backend is waking up; it will handle queued requests shortly
+            });
+        } catch (e) {}
+    }
+
+    queuePendingCloudSync(payload) {
+        try {
+            localStorage.setItem('tile_game_pending_cloud_sync', JSON.stringify({
+                payload: payload,
+                queuedAt: Date.now()
+            }));
+            console.log('[CloudSync] Skor yerel çevrimdışı kuyruğa kaydedildi (bağlantı sağlandığında iletilecek).');
+        } catch (e) {}
+    }
+
+    clearPendingCloudSync() {
+        try {
+            localStorage.removeItem('tile_game_pending_cloud_sync');
+        } catch (e) {}
+    }
+
+    async flushPendingCloudSync() {
+        if (typeof navigator !== 'undefined' && !navigator.onLine) return;
+        try {
+            const raw = localStorage.getItem('tile_game_pending_cloud_sync');
+            if (!raw) return;
+            const queued = JSON.parse(raw);
+            if (!queued || !queued.payload) {
+                this.clearPendingCloudSync();
+                return;
+            }
+
+            const userSyncUrl = 'https://viscora.onrender.com/api/user/sync';
+            const syncResp = await this.fetchWithTimeout(userSyncUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(queued.payload)
+            }, 5000);
+
+            if (syncResp && syncResp.ok) {
+                const syncJson = await syncResp.json().catch(() => null);
+                if (syncJson && syncJson.syncCode) {
+                    localStorage.setItem('tile_game_sync_code', syncJson.syncCode);
+                }
+                this.clearPendingCloudSync();
+                console.log('[CloudSync] Bekleyen çevrimdışı skor kuyruğu buluta başarıyla iletildi.');
+            }
+        } catch (e) {
+            // If still waking up, leave in queue for next flush attempt
+        }
+    }
+
     async syncCloudLeaderboard() {
         if (!this.playerProfile || !this.playerProfile.nickname || this.playerProfile.nickname === 'Siz') return;
 
@@ -6224,52 +6341,63 @@ class TileMatchingGame {
             this.mergeAndSaveCloudDataset([myEntry]);
 
             // 2. Sync to MongoDB Atlas via Render live API endpoint
-            if (typeof navigator !== 'undefined' && navigator.onLine) {
-                const userSyncUrl = 'https://viscora.onrender.com/api/user/sync';
-                const safeUserId = 'esle_' + myFullTag.replace(/[^a-zA-Z0-9çğışöüÇĞİŞÖÜ]/g, '_');
-                const syncPayload = {
-                    userId: safeUserId,
-                    saveData: {
-                        authorName: myFullTag,
-                        totalCrystals: myOverallScore,
-                        spentCrystals: myClassicScore,
-                        avatar: `${myTtScore}_${myClassicLvl}_${myTtLvl}_${myPuzzleCount}_${myTotalPlacedPieces}_${myInventoryCount}`,
-                        goldCoins: this.goldCoins,
-                        puzzleDataStr: myEntry.puzzleDataStr
-                    },
-                    force: true
-                };
+            const userSyncUrl = 'https://viscora.onrender.com/api/user/sync';
+            const safeUserId = 'esle_' + myFullTag.replace(/[^a-zA-Z0-9çğışöüÇĞİŞÖÜ]/g, '_');
+            const syncPayload = {
+                userId: safeUserId,
+                saveData: {
+                    authorName: myFullTag,
+                    totalCrystals: myOverallScore,
+                    spentCrystals: myClassicScore,
+                    avatar: `${myTtScore}_${myClassicLvl}_${myTtLvl}_${myPuzzleCount}_${myTotalPlacedPieces}_${myInventoryCount}`,
+                    goldCoins: this.goldCoins,
+                    puzzleDataStr: myEntry.puzzleDataStr
+                },
+                force: true
+            };
 
-                try {
-                    const syncResp = await this.fetchWithTimeout(userSyncUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(syncPayload)
-                    }, 3000);
-                    if (syncResp && syncResp.ok) {
-                        const syncJson = await syncResp.json().catch(() => null);
-                        if (syncJson && syncJson.syncCode) {
-                            localStorage.setItem('tile_game_sync_code', syncJson.syncCode);
-                        }
-                    }
-                } catch (userSyncErr) {}
-
-                // Dedicated endpoint fallback (if deployed)
-                try {
-                    const dedicatedUrl = 'https://viscora.onrender.com/api/esle-gitsin/sync';
-                    const mongoResp = await this.fetchWithTimeout(dedicatedUrl, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(myEntry)
-                    }, 1800);
-                    if (mongoResp && mongoResp.ok) {
-                        const mongoData = await mongoResp.json();
-                        if (mongoData && Array.isArray(mongoData.players) && mongoData.players.length > 0) {
-                            this.mergeAndSaveCloudDataset(mongoData.players);
-                        }
-                    }
-                } catch (mongoErr) {}
+            if (typeof navigator !== 'undefined' && !navigator.onLine) {
+                this.queuePendingCloudSync(syncPayload);
+                return;
             }
+
+            let syncSuccess = false;
+            try {
+                const syncResp = await this.fetchWithTimeout(userSyncUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(syncPayload)
+                }, 3500);
+                if (syncResp && syncResp.ok) {
+                    const syncJson = await syncResp.json().catch(() => null);
+                    if (syncJson && syncJson.syncCode) {
+                        localStorage.setItem('tile_game_sync_code', syncJson.syncCode);
+                    }
+                    this.clearPendingCloudSync();
+                    syncSuccess = true;
+                }
+            } catch (userSyncErr) {}
+
+            if (!syncSuccess) {
+                // If Render is cold or network timed out, save into pending queue to retry automatically!
+                this.queuePendingCloudSync(syncPayload);
+            }
+
+            // Dedicated endpoint fallback (if deployed)
+            try {
+                const dedicatedUrl = 'https://viscora.onrender.com/api/esle-gitsin/sync';
+                const mongoResp = await this.fetchWithTimeout(dedicatedUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(myEntry)
+                }, 1800);
+                if (mongoResp && mongoResp.ok) {
+                    const mongoData = await mongoResp.json();
+                    if (mongoData && Array.isArray(mongoData.players) && mongoData.players.length > 0) {
+                        this.mergeAndSaveCloudDataset(mongoData.players);
+                    }
+                }
+            } catch (mongoErr) {}
         } catch (e) {
             console.log('[CloudSync] Exception:', e);
         }
