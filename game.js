@@ -840,7 +840,7 @@ class TileMatchingGame {
                 prevPageBtn: "◀ ÖNCEKİ SAYFA",
                 nextPageBtn: "SONRAKİ SAYFA ▶",
                 completedBadge: "TAMAMLANDI! 🌟",
-                forceUpdateBtn: "⚡ CANLI GÜNCELLEMEYİ YÜKLE (v8.9.75)",
+                forceUpdateBtn: "⚡ CANLI GÜNCELLEMEYİ YÜKLE (v8.9.76)",
                 resetModalTitle: "🔄 HANGİ MOD SIFIRLANSIN?",
                 resetModalDesc: "Sıfırlamak istediğiniz oyun modunu seçin:",
                 resetClassicBtn: "🎮 KLASİK MODU SIFIRLA",
@@ -977,7 +977,7 @@ class TileMatchingGame {
                 prevPageBtn: "◀ PREVIOUS PAGE",
                 nextPageBtn: "NEXT PAGE ▶",
                 completedBadge: "COMPLETED! 🌟",
-                forceUpdateBtn: "⚡ INSTALL LIVE UPDATE (v8.9.75)",
+                forceUpdateBtn: "⚡ INSTALL LIVE UPDATE (v8.9.76)",
                 resetModalTitle: "🔄 RESET WHICH MODE?",
                 resetModalDesc: "Select game mode to reset progress:",
                 resetClassicBtn: "🎮 RESET CLASSIC MODE",
@@ -1114,7 +1114,7 @@ class TileMatchingGame {
                 prevPageBtn: "◀ VORHERIGE SEITE",
                 nextPageBtn: "NÄCHSTE SEITE ▶",
                 completedBadge: "ABGESCHLOSSEN! 🌟",
-                forceUpdateBtn: "⚡ LIVE-UPDATE INSTALLIEREN (v8.9.75)",
+                forceUpdateBtn: "⚡ LIVE-UPDATE INSTALLIEREN (v8.9.76)",
                 resetModalTitle: "🔄 WELCHEN MODUS ZURÜCKSETZEN?",
                 resetModalDesc: "Wähle den Spielmodus zum Zurücksetzen:",
                 resetClassicBtn: "🎮 KLASSISCHEN MODUS ZURÜCKSETZEN",
@@ -1251,7 +1251,7 @@ class TileMatchingGame {
                 prevPageBtn: "◀ PAGE PRÉCÉDENTE",
                 nextPageBtn: "PAGE SUIVANTE ▶",
                 completedBadge: "TERMINÉ! 🌟",
-                forceUpdateBtn: "⚡ INSTALLER MISE À JOUR (v8.9.75)",
+                forceUpdateBtn: "⚡ INSTALLER MISE À JOUR (v8.9.76)",
                 resetModalTitle: "🔄 RÉINITIALISER QUEL MODE?",
                 resetModalDesc: "Sélectionnez le mode à réinitialiser:",
                 resetClassicBtn: "🎮 RÉINIT. CLASSIQUE",
@@ -1388,7 +1388,7 @@ class TileMatchingGame {
                 prevPageBtn: "◀ PAGINA PRECEDENTE",
                 nextPageBtn: "PAGINA SUCCESSIVA ▶",
                 completedBadge: "COMPLETATO! 🌟",
-                forceUpdateBtn: "⚡ INSTALLA AGGIORNAMENTO (v8.9.75)",
+                forceUpdateBtn: "⚡ INSTALLA AGGIORNAMENTO (v8.9.76)",
                 resetModalTitle: "🔄 RESETTA QUALE MODALITÀ?",
                 resetModalDesc: "Seleziona la modalità da resettare:",
                 resetClassicBtn: "🎮 RESETTA CLASSICA",
@@ -1500,7 +1500,7 @@ class TileMatchingGame {
                 prevPageBtn: "◀ PÁGINA ANTERIOR",
                 nextPageBtn: "PÁGINA SIGUIENTE ▶",
                 completedBadge: "¡COMPLETADO! 🌟",
-                forceUpdateBtn: "⚡ INSTALAR ACTUALIZACIÓN (v8.9.75)",
+                forceUpdateBtn: "⚡ INSTALAR ACTUALIZACIÓN (v8.9.76)",
                 resetModalTitle: "🔄 ¿REINICIAR QUÉ MODO?",
                 resetModalDesc: "Selecciona el modo para reiniciar progreso:",
                 resetClassicBtn: "🎮 REINICIAR MODO CLÁSICO",
@@ -1637,7 +1637,7 @@ class TileMatchingGame {
                 prevPageBtn: "◀ PÁGINA ANTERIOR",
                 nextPageBtn: "PRÓXIMA PÁGINA ▶",
                 completedBadge: "CONCLUÍDO! 🌟",
-                forceUpdateBtn: "⚡ INSTALAR ATUALIZAÇÃO (v8.9.75)",
+                forceUpdateBtn: "⚡ INSTALAR ATUALIZAÇÃO (v8.9.76)",
                 resetModalTitle: "🔄 REINICIAR QUAL MODO?",
                 resetModalDesc: "Selecione o modo para reiniciar progresso:",
                 resetClassicBtn: "🎮 REINICIAR MODO CLÁSSICO",
@@ -1747,7 +1747,14 @@ class TileMatchingGame {
         } catch (e) {}
     }
 
-    saveGameProgress(isVictoryUnlock = false) {
+    debouncedSyncCloudLeaderboard() {
+        if (this._cloudSyncDebounceTimer) clearTimeout(this._cloudSyncDebounceTimer);
+        this._cloudSyncDebounceTimer = setTimeout(() => {
+            this.syncCloudLeaderboard();
+        }, 1200);
+    }
+
+    saveGameProgress(isVictoryUnlock = false, allowDecrease = false) {
         try {
             const puzzleData = {
                 goldCoins: this.goldCoins,
@@ -1768,8 +1775,15 @@ class TileMatchingGame {
                     const safeLevel = Math.max(currentHighest, targetSaveLevel);
                     const baseMinScore = (safeLevel > 1) ? (safeLevel - 1) * 2000 : 0;
                     
-                    // Support real-time score penalties (e.g. 45,000 -> 43,000) while enforcing non-negative & level floor
-                    const safeScore = (typeof this.score === 'number') ? Math.max(baseMinScore, Math.max(0, this.score)) : Math.max((this.classicProgress && this.classicProgress.score) || 0, baseMinScore);
+                    const prevScore = (this.classicProgress && typeof this.classicProgress.score === 'number') ? this.classicProgress.score : 0;
+                    const currentScore = (typeof this.score === 'number') ? this.score : 0;
+                    
+                    let safeScore;
+                    if (allowDecrease) {
+                        safeScore = Math.max(baseMinScore, Math.max(0, currentScore));
+                    } else {
+                        safeScore = Math.max(prevScore, currentScore, baseMinScore);
+                    }
                     
                     const data = {
                         level: safeLevel,
@@ -1786,8 +1800,15 @@ class TileMatchingGame {
                     const safeLevel = Math.max(currentHighest, targetSaveLevel);
                     const baseMinScore = (safeLevel > 1) ? (safeLevel - 1) * 2500 : 0;
 
-                    // Support real-time score penalties (e.g. 45,000 -> 43,000) while enforcing non-negative & level floor
-                    const safeScore = (typeof this.score === 'number') ? Math.max(baseMinScore, Math.max(0, this.score)) : Math.max((this.timeTrialProgress && this.timeTrialProgress.score) || 0, baseMinScore);
+                    const prevScore = (this.timeTrialProgress && typeof this.timeTrialProgress.score === 'number') ? this.timeTrialProgress.score : 0;
+                    const currentScore = (typeof this.score === 'number') ? this.score : 0;
+                    
+                    let safeScore;
+                    if (allowDecrease) {
+                        safeScore = Math.max(baseMinScore, Math.max(0, currentScore));
+                    } else {
+                        safeScore = Math.max(prevScore, currentScore, baseMinScore);
+                    }
 
                     const data = {
                         level: safeLevel,
@@ -1802,8 +1823,11 @@ class TileMatchingGame {
                 }
             }
 
-            // Sync scores to live cloud database unconditionally!
-            this.syncCloudLeaderboard();
+            // Immediately register own score to local dataset so leaderboard is 0ms up to date
+            this.registerSelfIntoCloudDataset();
+
+            // Sync scores to live cloud database
+            this.debouncedSyncCloudLeaderboard();
         } catch (e) {}
     }
 
@@ -2622,7 +2646,8 @@ class TileMatchingGame {
                 this.cleanupCurrentGame();
 
                 // 4. Save progress & sync penalty to Cloud DB
-                this.saveGameProgress();
+                this.saveGameProgress(false, true);
+                this.syncCloudLeaderboard();
 
                 // 5. Return to main menu
                 this.updateMainMenuButtons();
@@ -3579,7 +3604,7 @@ class TileMatchingGame {
 
         this.score -= this.undoCost;
         document.getElementById('score-val').innerText = this.score;
-        this.saveGameProgress();
+        this.saveGameProgress(false, true);
 
         this.undoCost *= 2;
         this.updateBoosterBadgesUI();
@@ -3637,7 +3662,7 @@ class TileMatchingGame {
         if (foundMatchTiles.length > 0) {
             this.score -= this.hintCost;
             document.getElementById('score-val').innerText = this.score;
-            this.saveGameProgress();
+            this.saveGameProgress(false, true);
 
             // Double the cost for next use in current level (%100 Increase!)
             this.hintCost *= 2;
@@ -3679,7 +3704,7 @@ class TileMatchingGame {
 
         this.score -= this.slotCost;
         document.getElementById('score-val').innerText = this.score;
-        this.saveGameProgress();
+        this.saveGameProgress(false, true);
 
         // Double the cost for next use in current level (%100 Increase!)
         this.slotCost *= 2;
@@ -3718,7 +3743,7 @@ class TileMatchingGame {
 
         this.score -= this.shuffleCost;
         document.getElementById('score-val').innerText = this.score;
-        this.saveGameProgress();
+        this.saveGameProgress(false, true);
 
         // Double the cost for next use in current level (5000 -> 10000 -> 20000...)
         this.shuffleCost *= 2;
@@ -5398,6 +5423,7 @@ class TileMatchingGame {
                         const merged = {
                             ...ex,
                             ...p,
+                            isSelf: ex.isSelf || p.isSelf || false,
                             classicLvl: Math.max(ex.classicLvl || 1, p.classicLvl || 1),
                             classicScore: Math.max(ex.classicScore || 0, p.classicScore || 0),
                             ttLvl: Math.max(ex.ttLvl || 1, p.ttLvl || 1),
@@ -5423,6 +5449,7 @@ class TileMatchingGame {
                     const merged = {
                         ...ex,
                         ...p,
+                        isSelf: ex.isSelf || p.isSelf || false,
                         classicLvl: Math.max(ex.classicLvl || 1, p.classicLvl || 1),
                         classicScore: Math.max(ex.classicScore || 0, p.classicScore || 0),
                         ttLvl: Math.max(ex.ttLvl || 1, p.ttLvl || 1),
@@ -5445,7 +5472,7 @@ class TileMatchingGame {
         } catch (e) {}
     }
 
-    fetchWithTimeout(url, options = {}, timeoutMs = 3500) {
+    fetchWithTimeout(url, options = {}, timeoutMs = 3000) {
         const controller = new AbortController();
         const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
         return fetch(url, { ...options, signal: controller.signal })
@@ -5453,34 +5480,96 @@ class TileMatchingGame {
     }
 
     async fetchCloudLeaderboardData() {
-        // Multi-stage cloud fetch with automatic fallback:
-        // 1. Live Render Backend (/api/esle-gitsin/leaderboard)
-        // 2. Global GitHub Raw CDN (leaderboard.json)
-        // 3. Fallback to cached & seed dataset
-        const endpoints = [
-            'https://viscora.onrender.com/api/esle-gitsin/leaderboard?t=' + Date.now(),
-            'https://raw.githubusercontent.com/Viscora-Game/esle-gitsin-3d/main/leaderboard.json?t=' + Date.now()
-        ];
+        // High-speed multi-stage cloud fetch with 0ms fallback:
+        // 1. Live Render MongoDB Atlas Backend (/api/debug_users) - Instant ~200ms response!
+        // 2. Dedicated endpoint fallback (/api/esle-gitsin/leaderboard)
+        // 3. Global GitHub Raw CDN (leaderboard.json)
+        // 4. In-memory local cache & seed champions
 
-        for (const ep of endpoints) {
-            try {
-                const resp = await this.fetchWithTimeout(ep, {
-                    cache: 'no-store',
-                    headers: {
-                        'Cache-Control': 'no-cache, no-store, must-revalidate',
-                        'Pragma': 'no-cache'
+        // 1. Live MongoDB Atlas endpoint via Render
+        try {
+            const resp = await this.fetchWithTimeout('https://viscora.onrender.com/api/debug_users?t=' + Date.now(), {
+                cache: 'no-store',
+                headers: {
+                    'Cache-Control': 'no-cache, no-store, must-revalidate',
+                    'Pragma': 'no-cache'
+                }
+            }, 2500);
+
+            if (resp && resp.ok) {
+                const debugUsers = await resp.json();
+                if (Array.isArray(debugUsers) && debugUsers.length > 0) {
+                    const parsedPlayers = [];
+                    for (const u of debugUsers) {
+                        if (u && u.userId && u.userId.startsWith('esle_')) {
+                            const fullTag = u.authorName || u.userId.replace('esle_', '').replace(/_/g, '#');
+                            const parts = fullTag.split('#');
+                            const name = parts[0] || 'Oyuncu';
+                            const tag = parts[1] || '0001';
+
+                            const overall = typeof u.totalCrystals === 'number' ? u.totalCrystals : 0;
+                            const classic = typeof u.spentCrystals === 'number' ? u.spentCrystals : 0;
+                            
+                            const avatarStr = u.avatar || '';
+                            const avatarParts = avatarStr.split('_');
+                            const tt = Number(avatarParts[0]) || Math.max(0, overall - classic);
+                            const cLvl = Number(avatarParts[1]) || 1;
+                            const ttLvl = Number(avatarParts[2]) || 1;
+                            const puz = Number(avatarParts[3]) || 0;
+
+                            parsedPlayers.push({
+                                fullTag: `${name}#${tag}`,
+                                name: name,
+                                tag: tag,
+                                overallScore: overall,
+                                classicScore: classic,
+                                ttScore: tt,
+                                classicLvl: cLvl,
+                                ttLvl: ttLvl,
+                                puzzles: puz,
+                                updatedAt: u.lastUpdated ? new Date(u.lastUpdated).getTime() : Date.now()
+                            });
+                        }
                     }
-                }, 3000);
-                if (resp && resp.ok) {
-                    const data = await resp.json();
-                    const list = Array.isArray(data) ? data : (data && Array.isArray(data.players) ? data.players : null);
-                    if (list && list.length > 0) {
-                        this.mergeAndSaveCloudDataset(list);
+
+                    if (parsedPlayers.length > 0) {
+                        this.mergeAndSaveCloudDataset(parsedPlayers);
                         return this.latestCloudDataset;
                     }
                 }
-            } catch (e) {}
-        }
+            }
+        } catch (e) {}
+
+        // 2. Dedicated endpoint fallback (if deployed on Render)
+        try {
+            const dedicatedResp = await this.fetchWithTimeout('https://viscora.onrender.com/api/esle-gitsin/leaderboard?t=' + Date.now(), {
+                cache: 'no-store'
+            }, 1800);
+            if (dedicatedResp && dedicatedResp.ok) {
+                const data = await dedicatedResp.json();
+                const list = Array.isArray(data) ? data : (data && Array.isArray(data.players) ? data.players : null);
+                if (list && list.length > 0) {
+                    this.mergeAndSaveCloudDataset(list);
+                    return this.latestCloudDataset;
+                }
+            }
+        } catch (e) {}
+
+        // 3. Fallback: GitHub Raw CDN
+        try {
+            const ghResp = await this.fetchWithTimeout('https://raw.githubusercontent.com/Viscora-Game/esle-gitsin-3d/main/leaderboard.json?t=' + Date.now(), {
+                cache: 'no-store'
+            }, 2000);
+            if (ghResp && ghResp.ok) {
+                const data = await ghResp.json();
+                const list = Array.isArray(data) ? data : (data && Array.isArray(data.players) ? data.players : null);
+                if (list && list.length > 0) {
+                    this.mergeAndSaveCloudDataset(list);
+                    return this.latestCloudDataset;
+                }
+            }
+        } catch (e) {}
+
         return this.latestCloudDataset;
     }
 
@@ -5514,18 +5603,21 @@ class TileMatchingGame {
             return;
         }
 
-        // 2. Non-blocking asynchronous background refresh and sync
+        // 2. High-speed parallel cloud sync & cloud fetch (~200ms)
         (async () => {
             try {
-                await this.syncCloudLeaderboard();
-                await this.fetchCloudLeaderboardData();
+                await Promise.allSettled([
+                    this.syncCloudLeaderboard(),
+                    this.fetchCloudLeaderboardData()
+                ]);
+                this.registerSelfIntoCloudDataset();
                 if (!modal.classList.contains('hidden') && modal.style.display !== 'none') {
                     this.renderLeaderboardList(this.currentLeaderboardCategory || 'overall');
                 }
             } catch (e) {}
         })();
 
-        // 3. Silent 8-Second Live Background Refresh while modal is open
+        // 3. Silent 5-Second Live Background Refresh while modal is open
         if (this.leaderboardPollInterval) clearInterval(this.leaderboardPollInterval);
         this.leaderboardPollInterval = setInterval(async () => {
             if (modal.classList.contains('hidden') || modal.style.display === 'none') {
@@ -5534,9 +5626,10 @@ class TileMatchingGame {
             }
             if (typeof navigator !== 'undefined' && navigator.onLine) {
                 await this.fetchCloudLeaderboardData();
+                this.registerSelfIntoCloudDataset();
                 this.renderLeaderboardList(this.currentLeaderboardCategory || 'overall');
             }
-        }, 8000);
+        }, 5000);
     }
 
     savePlayerProfile(nickname, tag) {
@@ -5688,14 +5781,13 @@ class TileMatchingGame {
         if (this.latestCloudDataset && Array.isArray(this.latestCloudDataset)) {
             for (const cp of this.latestCloudDataset) {
                 if (cp && cp.fullTag && cp.fullTag.toLowerCase() !== myFullTag.toLowerCase()) {
+                    if (!cp.fullTag || cp.fullTag.length < 3) {
+                        continue;
+                    }
+
                     const cpClassicScore = (typeof cp.classicScore === 'number' && cp.classicScore >= 0) ? cp.classicScore : 0;
                     const cpTtScore = (typeof cp.ttScore === 'number' && cp.ttScore >= 0) ? cp.ttScore : 0;
                     const cpOverallScore = (typeof cp.overallScore === 'number' && cp.overallScore >= 0) ? cp.overallScore : (cpClassicScore + cpTtScore);
-
-                    // IGNORE 0-SCORE BOT / PLACEHOLDER ACCOUNTS FOR CLEAN LEADERBOARD
-                    if (cpOverallScore <= 0 && cpClassicScore <= 0 && cpTtScore <= 0) {
-                        continue;
-                    }
 
                     const existingIdx = list.findIndex(item => item.fullTag.toLowerCase() === cp.fullTag.toLowerCase());
 
@@ -5743,7 +5835,7 @@ class TileMatchingGame {
     }
 
     async syncCloudLeaderboard() {
-        if (!this.playerProfile || !this.playerProfile.nickname) return;
+        if (!this.playerProfile || !this.playerProfile.nickname || this.playerProfile.nickname === 'Siz') return;
 
         try {
             const myName = this.playerProfile.nickname;
@@ -5771,11 +5863,8 @@ class TileMatchingGame {
 
             const myOverallScore = myClassicScore + myTtScore;
 
-            if (myOverallScore <= 0 && myClassicScore <= 0 && myTtScore <= 0) {
-                return; // Do not sync 0-score unplayed profiles to cloud!
-            }
-
             const myEntry = {
+                isSelf: true,
                 fullTag: myFullTag,
                 name: myName,
                 tag: myTag,
@@ -5793,18 +5882,40 @@ class TileMatchingGame {
                 updatedAt: Date.now()
             };
 
-            // 1. Immediately update local dataset so the player's own score reflects instantly
+            // 1. Immediately update local dataset so the player's own score reflects instantly (0ms)
             this.mergeAndSaveCloudDataset([myEntry]);
 
-            // 2. Sync to Render / MongoDB backend if online
+            // 2. Sync to MongoDB Atlas via Render live API endpoint
             if (typeof navigator !== 'undefined' && navigator.onLine) {
-                const mongoApiUrl = 'https://viscora.onrender.com/api/esle-gitsin/sync';
+                const userSyncUrl = 'https://viscora.onrender.com/api/user/sync';
+                const safeUserId = 'esle_' + myFullTag.replace(/[^a-zA-Z0-9çğışöüÇĞİŞÖÜ]/g, '_');
+                const syncPayload = {
+                    userId: safeUserId,
+                    saveData: {
+                        authorName: myFullTag,
+                        totalCrystals: myOverallScore,
+                        spentCrystals: myClassicScore,
+                        avatar: `${myTtScore}_${myClassicLvl}_${myTtLvl}_${myPuzzleCount}`
+                    },
+                    force: true
+                };
+
                 try {
-                    const mongoResp = await this.fetchWithTimeout(mongoApiUrl, {
+                    await this.fetchWithTimeout(userSyncUrl, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(syncPayload)
+                    }, 3000);
+                } catch (userSyncErr) {}
+
+                // Dedicated endpoint fallback (if deployed)
+                try {
+                    const dedicatedUrl = 'https://viscora.onrender.com/api/esle-gitsin/sync';
+                    const mongoResp = await this.fetchWithTimeout(dedicatedUrl, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
                         body: JSON.stringify(myEntry)
-                    }, 4000);
+                    }, 1800);
                     if (mongoResp && mongoResp.ok) {
                         const mongoData = await mongoResp.json();
                         if (mongoData && Array.isArray(mongoData.players) && mongoData.players.length > 0) {
@@ -5818,11 +5929,12 @@ class TileMatchingGame {
         }
     }
 
-
-
     renderLeaderboardList(category = 'overall') {
         const listContainer = document.getElementById('leaderboard-list-container');
         if (!listContainer) return;
+
+        // Ensure self scores are 100% fresh in dataset before rendering
+        this.registerSelfIntoCloudDataset();
 
         listContainer.innerHTML = '';
 
