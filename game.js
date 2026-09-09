@@ -626,8 +626,8 @@ class TileMatchingGame {
         this.levelStartScore = 0;
 
         // Auto-Update Engine State
-        this.currentVersion = '8.9.90';
-        this.currentBuild = 122;
+        this.currentVersion = '8.9.91';
+        this.currentBuild = 123;
         this.hasPendingUpdate = null;
         this.isUpdatingNow = false;
 
@@ -673,6 +673,18 @@ class TileMatchingGame {
         this.placedPuzzlePieces = {};
         this.activePuzzleId = 'cat';
         this.pendingChestReward = null;
+
+        // Daily & Weekly Login Rewards Config & State
+        this.dailyRewardsConfig = [
+            { day: 1, gold: 50, pieces: 0, chestStars: 0, desc: '+50 Altın' },
+            { day: 2, gold: 100, pieces: 1, chestStars: 0, desc: '+100 Altın\n+1 Parça' },
+            { day: 3, gold: 150, pieces: 0, chestStars: 0, desc: '+150 Altın' },
+            { day: 4, gold: 200, pieces: 1, chestStars: 0, desc: '+200 Altın\n+1 Parça' },
+            { day: 5, gold: 250, pieces: 0, chestStars: 0, desc: '+250 Altın' },
+            { day: 6, gold: 300, pieces: 2, chestStars: 0, desc: '+300 Altın\n+2 Parça' },
+            { day: 7, gold: 500, pieces: 3, chestStars: 3, desc: '+500 Altın + 3 Parça\n+ 3★ Sandık' }
+        ];
+        this.dailyRewardsState = this.loadDailyRewardsState();
 
         // 12-Piece Puzzles Catalog
         this.puzzlesCatalog = [
@@ -735,6 +747,15 @@ class TileMatchingGame {
         // Full 7-Language Global Localization Engine (TR, EN, DE, FR, IT, ES, PT)
         this.i18n = {
             tr: {
+                dailyGiftWidgetTag: "Hediye",
+                dailyRewardsTitle: "GÜNLÜK HEDİYELER",
+                dailyRewardsSub: "Her gün gel, serini koru! Kaçırırsan seri 1. güne döner.",
+                weeklyChestTitle: "HAFTALIK SÜPER SANDIK",
+                weeklyClaimBtn: "HAFTALIK ÖDÜLÜ AL",
+                claimBtn: "AL",
+                claimedTag: "ALINDI",
+                lockedTag: "KİLİTLİ",
+                streakResetToast: "Giriş atlandığı için seri 1. güne döndü!",
                 tabSwitchedMsg: "{name} sekmesine geçildi! Tekrar dokunarak yerleştirebilirsiniz.",
                 wrongTabMsg: "Lütfen parçayı ait olduğu karakter sekmesine yerleştirin!",
 
@@ -746,6 +767,15 @@ class TileMatchingGame {
                 pageWord: "Sayfa",
                 emptyInventoryMsg: "Envanterinizde henüz yerleştirilmemiş parça yok. Sandık açarak veya Altın ile parça kazanabilirsiniz!",
                 puzzles: {
+                dailyGiftWidgetTag: "Regalos",
+                dailyRewardsTitle: "RECOMPENSAS DIARIAS",
+                dailyRewardsSub: "¡Entra a diario! Perder un día reinicia la racha.",
+                weeklyChestTitle: "SÚPER COFRE SEMANAL",
+                weeklyClaimBtn: "RECLAMAR RECOMPENSA SEMANAL",
+                claimBtn: "RECLAMAR",
+                claimedTag: "RECLAMADO",
+                lockedTag: "BLOQUEADO",
+                streakResetToast: "¡Racha reiniciada al Día 1!",
                     cat: "Pamuk Kedi",
                     fox: "Sevimli Tilki",
                     panda: "Tatlı Panda",
@@ -872,6 +902,15 @@ class TileMatchingGame {
                 puzzleCompleted: "TEBRİKLER! {name} BULMACASI TAMAMLANDI!"
             },
             en: {
+                dailyGiftWidgetTag: "Gifts",
+                dailyRewardsTitle: "DAILY REWARDS",
+                dailyRewardsSub: "Check in daily to keep your streak! Miss a day and it resets.",
+                weeklyChestTitle: "WEEKLY SUPER CHEST",
+                weeklyClaimBtn: "CLAIM WEEKLY REWARD",
+                claimBtn: "CLAIM",
+                claimedTag: "CLAIMED",
+                lockedTag: "LOCKED",
+                streakResetToast: "Streak reset to Day 1 due to missed check-in!",
                 tabSwitchedMsg: "Switched to {name} tab! Tap again to place piece.",
                 wrongTabMsg: "Please place the piece in its correct character tab!",
 
@@ -1009,6 +1048,15 @@ class TileMatchingGame {
                 puzzleCompleted: "CONGRATS! {name} PUZZLE COMPLETED!"
             },
             de: {
+                dailyGiftWidgetTag: "Geschenk",
+                dailyRewardsTitle: "TÄGLICHE BELOHNUNGEN",
+                dailyRewardsSub: "Melde dich täglich an! Ein verpasster Tag setzt die Serie zurück.",
+                weeklyChestTitle: "WÖCHENTLICHE SUPER-TRUHE",
+                weeklyClaimBtn: "WOCHEN-BELOHNUNG HOLEN",
+                claimBtn: "HOLEN",
+                claimedTag: "EINGELÖST",
+                lockedTag: "GESPERRT",
+                streakResetToast: "Serie auf Tag 1 zurückgesetzt!",
                 tabSwitchedMsg: "Zum Tab {name} gewechselt! Zum Platzieren erneut tippen.",
                 wrongTabMsg: "Bitte platziere das Teil im richtigen Charakter-Tab!",
 
@@ -1146,6 +1194,15 @@ class TileMatchingGame {
                 puzzleCompleted: "GLÜCKWUNSCH! {name} PUZZLE VOLLSTÄNDIG!"
             },
             fr: {
+                dailyGiftWidgetTag: "Cadeaux",
+                dailyRewardsTitle: "RÉCOMPENSES QUOTIDIENNES",
+                dailyRewardsSub: "Connectez-vous tous les jours ! Un jour manqué réinitialise la série.",
+                weeklyChestTitle: "SUPER COFFRE HEBDOMADAIRE",
+                weeklyClaimBtn: "RÉCUPÉRER LA RÉCOMPENSE HEBDO",
+                claimBtn: "RÉCUPÉRER",
+                claimedTag: "RÉCUPÉRÉ",
+                lockedTag: "VERROUILLÉ",
+                streakResetToast: "Série réinitialisée au jour 1 !",
                 tabSwitchedMsg: "Onglet {name} ouvert! Touchez à nouveau pour placer la pièce.",
                 wrongTabMsg: "Veuillez placer la pièce dans l'onglet de personnage correspondant!",
 
@@ -1283,6 +1340,15 @@ class TileMatchingGame {
                 puzzleCompleted: "BRAVO! PUZZLE {name} COMPLÉTÉ!"
             },
             it: {
+                dailyGiftWidgetTag: "Regali",
+                dailyRewardsTitle: "RICOMPENSE GIORNALIERE",
+                dailyRewardsSub: "Accedi ogni giorno! Un giorno saltato resetta la serie.",
+                weeklyChestTitle: "SUPER BAULE SETTIMANALE",
+                weeklyClaimBtn: "RISCATTA PREMIO SETTIMANALE",
+                claimBtn: "RISCATTA",
+                claimedTag: "RISCATTATO",
+                lockedTag: "BLOCCATO",
+                streakResetToast: "Serie reimpostata al Giorno 1!",
                 tabSwitchedMsg: "Passato alla scheda {name}! Tocca di nuovo per posizionare.",
                 wrongTabMsg: "Inserisci il pezzo nella scheda del personaggio corretta!",
 
@@ -1532,6 +1598,15 @@ class TileMatchingGame {
                 puzzleCompleted: "¡ENHORABUENA! PUZZLE {name} COMPLETADO!"
             },
             pt: {
+                dailyGiftWidgetTag: "Presentes",
+                dailyRewardsTitle: "RECOMPENSAS DIÁRIAS",
+                dailyRewardsSub: "Entre diariamente! Perder um dia reinicia o streak.",
+                weeklyChestTitle: "SUPER BAÚ SEMANAL",
+                weeklyClaimBtn: "RESGATAR RECOMPENSA SEMANAL",
+                claimBtn: "RESGATAR",
+                claimedTag: "RESGATADO",
+                lockedTag: "BLOQUEADO",
+                streakResetToast: "Streak reiniciado no Dia 1!",
                 tabSwitchedMsg: "Mudado para a aba {name}! Toque novamente para colocar.",
                 wrongTabMsg: "Por favor, coloque a peça na aba de personagem correta!",
 
@@ -2307,6 +2382,33 @@ class TileMatchingGame {
             });
         }
 
+        // DAILY REWARDS EVENT LISTENERS
+        const btnDailyGift = document.getElementById('btn-menu-daily-gift');
+        if (btnDailyGift) {
+            btnDailyGift.addEventListener('click', () => {
+                this.sound.playClick();
+                this.openDailyRewardsModal();
+            });
+        }
+
+        const btnCloseDaily = document.getElementById('btn-close-daily-rewards');
+        if (btnCloseDaily) {
+            btnCloseDaily.addEventListener('click', () => {
+                const m = document.getElementById('modal-daily-rewards');
+                if (m) {
+                    m.classList.add('hidden');
+                    m.style.display = 'none';
+                }
+            });
+        }
+
+        const btnClaimWeeklyChest = document.getElementById('btn-claim-weekly-chest');
+        if (btnClaimWeeklyChest) {
+            btnClaimWeeklyChest.addEventListener('click', () => {
+                this.claimWeeklySuperChest();
+            });
+        }
+
         // LUCKY WHEEL EVENT LISTENERS
         const btnWheel = document.getElementById('btn-menu-wheel');
         if (btnWheel) {
@@ -2852,6 +2954,7 @@ class TileMatchingGame {
             this.settings.vibration = !this.settings.vibration;
             this.updateVibBtnUI();
         this.updateAdWidgetUI();
+        this.updateDailyGiftWidgetBadge();
         this.updateWheelTimerState();
             if (this.settings.vibration && navigator.vibrate) {
                 navigator.vibrate(40);
@@ -2980,6 +3083,7 @@ class TileMatchingGame {
 
         txtClassic.innerText = dict.classicBtnText.replace('{lvl}', classicLvl);
         txtTimeTrial.innerText = dict.timetrialBtnText.replace('{lvl}', timeTrialLvl);
+        this.updateDailyGiftWidgetBadge();
     }
 
     isPlayerInGame() {
@@ -5616,6 +5720,306 @@ class TileMatchingGame {
     // -------------------------------------------------------------
     // LEADERBOARD, PLAYER PROFILE & PROFANITY FILTER ENGINE
     // -------------------------------------------------------------
+    // =========================================================
+    // DAILY & WEEKLY LOGIN REWARDS ENGINE
+    // =========================================================
+
+    getCalendarDateString(date = new Date()) {
+        const y = date.getFullYear();
+        const m = String(date.getMonth() + 1).padStart(2, '0');
+        const d = String(date.getDate()).padStart(2, '0');
+        return `${y}-${m}-${d}`;
+    }
+
+    loadDailyRewardsState() {
+        try {
+            const raw = localStorage.getItem('tile_game_daily_rewards');
+            if (raw) {
+                const parsed = JSON.parse(raw);
+                if (parsed && typeof parsed.streak === 'number') {
+                    return parsed;
+                }
+            }
+        } catch (e) {}
+        return {
+            streak: 1,
+            lastClaimDate: '',
+            lastClaimTimestamp: 0,
+            weeklyProgress: 0,
+            weeklyClaimed: false
+        };
+    }
+
+    saveDailyRewardsState() {
+        try {
+            localStorage.setItem('tile_game_daily_rewards', JSON.stringify(this.dailyRewardsState));
+        } catch (e) {}
+    }
+
+    checkDailyRewardsStreak() {
+        const state = this.dailyRewardsState;
+        if (!state.lastClaimDate) {
+            return { canClaimToday: true, streakReset: false };
+        }
+
+        const todayStr = this.getCalendarDateString();
+        if (state.lastClaimDate === todayStr) {
+            return { canClaimToday: false, streakReset: false };
+        }
+
+        const [ly, lm, ld] = state.lastClaimDate.split('-').map(Number);
+        const lastDate = new Date(ly, lm - 1, ld);
+        const [ty, tm, td] = todayStr.split('-').map(Number);
+        const todayDate = new Date(ty, tm - 1, td);
+        const diffTime = todayDate.getTime() - lastDate.getTime();
+        const diffDays = Math.round(diffTime / (1000 * 60 * 60 * 24));
+
+        if (diffDays === 1) {
+            // Consecutive day: Streak continues!
+            return { canClaimToday: true, streakReset: false };
+        } else if (diffDays > 1) {
+            // Missed at least one calendar day: Streak resets to Day 1!
+            state.streak = 1;
+            state.weeklyProgress = 0;
+            state.weeklyClaimed = false;
+            this.saveDailyRewardsState();
+            return { canClaimToday: true, streakReset: true };
+        }
+
+        return { canClaimToday: false, streakReset: false };
+    }
+
+    updateDailyGiftWidgetBadge() {
+        const status = this.checkDailyRewardsStreak();
+        const dot = document.getElementById('daily-gift-notify-dot');
+        if (dot) {
+            const hasWeeklyReward = (this.dailyRewardsState.weeklyProgress >= 7 && !this.dailyRewardsState.weeklyClaimed);
+            if (status.canClaimToday || hasWeeklyReward) {
+                dot.classList.remove('hidden');
+            } else {
+                dot.classList.add('hidden');
+            }
+        }
+    }
+
+    openDailyRewardsModal() {
+        this.sound.playClick();
+        const status = this.checkDailyRewardsStreak();
+        const dict = this.i18n[this.settings.lang] || this.i18n.tr;
+
+        if (status.streakReset) {
+            this.showToast(dict.streakResetToast || 'Giriş atlandığı için seri sıfırlandı! 1. Güne dönüldü.');
+        }
+
+        this.renderDailyRewardsUI();
+
+        const modal = document.getElementById('modal-daily-rewards');
+        if (modal) {
+            modal.classList.remove('hidden');
+            modal.style.display = 'flex';
+        }
+    }
+
+    renderDailyRewardsUI() {
+        const grid = document.getElementById('daily-rewards-grid');
+        if (!grid) return;
+
+        const state = this.dailyRewardsState;
+        const status = this.checkDailyRewardsStreak();
+        const canClaimToday = status.canClaimToday;
+        const dict = this.i18n[this.settings.lang] || this.i18n.tr;
+
+        grid.innerHTML = '';
+
+        // Update Weekly Milestone Progress
+        const weeklyFill = document.getElementById('weekly-progress-bar-fill');
+        const weeklyCounter = document.getElementById('weekly-streak-counter');
+        const btnWeeklyClaim = document.getElementById('btn-claim-weekly-chest');
+
+        const currentWeekly = Math.min(7, state.weeklyProgress || 0);
+        if (weeklyFill) weeklyFill.style.width = `${(currentWeekly / 7) * 100}%`;
+        if (weeklyCounter) weeklyCounter.innerText = `${currentWeekly}/7 GÜN`;
+
+        if (btnWeeklyClaim) {
+            if (currentWeekly >= 7 && !state.weeklyClaimed) {
+                btnWeeklyClaim.classList.remove('hidden');
+            } else {
+                btnWeeklyClaim.classList.add('hidden');
+            }
+        }
+
+        for (let i = 0; i < this.dailyRewardsConfig.length; i++) {
+            const cfg = this.dailyRewardsConfig[i];
+            const dayNum = cfg.day;
+
+            let cardState = 'locked'; // 'claimed' | 'active-today' | 'locked'
+
+            if (dayNum < state.streak) {
+                cardState = 'claimed';
+            } else if (dayNum === state.streak) {
+                if (canClaimToday) {
+                    cardState = 'active-today';
+                } else {
+                    cardState = 'claimed';
+                }
+            } else {
+                cardState = 'locked';
+            }
+
+            const isVip = (dayNum === 7);
+            const cardEl = document.createElement('div');
+            cardEl.className = `daily-day-card ${isVip ? 'vip-day' : ''} ${cardState}`;
+
+            let iconHtml = '';
+            if (isVip) {
+                iconHtml = `<svg class="day-reward-svg" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8H3a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2v-9a2 2 0 0 0-2-2z"/><path d="M1 10h22"/><path d="M12 12v3"/><path d="M3 8V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v3"/></svg>`;
+            } else if (cfg.pieces > 0) {
+                iconHtml = `<svg class="day-reward-svg" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="12" cy="12" r="4"/></svg>`;
+            } else {
+                iconHtml = `<svg class="day-reward-svg" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M9 9.5c0-1.4 1.3-2 3-2s3 .8 3 2c0 2.5-6 1.5-6 4 0 1.2 1.3 2 3 2s3-.6 3-2"/></svg>`;
+            }
+
+            let actionHtml = '';
+            if (cardState === 'claimed') {
+                actionHtml = `<span class="day-status-pill pill-claimed">${dict.claimedTag || 'ALINDI'} ✓</span>`;
+            } else if (cardState === 'active-today') {
+                actionHtml = `<button class="daily-claim-btn" data-day="${dayNum}">${dict.claimBtn || 'AL'}</button>`;
+            } else {
+                actionHtml = `<span class="day-status-pill pill-locked">${dict.lockedTag || 'KİLİTLİ'}</span>`;
+            }
+
+            if (isVip) {
+                cardEl.innerHTML = `
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div class="day-icon-wrap" style="width: 42px; height: 42px;">
+                            ${iconHtml}
+                        </div>
+                        <div style="text-align: left;">
+                            <span class="day-badge">7. GÜN (BÜYÜK TAÇ ÖDÜLÜ)</span>
+                            <span class="day-reward-text" style="color: #fbbf24; font-size: 12px; margin: 0; display: block;">+500 Altın + 3 Parça + 3★ Sandık</span>
+                        </div>
+                    </div>
+                    <div style="min-width: 80px; text-align: right;">
+                        ${actionHtml}
+                    </div>
+                `;
+            } else {
+                cardEl.innerHTML = `
+                    <span class="day-badge">${dayNum}. GÜN</span>
+                    <div class="day-icon-wrap">
+                        ${iconHtml}
+                    </div>
+                    <span class="day-reward-text">${cfg.desc}</span>
+                    ${actionHtml}
+                `;
+            }
+
+            if (cardState === 'active-today') {
+                const btn = cardEl.querySelector('.daily-claim-btn');
+                if (btn) {
+                    btn.addEventListener('click', () => {
+                        this.claimDailyReward(dayNum);
+                    });
+                }
+            }
+
+            grid.appendChild(cardEl);
+        }
+    }
+
+    claimDailyReward(dayNum) {
+        const status = this.checkDailyRewardsStreak();
+        if (!status.canClaimToday) return;
+
+        const cfg = this.dailyRewardsConfig.find(c => c.day === dayNum);
+        if (!cfg) return;
+
+        const state = this.dailyRewardsState;
+
+        // 1. Award Gold
+        if (cfg.gold > 0) {
+            this.goldCoins += cfg.gold;
+            const goldEl = document.getElementById('gold-val');
+            if (goldEl) goldEl.innerText = this.goldCoins;
+            const goldPuzzleEl = document.getElementById('gold-val-puzzle');
+            if (goldPuzzleEl) goldPuzzleEl.innerText = this.goldCoins;
+        }
+
+        // 2. Award Puzzle Pieces
+        let piecesAwarded = 0;
+        if (cfg.pieces > 0) {
+            for (let i = 0; i < cfg.pieces; i++) {
+                const added = this.awardRandomMissingPuzzlePiece();
+                if (added) piecesAwarded++;
+            }
+        }
+
+        // 3. Award Chest
+        if (cfg.chestStars > 0) {
+            setTimeout(() => {
+                this.triggerChestRewardModal(cfg.chestStars, false);
+            }, 600);
+        }
+
+        // 4. FX & Sounds
+        this.sound.playVictorySound();
+        this.fx.spawnConfetti();
+
+        // 5. Update State
+        state.lastClaimDate = this.getCalendarDateString();
+        state.lastClaimTimestamp = Date.now();
+        state.weeklyProgress = Math.min(7, (state.weeklyProgress || 0) + 1);
+
+        if (state.streak < 7) {
+            state.streak += 1;
+        }
+
+        this.saveDailyRewardsState();
+        this.saveGameProgress();
+        this.debouncedSyncCloudLeaderboard();
+
+        // Toast feedback
+        let msg = `${dayNum}. Gün Hediyesi: +${cfg.gold} Altın!`;
+        if (piecesAwarded > 0) msg += ` (+${piecesAwarded} Yapboz Parçası)`;
+        this.showToast(msg);
+
+        // Re-render UI
+        this.renderDailyRewardsUI();
+        this.updateDailyGiftWidgetBadge();
+    }
+
+    claimWeeklySuperChest() {
+        const state = this.dailyRewardsState;
+        if (state.weeklyProgress < 7 || state.weeklyClaimed) return;
+
+        this.sound.playVictorySound();
+        this.fx.spawnConfetti();
+
+        // +1000 Gold
+        this.goldCoins += 1000;
+        const goldEl = document.getElementById('gold-val');
+        if (goldEl) goldEl.innerText = this.goldCoins;
+        const goldPuzzleEl = document.getElementById('gold-val-puzzle');
+        if (goldPuzzleEl) goldPuzzleEl.innerText = this.goldCoins;
+
+        // 5-Star Legendary Chest
+        setTimeout(() => {
+            this.triggerChestRewardModal(5, false);
+        }, 500);
+
+        state.weeklyClaimed = true;
+        state.weeklyProgress = 0;
+        state.streak = 1;
+
+        this.saveDailyRewardsState();
+        this.saveGameProgress();
+        this.debouncedSyncCloudLeaderboard();
+
+        this.showToast('Haftalık Süper Sandık Açıldı! (+1000 Altın & 5 Yıldızlı Sandık)');
+        this.renderDailyRewardsUI();
+        this.updateDailyGiftWidgetBadge();
+    }
+
     loadPlayerProfile() {
         try {
             const saved = localStorage.getItem('tile_game_player_profile');

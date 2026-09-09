@@ -127,7 +127,16 @@
                         <span class="wheel-widget-label" data-i18n="wheelWidgetTag">Çark</span>
                     </div>
 
-                    <!-- Round Floating Pop-up Leaderboard Widget in Top Middle -->
+                    <!-- Round Floating Pop-up Daily Gift Widget (Below Wheel in Top Left, perfectly symmetrical with Leaderboard) -->
+                    <div id="btn-menu-daily-gift" class="floating-daily-gift-widget" title="Günlük Hediyeler">
+                        <div class="daily-gift-center-icon">
+                            <svg class="menu-widget-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v10H4V12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
+                        </div>
+                        <span class="daily-gift-widget-label" data-i18n="dailyGiftWidgetTag">Hediye</span>
+                        <span id="daily-gift-notify-dot" class="widget-notify-dot hidden"></span>
+                    </div>
+
+                    <!-- Round Floating Pop-up Leaderboard Widget in Top Right Lower -->
                     <div id="btn-menu-leaderboard" class="floating-leaderboard-widget" title="Liderlik Tablosu">
                         <div class="leaderboard-center-icon">
                             <svg class="menu-widget-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h2M18 9h2a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-2M6 3h12v7a6 6 0 0 1-12 0V3zM9 21h6M12 16v5"></path></svg>
@@ -547,6 +556,43 @@
                 <button id="btn-spin-wheel" class="btn-primary btn-spin-wheel">
                     <span id="txt-spin-btn" data-i18n="spinBtnText">ÇARKI ÇEVİR</span>
                 </button>
+            </div>
+        </div>
+
+        <!-- DAILY & WEEKLY LOGIN REWARDS MODAL SCREEN -->
+        <div id="modal-daily-rewards" class="modal-overlay hidden" style="z-index: 99988;">
+            <div class="modal-card daily-rewards-card">
+                <button id="btn-close-daily-rewards" class="btn-close-x">✕</button>
+                <div class="daily-rewards-header">
+                    <div class="daily-title-group">
+                        <svg class="modal-title-svg" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v10H4V12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
+                        <h2 class="modal-title" data-i18n="dailyRewardsTitle">GÜNLÜK HEDİYELER</h2>
+                    </div>
+                    <p class="modal-desc" data-i18n="dailyRewardsSub">Her gün gel, serini koru! Kaçırırsan seri 1. güne döner.</p>
+                </div>
+
+                <!-- Weekly Master Milestone Progress Card -->
+                <div class="weekly-milestone-card">
+                    <div class="weekly-milestone-info">
+                        <div class="weekly-milestone-icon">
+                            <svg class="weekly-chest-svg" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8H3a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2v-9a2 2 0 0 0-2-2z"/><path d="M1 10h22"/><path d="M12 12v3"/><path d="M3 8V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v3"/></svg>
+                        </div>
+                        <div class="weekly-milestone-texts">
+                            <span class="weekly-title" data-i18n="weeklyChestTitle">HAFTALIK SÜPER SANDIK</span>
+                            <span class="weekly-reward-preview">+1000 Altın & 5 Yıldızlı Sandık</span>
+                        </div>
+                        <span id="weekly-streak-counter" class="weekly-streak-badge">0/7 GÜN</span>
+                    </div>
+                    <div class="weekly-progress-bar-bg">
+                        <div id="weekly-progress-bar-fill" class="weekly-progress-bar-fill" style="width: 0%;"></div>
+                    </div>
+                    <button id="btn-claim-weekly-chest" class="btn-primary weekly-claim-btn hidden" data-i18n="weeklyClaimBtn">HAFTALIK ÖDÜLÜ AL</button>
+                </div>
+
+                <!-- 7-Day Daily Login Cards Grid (Days 1 to 7 dynamically injected) -->
+                <div id="daily-rewards-grid" class="daily-grid-container">
+                    <!-- Days 1 to 7 injected dynamically -->
+                </div>
             </div>
         </div>
 
