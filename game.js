@@ -2806,6 +2806,28 @@ class TileMatchingGame {
                     return;
                 }
 
+                // GOLD COST CHECK FOR NAME CHANGE
+                const nameCost = this.getNameChangeCost();
+                if (nameCost > 0 && this.goldCoins < nameCost) {
+                    if (errMsg) {
+                        errMsg.innerText = `⚠️ YETERSİZ ALTIN: İsim değiştirmek için ${nameCost} Altın gerekiyor! (Mevcut: ${this.goldCoins} 🪙)`;
+                        errMsg.classList.remove('hidden');
+                    }
+                    this.sound.playLockThud();
+                    return;
+                }
+
+                // Deduct gold if name change
+                if (nameCost > 0) {
+                    this.goldCoins -= nameCost;
+                    this.playerProfile.nameChangeCount = (this.playerProfile.nameChangeCount || 0) + 1;
+                    const goldEl = document.getElementById('gold-val');
+                    if (goldEl) goldEl.innerText = this.goldCoins;
+                    const goldPuzzleEl = document.getElementById('gold-val-puzzle');
+                    if (goldPuzzleEl) goldPuzzleEl.innerText = this.goldCoins;
+                    this.saveGameProgress();
+                }
+
                 // 100% INSTANT 0ms SAVE & MODAL CLOSE
                 if (errMsg) errMsg.classList.add('hidden');
                 this.savePlayerProfile(rawNick, rawTag);
@@ -6596,12 +6618,49 @@ class TileMatchingGame {
     savePlayerProfile(nickname, tag) {
         const cleanNick = nickname.trim().substring(0, 10);
         const cleanTag = tag.trim().replace(/[^0-9]/g, '').padStart(4, '0').substring(0, 4);
+        const newFullTag = `${cleanNick}#${cleanTag}`;
+
+        const oldFullTag = (this.playerProfile && this.playerProfile.fullTag) ? this.playerProfile.fullTag : null;
+        const prevTags = (this.playerProfile && Array.isArray(this.playerProfile.previousFullTags)) ? [...this.playerProfile.previousFullTags] : [];
+        const changeCount = (this.playerProfile && typeof this.playerProfile.nameChangeCount === 'number') ? this.playerProfile.nameChangeCount : 0;
+
+        // Clean up old name if this is a genuine name change
+        if (oldFullTag && oldFullTag !== newFullTag && !prevTags.includes(oldFullTag)) {
+            prevTags.push(oldFullTag);
+
+            // 1. Immediately purge old fullTag from in-memory and local storage cloud cache
+            if (this.latestCloudDataset && Array.isArray(this.latestCloudDataset)) {
+                this.latestCloudDataset = this.latestCloudDataset.filter(p => {
+                    if (!p || !p.fullTag) return false;
+                    return p.fullTag.toLowerCase() !== oldFullTag.toLowerCase();
+                });
+                try {
+                    localStorage.setItem('tile_game_cloud_leaderboard_cache', JSON.stringify(this.latestCloudDataset));
+                } catch(e) {}
+            }
+
+            // 2. Zero out old user record on Render in the background so debug_users permanently ignores it
+            try {
+                const oldSafeUserId = 'esle_' + oldFullTag.replace(/[^a-zA-Z0-9çğışöüÇĞİŞÖÜ]/g, '_');
+                this.fetchWithTimeout('https://viscora.onrender.com/api/user/sync', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        userId: oldSafeUserId,
+                        saveData: { authorName: oldFullTag, totalCrystals: 0, spentCrystals: 0, avatar: '0_1_1_0_0_0', goldCoins: 0 },
+                        force: true
+                    })
+                }, 3000).catch(() => {});
+            } catch(e) {}
+        }
         
         this.playerProfile = {
             nickname: cleanNick,
             tag: cleanTag,
-            fullTag: `${cleanNick}#${cleanTag}`,
-            registeredAt: Date.now()
+            fullTag: newFullTag,
+            registeredAt: (this.playerProfile && this.playerProfile.registeredAt) || Date.now(),
+            previousFullTags: prevTags,
+            nameChangeCount: changeCount
         };
 
         try {
@@ -6647,6 +6706,17 @@ class TileMatchingGame {
         return Math.floor(1000 + Math.random() * 9000).toString();
     }
 
+    getNameChangeCost() {
+        if (!this.playerProfile || !this.playerProfile.nickname || this.playerProfile.nickname === 'Siz') {
+            return 0; // İlk profil oluşturma tamamen ücretsizdir
+        }
+        const count = (this.playerProfile && typeof this.playerProfile.nameChangeCount === 'number') 
+            ? this.playerProfile.nameChangeCount 
+            : 0;
+        const costs = [300, 500, 1000, 5000];
+        return costs[Math.min(count, costs.length - 1)];
+    }
+
     openSetNicknameModal(onSuccess = null, isFromLeaderboard = false) {
         this.onNicknameSavedCallback = onSuccess;
         const modal = document.getElementById('modal-set-nickname');
@@ -6660,18 +6730,28 @@ class TileMatchingGame {
 
         if (errMsg) errMsg.classList.add('hidden');
 
+        const cost = this.getNameChangeCost();
+        const submitBtn = document.getElementById('btn-save-nickname');
+
         if (isFromLeaderboard) {
             if (titleEl) titleEl.innerText = 'LİDERLİK TABLOSUNDA YERİNİ AL';
             if (subtextEl) subtextEl.innerText = 'Mevcut puanın ve seviyenle sıralamaya katılmak için adını ve etiketini belirle!';
-        } else if (this.playerProfile && this.playerProfile.nickname && this.playerProfile.nickname !== 'Siz') {
+            if (submitBtn) submitBtn.innerText = 'PROFİLİ KAYDET VE KATIL';
+        } else if (cost > 0) {
             if (titleEl) titleEl.innerText = 'OYUNCU ADINI DEĞİŞTİR';
-            if (subtextEl) subtextEl.innerText = 'Liderlik tablosundaki adınızı ve 4 haneli etiketinizi güncelleyin:';
+            if (subtextEl) {
+                subtextEl.innerHTML = `Liderlik tablosundaki adınızı ve 4 haneli etiketinizi güncelleyin.<br><span style="color:#fbbf24; font-weight:800; font-size:12px; display:inline-block; margin-top:4px;">🪙 İsim Değiştirme Ücreti: ${cost} Altın (Mevcut: ${this.goldCoins} 🪙)</span>`;
+            }
+            if (submitBtn) {
+                submitBtn.innerHTML = `<span>İSMİ DEĞİŞTİR</span> <span style="background:rgba(251,191,36,0.25); border:1px solid #fbbf24; border-radius:12px; padding:2px 8px; margin-left:6px; font-size:12px;">🪙 ${cost} Altın</span>`;
+            }
         } else {
             if (titleEl) titleEl.innerText = 'PROFİLİNİ OLUŞTUR';
             if (subtextEl) subtextEl.innerText = 'Liderlik tablosunda görünecek adınızı (Maks 10 Karakter) ve 4 haneli etiketinizi belirleyin!';
+            if (submitBtn) submitBtn.innerText = 'PROFİLİ KAYDET VE KATIL';
         }
 
-        if (inputNick) {
+                if (inputNick) {
             inputNick.value = (this.playerProfile && this.playerProfile.nickname && this.playerProfile.nickname !== 'Siz') ? this.playerProfile.nickname : this.getRandomNicknameSuggestion();
         }
         if (inputTag) {
@@ -6755,11 +6835,18 @@ class TileMatchingGame {
 
         // MERGE REAL LIVE ONLINE PLAYERS FROM CLOUD DATABASE
         const myKey = normalizeFullTag(myFullTag);
+        const myPrevTags = (this.playerProfile && Array.isArray(this.playerProfile.previousFullTags)) 
+            ? this.playerProfile.previousFullTags.map(t => normalizeFullTag(t)) 
+            : [];
 
         if (this.latestCloudDataset && Array.isArray(this.latestCloudDataset)) {
             for (const cp of this.latestCloudDataset) {
                 if (!cp || !cp.fullTag || cp.fullTag.length < 3) continue;
                 const cpKey = normalizeFullTag(cp.fullTag);
+
+                // Never display the player's own previous names!
+                if (myPrevTags.includes(cpKey)) continue;
+                if (cp.tag === myTag && cpKey !== myKey) continue;
 
                 if (myKey && cpKey === myKey) {
                     // Update self player with any higher cloud numbers or verified puzzle count
@@ -6801,6 +6888,15 @@ class TileMatchingGame {
                     placedPiecesCount: (typeof cp.placedPiecesCount === 'number' && cp.placedPiecesCount >= 0) ? cp.placedPiecesCount : ((cp.puzzles || 0) * 12),
                     inventoryCount: (typeof cp.inventoryCount === 'number' && cp.inventoryCount >= 0) ? cp.inventoryCount : 0
                 };
+                // DEDUPLICATION BY TAG: If another entry with the same 4-digit tag exists, keep the higher score!
+                const existingByTagIdx = list.findIndex(item => !item.isSelf && item.tag === cloudPlayer.tag);
+                if (existingByTagIdx !== -1) {
+                    if (cloudPlayer.overallScore > list[existingByTagIdx].overallScore) {
+                        list[existingByTagIdx] = cloudPlayer;
+                    }
+                    continue;
+                }
+
                 if (existingIdx > 0) {
                     list[existingIdx] = cloudPlayer;
                 } else if (existingIdx === -1) {
@@ -7273,6 +7369,9 @@ class TileMatchingGame {
         if (ttScore) ttScore.innerText = `${(player.ttScore || 0).toLocaleString()} Puan`;
 
         if (puzzleCount) {
+            const totalPuzzles = (this.puzzlesCatalog && this.puzzlesCatalog.length) ? this.puzzlesCatalog.length : 20;
+            const totalPossiblePieces = totalPuzzles * 12;
+
             if (player && player.isSelf) {
                 let totalPlaced = 0;
                 let completed = 0;
@@ -7284,11 +7383,11 @@ class TileMatchingGame {
                     }
                 }
                 const invCount = (this.puzzleInventory && Array.isArray(this.puzzleInventory)) ? this.puzzleInventory.length : 0;
-                puzzleCount.innerHTML = `<strong>${completed} / 12</strong> Tamamlandı <span style="display:block; font-size:11px; color:#fbbf24; margin-top:2px;">(${totalPlaced} / 144 Parça Yerleştirildi • ${invCount} Envanterde)</span>`;
+                puzzleCount.innerHTML = `<strong>${completed} / ${totalPuzzles}</strong> Tamamlandı <span style="display:block; font-size:11px; color:#fbbf24; margin-top:2px;">(${totalPlaced} / ${totalPossiblePieces} Parça Yerleştirildi • ${invCount} Envanterde)</span>`;
             } else {
                 const completed = player.puzzles || 0;
                 const placed = (typeof player.placedPiecesCount === 'number') ? player.placedPiecesCount : (completed * 12);
-                puzzleCount.innerHTML = `<strong>${completed} / 12</strong> Tamamlandı <span style="display:block; font-size:11px; color:#fbbf24; margin-top:2px;">(${placed} / 144 Parça Yerleştirildi)</span>`;
+                puzzleCount.innerHTML = `<strong>${completed} / ${totalPuzzles}</strong> Tamamlandı <span style="display:block; font-size:11px; color:#fbbf24; margin-top:2px;">(${placed} / ${totalPossiblePieces} Parça Yerleştirildi)</span>`;
             }
         }
 
