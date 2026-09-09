@@ -625,10 +625,15 @@ class TileMatchingGame {
         this.levelStartScore = 0;
 
         // Auto-Update Engine State
-        this.currentVersion = '8.9.93';
-        this.currentBuild = 125;
+        this.currentVersion = '8.9.95';
+        this.currentBuild = 128;
         this.hasPendingUpdate = null;
         this.isUpdatingNow = false;
+
+        // Match & Level Transition Concurrency Guards
+        this.activeMatchTimeouts = new Set();
+        this.isLevelWon = false;
+        this.isLevelTransitioning = false;
 
         // Time Trial Countdown Timer State
         this.timerInterval = null;
@@ -3158,6 +3163,10 @@ class TileMatchingGame {
         const btnCollectChest = document.getElementById('btn-collect-chest');
         if (btnCollectChest) {
             btnCollectChest.onclick = () => {
+                if (this.isLevelTransitioning) return;
+                this.isLevelTransitioning = true;
+                setTimeout(() => { this.isLevelTransitioning = false; }, 600);
+
                 try { this.sound.playClick(); } catch (e) {}
                 
                 // Clear pending reward references (rewards were already safely added and saved upon opening!)
@@ -3184,6 +3193,10 @@ class TileMatchingGame {
         }
 
         document.getElementById('btn-next-level').addEventListener('click', () => {
+            if (this.isLevelTransitioning) return;
+            this.isLevelTransitioning = true;
+            setTimeout(() => { this.isLevelTransitioning = false; }, 600);
+
             document.getElementById('modal-victory').classList.add('hidden');
             if (this.hasPendingUpdate) {
                 this.applyLiveAutoUpdate(this.hasPendingUpdate);
@@ -3194,6 +3207,10 @@ class TileMatchingGame {
 
         // RETRY BUTTON LOGIC (RESET TO LEVEL START SCORE WITHOUT HARSH PENALTY)
         document.getElementById('btn-retry').addEventListener('click', () => {
+            if (this.isLevelTransitioning) return;
+            this.isLevelTransitioning = true;
+            setTimeout(() => { this.isLevelTransitioning = false; }, 600);
+
             document.getElementById('modal-gameover').classList.add('hidden');
             if (this.hasPendingUpdate) {
                 this.applyLiveAutoUpdate(this.hasPendingUpdate);
@@ -3470,6 +3487,8 @@ class TileMatchingGame {
         this.hideMainMenuBannerAd();
         this.stopWheelTimerLoop();
         this.levelAdReviveCount = 0;
+        this.isLevelWon = false;
+        this.isLevelTransitioning = false;
 
         // Clear any stale timeouts from previous level to prevent ghost callbacks
         this.stopTimer();
@@ -3477,6 +3496,12 @@ class TileMatchingGame {
         if (this.deadlockCheckTimeout) { clearTimeout(this.deadlockCheckTimeout); this.deadlockCheckTimeout = null; }
         if (this.autoShuffleTimeout) { clearTimeout(this.autoShuffleTimeout); this.autoShuffleTimeout = null; }
         if (this.pairMatchTimeout) { clearTimeout(this.pairMatchTimeout); this.pairMatchTimeout = null; }
+        if (this.activeMatchTimeouts) {
+            this.activeMatchTimeouts.forEach(t => clearTimeout(t));
+            this.activeMatchTimeouts.clear();
+        } else {
+            this.activeMatchTimeouts = new Set();
+        }
 
         // Reset combo state so previous level's last match doesn't count
         this.comboCount = 1;
@@ -4291,7 +4316,7 @@ class TileMatchingGame {
     }
 
     onTileClick(tile) {
-        if (tile.isInSlot || tile.isProcessingClick) return;
+        if (this.isLevelWon || this.isLevelTransitioning || tile.isInSlot || tile.isProcessingClick) return;
 
         const now = Date.now();
         if (this.lastTileClickTime && (now - this.lastTileClickTime < 50)) {
@@ -4679,8 +4704,10 @@ class TileMatchingGame {
         this.sound.playMatchSound(this.comboCount);
         this.fx.spawnBurst(midX, midY);
 
-        if (this.pairMatchTimeout) clearTimeout(this.pairMatchTimeout);
-        this.pairMatchTimeout = setTimeout(() => {
+        if (!this.activeMatchTimeouts) this.activeMatchTimeouts = new Set();
+        const matchTimeoutId = setTimeout(() => {
+            if (this.activeMatchTimeouts) this.activeMatchTimeouts.delete(matchTimeoutId);
+
             if (tileA.element && tileA.element.parentElement) tileA.element.parentElement.removeChild(tileA.element);
             if (tileB.element && tileB.element.parentElement) tileB.element.parentElement.removeChild(tileB.element);
 
@@ -4703,6 +4730,9 @@ class TileMatchingGame {
             const activeDomTiles = document.querySelectorAll('#board .tile');
 
             if ((this.boardTiles.length === 0 || remainingBoardTiles.length === 0 || activeDomTiles.length === 0) && this.slotTiles.length === 0) {
+                if (this.isLevelWon) return; // Prevent duplicate victory triggers
+                this.isLevelWon = true;
+
                 this.stopTimer();
                 this.sound.playVictorySound();
                 this.fx.spawnConfetti();
@@ -4724,6 +4754,7 @@ class TileMatchingGame {
                 this.checkForMatches();
             }
         }, 180);
+        this.activeMatchTimeouts.add(matchTimeoutId);
     }
 
     showComboBadge(text) {
