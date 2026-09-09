@@ -1789,7 +1789,8 @@ class TileMatchingGame {
         this.checkFirstTimeRegistration();
         this.pingCloudServerWarmup();
         this.flushPendingCloudSync();
-        this.checkForLiveUpdate();
+        // Check for updates only AFTER intro finishes and player is safely on main menu
+        setTimeout(() => this.checkForLiveUpdate(), 4000);
         setInterval(() => this.checkForLiveUpdate(), 10 * 60 * 1000);
         } catch (e) {
             console.error('[EsleGitsin3D] Init error:', e);
@@ -3101,6 +3102,10 @@ class TileMatchingGame {
 
     async checkForLiveUpdate() {
         if (!navigator.onLine) return;
+        // Never check or interrupt during intro, or during active level gameplay
+        if (this.introActive || !this.introFinished || this.isPlayerInGame()) {
+            return;
+        }
         try {
             const res = await fetch('./version.json?_t=' + Date.now(), {
                 cache: 'no-store',
@@ -3110,7 +3115,7 @@ class TileMatchingGame {
             const remote = await res.json();
             if (remote && typeof remote.build === 'number' && remote.build > this.currentBuild) {
                 console.log(`[AutoUpdate] Yeni sürüm tespit edildi: v${remote.version} (Build ${remote.build}) > Mevcut: v${this.currentVersion} (Build ${this.currentBuild})`);
-                if (!this.isPlayerInGame()) {
+                if (!this.isPlayerInGame() && !this.introActive && this.introFinished) {
                     this.applyLiveAutoUpdate(remote.version);
                 } else {
                     this.hasPendingUpdate = remote.version;
@@ -3123,8 +3128,17 @@ class TileMatchingGame {
 
     async applyLiveAutoUpdate(newVer) {
         if (this.isUpdatingNow) return;
-        this.isUpdatingNow = true;
 
+        // Loop Protection: Never auto-reload more than once within a 60-second window
+        const now = Date.now();
+        const lastAttempt = parseInt(sessionStorage.getItem('tile_game_last_update_reload') || '0', 10);
+        if (now - lastAttempt < 60000) {
+            console.warn('[AutoUpdate] Auto-update already attempted within last 60s. Suppressing loop reload.');
+            return;
+        }
+        sessionStorage.setItem('tile_game_last_update_reload', now.toString());
+
+        this.isUpdatingNow = true;
         this.showToast(`Yeni Güncelleme (v${newVer || ''}) yükleniyor...`);
 
         try {
@@ -3141,8 +3155,8 @@ class TileMatchingGame {
         }
 
         setTimeout(() => {
-            window.location.href = window.location.origin + window.location.pathname + '?nocache=' + Date.now();
-        }, 750);
+            window.location.href = window.location.origin + window.location.pathname + '?v=' + (newVer || Date.now()) + '&_t=' + Date.now();
+        }, 1200);
     }
 
     openSettings() {
