@@ -3124,6 +3124,10 @@ body {
     transition: width 0.3s ease;
 }
 
+.weekly-claim-btn.hidden {
+    display: none !important;
+}
+
 .weekly-claim-btn {
     width: 100%;
     margin-top: 10px;
@@ -3200,6 +3204,36 @@ body {
 .daily-day-card.vip-day .day-badge {
     color: #fbbf24;
     font-size: 11px;
+}
+
+.day-icon-circle {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1.5px solid rgba(255, 255, 255, 0.1);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 3px auto;
+    transition: all 0.2s ease;
+}
+.daily-day-card.active-today .day-icon-circle {
+    background: rgba(16, 185, 129, 0.2);
+    border-color: rgba(52, 211, 153, 0.5);
+    box-shadow: 0 0 12px rgba(16, 185, 129, 0.4);
+}
+.daily-day-card.vip-day .day-icon-circle {
+    width: 44px;
+    height: 44px;
+    background: rgba(251, 191, 36, 0.15);
+    border-color: rgba(251, 191, 36, 0.45);
+    box-shadow: 0 0 12px rgba(251, 191, 36, 0.35);
+}
+.day-status-pill.pill-tomorrow {
+    color: #38bdf8;
+    background: rgba(56, 189, 248, 0.15);
+    border: 1px solid rgba(56, 189, 248, 0.35);
 }
 
 .day-icon-wrap {

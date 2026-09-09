@@ -626,8 +626,8 @@ class TileMatchingGame {
         this.levelStartScore = 0;
 
         // Auto-Update Engine State
-        this.currentVersion = '8.9.91';
-        this.currentBuild = 123;
+        this.currentVersion = '8.9.92';
+        this.currentBuild = 124;
         this.hasPendingUpdate = null;
         this.isUpdatingNow = false;
 
@@ -677,12 +677,12 @@ class TileMatchingGame {
         // Daily & Weekly Login Rewards Config & State
         this.dailyRewardsConfig = [
             { day: 1, gold: 50, pieces: 0, chestStars: 0, desc: '+50 Altın' },
-            { day: 2, gold: 100, pieces: 1, chestStars: 0, desc: '+100 Altın\n+1 Parça' },
+            { day: 2, gold: 100, pieces: 1, chestStars: 0, desc: '+100 Altın<br>+1 Parça' },
             { day: 3, gold: 150, pieces: 0, chestStars: 0, desc: '+150 Altın' },
-            { day: 4, gold: 200, pieces: 1, chestStars: 0, desc: '+200 Altın\n+1 Parça' },
+            { day: 4, gold: 200, pieces: 1, chestStars: 0, desc: '+200 Altın<br>+1 Parça' },
             { day: 5, gold: 250, pieces: 0, chestStars: 0, desc: '+250 Altın' },
-            { day: 6, gold: 300, pieces: 2, chestStars: 0, desc: '+300 Altın\n+2 Parça' },
-            { day: 7, gold: 500, pieces: 3, chestStars: 3, desc: '+500 Altın + 3 Parça\n+ 3★ Sandık' }
+            { day: 6, gold: 300, pieces: 2, chestStars: 0, desc: '+300 Altın<br>+2 Parça' },
+            { day: 7, gold: 500, pieces: 3, chestStars: 3, desc: '+500 Altın + 3 Parça + 3★ Sandık' }
         ];
         this.dailyRewardsState = this.loadDailyRewardsState();
 
@@ -748,6 +748,7 @@ class TileMatchingGame {
         this.i18n = {
             tr: {
                 dailyGiftWidgetTag: "Hediye",
+                tomorrowTag: "YARIN",
                 dailyRewardsTitle: "GÜNLÜK HEDİYELER",
                 dailyRewardsSub: "Her gün gel, serini koru! Kaçırırsan seri 1. güne döner.",
                 weeklyChestTitle: "HAFTALIK SÜPER SANDIK",
@@ -768,6 +769,7 @@ class TileMatchingGame {
                 emptyInventoryMsg: "Envanterinizde henüz yerleştirilmemiş parça yok. Sandık açarak veya Altın ile parça kazanabilirsiniz!",
                 puzzles: {
                 dailyGiftWidgetTag: "Regalos",
+                tomorrowTag: "MAÑANA",
                 dailyRewardsTitle: "RECOMPENSAS DIARIAS",
                 dailyRewardsSub: "¡Entra a diario! Perder un día reinicia la racha.",
                 weeklyChestTitle: "SÚPER COFRE SEMANAL",
@@ -903,6 +905,7 @@ class TileMatchingGame {
             },
             en: {
                 dailyGiftWidgetTag: "Gifts",
+                tomorrowTag: "TOMORROW",
                 dailyRewardsTitle: "DAILY REWARDS",
                 dailyRewardsSub: "Check in daily to keep your streak! Miss a day and it resets.",
                 weeklyChestTitle: "WEEKLY SUPER CHEST",
@@ -1049,6 +1052,7 @@ class TileMatchingGame {
             },
             de: {
                 dailyGiftWidgetTag: "Geschenk",
+                tomorrowTag: "MORGEN",
                 dailyRewardsTitle: "TÄGLICHE BELOHNUNGEN",
                 dailyRewardsSub: "Melde dich täglich an! Ein verpasster Tag setzt die Serie zurück.",
                 weeklyChestTitle: "WÖCHENTLICHE SUPER-TRUHE",
@@ -1195,6 +1199,7 @@ class TileMatchingGame {
             },
             fr: {
                 dailyGiftWidgetTag: "Cadeaux",
+                tomorrowTag: "DEMAIN",
                 dailyRewardsTitle: "RÉCOMPENSES QUOTIDIENNES",
                 dailyRewardsSub: "Connectez-vous tous les jours ! Un jour manqué réinitialise la série.",
                 weeklyChestTitle: "SUPER COFFRE HEBDOMADAIRE",
@@ -1341,6 +1346,7 @@ class TileMatchingGame {
             },
             it: {
                 dailyGiftWidgetTag: "Regali",
+                tomorrowTag: "DOMANI",
                 dailyRewardsTitle: "RICOMPENSE GIORNALIERE",
                 dailyRewardsSub: "Accedi ogni giorno! Un giorno saltato resetta la serie.",
                 weeklyChestTitle: "SUPER BAULE SETTIMANALE",
@@ -1599,6 +1605,7 @@ class TileMatchingGame {
             },
             pt: {
                 dailyGiftWidgetTag: "Presentes",
+                tomorrowTag: "AMANHÃ",
                 dailyRewardsTitle: "RECOMPENSAS DIÁRIAS",
                 dailyRewardsSub: "Entre diariamente! Perder um dia reinicia o streak.",
                 weeklyChestTitle: "SUPER BAÚ SEMANAL",
@@ -5737,12 +5744,16 @@ class TileMatchingGame {
             if (raw) {
                 const parsed = JSON.parse(raw);
                 if (parsed && typeof parsed.streak === 'number') {
+                    // Auto-heal state if previous version bumped streak ahead of actual claims
+                    if (parsed.lastClaimDate && parsed.weeklyProgress > 0 && parsed.streak > parsed.weeklyProgress) {
+                        parsed.streak = parsed.weeklyProgress;
+                    }
                     return parsed;
                 }
             }
         } catch (e) {}
         return {
-            streak: 1,
+            streak: 0,
             lastClaimDate: '',
             lastClaimTimestamp: 0,
             weeklyProgress: 0,
@@ -5758,11 +5769,12 @@ class TileMatchingGame {
 
     checkDailyRewardsStreak() {
         const state = this.dailyRewardsState;
+        const todayStr = this.getCalendarDateString();
+
         if (!state.lastClaimDate) {
             return { canClaimToday: true, streakReset: false };
         }
 
-        const todayStr = this.getCalendarDateString();
         if (state.lastClaimDate === todayStr) {
             return { canClaimToday: false, streakReset: false };
         }
@@ -5776,10 +5788,14 @@ class TileMatchingGame {
 
         if (diffDays === 1) {
             // Consecutive day: Streak continues!
+            if (state.streak >= 7) {
+                state.streak = 0;
+                this.saveDailyRewardsState();
+            }
             return { canClaimToday: true, streakReset: false };
         } else if (diffDays > 1) {
             // Missed at least one calendar day: Streak resets to Day 1!
-            state.streak = 1;
+            state.streak = 0;
             state.weeklyProgress = 0;
             state.weeklyClaimed = false;
             this.saveDailyRewardsState();
@@ -5843,24 +5859,28 @@ class TileMatchingGame {
         if (btnWeeklyClaim) {
             if (currentWeekly >= 7 && !state.weeklyClaimed) {
                 btnWeeklyClaim.classList.remove('hidden');
+                btnWeeklyClaim.style.display = 'block';
             } else {
                 btnWeeklyClaim.classList.add('hidden');
+                btnWeeklyClaim.style.display = 'none';
             }
         }
+
+        const todayTargetDay = state.streak + 1;
 
         for (let i = 0; i < this.dailyRewardsConfig.length; i++) {
             const cfg = this.dailyRewardsConfig[i];
             const dayNum = cfg.day;
 
-            let cardState = 'locked'; // 'claimed' | 'active-today' | 'locked'
+            let cardState = 'locked'; // 'claimed' | 'active-today' | 'next-day' | 'locked'
 
-            if (dayNum < state.streak) {
+            if (dayNum <= state.streak) {
                 cardState = 'claimed';
-            } else if (dayNum === state.streak) {
+            } else if (dayNum === todayTargetDay) {
                 if (canClaimToday) {
                     cardState = 'active-today';
                 } else {
-                    cardState = 'claimed';
+                    cardState = 'next-day';
                 }
             } else {
                 cardState = 'locked';
@@ -5872,11 +5892,11 @@ class TileMatchingGame {
 
             let iconHtml = '';
             if (isVip) {
-                iconHtml = `<svg class="day-reward-svg" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8H3a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2v-9a2 2 0 0 0-2-2z"/><path d="M1 10h22"/><path d="M12 12v3"/><path d="M3 8V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v3"/></svg>`;
+                iconHtml = `<div class="day-icon-circle"><svg class="day-reward-svg" viewBox="0 0 24 24" fill="none"><path d="M21 8H3a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2v-9a2 2 0 0 0-2-2z" fill="rgba(245, 158, 11, 0.3)" stroke="#fbbf24" stroke-width="1.8"/><path d="M1 10h22" stroke="#fbbf24" stroke-width="1.5"/><circle cx="12" cy="14" r="1.5" fill="#fef08a"/><path d="M5 6l2.5 2h9.5L19 6l-2.5 1-4.5-4-4.5 4L5 6z" fill="#f59e0b" stroke="#fef08a" stroke-width="1.2"/></svg></div>`;
             } else if (cfg.pieces > 0) {
-                iconHtml = `<svg class="day-reward-svg" viewBox="0 0 24 24" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="12" cy="12" r="4"/></svg>`;
+                iconHtml = `<div class="day-icon-circle"><svg class="day-reward-svg" viewBox="0 0 24 24" fill="none"><path d="M19 10.5V7a2 2 0 0 0-2-2h-3.5a2.5 2.5 0 0 1-5 0H5a2 2 0 0 0-2 2v3.5a2.5 2.5 0 0 0 0 5V19a2 2 0 0 0 2 2h3.5a2.5 2.5 0 0 0 5 0H17a2 2 0 0 0 2-2v-3.5a2.5 2.5 0 0 1 0-5z" fill="rgba(14, 165, 233, 0.25)" stroke="#38bdf8" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="12" r="2" fill="#38bdf8"/></svg></div>`;
             } else {
-                iconHtml = `<svg class="day-reward-svg" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v10M9 9.5c0-1.4 1.3-2 3-2s3 .8 3 2c0 2.5-6 1.5-6 4 0 1.2 1.3 2 3 2s3-.6 3-2"/></svg>`;
+                iconHtml = `<div class="day-icon-circle"><svg class="day-reward-svg" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9.5" fill="rgba(245, 158, 11, 0.25)" stroke="#fbbf24" stroke-width="1.8"/><circle cx="12" cy="12" r="6.5" stroke="#fef08a" stroke-width="1" stroke-dasharray="2 1.5"/><polygon points="12,7 13.5,10.5 17,12 13.5,13.5 12,17 10.5,13.5 7,12 10.5,10.5" fill="#fbbf24"/></svg></div>`;
             }
 
             let actionHtml = '';
@@ -5884,6 +5904,8 @@ class TileMatchingGame {
                 actionHtml = `<span class="day-status-pill pill-claimed">${dict.claimedTag || 'ALINDI'} ✓</span>`;
             } else if (cardState === 'active-today') {
                 actionHtml = `<button class="daily-claim-btn" data-day="${dayNum}">${dict.claimBtn || 'AL'}</button>`;
+            } else if (cardState === 'next-day') {
+                actionHtml = `<span class="day-status-pill pill-tomorrow">${dict.tomorrowTag || 'YARIN'}</span>`;
             } else {
                 actionHtml = `<span class="day-status-pill pill-locked">${dict.lockedTag || 'KİLİTLİ'}</span>`;
             }
@@ -5891,9 +5913,7 @@ class TileMatchingGame {
             if (isVip) {
                 cardEl.innerHTML = `
                     <div style="display: flex; align-items: center; gap: 12px;">
-                        <div class="day-icon-wrap" style="width: 42px; height: 42px;">
-                            ${iconHtml}
-                        </div>
+                        ${iconHtml}
                         <div style="text-align: left;">
                             <span class="day-badge">7. GÜN (BÜYÜK TAÇ ÖDÜLÜ)</span>
                             <span class="day-reward-text" style="color: #fbbf24; font-size: 12px; margin: 0; display: block;">+500 Altın + 3 Parça + 3★ Sandık</span>
@@ -5906,9 +5926,7 @@ class TileMatchingGame {
             } else {
                 cardEl.innerHTML = `
                     <span class="day-badge">${dayNum}. GÜN</span>
-                    <div class="day-icon-wrap">
-                        ${iconHtml}
-                    </div>
+                    ${iconHtml}
                     <span class="day-reward-text">${cfg.desc}</span>
                     ${actionHtml}
                 `;
@@ -5965,14 +5983,11 @@ class TileMatchingGame {
         this.sound.playVictorySound();
         this.fx.spawnConfetti();
 
-        // 5. Update State
+        // 5. Update State: streak equals the day just claimed
+        state.streak = dayNum;
         state.lastClaimDate = this.getCalendarDateString();
         state.lastClaimTimestamp = Date.now();
         state.weeklyProgress = Math.min(7, (state.weeklyProgress || 0) + 1);
-
-        if (state.streak < 7) {
-            state.streak += 1;
-        }
 
         this.saveDailyRewardsState();
         this.saveGameProgress();
