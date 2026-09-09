@@ -1,0 +1,170 @@
+{
+  "updatedAt": 1788961452250,
+  "players": [
+    {
+      "name": "NİNJA",
+      "tag": "0456",
+      "fullTag": "NİNJA#0456",
+      "classicLvl": 34,
+      "classicScore": 261200,
+      "ttLvl": 10,
+      "ttScore": 76100,
+      "overallScore": 337300,
+      "puzzles": 0
+    },
+    {
+      "name": "HamzaXd",
+      "tag": "6734",
+      "fullTag": "HamzaXd#6734",
+      "classicLvl": 22,
+      "classicScore": 101500,
+      "ttLvl": 11,
+      "ttScore": 158200,
+      "overallScore": 259700,
+      "puzzles": 0
+    },
+    {
+      "name": "Sudiş",
+      "tag": "2802",
+      "fullTag": "Sudiş#2802",
+      "classicLvl": 22,
+      "classicScore": 44200,
+      "ttLvl": 12,
+      "ttScore": 105800,
+      "overallScore": 150000,
+      "puzzles": 2
+    },
+    {
+      "name": "Mert",
+      "tag": "1042",
+      "fullTag": "Mert#1042",
+      "classicLvl": 18,
+      "classicScore": 48500,
+      "ttLvl": 7,
+      "ttScore": 65400,
+      "overallScore": 113900,
+      "puzzles": 1
+    },
+    {
+      "name": "Gökhan",
+      "tag": "7968",
+      "fullTag": "Gökhan#7968",
+      "classicLvl": 16,
+      "classicScore": 41200,
+      "ttLvl": 6,
+      "ttScore": 54100,
+      "overallScore": 95300,
+      "puzzles": 1
+    },
+    {
+      "name": "Taha",
+      "tag": "4412",
+      "fullTag": "Taha#4412",
+      "classicLvl": 15,
+      "classicScore": 38900,
+      "ttLvl": 5,
+      "ttScore": 42300,
+      "overallScore": 81200,
+      "puzzles": 0
+    },
+    {
+      "name": "The Grace",
+      "tag": "7701",
+      "fullTag": "The Grace#7701",
+      "classicLvl": 14,
+      "classicScore": 36500,
+      "ttLvl": 5,
+      "ttScore": 39800,
+      "overallScore": 76300,
+      "puzzles": 1
+    },
+    {
+      "name": "Ensar",
+      "tag": "3309",
+      "fullTag": "Ensar#3309",
+      "classicLvl": 13,
+      "classicScore": 33400,
+      "ttLvl": 4,
+      "ttScore": 31200,
+      "overallScore": 64600,
+      "puzzles": 0
+    },
+    {
+      "name": "Melek",
+      "tag": "9021",
+      "fullTag": "Melek#9021",
+      "classicLvl": 12,
+      "classicScore": 30100,
+      "ttLvl": 4,
+      "ttScore": 28900,
+      "overallScore": 59000,
+      "puzzles": 0
+    },
+    {
+      "name": "Ayse",
+      "tag": "5512",
+      "fullTag": "Ayse#5512",
+      "classicLvl": 11,
+      "classicScore": 26800,
+      "ttLvl": 3,
+      "ttScore": 24500,
+      "overallScore": 51300,
+      "puzzles": 0
+    },
+    {
+      "name": "Grey",
+      "tag": "1184",
+      "fullTag": "Grey#1184",
+      "classicLvl": 10,
+      "classicScore": 23500,
+      "ttLvl": 3,
+      "ttScore": 21000,
+      "overallScore": 44500,
+      "puzzles": 0
+    },
+    {
+      "name": "OsmanaGİ",
+      "tag": "6219",
+      "fullTag": "OsmanaGİ#6219",
+      "classicLvl": 9,
+      "classicScore": 19800,
+      "ttLvl": 2,
+      "ttScore": 16400,
+      "overallScore": 36200,
+      "puzzles": 0
+    },
+    {
+      "name": "Bero",
+      "tag": "8834",
+      "fullTag": "Bero#8834",
+      "classicLvl": 8,
+      "classicScore": 16200,
+      "ttLvl": 2,
+      "ttScore": 14100,
+      "overallScore": 30300,
+      "puzzles": 0
+    },
+    {
+      "name": "sudis",
+      "tag": "0228",
+      "fullTag": "sudis#0228",
+      "classicLvl": 3,
+      "classicScore": 14500,
+      "ttLvl": 1,
+      "ttScore": 0,
+      "overallScore": 14500,
+      "puzzles": 0
+    },
+    {
+      "name": "TestUser",
+      "tag": "0001",
+      "fullTag": "TestUser#0001",
+      "classicLvl": 2,
+      "classicScore": 50,
+      "ttLvl": 1,
+      "ttScore": 50,
+      "overallScore": 100,
+      "puzzles": 1
+    }
+  ]
+}

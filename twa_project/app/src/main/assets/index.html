@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0, user-scalable=no, shrink-to-fit=no, viewport-fit=cover">
+    <meta name="theme-color" content="#060913">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="mobile-web-app-capable" content="yes">
+    <title>Eşle Gitsin! 3D - Eşleme Oyunu</title>
+
+    <!-- PWA Favicon & Apple Touch Icons with Version Query to Bypass Cache -->
+    <link rel="shortcut icon" href="favicon.ico?v=3">
+    <link rel="icon" type="image/png" sizes="64x64" href="favicon.png?v=3">
+    <link rel="icon" type="image/png" sizes="192x192" href="icons/app-icon-192.png?v=3">
+    <link rel="apple-touch-icon" sizes="180x180" href="icons/app-apple-icon.png?v=3">
+    <link rel="manifest" href="manifest.json?v=3">
+
+    <!-- Instant Asset Preloader for 0ms Asset Loading -->
+    <link rel="preload" as="image" href="images/cat.jpg">
+    <link rel="preload" as="image" href="images/fox.jpg">
+    <link rel="preload" as="image" href="images/panda.jpg">
+    <link rel="preload" as="image" href="images/dragon.jpg">
+    <link rel="preload" as="image" href="images/shiba.jpg">
+    <link rel="preload" as="image" href="images/unicorn.jpg">
+    <link rel="preload" as="image" href="images/lion.jpg">
+    <link rel="preload" as="image" href="images/bunny.jpg">
+    <link rel="preload" as="image" href="images/owl.jpg">
+    <link rel="preload" as="image" href="images/red_panda.jpg">
+    <link rel="preload" as="image" href="images/frog.jpg">
+    <link rel="preload" as="image" href="images/penguin.jpg">
+    <link rel="preload" as="image" href="images/koala.jpg">
+    <link rel="preload" as="image" href="images/tiger.jpg">
+    <link rel="preload" as="image" href="images/hamster.jpg">
+    <link rel="preload" as="image" href="images/giraffe.jpg">
+    <link rel="preload" as="image" href="images/monkey.jpg">
+    <link rel="preload" as="image" href="images/elephant.jpg">
+    <link rel="preload" as="image" href="images/deer.jpg">
+    <link rel="preload" as="image" href="images/hedgehog.jpg">
+    <link rel="preload" as="image" href="images/app_hero_icon.png">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700;900&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css?v=8.9.95">
+</head>
+<body oncontextmenu="return false;" onselectstart="return false;" ondragstart="return false;">
+    <div id="app-wrapper">
+        <!-- Main Game Container (1080x1920 Portrait Aspect Ratio) -->
+        <div id="game-container">
+            <!-- CYBERCORE INTERACTIVE STUDIO INTRO STAGE (MATCHING MAZE OF FEAR) -->
+            <audio id="cybercore-intro-audio" src="audio/cybercore_sound_2_hollywood.wav" preload="auto"></audio>
+            <div id="cybercore-intro-stage">
+                <div class="intro-grid"></div>
+                <div class="glow-aura"></div>
+                <div class="logo-box" id="logo-box">
+                    <svg class="vector-ci-logo" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <linearGradient id="metalGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#ffffff" />
+                                <stop offset="30%" stop-color="#cbd5e1" />
+                                <stop offset="70%" stop-color="#64748b" />
+                                <stop offset="100%" stop-color="#334155" />
+                            </linearGradient>
+                            <linearGradient id="cyanGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#38bdf8" />
+                                <stop offset="100%" stop-color="#00f2fe" />
+                            </linearGradient>
+                            <filter id="neonGlow" x="-20%" y="-20%" width="140%" height="140%">
+                                <feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#00f2fe" flood-opacity="0.9"/>
+                            </filter>
+                        </defs>
+                        <path d="M 125 35 A 72 72 0 1 0 90 172 L 90 148 A 48 48 0 1 1 112 56 Z" fill="url(#metalGrad)" stroke="#00f2fe" stroke-width="1.5" filter="url(#neonGlow)" />
+                        <path d="M 134 26 L 160 48 L 144 65 L 122 46 Z" fill="url(#metalGrad)" stroke="#00f2fe" stroke-width="1.5" filter="url(#neonGlow)" />
+                        <rect x="94" y="78" width="22" height="66" rx="2" fill="url(#metalGrad)" stroke="#00f2fe" stroke-width="1.5" filter="url(#neonGlow)" />
+                        <rect x="94" y="50" width="22" height="20" rx="2" fill="url(#cyanGrad)" stroke="#ffffff" stroke-width="1" filter="drop-shadow(0 0 10px #00f2fe)" />
+                    </svg>
+                    <h1 class="brand-title">
+                        CYBERCORE
+                        <div class="light-sweep"></div>
+                    </h1>
+                    <div class="brand-subtitle">INTERACTIVE</div>
+                </div>
+            </div>
+            <!-- SVG Jigsaw Piece ClipPath Definitions -->
+            <svg width="0" height="0" style="position:absolute; pointer-events:none;">
+                <defs>
+                    <clipPath id="jigsaw-clip-0" clipPathUnits="objectBoundingBox"><path d="M 0 0 L 1 0 L 1 0.38 C 1.18 0.38, 1.18 0.62, 1 0.62 L 1 1 L 0.62 1 C 0.62 0.82, 0.38 0.82, 0.38 1 L 0 1 L 0 0 Z"/></clipPath>
+                    <clipPath id="jigsaw-clip-1" clipPathUnits="objectBoundingBox"><path d="M 0 0 L 1 0 L 1 0.38 C 0.82 0.38, 0.82 0.62, 1 0.62 L 1 1 L 0.62 1 C 0.62 1.18, 0.38 1.18, 0.38 1 L 0 1 L 0 0.62 C 0.18 0.62, 0.18 0.38, 0 0.38 L 0 0 Z"/></clipPath>
+                    <clipPath id="jigsaw-clip-2" clipPathUnits="objectBoundingBox"><path d="M 0 0 L 1 0 L 1 1 L 0.62 1 C 0.62 0.82, 0.38 0.82, 0.38 1 L 0 1 L 0 0.62 C -0.18 0.62, -0.18 0.38, 0 0.38 L 0 0 Z"/></clipPath>
+                    <clipPath id="jigsaw-clip-3" clipPathUnits="objectBoundingBox"><path d="M 0 0 L 0.38 0 C 0.38 -0.18, 0.62 -0.18, 0.62 0 L 1 0 L 1 0.38 C 0.82 0.38, 0.82 0.62, 1 0.62 L 1 1 L 0.62 1 C 0.62 1.18, 0.38 1.18, 0.38 1 L 0 1 L 0 0 Z"/></clipPath>
+                    <clipPath id="jigsaw-clip-4" clipPathUnits="objectBoundingBox"><path d="M 0 0 L 0.38 0 C 0.38 0.18, 0.62 0.18, 0.62 0 L 1 0 L 1 0.38 C 1.18 0.38, 1.18 0.62, 1 0.62 L 1 1 L 0.62 1 C 0.62 0.82, 0.38 0.82, 0.38 1 L 0 1 L 0 0.62 C -0.18 0.62, -0.18 0.38, 0 0.38 L 0 0 Z"/></clipPath>
+                    <clipPath id="jigsaw-clip-5" clipPathUnits="objectBoundingBox"><path d="M 0 0 L 0.38 0 C 0.38 -0.18, 0.62 -0.18, 0.62 0 L 1 0 L 1 1 L 0.62 1 C 0.62 1.18, 0.38 1.18, 0.38 1 L 0 1 L 0 0.62 C 0.18 0.62, 0.18 0.38, 0 0.38 L 0 0 Z"/></clipPath>
+                    <clipPath id="jigsaw-clip-6" clipPathUnits="objectBoundingBox"><path d="M 0 0 L 0.38 0 C 0.38 0.18, 0.62 0.18, 0.62 0 L 1 0 L 1 0.38 C 1.18 0.38, 1.18 0.62, 1 0.62 L 1 1 L 0.62 1 C 0.62 0.82, 0.38 0.82, 0.38 1 L 0 1 L 0 0 Z"/></clipPath>
+                    <clipPath id="jigsaw-clip-7" clipPathUnits="objectBoundingBox"><path d="M 0 0 L 0.38 0 C 0.38 -0.18, 0.62 -0.18, 0.62 0 L 1 0 L 1 0.38 C 0.82 0.38, 0.82 0.62, 1 0.62 L 1 1 L 0.62 1 C 0.62 1.18, 0.38 1.18, 0.38 1 L 0 1 L 0 0.62 C 0.18 0.62, 0.18 0.38, 0 0.38 L 0 0 Z"/></clipPath>
+                    <clipPath id="jigsaw-clip-8" clipPathUnits="objectBoundingBox"><path d="M 0 0 L 0.38 0 C 0.38 0.18, 0.62 0.18, 0.62 0 L 1 0 L 1 1 L 0.62 1 C 0.62 0.82, 0.38 0.82, 0.38 1 L 0 1 L 0 0.62 C -0.18 0.62, -0.18 0.38, 0 0.38 L 0 0 Z"/></clipPath>
+                    <clipPath id="jigsaw-clip-9" clipPathUnits="objectBoundingBox"><path d="M 0 0 L 0.38 0 C 0.38 -0.18, 0.62 -0.18, 0.62 0 L 1 0 L 1 0.38 C 0.82 0.38, 0.82 0.62, 1 0.62 L 1 1 L 0 1 L 0 0 Z"/></clipPath>
+                    <clipPath id="jigsaw-clip-10" clipPathUnits="objectBoundingBox"><path d="M 0 0 L 0.38 0 C 0.38 0.18, 0.62 0.18, 0.62 0 L 1 0 L 1 0.38 C 1.18 0.38, 1.18 0.62, 1 0.62 L 1 1 L 0 1 L 0 0.62 C 0.18 0.62, 0.18 0.38, 0 0.38 L 0 0 Z"/></clipPath>
+                    <clipPath id="jigsaw-clip-11" clipPathUnits="objectBoundingBox"><path d="M 0 0 L 0.38 0 C 0.38 -0.18, 0.62 -0.18, 0.62 0 L 1 0 L 1 1 L 0 1 L 0 0.62 C -0.18 0.62, -0.18 0.38, 0 0.38 L 0 0 Z"/></clipPath>
+                </defs>
+            </svg>
+
+            <!-- Canvas Overlay for Match Particles & Confetti -->
+            <canvas id="fx-canvas"></canvas>
+
+            <!-- Main Menu Screen (Dual-Mode Choice View: Classic vs Time Trial) -->
+            <div id="main-menu" class="menu-overlay">
+                <!-- Rich Floating Character Background Layer (16 Character Mini Cards) -->
+                <div class="menu-bg-characters">
+                    <img src="images/fox.jpg" class="bg-char char-1" alt="Fox">
+                    <img src="images/cat.jpg" class="bg-char char-2" alt="Cat">
+                    <img src="images/panda.jpg" class="bg-char char-3" alt="Panda">
+                    <img src="images/dragon.jpg" class="bg-char char-4" alt="Dragon">
+                    <img src="images/shiba.jpg" class="bg-char char-5" alt="Shiba">
+                    <img src="images/unicorn.jpg" class="bg-char char-6" alt="Unicorn">
+                    <img src="images/lion.jpg" class="bg-char char-7" alt="Lion">
+                    <img src="images/bunny.jpg" class="bg-char char-8" alt="Bunny">
+                    <img src="images/owl.jpg" class="bg-char char-9" alt="Owl">
+                    <img src="images/red_panda.jpg" class="bg-char char-10" alt="Red Panda">
+                    <img src="images/frog.jpg" class="bg-char char-11" alt="Frog">
+                    <img src="images/penguin.jpg" class="bg-char char-12" alt="Penguin">
+                    <div class="bg-char char-13 svg-bg-char"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="32" fill="#cbd5e1"/><circle cx="38" cy="48" r="4" fill="#0f172a"/><circle cx="62" cy="48" r="4" fill="#0f172a"/></svg></div>
+                    <div class="bg-char char-14 svg-bg-char"><svg viewBox="0 0 100 100"><ellipse cx="50" cy="52" rx="28" ry="34" fill="#f59e0b"/><circle cx="40" cy="46" r="4" fill="#451a03"/><circle cx="60" cy="46" r="4" fill="#451a03"/></svg></div>
+                    <div class="bg-char char-15 svg-bg-char"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="32" fill="#d97706"/><circle cx="38" cy="44" r="4" fill="#451a03"/><circle cx="62" cy="44" r="4" fill="#451a03"/></svg></div>
+                    <div class="bg-char char-16 svg-bg-char"><svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="30" fill="#cbd5e1"/><circle cx="38" cy="44" r="4" fill="#0f172a"/><circle cx="62" cy="44" r="4" fill="#451a03"/></svg></div>
+                </div>
+
+                <!-- Glassmorphic Integrated Menu Card Panel -->
+                <div class="menu-card">
+                    <!-- Round Floating Pop-up Lucky Wheel Widget in Top Left Corner -->
+                    <div id="btn-menu-wheel" class="floating-wheel-widget" title="Şans Çarkı">
+                        <div class="wheel-center-icon">
+                            <svg class="menu-widget-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 3v18M3 12h18M5.6 5.6l12.8 12.8M18.4 5.6L5.6 18.4"></path></svg>
+                        </div>
+                        <span class="wheel-widget-label" data-i18n="wheelWidgetTag">Çark</span>
+                    </div>
+
+                    <!-- Round Floating Pop-up Daily Gift Widget (Below Wheel in Top Left, perfectly symmetrical with Leaderboard) -->
+                    <div id="btn-menu-daily-gift" class="floating-daily-gift-widget" title="Günlük Hediyeler">
+                        <div class="daily-gift-center-icon">
+                            <svg class="menu-widget-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v10H4V12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
+                        </div>
+                        <span class="daily-gift-widget-label" data-i18n="dailyGiftWidgetTag">Hediye</span>
+                        <span id="daily-gift-notify-dot" class="widget-notify-dot hidden"></span>
+                    </div>
+
+                    <!-- Round Floating Pop-up Leaderboard Widget in Top Right Lower -->
+                    <div id="btn-menu-leaderboard" class="floating-leaderboard-widget" title="Liderlik Tablosu">
+                        <div class="leaderboard-center-icon">
+                            <svg class="menu-widget-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h2M18 9h2a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-2M6 3h12v7a6 6 0 0 1-12 0V3zM9 21h6M12 16v5"></path></svg>
+                        </div>
+                        <span class="leaderboard-widget-label">Liderler</span>
+                    </div>
+
+                    <!-- Round Floating Pop-up Ad Chest Widget in Top Right Corner -->
+                    <div id="btn-menu-ad-chest" class="floating-ad-chest-widget" title="Ödüllü Sandık">
+                        <div class="ad-chest-gift-icon">
+                            <svg class="menu-widget-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 12 20 22 4 22 4 12"></polyline><rect x="2" y="7" width="20" height="5"></rect><line x1="12" y1="22" x2="12" y2="7"></line><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"></path><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path></svg>
+                        </div>
+                        <span class="ad-widget-label" data-i18n="adWidgetTag">Ücretsiz</span>
+                    </div>
+
+                    <!-- Ultra Eye-Catching 3D Heart Logo Emblem with Golden Crown & Sunburst Aura -->
+                    <div class="menu-logo-frame">
+                        <!-- Rotating Sunburst Aura -->
+                        <div class="sunburst-aura"></div>
+                        <!-- Floating Golden Crown Vector Glyph -->
+                        <div class="logo-crown">
+                            <svg class="logo-crown-svg" viewBox="0 0 24 24" fill="#fbbf24"><path d="M5 19h14a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v2a1 1 0 0 0 1 1zm-1-8l2.5 3h11L20 11l-3 2-5-7-5 7-3-2z"/></svg>
+                        </div>
+
+                        <div class="logo-heart-container">
+                            <img src="images/app_hero_icon.png" class="menu-hero-icon" alt="Eşle Gitsin 3D Logo">
+                            <div class="badge-3d-star">3D</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Dynamic Dual-Language Game Title -->
+                    <h1 id="menu-game-title" class="menu-title" data-i18n="gameTitle">EŞLE GİTSİN! 3D</h1>
+                    <p id="menu-subtitle" class="menu-subtitle" data-i18n="menuSubtitle">Eşleme ve Zeka Macerası</p>
+                    
+                    <!-- Dual-Mode Main Menu Button Selection (Clean Typography) -->
+                    <div class="menu-btn-group">
+                        <button id="btn-mode-classic" class="btn-primary btn-menu">
+                            <span id="txt-classic-btn">KLASİK MOD (SEVİYE 1)</span>
+                        </button>
+                        <button id="btn-mode-timetrial" class="btn-timetrial btn-menu">
+                            <span id="txt-timetrial-btn">ZAMANA KARŞI MOD (SEVİYE 1)</span>
+                        </button>
+                        <button id="btn-menu-journal" class="btn-secondary btn-menu btn-journal">
+                            <span data-i18n="journalBtnText">YAPBOZ GÜNLÜĞÜ</span>
+                        </button>
+                        <button id="btn-menu-settings" class="btn-secondary btn-menu">
+                            <span data-i18n="settingsTitle">AYARLAR</span>
+                        </button>
+                    </div>
+
+                    <!-- Main Menu Dedicated AdMob Banner Slot -->
+                    <div id="main-menu-ad-banner" class="main-menu-ad-banner">
+                        <div class="ad-banner-badge" data-i18n="adBannerBadge">SPONSORLU</div>
+                        <div id="admob-banner-slot" class="admob-banner-slot">
+                            <span class="ad-banner-demo-text">Google AdMob Banner (320x50)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interactive Character Guided Tutorial Modal Screen -->
+            <div id="modal-tutorial" class="modal-overlay hidden">
+                <div class="modal-card tutorial-card">
+                    <button id="btn-close-tutorial" class="btn-close-x tutorial-close-btn">✕</button>
+                    
+                    <!-- Floating Character Avatar Header -->
+                    <div class="tutorial-avatar-wrapper">
+                        <img id="tut-avatar-img" src="images/fox.jpg" alt="Character Host" class="tut-avatar">
+                        <div id="tut-badge-name" class="tut-character-name">FOXİ (Kozmik Tilki)</div>
+                    </div>
+
+                    <!-- Speech Bubble & Content Container -->
+                    <div class="speech-bubble">
+                        <h3 id="tut-title" class="tut-slide-title">EŞLE GİTSİN! 3D'YE HOŞ GELDİN</h3>
+                        <p id="tut-body" class="tut-slide-body">Tahtadaki üstü açık olan 2 aynı kartı tepsine aktararak eşleştir! 5 slotlu tepsi dolmadan tüm kartları temizle!</p>
+                    </div>
+
+                    <!-- Slide Navigation Dots -->
+                    <div class="tut-dots-row">
+                        <span class="tut-dot active" data-step="0"></span>
+                        <span class="tut-dot" data-step="1"></span>
+                        <span class="tut-dot" data-step="2"></span>
+                        <span class="tut-dot" data-step="3"></span>
+                    </div>
+
+                    <!-- Action Navigation Buttons -->
+                    <div class="tut-nav-btns">
+                        <button id="btn-tut-prev" class="btn-secondary tut-btn-prev hidden" data-i18n="prevBtn">GERİ</button>
+                        <button id="btn-tut-next" class="btn-primary tut-btn-next" data-i18n="nextBtn">İLERİ</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Modern Settings Modal Screen -->
+            <div id="modal-settings" class="modal-overlay hidden">
+                <div class="modal-card settings-card">
+                    <!-- Modal Header -->
+                    <div class="modal-header-row settings-header">
+                        <div class="settings-title-group">
+                            <svg class="modal-title-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                            <h2 class="modal-title" data-i18n="settingsTitle">AYARLAR</h2>
+                        </div>
+                        <button id="btn-close-settings" class="btn-close-x" aria-label="Kapat">✕</button>
+                    </div>
+
+                    <!-- Scrollable Settings Content -->
+                    <div class="settings-body-scroll">
+                        <!-- Section 1: Ses & Müzik (Audio & Haptics) -->
+                        <div class="settings-group-card">
+                            <div class="settings-group-header">
+                                <span class="settings-group-title">SES VE TİTREŞİM</span>
+                            </div>
+
+                            <!-- Sound FX Volume Setting -->
+                            <div class="setting-row">
+                                <div class="setting-info">
+                                    <span class="setting-label" data-i18n="volLabel">Ses Efektleri</span>
+                                    <span id="vol-val-text" class="setting-val">80%</span>
+                                </div>
+                                <input type="range" id="slider-volume" min="0" max="100" value="80" class="setting-slider">
+                            </div>
+
+                            <!-- Background Music Volume Setting -->
+                            <div class="setting-row">
+                                <div class="setting-info">
+                                    <span class="setting-label" data-i18n="musicLabel">Müzik Düzeyi</span>
+                                    <span id="music-val-text" class="setting-val">30%</span>
+                                </div>
+                                <input type="range" id="slider-music" min="0" max="100" value="30" class="setting-slider">
+                            </div>
+
+                            <!-- Music Song Track Selector -->
+                            <div class="setting-row">
+                                <div class="setting-info">
+                                    <span class="setting-label" data-i18n="trackLabel">Müzik Parçası</span>
+                                </div>
+                                <div class="track-grid-selector">
+                                    <button id="btn-track-carefree" class="lang-btn track-btn active" data-i18n="trackCarefree">Carefree</button>
+                                    <button id="btn-track-duck" class="lang-btn track-btn" data-i18n="trackDuck">Ördekçik</button>
+                                    <button id="btn-track-monkeys" class="lang-btn track-btn" data-i18n="trackMarimba">Marimba</button>
+                                </div>
+                            </div>
+
+                            <!-- Vibration Setting -->
+                            <div class="setting-row setting-row-switch">
+                                <span class="setting-label" data-i18n="vibLabel">Titreşim</span>
+                                <button id="btn-toggle-vib" class="toggle-btn active">
+                                    <span id="vib-btn-text">AÇIK</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Section 2: Dil Seçimi (Language Support) -->
+                        <div class="settings-group-card">
+                            <div class="settings-group-header">
+                                <span class="settings-group-title">DİL SEÇİMİ</span>
+                            </div>
+                            <div class="lang-grid-selector">
+                                <button id="btn-lang-tr" class="lang-btn active">🇹🇷 TR</button>
+                                <button id="btn-lang-en" class="lang-btn">🇬🇧 EN</button>
+                                <button id="btn-lang-de" class="lang-btn">🇩🇪 DE</button>
+                                <button id="btn-lang-fr" class="lang-btn">🇫🇷 FR</button>
+                                <button id="btn-lang-it" class="lang-btn">🇮🇹 IT</button>
+                                <button id="btn-lang-es" class="lang-btn">🇪🇸 ES</button>
+                                <button id="btn-lang-pt" class="lang-btn">🇵🇹 PT</button>
+                            </div>
+                        </div>
+
+                        <!-- Section 3: Oyun & Hesap Yönetimi (Game Actions) -->
+                        <div class="settings-group-card">
+                            <div class="settings-group-header">
+                                <span class="settings-group-title">OYUN VE HESAP</span>
+                            </div>
+
+                            <div class="settings-buttons-list">
+                                <!-- Change Nickname / Profile Button -->
+                                <button id="btn-settings-edit-profile" class="settings-list-btn btn-profile">
+                                    <span data-i18n="editProfileBtnText">KULLANICI ADINI DEĞİŞTİR</span>
+                                    <span class="btn-chevron">›</span>
+                                </button>
+
+                                <!-- Replay Tutorial Button -->
+                                <button id="btn-menu-tutorial" class="settings-list-btn">
+                                    <span data-i18n="howToPlayBtnText">NASIL OYNANIR? (REHBER)</span>
+                                    <span class="btn-chevron">›</span>
+                                </button>
+
+                                <!-- Privacy Policy Button -->
+                                <a id="btn-privacy-policy" href="privacy.html" target="_blank" class="settings-list-btn btn-link">
+                                    <span data-i18n="privacyPolicyBtnText">GİZLİLİK POLİTİKASI</span>
+                                    <span class="btn-chevron">↗</span>
+                                </a>
+
+                                <!-- Force Update & Clear Cache Button -->
+                                <button id="btn-force-update" class="settings-list-btn btn-update">
+                                    <span data-i18n="forceUpdateBtn">CANLI GÜNCELLEMEYİ YÜKLE (v8.9.92)</span>
+                                    <span class="btn-chevron">↻</span>
+                                </button>
+
+                                <!-- Reset Game Progress Button -->
+                                <button id="btn-menu-newgame" class="settings-list-btn btn-danger">
+                                    <span data-i18n="newGameBtn">SIFIRLA VE YENİ OYUN BAŞLAT</span>
+                                    <span class="btn-chevron">›</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Pinned Footer Save Button -->
+                    <button id="btn-save-settings" class="btn-primary settings-save-btn" data-i18n="saveBtn">KAYDET VE KAPAT</button>
+                </div>
+            </div>
+
+            <!-- Reset Choice Modal Confirmation Dialog (Asks WHICH mode to reset!) -->
+            <div id="modal-reset-confirm" class="modal-overlay hidden">
+                <div class="modal-card reset-choice-card">
+                    <div class="modal-header-row">
+                        <h2 class="modal-title" data-i18n="resetModalTitle">HANGİ MOD SIFIRLANSIN?</h2>
+                        <button id="btn-close-reset-confirm" class="btn-close-x">✕</button>
+                    </div>
+
+                    <p class="reset-desc" data-i18n="resetModalDesc">Sıfırlamak istediğiniz oyun modunu seçin:</p>
+
+                    <div class="reset-btn-stack">
+                        <button id="btn-reset-classic" class="btn-secondary reset-option-btn">
+                            <span data-i18n="resetClassicBtn">KLASİK MODU SIFIRLA</span>
+                        </button>
+                        <button id="btn-reset-timetrial" class="btn-timetrial reset-option-btn">
+                            <span data-i18n="resetTimeTrialBtn">ZAMANA KARŞI MODU SIFIRLA</span>
+                        </button>
+                        <button id="btn-reset-both" class="btn-danger-reset reset-option-btn">
+                            <span data-i18n="resetBothBtn">HER İKİ MODU DA SIFIRLA</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Top Navigation & HUD Bar (CLEAN SINGLE-ROW MODERN MOBILE HUD) -->
+            <header id="hud-header">
+                <div class="hud-top-row">
+                    <button id="btn-hud-home" class="hud-icon-btn" title="Ana Menü" aria-label="Ana Menü">
+                        <svg class="hud-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                    </button>
+                    
+                    <div class="hud-info-group">
+                        <div class="hud-item badge-level">
+                            <span class="hud-label" data-i18n="levelLabel">SEVİYE</span>
+                            <span id="level-num" class="hud-val">1</span>
+                        </div>
+
+                        <!-- Timer Badge (ONLY Visible in Time Trial Mode!) -->
+                        <div id="badge-timer" class="hud-item badge-timer hidden">
+                            <span class="timer-icon">
+                                <svg class="timer-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                            </span>
+                            <span id="timer-val" class="hud-val">00:30</span>
+                        </div>
+
+                        <div class="hud-item badge-score">
+                            <span class="hud-label" data-i18n="score">SKOR</span>
+                            <span id="score-val" class="hud-val">0</span>
+                        </div>
+
+                        <div class="hud-item badge-gold">
+                            <span class="hud-label" data-i18n="goldLabel">ALTIN</span>
+                            <span class="gold-icon">
+                                <svg class="gold-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v10M9 9.5c0-1.4 1.3-2 3-2s3 .8 3 2c0 2.5-6 1.5-6 4 0 1.2 1.3 2 3 2s3-.6 3-2"></path></svg>
+                            </span>
+                            <span id="gold-val" class="hud-val">0</span>
+                        </div>
+                    </div>
+
+                    <button id="btn-hud-settings" class="hud-icon-btn" title="Ayarlar" aria-label="Ayarlar">
+                        <svg class="hud-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Combo Multiplier Floating HUD Badge -->
+            <div id="combo-badge" class="combo-badge hidden">
+                <span id="combo-text">HARİKA EŞLEŞME</span>
+            </div>
+
+            <!-- Main Stacked Pyramid Board Area -->
+            <main id="board-container">
+                <!-- Luxury Glassmorphic Board Mat Frame with Corner Accents -->
+                <div class="board-mat-frame">
+                    <div class="mat-corner corner-tl"></div>
+                    <div class="mat-corner corner-tr"></div>
+                    <div class="mat-corner corner-bl"></div>
+                    <div class="mat-corner corner-br"></div>
+                </div>
+                <div id="board"></div>
+            </main>
+
+            <!-- Floating Top Emergency 6th Slot Holder (Appears above center slot) -->
+            <div id="floating-extra-slot" class="floating-extra-slot hidden">
+                <div class="extra-slot-badge" data-i18n="emergencySlotTitle">ACİL SLOT</div>
+                <div class="extra-slot-box"></div>
+            </div>
+
+            <!-- In-Game Ergonomic Bottom Booster Dock (Directly accessible above tray) -->
+            <div id="in-game-boosters-dock" class="hud-bottom-boosters">
+                <!-- Undo Last Move Booster Button (500 Score Base) -->
+                <button id="btn-undo" class="booster-pill undo-pill" title="Son Kartı Geri Al" aria-label="Geri Al">
+                    <span class="booster-icon">
+                        <svg class="booster-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
+                    </span>
+                    <span class="booster-name" data-i18n="undoBtnLabel">Geri Al</span>
+                    <span id="undo-cost-badge" class="cost-badge cost-emerald">500 P</span>
+                </button>
+
+                <!-- Smart Hint Button (300 Score Base) -->
+                <button id="btn-hint" class="booster-pill hint-pill" title="Akıllı İpucu" aria-label="İpucu">
+                    <span class="booster-icon">
+                        <svg class="booster-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18h6"></path><path d="M10 22h4"></path><path d="M12 2a7 7 0 0 0-7 7c0 2.5 1.5 4.5 3 6h8c1.5-1.5 3-3.5 3-6a7 7 0 0 0-7-7z"></path></svg>
+                    </span>
+                    <span class="booster-name" data-i18n="hintLabel">İpucu</span>
+                    <span id="hint-cost-badge" class="cost-badge cost-sky">300 P</span>
+                </button>
+
+                <!-- Extra Slot Booster Button (1000 Score Base) -->
+                <button id="btn-extra-slot" class="booster-pill slot-pill" title="Ek Slot Hakkı" aria-label="+1 Slot">
+                    <span class="booster-icon">
+                        <svg class="booster-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="4"></rect><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+                    </span>
+                    <span class="booster-name" data-i18n="slotBtnLabel">+1 Slot</span>
+                    <span id="slot-cost-badge" class="cost-badge cost-gold">1000 P</span>
+                </button>
+
+                <!-- Shuffle Board Booster Button (5000 Score Base) -->
+                <button id="btn-shuffle" class="booster-pill shuffle-pill" title="Kartları Karıştır" aria-label="Karıştır">
+                    <span class="booster-icon">
+                        <svg class="booster-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polyline points="16 3 21 3 21 8"></polyline><line x1="4" y1="20" x2="21" y2="3"></line><polyline points="21 16 21 21 16 21"></polyline><line x1="15" y1="15" x2="21" y2="21"></line><line x1="4" y1="4" x2="9" y2="9"></line></svg>
+                    </span>
+                    <span class="booster-name" data-i18n="shuffleBtnLabel">Karıştır</span>
+                    <span id="shuffle-cost-badge" class="cost-badge cost-purple">5000 P</span>
+                </button>
+            </div>
+
+            <!-- Bottom 5-Slot Fixed Tray Area -->
+            <footer id="slot-tray-container">
+                <div id="slot-tray-bg">
+                    <div class="slot-marker"></div>
+                    <div class="slot-marker"></div>
+                    <div class="slot-marker"></div>
+                    <div class="slot-marker"></div>
+                    <div class="slot-marker"></div>
+                    <div id="slot-tiles-layer"></div>
+                </div>
+            </footer>
+        </div>
+
+        <!-- Victory Modal Dialog -->
+        <div id="modal-victory" class="modal-overlay hidden">
+            <div class="modal-card">
+                <div class="modal-icon">
+                    <svg class="modal-icon-svg victory-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h2"></path><path d="M18 9h2a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2h-2"></path><path d="M4 22h16"></path><path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"></path><path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"></path><path d="M18 2H6v7a6 6 0 0 0 12 0V2z"></path></svg>
+                </div>
+                <h2 class="modal-title" data-i18n="victoryTitle">TEBRİKLER!</h2>
+                <p class="modal-desc" data-i18n="victoryDesc">Bölümdeki tüm kartları başarıyla eşleştirdiniz!</p>
+                <div class="modal-stat"><span data-i18n="scoreLabel">SKOR</span>: <span id="victory-score">0</span></div>
+                <button id="btn-next-level" class="btn-primary" data-i18n="nextLevelBtn">SONRAKİ BÖLÜM</button>
+            </div>
+        </div>
+
+        <!-- CHEST OPENING REWARD MODAL -->
+        <div id="modal-chest" class="modal-overlay hidden">
+            <div class="modal-card chest-card">
+                <div class="chest-star-rating">
+                    <span id="chest-star-display" class="chest-star-display">★★★★★</span>
+                </div>
+                <h2 id="chest-modal-title" class="modal-title">ÖDÜL SANDIĞI</h2>
+                <p id="chest-modal-desc" class="modal-desc">Bölüm Başarısı! Ödüllerinizi görmek için butona basın!</p>
+                
+                <div id="chest-box-container" class="chest-box-container">
+                    <div id="chest-box" class="chest-box">
+                        <svg class="chest-box-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8H3a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2v-9a2 2 0 0 0-2-2z"></path><path d="M1 10h22"></path><path d="M12 12v3"></path><path d="M3 8V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v3"></path></svg>
+                    </div>
+                </div>
+
+                <!-- Stage 1 Button: ÖDÜLLERİ AL (Sadece 1. Aşamada Görünür) -->
+                <button id="btn-open-chest" class="btn-primary chest-open-btn">
+                    <span data-i18n="chestOpenBtn">ÖDÜLLERİ AL</span>
+                </button>
+
+                <!-- Stage 2 Content: Ödüller & Envantere Ekle (Sadece 2. Aşamada Görünür) -->
+                <div id="chest-reward-content" class="chest-reward-content hidden">
+                    <div id="chest-reward-list" class="chest-reward-list"></div>
+                    <button id="btn-collect-chest" class="btn-primary collect-btn">
+                        <span data-i18n="chestCollectBtn">ENVANTERE EKLE VE DEVAM ET</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- CUTE 3D LUCKY WHEEL MODAL SCREEN -->
+        <div id="modal-wheel" class="modal-overlay hidden">
+            <div class="modal-card wheel-card">
+                <button id="btn-close-wheel" class="btn-close-x">✕</button>
+                <h2 id="wheel-title" class="modal-title" data-i18n="wheelTitle">ŞANS ÇARKI</h2>
+                <p id="wheel-subtitle" class="modal-desc" data-i18n="wheelSubtitle">Çarkı çevir, sürpriz altın ve yapboz parçaları kazan!</p>
+
+                <!-- Wheel Canvas Container with Golden Ticker Pointer -->
+                <div class="wheel-wrapper">
+                    <div class="wheel-pointer">▼</div>
+                    <div id="wheel-disc" class="wheel-disc">
+                        <canvas id="wheel-canvas" width="280" height="280"></canvas>
+                    </div>
+                    <div class="wheel-center-cap">
+                        <svg class="wheel-center-svg" viewBox="0 0 24 24" fill="#fbbf24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                    </div>
+                </div>
+
+                <!-- Dynamic Status Badge & Spin Action Button -->
+                <div id="wheel-status-badge" class="wheel-status-badge">1/1 ÜCRETSİZ HAK</div>
+                <button id="btn-spin-wheel" class="btn-primary btn-spin-wheel">
+                    <span id="txt-spin-btn" data-i18n="spinBtnText">ÇARKI ÇEVİR</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- DAILY & WEEKLY LOGIN REWARDS MODAL SCREEN -->
+        <div id="modal-daily-rewards" class="modal-overlay hidden" style="z-index: 99988;">
+            <div class="modal-card daily-rewards-card">
+                <button id="btn-close-daily-rewards" class="btn-close-x">✕</button>
+                <div class="daily-rewards-header">
+                    <div class="daily-title-group">
+                        <svg class="modal-title-svg" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v10H4V12"/><rect x="2" y="7" width="20" height="5"/><line x1="12" y1="22" x2="12" y2="7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
+                        <h2 class="modal-title" data-i18n="dailyRewardsTitle">GÜNLÜK HEDİYELER</h2>
+                    </div>
+                    <p class="modal-desc" data-i18n="dailyRewardsSub">Her gün gel, serini koru! Kaçırırsan seri 1. güne döner.</p>
+                </div>
+
+                <!-- Weekly Master Milestone Progress Card -->
+                <div class="weekly-milestone-card">
+                    <div class="weekly-milestone-info">
+                        <div class="weekly-milestone-icon">
+                            <svg class="weekly-chest-svg" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8H3a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h18a2 2 0 0 0 2-2v-9a2 2 0 0 0-2-2z"/><path d="M1 10h22"/><path d="M12 12v3"/><path d="M3 8V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v3"/></svg>
+                        </div>
+                        <div class="weekly-milestone-texts">
+                            <span class="weekly-title" data-i18n="weeklyChestTitle">HAFTALIK SÜPER SANDIK</span>
+                            <span class="weekly-reward-preview">+1000 Altın & 5 Yıldızlı Sandık</span>
+                        </div>
+                        <span id="weekly-streak-counter" class="weekly-streak-badge">0/7 GÜN</span>
+                    </div>
+                    <div class="weekly-progress-bar-bg">
+                        <div id="weekly-progress-bar-fill" class="weekly-progress-bar-fill" style="width: 0%;"></div>
+                    </div>
+                    <button id="btn-claim-weekly-chest" class="btn-primary weekly-claim-btn hidden" style="display: none;" data-i18n="weeklyClaimBtn">HAFTALIK ÖDÜLÜ AL</button>
+                </div>
+
+                <!-- 7-Day Daily Login Cards Grid (Days 1 to 7 dynamically injected) -->
+                <div id="daily-rewards-grid" class="daily-grid-container">
+                    <!-- Days 1 to 7 injected dynamically -->
+                </div>
+            </div>
+        </div>
+
+        <!-- 12-PIECE DRAG & DROP PUZZLE GALLERY & JOURNAL MODAL -->
+        <div id="modal-puzzle-gallery" class="modal-overlay hidden">
+            <div class="modal-card gallery-modal-card journal-book-card">
+                <button id="btn-close-gallery" class="btn-close-x">✕</button>
+                <div class="journal-book-header">
+                    <div class="journal-gold-badge">
+                        <span class="gold-icon">
+                            <svg class="gold-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v10M9 9.5c0-1.4 1.3-2 3-2s3 .8 3 2c0 2.5-6 1.5-6 4 0 1.2 1.3 2 3 2s3-.6 3-2"></path></svg>
+                        </span>
+                        <span id="gold-val-puzzle">0</span>
+                    </div>
+                    <span class="journal-ribbon" data-i18n="journalBtnText">YAPBOZ GÜNLÜĞÜ</span>
+                    
+                    <div class="journal-character-selector-row">
+                        <button id="btn-prev-page" class="journal-arrow-nav-btn">◀</button>
+                        <h2 id="journal-picture-title" class="modal-title">Pamuk Kedi</h2>
+                        <button id="btn-next-page" class="journal-arrow-nav-btn">▶</button>
+                    </div>
+                    <span id="journal-page-num" class="journal-page-badge">Sayfa 1 / 12</span>
+                </div>
+
+                <!-- Main 3x4 Puzzle Placement Board (12 Jigsaw Grid Slots) -->
+                <div class="puzzle-board-wrapper journal-page-paper">
+                    <div id="puzzle-board-grid" class="puzzle-grid-3x4"></div>
+                    <div id="puzzle-completed-badge" class="completed-badge hidden">TAMAMLANDI</div>
+                </div>
+
+                <!-- Gold Economy: Buy Missing Piece Button -->
+                <div class="gallery-action-bar">
+                    <button id="btn-buy-puzzle-piece" class="btn-secondary buy-piece-btn">
+                        <span data-i18n="buyPieceBtn">1 Parça Al</span>
+                        <span class="buy-cost-tag" data-i18n="buyPieceCostTag">100 Altın</span>
+                    </button>
+                </div>
+
+                <!-- Unplaced Pieces Inventory Drag & Drop Tray -->
+                <div class="inventory-section">
+                    <h3 class="inventory-title" data-i18n="inventoryTitle">ENVANTER (Parçaları Tahtaya Sürükleyin veya Dokunun):</h3>
+                    <div id="puzzle-inventory-tray" class="inventory-tray"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Game Over Modal Dialog with Penalty Alert -->
+        <div id="modal-gameover" class="modal-overlay hidden">
+            <div class="modal-card modal-defeat">
+                <div class="modal-icon" id="defeat-icon">
+                    <svg class="modal-icon-svg defeat-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
+                </div>
+                <h2 class="modal-title" id="defeat-title" data-i18n="defeatTitle">SLOT DOLDU!</h2>
+                <p class="modal-desc" id="defeat-desc" data-i18n="defeatDesc">Tepside boş alan kalmadı ve eşleşen kart bulunamadı.</p>
+                
+                <!-- Defeat Info Badge -->
+                <div class="penalty-badge" style="background: rgba(239, 68, 68, 0.15); border-color: rgba(239, 68, 68, 0.4);">
+                    <span class="penalty-icon">!</span>
+                    <span id="penalty-text" data-i18n="penaltyText">Bölüm puanı sıfırlandı</span>
+                </div>
+
+                <button id="btn-ad-revive" class="btn-primary btn-ad-revive" style="background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); border-color: #a78bfa; margin-bottom: 10px;">
+                    <span data-i18n="adReviveBtn">REKLAM İZLE & +1 SLOT İLE DEVAM ET</span>
+                </button>
+
+                <button id="btn-retry" class="btn-primary" data-i18n="retryBtn">TEKRAR DENE</button>
+            </div>
+        </div>
+
+        <!-- REWARDED VIDEO AD PLAYER MODAL DEMO -->
+        <div id="modal-ad-player" class="modal-overlay hidden" style="z-index: 99999; background: rgba(0,0,0,0.95);">
+            <div class="modal-card ad-player-card" style="text-align: center; border-color: #8b5cf6; padding: 24px;">
+                <div class="ad-spinner-icon" style="margin-bottom: 12px;">
+                    <svg class="ad-spinner-svg" viewBox="0 0 24 24" fill="none" stroke="#a78bfa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 44px; height: 44px; margin: 0 auto; display: block;"><circle cx="12" cy="12" r="10"></circle><polygon points="10 8 16 12 10 16 10 8" fill="#a78bfa"></polygon></svg>
+                </div>
+                <h2 style="color: #a78bfa; font-size: 20px; font-weight: 900; margin: 12px 0 6px 0;">ÖDÜLLÜ REKLAM OYNATILIYOR...</h2>
+                <p style="color: #cbd5e1; font-size: 13px; margin-bottom: 16px;">Ödülünüzü almak için lütfen tamamlanmasını bekleyin!</p>
+                <div class="ad-progress-bar" style="width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; margin-bottom: 12px;">
+                    <div id="ad-progress-fill" style="width: 0%; height: 100%; background: linear-gradient(90deg, #8b5cf6, #ec4899); transition: width 0.1s linear;"></div>
+                </div>
+                <span id="ad-timer-countdown" style="font-size: 14px; font-weight: 800; color: #fbbf24;">Kalan Süre: 3 sn</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- First-Time / Edit Nickname & 4-Digit Tag Registration Modal -->
+    <div id="modal-set-nickname" class="modal-overlay hidden" style="z-index: 99990;">
+        <div class="modal-card nickname-card" style="position: relative;">
+            <button id="btn-close-nickname" class="btn-close-x" style="position: absolute; right: 14px; top: 14px;">✕</button>
+            <div class="modal-header-row">
+                <h2 class="modal-title" id="nickname-modal-title">PROFİLİNİ OLUŞTUR</h2>
+            </div>
+            <p class="nickname-subtext" id="nickname-modal-subtext">Liderlik tablosunda görünecek adınızı (Maks 10 Karakter) ve 4 haneli etiketinizi belirleyin!</p>
+            
+            <div class="nickname-form-group">
+                <label class="nickname-label">Kullanıcı Adı (Maks 10 Harf):</label>
+                <div class="input-with-random">
+                    <input type="text" id="input-nickname" maxlength="10" placeholder="Örn: Kozmik" class="nickname-input">
+                    <button id="btn-random-nickname" class="btn-random-dice" title="Rastgele İsim Öner">
+                        <svg class="dice-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"></rect><circle cx="8.5" cy="8.5" r="1.5" fill="currentColor"></circle><circle cx="15.5" cy="15.5" r="1.5" fill="currentColor"></circle></svg>
+                    </button>
+                </div>
+                
+                <label class="nickname-label" style="margin-top: 12px;">4 Haneli Etiket (Örn: #0001):</label>
+                <div class="tag-input-row">
+                    <span class="tag-hash-symbol">#</span>
+                    <input type="text" id="input-tag" maxlength="4" placeholder="0001" class="tag-input">
+                    <button id="btn-random-tag" class="btn-random-dice" title="Rastgele Etiket">
+                        <svg class="dice-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"></rect><circle cx="8.5" cy="8.5" r="1.5" fill="currentColor"></circle><circle cx="15.5" cy="15.5" r="1.5" fill="currentColor"></circle></svg>
+                    </button>
+                </div>
+                
+                <span id="nickname-error-msg" class="nickname-error hidden">Lütfen uygun bir kullanıcı adı girin!</span>
+            </div>
+
+            <button id="btn-save-nickname" class="btn-primary nickname-submit-btn">PROFİLİ KAYDET VE KATIL</button>
+        </div>
+    </div>
+
+    <!-- Leaderboard Modal Screen (3-Tab, Top 1000 & Self Rank Sticky Bar) -->
+    <div id="modal-leaderboard" class="modal-overlay hidden" style="z-index: 99980;">
+        <div class="modal-card leaderboard-modal-card">
+            <button id="btn-close-leaderboard" class="btn-close-x">✕</button>
+            <div class="leaderboard-header">
+                <div class="lb-header-title-row">
+                    <h2 class="modal-title" style="margin: 0; font-size: 19px;">LİDERLİK TABLOSU</h2>
+                    <button id="btn-refresh-leaderboard" class="btn-refresh-lb" title="Sıralamayı Yenile">
+                        <svg class="refresh-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 3 Leaderboard Category Tabs -->
+            <div class="leaderboard-tabs-row">
+                <button class="lb-tab-btn active" data-lb-tab="overall">GENEL</button>
+                <button class="lb-tab-btn" data-lb-tab="classic">KLASİK</button>
+                <button class="lb-tab-btn" data-lb-tab="timetrial">ZAMANA KARŞI</button>
+            </div>
+
+            <!-- Scrollable Leaderboard List (Top 1000 Players) -->
+            <div id="leaderboard-list-container" class="leaderboard-list-scroll">
+                <!-- Dynamically Injected Player Rows -->
+            </div>
+
+            <!-- Sticky Bottom Self Rank Bar -->
+            <div id="leaderboard-self-bar" class="leaderboard-self-bar">
+                <div id="self-rank-badge" class="self-rank-badge">#---</div>
+                <div class="self-info-col">
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <span id="self-name-tag" class="self-name-tag">SİZ: ---#----</span>
+                        <button id="btn-edit-lb-nickname" class="btn-edit-nick-pill" title="İsmini Değiştir">Düzenle</button>
+                    </div>
+                    <span id="self-title-badge" class="self-title-badge">Yükselen Yıldız</span>
+                </div>
+                <div id="self-score-val" class="self-score-val">0 Puan</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mid-Level Quit Confirmation Modal (-500 Score Penalty Warning) -->
+    <div id="modal-confirm-quit" class="modal-overlay hidden" style="z-index: 99995;">
+        <div class="modal-card confirm-quit-card">
+            <div class="modal-header-row">
+                <h2 class="modal-title" style="color: #ef4444;">AYRILMA ONAYI</h2>
+            </div>
+            <p class="quit-warning-text">Bölümü tamamlamadan ana menüye dönerseniz:<br><br>• Bu bölümde kazanılan puanlar geçersiz sayılır.<br>• Hesabınızdan <b style="color: #ef4444;">-500 PUAN CEZASI</b> kesilir!</p>
+            <div class="quit-btn-row">
+                <button id="btn-cancel-quit" class="btn-secondary quit-btn">VAZGEÇ</button>
+                <button id="btn-accept-quit-penalty" class="btn-primary quit-btn penalty-accept-btn">CEZAYI KABUL ET VE AYRIL</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Wheel Ad Spin Permission Modal Screen -->
+    <div id="modal-wheel-ad-confirm" class="modal-overlay hidden" style="z-index: 99996;">
+        <div class="modal-card wheel-ad-confirm-card" style="text-align: center; max-width: 360px;">
+            <button id="btn-close-wheel-ad-confirm" class="btn-close-x">✕</button>
+            <div style="margin-bottom: 12px;">
+                <svg class="modal-icon-svg" viewBox="0 0 24 24" fill="none" stroke="#fbbf24" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 44px; height: 44px; margin: 0 auto; display: block;"><circle cx="12" cy="12" r="10"></circle><polygon points="10 8 16 12 10 16 10 8" fill="#fbbf24"></polygon></svg>
+            </div>
+            <h2 class="modal-title" style="color: #fbbf24; font-size: 20px;">REKLAMLA +1 ÇEVİRME HAKKI</h2>
+            <p style="color: #cbd5e1; font-size: 13px; margin: 10px 0 16px 0; line-height: 1.4;">Kısa bir ödüllü reklam izleyerek Çarkı 1 kez daha çevirebilirsiniz!<br><br><span style="color: #38bdf8; font-weight: 800;">(Reklamlı çevirme 8 saatte bir tekrar kullanılabilir)</span></p>
+            <div style="display: flex; flex-direction: column; gap: 10px;">
+                <button id="btn-spin-ad-accept" class="btn-primary" style="background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); border-color: #c084fc; padding: 12px; font-size: 14px;">
+                    REKLAM İZLE VE ÇARKI ÇEVİR
+                </button>
+                <button id="btn-spin-ad-cancel" class="btn-secondary" style="padding: 10px; font-size: 13px;">
+                    ŞİMDİLİK GEÇ
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Player Profile Card Summary Modal Screen -->
+    <div id="modal-player-profile" class="modal-overlay hidden" style="z-index: 99985;">
+        <div class="modal-card player-profile-card">
+            <button id="btn-close-player-profile" class="btn-close-x">✕</button>
+            
+            <div class="profile-header-box">
+                <div id="profile-avatar-frame" class="profile-avatar-frame">1</div>
+                <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    <h2 id="profile-name-tag" class="profile-name-tag">Oyuncu#0000</h2>
+                    <button id="btn-profile-edit-name" class="btn-edit-nick-pill hidden" title="İsmini Değiştir">Düzenle</button>
+                </div>
+                <span id="profile-title-badge" class="profile-tier-badge">Kozmik İlah</span>
+                <span id="profile-global-rank" class="profile-global-rank">Küresel Sıralama: #1</span>
+            </div>
+
+            <div class="profile-stats-grid">
+                <div class="profile-stat-box">
+                    <span class="stat-label">Klasik Mod</span>
+                    <span id="profile-classic-level" class="stat-val">Seviye 1</span>
+                    <span id="profile-classic-score" class="stat-sub">0 Puan</span>
+                </div>
+
+                <div class="profile-stat-box">
+                    <span class="stat-label">Zamana Karşı</span>
+                    <span id="profile-timetrial-level" class="stat-val">Seviye 1</span>
+                    <span id="profile-timetrial-score" class="stat-sub">0 Puan</span>
+                </div>
+
+                <div class="profile-stat-box full-width-stat">
+                    <span class="stat-label">Yapboz Koleksiyonu</span>
+                    <span id="profile-puzzle-count" class="stat-val">0 / 12 Tamamlandı</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Register PWA Service Worker with Automatic Live Update Detection -->
+    <script>
+      if ('serviceWorker' in navigator) {
+        let swRefreshing = false;
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+          if (!swRefreshing) {
+            swRefreshing = true;
+            console.log('[PWA] New Service Worker active, checking if safe to auto-reload...');
+            const isPlaying = window.gameInstance && typeof window.gameInstance.isPlayerInGame === 'function' && window.gameInstance.isPlayerInGame();
+            if (!isPlaying) {
+              window.location.reload();
+            } else if (window.gameInstance) {
+              window.gameInstance.hasPendingUpdate = true;
+            }
+          }
+        });
+
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./sw.js?v=8.9.95').then((reg) => {
+            // Immediate update check on launch
+            reg.update();
+
+            reg.addEventListener('updatefound', () => {
+              const newWorker = reg.installing;
+              if (newWorker) {
+                newWorker.addEventListener('statechange', () => {
+                  if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                    console.log('[PWA] New version ready in background.');
+                    const isPlaying = window.gameInstance && typeof window.gameInstance.isPlayerInGame === 'function' && window.gameInstance.isPlayerInGame();
+                    const isIntro = window.gameInstance && (window.gameInstance.introActive || !window.gameInstance.introFinished);
+                    if (!isPlaying && !isIntro) {
+                      const lastReload = parseInt(sessionStorage.getItem('pwa_sw_reload') || '0', 10);
+                      if (Date.now() - lastReload > 60000) {
+                        sessionStorage.setItem('pwa_sw_reload', Date.now().toString());
+                        window.location.reload();
+                      }
+                    } else if (window.gameInstance) {
+                      window.gameInstance.hasPendingUpdate = true;
+                    }
+                  }
+                });
+              }
+            });
+
+            // Check periodically every 10 minutes
+            setInterval(() => {
+              if (navigator.onLine) reg.update();
+            }, 10 * 60 * 1000);
+          }).catch(err => console.log('SW Registration error:', err));
+        });
+      }
+    </script>
+    <!-- Global Toast Notification (Z-Index 999999 - Above ALL Modals) -->
+    <div id="toast-msg" class="toast-msg hidden">
+        <span id="toast-text">Yetersiz Altın!</span>
+    </div>
+
+    <script src="game.js?v=8.9.95" defer></script>
+</body>
+</html>
