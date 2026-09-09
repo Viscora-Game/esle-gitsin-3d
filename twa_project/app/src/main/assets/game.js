@@ -626,7 +626,7 @@ class TileMatchingGame {
 
         // Auto-Update Engine State
         this.currentVersion = '8.9.95';
-        this.currentBuild = 128;
+        this.currentBuild = 129;
         this.hasPendingUpdate = null;
         this.isUpdatingNow = false;
 
