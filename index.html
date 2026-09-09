@@ -29,12 +29,20 @@
     <link rel="preload" as="image" href="images/red_panda.jpg">
     <link rel="preload" as="image" href="images/frog.jpg">
     <link rel="preload" as="image" href="images/penguin.jpg">
+    <link rel="preload" as="image" href="images/koala.jpg">
+    <link rel="preload" as="image" href="images/tiger.jpg">
+    <link rel="preload" as="image" href="images/hamster.jpg">
+    <link rel="preload" as="image" href="images/giraffe.jpg">
+    <link rel="preload" as="image" href="images/monkey.jpg">
+    <link rel="preload" as="image" href="images/elephant.jpg">
+    <link rel="preload" as="image" href="images/deer.jpg">
+    <link rel="preload" as="image" href="images/hedgehog.jpg">
     <link rel="preload" as="image" href="images/app_hero_icon.png">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700;900&family=Orbitron:wght@700;900&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css?v=8.9.92">
+    <link rel="stylesheet" href="styles.css?v=8.9.93">
 </head>
 <body oncontextmenu="return false;" onselectstart="return false;" ondragstart="return false;">
     <div id="app-wrapper">
@@ -840,7 +848,7 @@
         });
 
         window.addEventListener('load', () => {
-          navigator.serviceWorker.register('./sw.js?v=8.9.92').then((reg) => {
+          navigator.serviceWorker.register('./sw.js?v=8.9.93').then((reg) => {
             // Immediate update check on launch
             reg.update();
 
@@ -879,6 +887,6 @@
         <span id="toast-text">Yetersiz Altın!</span>
     </div>
 
-    <script src="game.js?v=8.9.92" defer></script>
+    <script src="game.js?v=8.9.93" defer></script>
 </body>
 </html>

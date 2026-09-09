@@ -626,8 +626,8 @@ class TileMatchingGame {
         this.levelStartScore = 0;
 
         // Auto-Update Engine State
-        this.currentVersion = '8.9.92';
-        this.currentBuild = 124;
+        this.currentVersion = '8.9.93';
+        this.currentBuild = 125;
         this.hasPendingUpdate = null;
         this.isUpdatingNow = false;
 
@@ -688,33 +688,49 @@ class TileMatchingGame {
 
         // 12-Piece Puzzles Catalog
         this.puzzlesCatalog = [
-            { id: 'cat', name: 'Pamuk Kedi', imgSrc: 'images/cat.jpg' },
-            { id: 'fox', name: 'Sevimli Tilki', imgSrc: 'images/fox.jpg' },
-            { id: 'panda', name: 'Tombul Panda', imgSrc: 'images/panda.jpg' },
-            { id: 'dragon', name: 'Deniz Ejderhası', imgSrc: 'images/dragon.jpg' },
-            { id: 'shiba', name: 'Shiba Inu', imgSrc: 'images/shiba.jpg' },
-            { id: 'unicorn', name: 'Büyülü Tekboynuz', imgSrc: 'images/unicorn.jpg' },
-            { id: 'lion', name: 'Kral Aslan', imgSrc: 'images/lion.jpg' },
-            { id: 'bunny', name: 'Sihirli Tavşan', imgSrc: 'images/bunny.jpg' },
-            { id: 'owl', name: 'Bilge Baykuş', imgSrc: 'images/owl.jpg' },
-            { id: 'red_panda', name: 'Kızıl Panda', imgSrc: 'images/red_panda.jpg' },
-            { id: 'frog', name: 'Prens Kurbağa', imgSrc: 'images/frog.jpg' },
-            { id: 'penguin', name: 'Kutup Pengueni', imgSrc: 'images/penguin.jpg' }
+            { id: 'cat',       name: 'Pamuk Kedi',       unlockLevel: 1,   imgSrc: 'images/cat.jpg' },
+            { id: 'fox',       name: 'Sevimli Tilki',    unlockLevel: 1,   imgSrc: 'images/fox.jpg' },
+            { id: 'panda',     name: 'Tombul Panda',     unlockLevel: 1,   imgSrc: 'images/panda.jpg' },
+            { id: 'dragon',    name: 'Deniz Ejderhası', unlockLevel: 1,   imgSrc: 'images/dragon.jpg' },
+            { id: 'shiba',     name: 'Shiba Inu',        unlockLevel: 1,   imgSrc: 'images/shiba.jpg' },
+            { id: 'unicorn',   name: 'Büyülü Tekboynuz', unlockLevel: 1,   imgSrc: 'images/unicorn.jpg' },
+            { id: 'lion',      name: 'Kral Aslan',       unlockLevel: 1,   imgSrc: 'images/lion.jpg' },
+            { id: 'bunny',     name: 'Sihirli Tavşan',   unlockLevel: 1,   imgSrc: 'images/bunny.jpg' },
+            { id: 'owl',       name: 'Bilge Baykuş',     unlockLevel: 1,   imgSrc: 'images/owl.jpg' },
+            { id: 'red_panda', name: 'Kızıl Panda',      unlockLevel: 1,   imgSrc: 'images/red_panda.jpg' },
+            { id: 'frog',      name: 'Prens Kurbağa',    unlockLevel: 10,  imgSrc: 'images/frog.jpg' },
+            { id: 'penguin',   name: 'Kutup Pengueni',   unlockLevel: 20,  imgSrc: 'images/penguin.jpg' },
+            { id: 'koala',     name: 'Uykucu Koala',     unlockLevel: 30,  imgSrc: 'images/koala.jpg' },
+            { id: 'tiger',     name: 'Cesur Kaplan',     unlockLevel: 40,  imgSrc: 'images/tiger.jpg' },
+            { id: 'hamster',   name: 'Tombul Hamster',   unlockLevel: 50,  imgSrc: 'images/hamster.jpg' },
+            { id: 'giraffe',   name: 'Minik Zürafa',     unlockLevel: 60,  imgSrc: 'images/giraffe.jpg' },
+            { id: 'monkey',    name: 'Neşeli Maymun',    unlockLevel: 70,  imgSrc: 'images/monkey.jpg' },
+            { id: 'elephant',  name: 'Sevimli Fil',      unlockLevel: 80,  imgSrc: 'images/elephant.jpg' },
+            { id: 'deer',      name: 'Orman Geyiği',     unlockLevel: 90,  imgSrc: 'images/deer.jpg' },
+            { id: 'hedgehog',  name: 'Tatlı Kirpi',      unlockLevel: 100, imgSrc: 'images/hedgehog.jpg' }
         ];
 
         this.types = [
-            { id: 'fox', name: 'Sevimli Tilki', bg: '#fff7ed', imgSrc: 'images/fox.jpg' },
-            { id: 'cat', name: 'Pamuk Kedi', bg: '#fbf7ff', imgSrc: 'images/cat.jpg' },
-            { id: 'panda', name: 'Tombul Panda', bg: '#f8fafc', imgSrc: 'images/panda.jpg' },
-            { id: 'dragon', name: 'Deniz Ejderhası', bg: '#f0f9ff', imgSrc: 'images/dragon.jpg' },
-            { id: 'shiba', name: 'Shiba Inu', bg: '#fefce8', imgSrc: 'images/shiba.jpg' },
-            { id: 'unicorn', name: 'Büyülü Tekboynuz', bg: '#fae8ff', imgSrc: 'images/unicorn.jpg' },
-            { id: 'lion', name: 'Kral Aslan', bg: '#fffbeb', imgSrc: 'images/lion.jpg' },
-            { id: 'bunny', name: 'Sihirli Tavşan', bg: '#fdf2f8', imgSrc: 'images/bunny.jpg' },
-            { id: 'owl', name: 'Bilge Baykuş', bg: '#f1f5f9', imgSrc: 'images/owl.jpg' },
-            { id: 'red_panda', name: 'Kızıl Panda', bg: '#fff2e6', imgSrc: 'images/red_panda.jpg' },
-            { id: 'frog', name: 'Prens Kurbağa', bg: '#ecfdf5', imgSrc: 'images/frog.jpg' },
-            { id: 'penguin', name: 'Kutup Pengueni', bg: '#f0f9ff', imgSrc: 'images/penguin.jpg' }
+            { id: 'cat',       name: 'Pamuk Kedi',       unlockLevel: 1,   bg: '#fbf7ff', imgSrc: 'images/cat.jpg' },
+            { id: 'fox',       name: 'Sevimli Tilki',    unlockLevel: 1,   bg: '#fff7ed', imgSrc: 'images/fox.jpg' },
+            { id: 'panda',     name: 'Tombul Panda',     unlockLevel: 1,   bg: '#f8fafc', imgSrc: 'images/panda.jpg' },
+            { id: 'dragon',    name: 'Deniz Ejderhası', unlockLevel: 1,   bg: '#f0f9ff', imgSrc: 'images/dragon.jpg' },
+            { id: 'shiba',     name: 'Shiba Inu',        unlockLevel: 1,   bg: '#fefce8', imgSrc: 'images/shiba.jpg' },
+            { id: 'unicorn',   name: 'Büyülü Tekboynuz', unlockLevel: 1,   bg: '#fae8ff', imgSrc: 'images/unicorn.jpg' },
+            { id: 'lion',      name: 'Kral Aslan',       unlockLevel: 1,   bg: '#fffbeb', imgSrc: 'images/lion.jpg' },
+            { id: 'bunny',     name: 'Sihirli Tavşan',   unlockLevel: 1,   bg: '#fdf2f8', imgSrc: 'images/bunny.jpg' },
+            { id: 'owl',       name: 'Bilge Baykuş',     unlockLevel: 1,   bg: '#f1f5f9', imgSrc: 'images/owl.jpg' },
+            { id: 'red_panda', name: 'Kızıl Panda',      unlockLevel: 1,   bg: '#fff2e6', imgSrc: 'images/red_panda.jpg' },
+            { id: 'frog',      name: 'Prens Kurbağa',    unlockLevel: 10,  bg: '#ecfdf5', imgSrc: 'images/frog.jpg' },
+            { id: 'penguin',   name: 'Kutup Pengueni',   unlockLevel: 20,  bg: '#f0f9ff', imgSrc: 'images/penguin.jpg' },
+            { id: 'koala',     name: 'Uykucu Koala',     unlockLevel: 30,  bg: '#f1f5f9', imgSrc: 'images/koala.jpg' },
+            { id: 'tiger',     name: 'Cesur Kaplan',     unlockLevel: 40,  bg: '#fef3c7', imgSrc: 'images/tiger.jpg' },
+            { id: 'hamster',   name: 'Tombul Hamster',   unlockLevel: 50,  bg: '#ffedd5', imgSrc: 'images/hamster.jpg' },
+            { id: 'giraffe',   name: 'Minik Zürafa',     unlockLevel: 60,  bg: '#fef9c3', imgSrc: 'images/giraffe.jpg' },
+            { id: 'monkey',    name: 'Neşeli Maymun',    unlockLevel: 70,  bg: '#f7fee7', imgSrc: 'images/monkey.jpg' },
+            { id: 'elephant',  name: 'Sevimli Fil',      unlockLevel: 80,  bg: '#e0f2fe', imgSrc: 'images/elephant.jpg' },
+            { id: 'deer',      name: 'Orman Geyiği',     unlockLevel: 90,  bg: '#fafaf9', imgSrc: 'images/deer.jpg' },
+            { id: 'hedgehog',  name: 'Tatlı Kirpi',      unlockLevel: 100, bg: '#fff1f2', imgSrc: 'images/hedgehog.jpg' }
         ];
 
         // Ultra-HD Rich Level Table Themes & High-Luminance Stage Backdrops per Section
@@ -789,7 +805,19 @@ class TileMatchingGame {
                     owl: "Bilge Baykuş",
                     red_panda: "Kızıl Panda",
                     frog: "Neşeli Kurbağa",
-                    penguin: "Sevimli Penguen"
+                    penguin: "Sevimli Penguen",
+                    koala: "Uykucu Koala",
+                    tiger: "Cesur Kaplan",
+                    hamster: "Tombul Hamster",
+                    giraffe: "Minik Zürafa",
+                    monkey: "Neşeli Maymun",
+                    elephant: "Sevimli Fil",
+                    deer: "Orman Geyiği",
+                    hedgehog: "Tatlı Kirpi",
+                    bear: "Bal Ayısı",
+                    zebra: "Çizgili Zebra",
+                    raccoon: "Haylaz Rakun",
+                    dolphin: "Mavi Yunus"
                 },
 
                 musicLabel: "Müzik Sesi",
@@ -936,7 +964,19 @@ class TileMatchingGame {
                 owl: "Wise Owl",
                 red_panda: "Red Panda",
                 frog: "Happy Frog",
-                penguin: "Cute Penguin"
+                penguin: "Cute Penguin",
+                    koala: "Sleepy Koala",
+                    tiger: "Brave Tiger",
+                    hamster: "Chubby Hamster",
+                    giraffe: "Little Giraffe",
+                    monkey: "Happy Monkey",
+                    elephant: "Cute Elephant",
+                    deer: "Forest Deer",
+                    hedgehog: "Sweet Hedgehog",
+                    bear: "Honey Bear",
+                    zebra: "Striped Zebra",
+                    raccoon: "Sneaky Raccoon",
+                    dolphin: "Blue Dolphin"
                 },
 
                 musicLabel: "Music Volume",
@@ -1083,7 +1123,19 @@ class TileMatchingGame {
                 owl: "Weise Eule",
                 red_panda: "Roter Panda",
                 frog: "Fröhlicher Frosch",
-                penguin: "Süßer Pinguin"
+                penguin: "Süßer Pinguin",
+                    koala: "Schläfriger Koala",
+                    tiger: "Tapferer Tiger",
+                    hamster: "Pummeliger Hamster",
+                    giraffe: "Kleine Giraffe",
+                    monkey: "Fröhlicher Affe",
+                    elephant: "Süßer Elefant",
+                    deer: "Waldhirsch",
+                    hedgehog: "Süßer Igel",
+                    bear: "Honigbär",
+                    zebra: "Gestreiftes Zebra",
+                    raccoon: "Frecher Waschbär",
+                    dolphin: "Blauer Delfin"
                 },
 
                 musicLabel: "Musiklautstärke",
@@ -1230,7 +1282,19 @@ class TileMatchingGame {
                 owl: "Chouette Sage",
                 red_panda: "Panda Roux",
                 frog: "Grenouille Joyeuse",
-                penguin: "Mignon Pingouin"
+                penguin: "Mignon Pingouin",
+                    koala: "Koala Endormi",
+                    tiger: "Tigre Brave",
+                    hamster: "Hamster Dodu",
+                    giraffe: "Petite Girafe",
+                    monkey: "Singe Joyeux",
+                    elephant: "Éléphant Mignon",
+                    deer: "Cerf de la Forêt",
+                    hedgehog: "Hérisson Doux",
+                    bear: "Ours au Miel",
+                    zebra: "Zèbre Rayé",
+                    raccoon: "Raton Espiègle",
+                    dolphin: "Dauphin Bleu"
                 },
 
                 musicLabel: "Volume Musique",
@@ -1377,7 +1441,19 @@ class TileMatchingGame {
                 owl: "Gufo Saggio",
                 red_panda: "Panda Rosso",
                 frog: "Rana Felice",
-                penguin: "Pinguino Carino"
+                penguin: "Pinguino Carino",
+                    koala: "Koala Dormiglione",
+                    tiger: "Tigre Coraggiosa",
+                    hamster: "Criceto Paffuto",
+                    giraffe: "Piccola Giraffa",
+                    monkey: "Scimmia Allegra",
+                    elephant: "Elefante Carino",
+                    deer: "Cervo del Bosco",
+                    hedgehog: "Riccio Dolce",
+                    bear: "Orso del Miele",
+                    zebra: "Zebra a Righe",
+                    raccoon: "Procione Birichino",
+                    dolphin: "Delfino Blu"
                 },
 
                 musicLabel: "Volume Musica",
@@ -1636,7 +1712,19 @@ class TileMatchingGame {
                 owl: "Coruja Sábia",
                 red_panda: "Panda Vermelho",
                 frog: "Sapo Alegre",
-                penguin: "Pinguim Fofo"
+                penguin: "Pinguim Fofo",
+                    koala: "Coala Sonolento",
+                    tiger: "Tigre Valente",
+                    hamster: "Hamster Fofinho",
+                    giraffe: "Girafa Pequena",
+                    monkey: "Macaco Alegre",
+                    elephant: "Elefante Fofo",
+                    deer: "Cervo da Floresta",
+                    hedgehog: "Ouriço Doce",
+                    bear: "Urso de Mel",
+                    zebra: "Zebra Listrada",
+                    raccoon: "Guaxinim Travesso",
+                    dolphin: "Golfinho Azul"
                 },
 
                 musicLabel: "Volume Música",
@@ -1868,6 +1956,18 @@ class TileMatchingGame {
         }, 1200);
     }
 
+    getPlayerMaxLevel() {
+        const cLvl = (this.classicProgress && typeof this.classicProgress.level === 'number') ? this.classicProgress.level : 1;
+        const ttLvl = (this.timeTrialProgress && typeof this.timeTrialProgress.level === 'number') ? this.timeTrialProgress.level : 1;
+        return Math.max(cLvl, ttLvl, this.level || 1);
+    }
+
+    getUnlockedPuzzles() {
+        const pLvl = this.getPlayerMaxLevel();
+        const unlocked = this.puzzlesCatalog.filter(p => (p.unlockLevel || 1) <= pLvl);
+        return unlocked.length > 0 ? unlocked : [this.puzzlesCatalog[0]];
+    }
+
     saveGameProgress(isVictoryUnlock = false, allowDecrease = false) {
         try {
             const puzzleData = {
@@ -2078,7 +2178,15 @@ class TileMatchingGame {
             'images/owl.jpg',
             'images/red_panda.jpg',
             'images/frog.jpg',
-            'images/penguin.jpg'
+            'images/penguin.jpg',
+            'images/koala.jpg',
+            'images/tiger.jpg',
+            'images/hamster.jpg',
+            'images/giraffe.jpg',
+            'images/monkey.jpg',
+            'images/elephant.jpg',
+            'images/deer.jpg',
+            'images/hedgehog.jpg'
         ];
 
         this.preloadedImages = {};
@@ -3459,8 +3567,22 @@ class TileMatchingGame {
             });
         }
 
-        const activeTypesCount = Math.min(this.types.length, 5 + Math.floor((this.level - 1) / 10) * 2);
-        const activeTypes = this.types.slice(0, activeTypesCount);
+        // PROGRESSION: Only characters unlocked up to current level (every 10 levels +1 new character)
+        const unlockedTypes = this.types.filter(t => (t.unlockLevel || 1) <= this.level);
+        const baseTypesCount = 5;
+        const extraTypes = Math.floor((this.level - 1) / 10); // Her 10 levelde 1 artacak şekilde!
+        const targetActiveCount = Math.min(unlockedTypes.length, baseTypesCount + extraTypes);
+
+        let activeTypes = [];
+        if (unlockedTypes.length <= targetActiveCount) {
+            activeTypes = [...unlockedTypes];
+        } else {
+            // Guarantee the newly unlocked animal appears on the board!
+            const newest = unlockedTypes[unlockedTypes.length - 1];
+            const others = unlockedTypes.slice(0, unlockedTypes.length - 1);
+            this.shuffleArray(others);
+            activeTypes = [newest, ...others.slice(0, targetActiveCount - 1)];
+        }
         this.shuffleArray(activeTypes);
 
         const pool = [];
@@ -4671,7 +4793,17 @@ class TileMatchingGame {
         }
 
         const descEl = document.getElementById('chest-modal-desc');
-        if (descEl) descEl.innerText = dict.chestInitialDesc || 'Bölüm Başarısı! Ödüllerinizi görmek için aşağıdaki ÖDÜLLERİ AL butonuna basın!';
+        if (descEl) {
+            let descMsg = dict.chestInitialDesc || 'Bölüm Başarısı! Ödüllerinizi görmek için aşağıdaki ÖDÜLLERİ AL butonuna basın!';
+            if (isBonus && this.level && this.level % 10 === 0) {
+                const justUnlocked = this.puzzlesCatalog.find(p => p.unlockLevel === this.level);
+                if (justUnlocked) {
+                    const charNameLoc = this.getLocalizedPuzzleName(justUnlocked.id);
+                    descMsg = `🎉 <strong>BÖLÜM ${this.level} TAMAMLANDI!</strong><br>🌟 <strong>YENİ KARAKTER & YAPBOZ AÇILDI:</strong> ${charNameLoc}! 🌟`;
+                }
+            }
+            descEl.innerHTML = descMsg;
+        }
 
         const chestCard = document.querySelector('.chest-card');
         const chestBox = document.getElementById('chest-box');
@@ -4821,7 +4953,8 @@ class TileMatchingGame {
     }
 
     rollAnyPuzzlePiece() {
-        const puzzle = this.puzzlesCatalog[Math.floor(Math.random() * this.puzzlesCatalog.length)];
+        const available = this.getUnlockedPuzzles();
+        const puzzle = available[Math.floor(Math.random() * available.length)];
         const pieceIdx = Math.floor(Math.random() * 12);
         return { puzzleId: puzzle.id, puzzleName: puzzle.name, pieceIndex: pieceIdx };
     }
@@ -4838,11 +4971,11 @@ class TileMatchingGame {
 
     getRandomMissingPieceData() {
         const missing = [];
-        for (const puzzle of this.puzzlesCatalog) {
+        const available = this.getUnlockedPuzzles();
+        for (const puzzle of available) {
             const placed = this.placedPuzzlePieces[puzzle.id] || [];
             for (let i = 0; i < 12; i++) {
                 if (!placed.includes(i)) {
-                    // Check if already in inventory or already pending in current chest reveal
                     const inInv = this.puzzleInventory.some(p => p.puzzleId === puzzle.id && p.pieceIndex === i);
                     const inPending = this.pendingAwardedPieces && this.pendingAwardedPieces.some(p => p.puzzleId === puzzle.id && p.pieceIndex === i);
                     if (!inInv && !inPending) {
@@ -4859,7 +4992,8 @@ class TileMatchingGame {
 
     getPreviewMissingPieces(count) {
         const list = [];
-        for (const puzzle of this.puzzlesCatalog) {
+        const available = this.getUnlockedPuzzles();
+        for (const puzzle of available) {
             const placed = this.placedPuzzlePieces[puzzle.id] || [];
             for (let i = 0; i < 12; i++) {
                 if (!placed.includes(i)) {
@@ -4876,7 +5010,8 @@ class TileMatchingGame {
 
     awardRandomMissingPuzzlePiece() {
         const missing = [];
-        for (const puzzle of this.puzzlesCatalog) {
+        const available = this.getUnlockedPuzzles();
+        for (const puzzle of available) {
             const placed = this.placedPuzzlePieces[puzzle.id] || [];
             for (let i = 0; i < 12; i++) {
                 if (!placed.includes(i)) {
@@ -4949,17 +5084,27 @@ class TileMatchingGame {
         if (goldEl) goldEl.innerText = this.goldCoins;
         const goldPuzzleEl = document.getElementById('gold-val-puzzle');
         if (goldPuzzleEl) goldPuzzleEl.innerText = this.goldCoins;
+
+        const playerLvl = this.getPlayerMaxLevel();
+
         const tabsContainer = document.getElementById('puzzle-selector-tabs');
         if (tabsContainer) {
             tabsContainer.innerHTML = '';
             for (const puzzle of this.puzzlesCatalog) {
+                const isUnlocked = playerLvl >= (puzzle.unlockLevel || 1);
                 const placed = this.placedPuzzlePieces[puzzle.id] || [];
                 const pct = Math.round((placed.length / 12) * 100);
                 const isComplete = placed.length === 12;
 
                 const btn = document.createElement('button');
-                btn.className = `puzzle-tab-btn ${puzzle.id === this.activePuzzleId ? 'active' : ''}`;
-                btn.innerHTML = `<span>${puzzle.name}</span> <span class="puzzle-pct-badge">${isComplete ? '🏆 %100' : `%${pct}`}</span>`;
+                if (isUnlocked) {
+                    btn.className = `puzzle-tab-btn ${puzzle.id === this.activePuzzleId ? 'active' : ''}`;
+                    btn.innerHTML = `<span>${puzzle.name}</span> <span class="puzzle-pct-badge">${isComplete ? '🏆 %100' : `%${pct}`}</span>`;
+                } else {
+                    btn.className = `puzzle-tab-btn locked ${puzzle.id === this.activePuzzleId ? 'active' : ''}`;
+                    btn.innerHTML = `<span>🔒 ${puzzle.name}</span> <span class="puzzle-pct-badge">Lvl ${puzzle.unlockLevel}</span>`;
+                }
+
                 btn.addEventListener('click', () => {
                     this.activePuzzleId = puzzle.id;
                     this.renderPuzzleGalleryModal();
@@ -4970,22 +5115,43 @@ class TileMatchingGame {
 
         const activeIdx = this.puzzlesCatalog.findIndex(p => p.id === this.activePuzzleId);
         const activePuzzle = this.puzzlesCatalog[activeIdx >= 0 ? activeIdx : 0] || this.puzzlesCatalog[0];
+        const isCurrentLocked = playerLvl < (activePuzzle.unlockLevel || 1);
         const placedPieces = this.placedPuzzlePieces[activePuzzle.id] || [];
         const activePct = Math.round((placedPieces.length / 12) * 100);
         
         const titleEl = document.getElementById('journal-picture-title');
-        if (titleEl) titleEl.innerText = `${activePuzzle.name} (%${activePct})`;
+        if (titleEl) {
+            if (isCurrentLocked) {
+                titleEl.innerText = `🔒 ${activePuzzle.name} (Seviye ${activePuzzle.unlockLevel}'de Açılır)`;
+            } else {
+                titleEl.innerText = `${activePuzzle.name} (%${activePct})`;
+            }
+        }
 
         const pageNumEl = document.getElementById('journal-page-num');
         if (pageNumEl) pageNumEl.innerText = `Sayfa ${activeIdx + 1} / ${this.puzzlesCatalog.length}`;
-        const isCompleted = placedPieces.length === 12;
 
         const badge = document.getElementById('puzzle-completed-badge');
         if (badge) {
-            if (placedPieces.length === 12) {
+            if (!isCurrentLocked && placedPieces.length === 12) {
                 badge.classList.remove('hidden');
             } else {
                 badge.classList.add('hidden');
+            }
+        }
+
+        // Buy button state depending on lock
+        const buyBtn = document.getElementById('btn-buy-puzzle-piece');
+        if (buyBtn) {
+            if (isCurrentLocked) {
+                buyBtn.style.opacity = '0.5';
+                buyBtn.style.pointerEvents = 'none';
+                buyBtn.innerHTML = `<span>🔒 Seviye ${activePuzzle.unlockLevel}'de Açılır</span>`;
+            } else {
+                buyBtn.style.opacity = '1';
+                buyBtn.style.pointerEvents = 'auto';
+                const dict = (this.i18n && this.i18n[this.settings.lang]) ? this.i18n[this.settings.lang] : (this.i18n ? this.i18n.tr : {});
+                buyBtn.innerHTML = `<span>${dict.buyPieceBtn || 'PARÇA SATIN AL (100 🪙)'}</span>`;
             }
         }
 
@@ -5000,48 +5166,61 @@ class TileMatchingGame {
         const gridEl = document.getElementById('puzzle-board-grid');
         if (gridEl) {
             gridEl.innerHTML = '';
-            for (let i = 0; i < 12; i++) {
-                const col = i % 3;
-                const row = Math.floor(i / 3);
 
-                const slot = document.createElement('div');
-                slot.setAttribute('data-slot-index', i);
+            if (isCurrentLocked) {
+                const overlay = document.createElement('div');
+                overlay.className = 'puzzle-locked-overlay';
+                overlay.innerHTML = `
+                    <div class="lock-icon">🔒</div>
+                    <div class="lock-title">${activePuzzle.name.toUpperCase()} KİLİTLİ</div>
+                    <div class="lock-desc">Bu yapbozu açmak ve parçalarını toplamak için seviye atlayın!</div>
+                    <div class="lock-progress">Gereken: Seviye ${activePuzzle.unlockLevel} &nbsp;•&nbsp; Mevcut Seviyen: ${playerLvl}</div>
+                `;
+                gridEl.appendChild(overlay);
+            } else {
+                for (let i = 0; i < 12; i++) {
+                    const col = i % 3;
+                    const row = Math.floor(i / 3);
 
-                if (placedPieces.includes(i)) {
-                    slot.className = 'puzzle-slot jigsaw-shaped filled';
-                    slot.style.backgroundImage = `url(${activePuzzle.imgSrc})`;
-                    slot.style.backgroundSize = '300% 400%';
-                    slot.style.backgroundPosition = `${col * 50}% ${row * 33.333333}%`;
-                    slot.style.backgroundRepeat = 'no-repeat';
-                    slot.style.clipPath = `url(#jigsaw-clip-${i})`;
-                    slot.style.webkitClipPath = `url(#jigsaw-clip-${i})`;
-                    slot.innerText = '';
-                } else {
-                    slot.className = 'puzzle-slot jigsaw-shaped empty';
-                    slot.style.backgroundImage = 'none';
-                    slot.innerText = `#${i + 1}`;
-                }
+                    const slot = document.createElement('div');
+                    slot.setAttribute('data-slot-index', i);
 
-                slot.addEventListener('dragover', (e) => {
-                    e.preventDefault();
-                    slot.classList.add('drag-over');
-                });
-                slot.addEventListener('dragleave', () => {
-                    slot.classList.remove('drag-over');
-                });
-                slot.addEventListener('drop', (e) => {
-                    e.preventDefault();
-                    slot.classList.remove('drag-over');
-                    const pieceData = e.dataTransfer ? e.dataTransfer.getData('text/plain') : null;
-                    if (pieceData) {
-                        try {
-                            const parsed = JSON.parse(pieceData);
-                            this.handlePlacePuzzlePiece(parsed.id, parsed.puzzleId, parsed.pieceIndex, i);
-                        } catch (err) {}
+                    if (placedPieces.includes(i)) {
+                        slot.className = 'puzzle-slot jigsaw-shaped filled';
+                        slot.style.backgroundImage = `url(${activePuzzle.imgSrc})`;
+                        slot.style.backgroundSize = '300% 400%';
+                        slot.style.backgroundPosition = `${col * 50}% ${row * 33.333333}%`;
+                        slot.style.backgroundRepeat = 'no-repeat';
+                        slot.style.clipPath = `url(#jigsaw-clip-${i})`;
+                        slot.style.webkitClipPath = `url(#jigsaw-clip-${i})`;
+                        slot.innerText = '';
+                    } else {
+                        slot.className = 'puzzle-slot jigsaw-shaped empty';
+                        slot.style.backgroundImage = 'none';
+                        slot.innerText = `#${i + 1}`;
                     }
-                });
 
-                gridEl.appendChild(slot);
+                    slot.addEventListener('dragover', (e) => {
+                        e.preventDefault();
+                        slot.classList.add('drag-over');
+                    });
+                    slot.addEventListener('dragleave', () => {
+                        slot.classList.remove('drag-over');
+                    });
+                    slot.addEventListener('drop', (e) => {
+                        e.preventDefault();
+                        slot.classList.remove('drag-over');
+                        const pieceData = e.dataTransfer ? e.dataTransfer.getData('text/plain') : null;
+                        if (pieceData) {
+                            try {
+                                const parsed = JSON.parse(pieceData);
+                                this.handlePlacePuzzlePiece(parsed.id, parsed.puzzleId, parsed.pieceIndex, i);
+                            } catch (err) {}
+                        }
+                    });
+
+                    gridEl.appendChild(slot);
+                }
             }
         }
 

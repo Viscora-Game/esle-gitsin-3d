@@ -1,4 +1,4 @@
-const CACHE_NAME = 'esle-gitsin-3d-v8.9.92';
+const CACHE_NAME = 'esle-gitsin-3d-v8.9.93';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -28,7 +28,15 @@ const ASSETS_TO_CACHE = [
   './images/owl.jpg',
   './images/red_panda.jpg',
   './images/frog.jpg',
-  './images/penguin.jpg'
+  './images/penguin.jpg',
+  './images/koala.jpg',
+  './images/tiger.jpg',
+  './images/hamster.jpg',
+  './images/giraffe.jpg',
+  './images/monkey.jpg',
+  './images/elephant.jpg',
+  './images/deer.jpg',
+  './images/hedgehog.jpg'
 ];
 
 // Install Event - Pre-cache core files with individual safety & activate immediately
