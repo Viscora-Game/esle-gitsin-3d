@@ -67,9 +67,12 @@ public class LauncherActivity extends android.app.Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // Enforce portrait orientation
-        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        hideSystemUI();
+        // Safe orientation check (Android 8.0 Oreo crashes if orientation is forced on fullscreen themes)
+        if (Build.VERSION.SDK_INT != Build.VERSION_CODES.O) {
+            try {
+                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+            } catch (Throwable ignored) {}
+        }
 
         // Root container (pitch dark background)
         FrameLayout rootLayout = new FrameLayout(this);
@@ -97,64 +100,110 @@ public class LauncherActivity extends android.app.Activity {
         settings.setAllowFileAccess(true);
         settings.setAllowContentAccess(true);
         settings.setMediaPlaybackRequiresUserGesture(false);
-        settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        try {
+            settings.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
+        } catch (Throwable ignored) {}
         settings.setCacheMode(WebSettings.LOAD_DEFAULT);
 
         // Register window.AndroidAdMob JavaScript Interface
-        mWebView.addJavascriptInterface(new AdMobJavaScriptInterface(), "AndroidAdMob");
+        try {
+            mWebView.addJavascriptInterface(new AdMobJavaScriptInterface(), "AndroidAdMob");
+        } catch (Throwable t) {
+            Log.e(TAG, "Error attaching AdMob JS Interface: " + t.getMessage());
+        }
 
         mWebView.setWebViewClient(new WebViewClientCompat() {
             @Override
             public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
-                Uri url = request.getUrl();
-                if (url.getHost() != null && url.getHost().equals("appassets.androidplatform.net")) {
-                    return assetLoader.shouldInterceptRequest(url);
+                if (request == null) return null;
+                try {
+                    Uri url = request.getUrl();
+                    if (url != null && url.getHost() != null && "appassets.androidplatform.net".equalsIgnoreCase(url.getHost())) {
+                        WebResourceResponse response = assetLoader.shouldInterceptRequest(url);
+                        if (response != null) {
+                            return response;
+                        }
+                    }
+                } catch (Throwable t) {
+                    Log.w(TAG, "AssetLoader interception error: " + t.getMessage());
                 }
                 return super.shouldInterceptRequest(view, request);
+            }
+
+            @Override
+            public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
+                super.onReceivedError(view, errorCode, description, failingUrl);
+                if (failingUrl != null && failingUrl.contains("appassets.androidplatform.net")) {
+                    try {
+                        view.loadUrl("file:///android_asset/index.html");
+                    } catch (Throwable ignored) {}
+                }
             }
         });
 
         rootLayout.addView(mWebView);
 
-        // Setup Native Banner AdView (bottom anchored, hidden until requested)
-        mAdView = new AdView(this);
-        mAdView.setAdSize(AdSize.BANNER);
-        mAdView.setAdUnitId(BANNER_AD_UNIT_ID);
-        FrameLayout.LayoutParams bannerParams = new FrameLayout.LayoutParams(
-                ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT);
-        bannerParams.gravity = Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL;
-        mAdView.setLayoutParams(bannerParams);
-        mAdView.setVisibility(View.GONE);
-        rootLayout.addView(mAdView);
+        // Setup Native Banner AdView (safely guarded against missing Play Services)
+        try {
+            mAdView = new AdView(this);
+            mAdView.setAdSize(AdSize.BANNER);
+            mAdView.setAdUnitId(BANNER_AD_UNIT_ID);
+            FrameLayout.LayoutParams bannerParams = new FrameLayout.LayoutParams(
+                    ViewGroup.LayoutParams.WRAP_CONTENT,
+                    ViewGroup.LayoutParams.WRAP_CONTENT);
+            bannerParams.gravity = Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL;
+            mAdView.setLayoutParams(bannerParams);
+            mAdView.setVisibility(View.GONE);
+            rootLayout.addView(mAdView);
+        } catch (Throwable t) {
+            Log.w(TAG, "Failed to create AdView: " + t.getMessage());
+            mAdView = null;
+        }
 
         setContentView(rootLayout);
+        hideSystemUI();
 
         // Load local game directly from assets (0ms, 100% offline)
-        mWebView.loadUrl("https://appassets.androidplatform.net/assets/index.html");
+        try {
+            mWebView.loadUrl("https://appassets.androidplatform.net/assets/index.html");
+        } catch (Throwable t) {
+            Log.e(TAG, "Failed loading appassets URL, attempting direct file fallback: " + t.getMessage());
+            try {
+                mWebView.loadUrl("file:///android_asset/index.html");
+            } catch (Throwable ignored) {}
+        }
 
-        // Pre-load rewarded ad in background
-        loadRewardedAd(REWARDED_DEFAULT_ID);
-        loadInterstitialAd();
+        // Pre-load rewarded & interstitial ad safely in background
+        try {
+            loadRewardedAd(REWARDED_DEFAULT_ID);
+        } catch (Throwable ignored) {}
+        try {
+            loadInterstitialAd();
+        } catch (Throwable ignored) {}
     }
 
     private void hideSystemUI() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-            final WindowInsetsController controller = getWindow().getInsetsController();
-            if (controller != null) {
-                controller.hide(WindowInsets.Type.statusBars() | WindowInsets.Type.navigationBars());
-                controller.setSystemBarsBehavior(WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
+        try {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+                final WindowInsetsController controller = getWindow().getInsetsController();
+                if (controller != null) {
+                    controller.hide(WindowInsets.Type.statusBars() | WindowInsets.Type.navigationBars());
+                    controller.setSystemBarsBehavior(WindowInsetsController.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE);
+                }
+            } else {
+                View decor = getWindow().getDecorView();
+                if (decor != null) {
+                    decor.setSystemUiVisibility(
+                            View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                                    | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                                    | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                                    | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                                    | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                                    | View.SYSTEM_UI_FLAG_FULLSCREEN
+                    );
+                }
             }
-        } else {
-            getWindow().getDecorView().setSystemUiVisibility(
-                    View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                            | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
-                            | View.SYSTEM_UI_FLAG_FULLSCREEN
-            );
-        }
+        } catch (Throwable ignored) {}
     }
 
     @Override
@@ -170,47 +219,59 @@ public class LauncherActivity extends android.app.Activity {
     // =========================================================
 
     private void loadRewardedAd(final String adUnitId) {
-        if (mIsRewardedLoading || mRewardedAd != null) return;
-        mIsRewardedLoading = true;
+        try {
+            if (mIsRewardedLoading || mRewardedAd != null) return;
+            mIsRewardedLoading = true;
 
-        AdRequest adRequest = new AdRequest.Builder().build();
-        String unitId = (adUnitId != null && !adUnitId.isEmpty()) ? adUnitId : REWARDED_DEFAULT_ID;
+            AdRequest adRequest = new AdRequest.Builder().build();
+            String unitId = (adUnitId != null && !adUnitId.isEmpty()) ? adUnitId : REWARDED_DEFAULT_ID;
 
-        RewardedAd.load(this, unitId, adRequest, new RewardedAdLoadCallback() {
-            @Override
-            public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
-                Log.w(TAG, "Rewarded ad failed to load: " + loadAdError.getMessage());
-                mRewardedAd = null;
-                mIsRewardedLoading = false;
-            }
+            RewardedAd.load(this, unitId, adRequest, new RewardedAdLoadCallback() {
+                @Override
+                public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+                    Log.w(TAG, "Rewarded ad failed to load: " + loadAdError.getMessage());
+                    mRewardedAd = null;
+                    mIsRewardedLoading = false;
+                }
 
-            @Override
-            public void onAdLoaded(@NonNull RewardedAd rewardedAd) {
-                Log.d(TAG, "Rewarded ad loaded successfully.");
-                mRewardedAd = rewardedAd;
-                mIsRewardedLoading = false;
-            }
-        });
+                @Override
+                public void onAdLoaded(@NonNull RewardedAd rewardedAd) {
+                    Log.d(TAG, "Rewarded ad loaded successfully.");
+                    mRewardedAd = rewardedAd;
+                    mIsRewardedLoading = false;
+                }
+            });
+        } catch (Throwable t) {
+            Log.w(TAG, "Error calling RewardedAd.load: " + t.getMessage());
+            mRewardedAd = null;
+            mIsRewardedLoading = false;
+        }
     }
 
     private void loadInterstitialAd() {
-        if (mIsInterstitialLoading || mInterstitialAd != null) return;
-        mIsInterstitialLoading = true;
+        try {
+            if (mIsInterstitialLoading || mInterstitialAd != null) return;
+            mIsInterstitialLoading = true;
 
-        AdRequest adRequest = new AdRequest.Builder().build();
-        InterstitialAd.load(this, INTERSTITIAL_AD_UNIT_ID, adRequest, new InterstitialAdLoadCallback() {
-            @Override
-            public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
-                mInterstitialAd = interstitialAd;
-                mIsInterstitialLoading = false;
-            }
+            AdRequest adRequest = new AdRequest.Builder().build();
+            InterstitialAd.load(this, INTERSTITIAL_AD_UNIT_ID, adRequest, new InterstitialAdLoadCallback() {
+                @Override
+                public void onAdLoaded(@NonNull InterstitialAd interstitialAd) {
+                    mInterstitialAd = interstitialAd;
+                    mIsInterstitialLoading = false;
+                }
 
-            @Override
-            public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
-                mInterstitialAd = null;
-                mIsInterstitialLoading = false;
-            }
-        });
+                @Override
+                public void onAdFailedToLoad(@NonNull LoadAdError loadAdError) {
+                    mInterstitialAd = null;
+                    mIsInterstitialLoading = false;
+                }
+            });
+        } catch (Throwable t) {
+            Log.w(TAG, "Error calling InterstitialAd.load: " + t.getMessage());
+            mInterstitialAd = null;
+            mIsInterstitialLoading = false;
+        }
     }
 
     public class AdMobJavaScriptInterface {
@@ -223,36 +284,42 @@ public class LauncherActivity extends android.app.Activity {
         @JavascriptInterface
         public void showRewardedAd(final String adUnitId) {
             runOnUiThread(() -> {
-                final String targetUnitId = (adUnitId != null && !adUnitId.isEmpty()) ? adUnitId : REWARDED_DEFAULT_ID;
+                try {
+                    final String targetUnitId = (adUnitId != null && !adUnitId.isEmpty()) ? adUnitId : REWARDED_DEFAULT_ID;
 
-                if (mRewardedAd != null) {
-                    mRewardedAd.setFullScreenContentCallback(new FullScreenContentCallback() {
-                        @Override
-                        public void onAdDismissedFullScreenContent() {
-                            mRewardedAd = null;
-                            hideSystemUI();
-                            loadRewardedAd(targetUnitId);
-                        }
+                    if (mRewardedAd != null) {
+                        mRewardedAd.setFullScreenContentCallback(new FullScreenContentCallback() {
+                            @Override
+                            public void onAdDismissedFullScreenContent() {
+                                mRewardedAd = null;
+                                hideSystemUI();
+                                loadRewardedAd(targetUnitId);
+                            }
 
-                        @Override
-                        public void onAdFailedToShowFullScreenContent(@NonNull AdError adError) {
-                            mRewardedAd = null;
-                            hideSystemUI();
-                            loadRewardedAd(targetUnitId);
-                        }
-                    });
-
-                    mRewardedAd.show(LauncherActivity.this, rewardItem -> {
-                        Log.d(TAG, "User earned reward: " + rewardItem.getAmount());
-                        runOnUiThread(() -> {
-                            if (mWebView != null) {
-                                mWebView.evaluateJavascript("window.onAdMobRewardSuccess && window.onAdMobRewardSuccess();", null);
+                            @Override
+                            public void onAdFailedToShowFullScreenContent(@NonNull AdError adError) {
+                                mRewardedAd = null;
+                                hideSystemUI();
+                                loadRewardedAd(targetUnitId);
                             }
                         });
-                    });
-                } else {
-                    Log.w(TAG, "Rewarded ad not ready yet, loading now...");
-                    loadRewardedAd(targetUnitId);
+
+                        mRewardedAd.show(LauncherActivity.this, rewardItem -> {
+                            Log.d(TAG, "User earned reward: " + rewardItem.getAmount());
+                            runOnUiThread(() -> {
+                                try {
+                                    if (mWebView != null) {
+                                        mWebView.evaluateJavascript("window.onAdMobRewardSuccess && window.onAdMobRewardSuccess();", null);
+                                    }
+                                } catch (Throwable ignored) {}
+                            });
+                        });
+                    } else {
+                        Log.w(TAG, "Rewarded ad not ready yet, loading now...");
+                        loadRewardedAd(targetUnitId);
+                    }
+                } catch (Throwable t) {
+                    Log.w(TAG, "Error showing rewarded ad: " + t.getMessage());
                 }
             });
         }
@@ -260,10 +327,14 @@ public class LauncherActivity extends android.app.Activity {
         @JavascriptInterface
         public void showBannerAd() {
             runOnUiThread(() -> {
-                if (mAdView != null) {
-                    mAdView.setVisibility(View.VISIBLE);
-                    AdRequest adRequest = new AdRequest.Builder().build();
-                    mAdView.loadAd(adRequest);
+                try {
+                    if (mAdView != null) {
+                        mAdView.setVisibility(View.VISIBLE);
+                        AdRequest adRequest = new AdRequest.Builder().build();
+                        mAdView.loadAd(adRequest);
+                    }
+                } catch (Throwable t) {
+                    Log.w(TAG, "Error showing banner ad: " + t.getMessage());
                 }
             });
         }
@@ -271,8 +342,12 @@ public class LauncherActivity extends android.app.Activity {
         @JavascriptInterface
         public void hideBannerAd() {
             runOnUiThread(() -> {
-                if (mAdView != null) {
-                    mAdView.setVisibility(View.GONE);
+                try {
+                    if (mAdView != null) {
+                        mAdView.setVisibility(View.GONE);
+                    }
+                } catch (Throwable t) {
+                    Log.w(TAG, "Error hiding banner ad: " + t.getMessage());
                 }
             });
         }
@@ -280,18 +355,22 @@ public class LauncherActivity extends android.app.Activity {
         @JavascriptInterface
         public void showInterstitialAd() {
             runOnUiThread(() -> {
-                if (mInterstitialAd != null) {
-                    mInterstitialAd.setFullScreenContentCallback(new FullScreenContentCallback() {
-                        @Override
-                        public void onAdDismissedFullScreenContent() {
-                            mInterstitialAd = null;
-                            hideSystemUI();
-                            loadInterstitialAd();
-                        }
-                    });
-                    mInterstitialAd.show(LauncherActivity.this);
-                } else {
-                    loadInterstitialAd();
+                try {
+                    if (mInterstitialAd != null) {
+                        mInterstitialAd.setFullScreenContentCallback(new FullScreenContentCallback() {
+                            @Override
+                            public void onAdDismissedFullScreenContent() {
+                                mInterstitialAd = null;
+                                hideSystemUI();
+                                loadInterstitialAd();
+                            }
+                        });
+                        mInterstitialAd.show(LauncherActivity.this);
+                    } else {
+                        loadInterstitialAd();
+                    }
+                } catch (Throwable t) {
+                    Log.w(TAG, "Error showing interstitial ad: " + t.getMessage());
                 }
             });
         }
@@ -299,17 +378,23 @@ public class LauncherActivity extends android.app.Activity {
 
     @Override
     public void onBackPressed() {
-        if (mWebView != null && mWebView.canGoBack()) {
-            mWebView.goBack();
-        } else {
-            super.onBackPressed();
-        }
+        try {
+            if (mWebView != null && mWebView.canGoBack()) {
+                mWebView.goBack();
+                return;
+            }
+        } catch (Throwable ignored) {}
+        super.onBackPressed();
     }
 
     @Override
     protected void onPause() {
-        if (mAdView != null) mAdView.pause();
-        if (mWebView != null) mWebView.onPause();
+        try {
+            if (mAdView != null) mAdView.pause();
+        } catch (Throwable ignored) {}
+        try {
+            if (mWebView != null) mWebView.onPause();
+        } catch (Throwable ignored) {}
         super.onPause();
     }
 
@@ -317,14 +402,22 @@ public class LauncherActivity extends android.app.Activity {
     protected void onResume() {
         super.onResume();
         hideSystemUI();
-        if (mAdView != null) mAdView.resume();
-        if (mWebView != null) mWebView.onResume();
+        try {
+            if (mAdView != null) mAdView.resume();
+        } catch (Throwable ignored) {}
+        try {
+            if (mWebView != null) mWebView.onResume();
+        } catch (Throwable ignored) {}
     }
 
     @Override
     protected void onDestroy() {
-        if (mAdView != null) mAdView.destroy();
-        if (mWebView != null) mWebView.destroy();
+        try {
+            if (mAdView != null) mAdView.destroy();
+        } catch (Throwable ignored) {}
+        try {
+            if (mWebView != null) mWebView.destroy();
+        } catch (Throwable ignored) {}
         super.onDestroy();
     }
 }

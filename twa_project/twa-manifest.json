@@ -21,7 +21,7 @@
     "alias": "my-key-alias"
   },
   "appVersionName": "8.9.95",
-  "appVersionCode": 129,
+  "appVersionCode": 130,
   "shortcuts": [],
   "generatorApp": "bubblewrap-cli",
   "webManifestUrl": "https://viscora-game.github.io/esle-gitsin-3d/manifest.json",

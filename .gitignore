@@ -1,7 +1,7 @@
 # Build & Gradle & Scratch Directories
 build/
 **/build/
-.gradle/
+**/.gradle/
 scratch/
 
 

@@ -22,8 +22,8 @@ public class Application extends android.app.Application {
   @Override
   public void onCreate() {
       super.onCreate();
-      new Thread(() -> {
-          MobileAds.initialize(this, initializationStatus -> {});
-      }).start();
+      try {
+          com.google.android.gms.ads.MobileAds.initialize(this, initializationStatus -> {});
+      } catch (Throwable ignored) {}
   }
 }

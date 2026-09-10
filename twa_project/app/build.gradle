@@ -57,7 +57,7 @@ android {
         applicationId "com.viscoragame.eslegitsin3d"
         minSdkVersion 21
         targetSdkVersion 36
-        versionCode 129
+        versionCode 130
         versionName "8.9.95"
 
         // The name for the application
@@ -161,7 +161,7 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled true
+            minifyEnabled false
             signingConfig signingConfigs.release
         }
     }
