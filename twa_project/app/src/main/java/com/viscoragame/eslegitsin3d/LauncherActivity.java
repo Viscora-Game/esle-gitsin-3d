@@ -16,6 +16,8 @@
 package com.viscoragame.eslegitsin3d;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.net.Uri;
@@ -48,6 +50,11 @@ import com.google.android.gms.ads.interstitial.InterstitialAdLoadCallback;
 import com.google.android.gms.ads.rewarded.RewardedAd;
 import com.google.android.gms.ads.rewarded.RewardedAdLoadCallback;
 
+import com.google.android.gms.games.GamesSignInClient;
+import com.google.android.gms.games.PlayGames;
+import com.google.android.gms.games.Player;
+import com.google.android.gms.games.PlayersClient;
+
 public class LauncherActivity extends android.app.Activity {
 
     private static final String TAG = "EsleGitsinAdMob";
@@ -61,6 +68,8 @@ public class LauncherActivity extends android.app.Activity {
     private InterstitialAd mInterstitialAd;
     private boolean mIsRewardedLoading = false;
     private boolean mIsInterstitialLoading = false;
+
+    private static final String PREFS_NAME = "EsleGitsinSecureSave";
 
     @SuppressLint("SetJavaScriptEnabled")
     @Override
@@ -112,6 +121,20 @@ public class LauncherActivity extends android.app.Activity {
             Log.e(TAG, "Error attaching AdMob JS Interface: " + t.getMessage());
         }
 
+        // Register window.AndroidStorage (SharedPreferences double persistence)
+        try {
+            mWebView.addJavascriptInterface(new StorageJavaScriptInterface(), "AndroidStorage");
+        } catch (Throwable t) {
+            Log.e(TAG, "Error attaching Storage JS Interface: " + t.getMessage());
+        }
+
+        // Register window.AndroidPlayGames (Google Play Games bridge)
+        try {
+            mWebView.addJavascriptInterface(new PlayGamesJavaScriptInterface(), "AndroidPlayGames");
+        } catch (Throwable t) {
+            Log.e(TAG, "Error attaching PlayGames JS Interface: " + t.getMessage());
+        }
+
         mWebView.setWebViewClient(new WebViewClientCompat() {
             @Override
             public WebResourceResponse shouldInterceptRequest(WebView view, WebResourceRequest request) {
@@ -138,6 +161,13 @@ public class LauncherActivity extends android.app.Activity {
                         view.loadUrl("file:///android_asset/index.html");
                     } catch (Throwable ignored) {}
                 }
+            }
+
+            @Override
+            public void onPageFinished(WebView view, String url) {
+                super.onPageFinished(view, url);
+                // Trigger Google Play Games silent sign-in once page is loaded
+                initPlayGamesSignIn();
             }
         });
 
@@ -211,6 +241,95 @@ public class LauncherActivity extends android.app.Activity {
         super.onWindowFocusChanged(hasFocus);
         if (hasFocus) {
             hideSystemUI();
+        }
+    }
+
+    // =========================================================
+    // GOOGLE PLAY GAMES SERVICES (PGS v2) INTEGRATION
+    // =========================================================
+
+    private void initPlayGamesSignIn() {
+        try {
+            GamesSignInClient signInClient = PlayGames.getGamesSignInClient(this);
+            signInClient.isAuthenticated().addOnCompleteListener(authTask -> {
+                try {
+                    boolean authenticated = authTask.isSuccessful() && authTask.getResult().isAuthenticated();
+                    if (authenticated) {
+                        fetchPlayGamesPlayer();
+                    } else {
+                        // Attempt silent / automatic sign-in
+                        signInClient.signIn().addOnCompleteListener(signInTask -> {
+                            try {
+                                if (signInTask.isSuccessful() && signInTask.getResult().isAuthenticated()) {
+                                    fetchPlayGamesPlayer();
+                                }
+                            } catch (Throwable ignored) {}
+                        });
+                    }
+                } catch (Throwable ignored) {}
+            });
+        } catch (Throwable t) {
+            Log.w(TAG, "Play Games initialization skipped/failed: " + t.getMessage());
+        }
+    }
+
+    private void fetchPlayGamesPlayer() {
+        try {
+            PlayersClient playersClient = PlayGames.getPlayersClient(this);
+            playersClient.getCurrentPlayer().addOnCompleteListener(task -> {
+                try {
+                    if (task.isSuccessful() && task.getResult() != null) {
+                        Player player = task.getResult();
+                        final String playerId = player.getPlayerId();
+                        final String displayName = player.getDisplayName();
+                        runOnUiThread(() -> {
+                            try {
+                                if (mWebView != null) {
+                                    String safeId = (playerId != null) ? playerId.replace("'", "\\'") : "";
+                                    String safeName = (displayName != null) ? displayName.replace("'", "\\'") : "";
+                                    String js = "window.onPlayGamesSignedIn && window.onPlayGamesSignedIn('" + safeId + "', '" + safeName + "');";
+                                    mWebView.evaluateJavascript(js, null);
+                                }
+                            } catch (Throwable ignored) {}
+                        });
+                    }
+                } catch (Throwable ignored) {}
+            });
+        } catch (Throwable t) {
+            Log.w(TAG, "Error fetching Player data: " + t.getMessage());
+        }
+    }
+
+    public class PlayGamesJavaScriptInterface {
+        @JavascriptInterface
+        public void signIn() {
+            runOnUiThread(() -> initPlayGamesSignIn());
+        }
+    }
+
+    // =========================================================
+    // NATIVE SHAREDPREFERENCES STORAGE BRIDGE (ANTI-DATA-LOSS)
+    // =========================================================
+
+    public class StorageJavaScriptInterface {
+        @JavascriptInterface
+        public void setItem(String key, String value) {
+            try {
+                if (key == null) return;
+                SharedPreferences prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+                prefs.edit().putString(key, value).apply();
+            } catch (Throwable ignored) {}
+        }
+
+        @JavascriptInterface
+        public String getItem(String key) {
+            try {
+                if (key == null) return null;
+                SharedPreferences prefs = getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+                return prefs.getString(key, null);
+            } catch (Throwable ignored) {
+                return null;
+            }
         }
     }
 

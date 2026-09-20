@@ -16,6 +16,7 @@
 package com.viscoragame.eslegitsin3d;
 
 import com.google.android.gms.ads.MobileAds;
+import com.google.android.gms.games.PlayGamesSdk;
 
 public class Application extends android.app.Application {
 
@@ -23,7 +24,11 @@ public class Application extends android.app.Application {
   public void onCreate() {
       super.onCreate();
       try {
-          com.google.android.gms.ads.MobileAds.initialize(this, initializationStatus -> {});
+          MobileAds.initialize(this, initializationStatus -> {});
+      } catch (Throwable ignored) {}
+
+      try {
+          PlayGamesSdk.initialize(this);
       } catch (Throwable ignored) {}
   }
 }

@@ -626,7 +626,7 @@ class TileMatchingGame {
 
         // Auto-Update Engine State
         this.currentVersion = '8.9.95';
-        this.currentBuild = 129;
+        this.currentBuild = 131;
         this.hasPendingUpdate = null;
         this.isUpdatingNow = false;
 
@@ -1859,6 +1859,11 @@ class TileMatchingGame {
         this.loadSettings();
         this.loadGameProgress();
         this.loadPlayerProfile();
+        if (typeof window !== 'undefined' && window._pendingPlayGamesAuth) {
+            const auth = window._pendingPlayGamesAuth;
+            window._pendingPlayGamesAuth = null;
+            this.handlePlayGamesSignIn(auth.playerId, auth.displayName);
+        }
         this.loadCloudLeaderboardCache();
         this.fetchCloudLeaderboardData().then(freshData => {
             if (freshData && Array.isArray(freshData)) {
@@ -1899,6 +1904,90 @@ class TileMatchingGame {
                 mainMenu.style.opacity = '1';
             }
         }
+    }
+
+    
+    storageGet(key) {
+        try {
+            let val = localStorage.getItem(key);
+            if (!val) val = localStorage.getItem(key + '_backup');
+            if (!val && typeof window !== 'undefined' && window.AndroidStorage && typeof window.AndroidStorage.getItem === 'function') {
+                const nativeVal = window.AndroidStorage.getItem(key);
+                if (nativeVal && nativeVal.length > 0) {
+                    val = nativeVal;
+                    try {
+                        localStorage.setItem(key, val);
+                        localStorage.setItem(key + '_backup', val);
+                    } catch (e) {}
+                }
+            }
+            return val;
+        } catch (e) {
+            return null;
+        }
+    }
+
+    storageSet(key, val) {
+        try {
+            const strVal = (typeof val === 'string') ? val : JSON.stringify(val);
+            localStorage.setItem(key, strVal);
+            localStorage.setItem(key + '_backup', strVal);
+            if (typeof window !== 'undefined' && window.AndroidStorage && typeof window.AndroidStorage.setItem === 'function') {
+                window.AndroidStorage.setItem(key, strVal);
+            }
+        } catch (e) {}
+    }
+
+    handlePlayGamesSignIn(playerId, displayName) {
+        if (!playerId) return;
+        console.log('[PlayGames] User authenticated:', playerId, displayName);
+        
+        if (!this.playerProfile) {
+            this.loadPlayerProfile();
+        }
+
+        let profileChanged = false;
+        if (!this.playerProfile) {
+            const cleanName = (displayName && displayName.trim().length > 0) ? displayName.trim().substring(0, 10) : 'Oyuncu';
+            const tag = this.getRandomTagSuggestion();
+            this.playerProfile = {
+                nickname: cleanName,
+                tag: tag,
+                fullTag: `${cleanName}#${tag}`,
+                registeredAt: Date.now(),
+                previousFullTags: [],
+                nameChangeCount: 0,
+                googlePlayerId: playerId,
+                googleDisplayName: displayName
+            };
+            profileChanged = true;
+        } else {
+            if (this.playerProfile.googlePlayerId !== playerId) {
+                this.playerProfile.googlePlayerId = playerId;
+                profileChanged = true;
+            }
+            if (displayName && this.playerProfile.googleDisplayName !== displayName) {
+                this.playerProfile.googleDisplayName = displayName;
+                profileChanged = true;
+            }
+            if ((!this.playerProfile.nickname || this.playerProfile.nickname === 'Siz') && displayName) {
+                const cleanName = displayName.trim().substring(0, 10);
+                this.playerProfile.nickname = cleanName;
+                this.playerProfile.fullTag = `${cleanName}#${this.playerProfile.tag || '0001'}`;
+                profileChanged = true;
+            }
+        }
+
+        if (profileChanged) {
+            this.storageSet('tile_game_player_profile', JSON.stringify(this.playerProfile));
+            this.registerSelfIntoCloudDataset();
+        }
+
+        // Trigger cloud restore using permanent Google Play ID
+        setTimeout(() => {
+            this.restoreCloudPuzzleData(true);
+            this.syncCloudLeaderboard();
+        }, 500);
     }
 
     loadGameProgress() {
@@ -6282,7 +6371,7 @@ class TileMatchingGame {
 
     loadPlayerProfile() {
         try {
-            const saved = localStorage.getItem('tile_game_player_profile');
+            const saved = this.storageGet('tile_game_player_profile');
             if (saved) {
                 this.playerProfile = JSON.parse(saved);
                 if (this.playerProfile && (this.playerProfile.nickname === 'Siz' || !this.playerProfile.nickname)) {
@@ -6694,7 +6783,7 @@ class TileMatchingGame {
         };
 
         try {
-            localStorage.setItem('tile_game_player_profile', JSON.stringify(this.playerProfile));
+            this.storageSet('tile_game_player_profile', JSON.stringify(this.playerProfile));
         } catch (e) {}
 
         this.registerSelfIntoCloudDataset();
@@ -7080,7 +7169,7 @@ class TileMatchingGame {
 
             // 2. Sync to MongoDB Atlas via Render live API endpoint
             const userSyncUrl = 'https://viscora.onrender.com/api/user/sync';
-            const safeUserId = 'esle_' + myFullTag.replace(/[^a-zA-Z0-9çğışöüÇĞİŞÖÜ]/g, '_');
+            const safeUserId = (this.playerProfile && this.playerProfile.googlePlayerId) ? ('gpg_' + this.playerProfile.googlePlayerId) : ('esle_' + myFullTag.replace(/[^a-zA-Z0-9çğışöüÇĞİŞÖÜ]/g, '_'));
             const syncPayload = {
                 userId: safeUserId,
                 saveData: {
@@ -7147,7 +7236,7 @@ class TileMatchingGame {
 
         try {
             const myFullTag = this.playerProfile.fullTag || `${this.playerProfile.nickname}#${this.playerProfile.tag || '0001'}`;
-            const safeUserId = 'esle_' + myFullTag.replace(/[^a-zA-Z0-9çğışöüÇĞİŞÖÜ]/g, '_');
+            const safeUserId = (this.playerProfile && this.playerProfile.googlePlayerId) ? ('gpg_' + this.playerProfile.googlePlayerId) : ('esle_' + myFullTag.replace(/[^a-zA-Z0-9çğışöüÇĞİŞÖÜ]/g, '_'));
             
             let syncCode = localStorage.getItem('tile_game_sync_code');
 
@@ -7463,3 +7552,13 @@ window.addEventListener('error', (e) => {
 window.addEventListener('unhandledrejection', (e) => {
     console.error('[EsleGitsin3D] Unhandled promise rejection:', e.reason);
 });
+
+
+// Google Play Games Services global bridge
+window.onPlayGamesSignedIn = function(playerId, displayName) {
+    if (window.gameInstance && typeof window.gameInstance.handlePlayGamesSignIn === 'function') {
+        window.gameInstance.handlePlayGamesSignIn(playerId, displayName);
+    } else {
+        window._pendingPlayGamesAuth = { playerId, displayName };
+    }
+};
