@@ -2883,43 +2883,19 @@ class TileMatchingGame {
                     ? this.latestCloudDataset
                     : (DEFAULT_LEADERBOARD_SEED || []);
 
-                // 1. Strict 4-digit unique tag validation: NO TWO PLAYERS MAY HAVE THE SAME TAG!
-                const isTagTaken = pool.some(p => {
-                    if (!p) return false;
-                    const pFull = (p.fullTag || '').toLowerCase();
-                    if (myCurrentFullTag && pFull === myCurrentFullTag) return false;
-                    const pTag = p.tag || (p.fullTag && p.fullTag.includes('#') ? p.fullTag.split('#')[1] : null);
-                    if (!pTag) return false;
-                    const cleanPTag = String(pTag).trim().padStart(4, '0');
-                    if (myCurrentTag && cleanPTag === myCurrentTag) {
-                        return false; // Player keeping their own verified tag
-                    }
-                    return cleanPTag === rawTag;
-                });
-
-                if (isTagTaken) {
-                    const newTag = this.getRandomTagSuggestion();
-                    if (inputTag) inputTag.value = newTag;
-                    if (errMsg) {
-                        errMsg.innerText = `⚠️ ETİKET DOLU: "#${rawTag}" etiketi başka bir oyuncuya ait! Her oyuncunun etiketi benzersizdir. Size yeni bir etiket (#${newTag}) atandı, tekrar kaydet butonuna basabilirsiniz!`;
-                        errMsg.classList.remove('hidden');
-                    }
-                    this.sound.playLockThud();
-                    return;
-                }
-
-                // 2. Full tag conflict check (safety redundancy)
+                // Strict Discord-style Unique FullTag Check (Two players with same name cannot have same tag)
                 const isTaken = pool.some(p => {
                     if (!p || !p.fullTag) return false;
-                    if (myCurrentFullTag && p.fullTag.toLowerCase() === myCurrentFullTag) return false;
-                    return p.fullTag.toLowerCase() === targetLower;
+                    const pFullNorm = normalizeFullTag(p.fullTag);
+                    if (myCurrentFullTag && pFullNorm === normalizeFullTag(myCurrentFullTag)) return false;
+                    return pFullNorm === normalizeFullTag(targetFullTag);
                 });
 
                 if (isTaken) {
-                    const newTag = this.getRandomTagSuggestion();
+                    const newTag = this.getRandomTagSuggestion(rawNick);
                     if (inputTag) inputTag.value = newTag;
                     if (errMsg) {
-                        errMsg.innerText = `⚠️ KULLANICI ADI & ETİKET DOLU: "${targetFullTag}" başkası tarafından kullanılıyor. Yeni bir etiket (#${newTag}) önerildi, tekrar kaydet butonuna basabilirsiniz!`;
+                        errMsg.innerText = `⚠️ BU İSİM VE ETİKET DOLU: "${targetFullTag}" zaten kullanılıyor! Size "${rawNick}" ismi için boşta olan yeni bir etiket (#${newTag}) atandı, tekrar kaydet butonuna basabilirsiniz!`;
                         errMsg.classList.remove('hidden');
                     }
                     this.sound.playLockThud();
@@ -6848,24 +6824,27 @@ class TileMatchingGame {
         return `${p}${s}`.substring(0, 10);
     }
 
-    getRandomTagSuggestion() {
+    getRandomTagSuggestion(forNickname = '') {
         const usedTags = new Set();
         const pool = (this.latestCloudDataset && Array.isArray(this.latestCloudDataset))
             ? this.latestCloudDataset
             : (DEFAULT_LEADERBOARD_SEED || []);
+        
+        const targetNickNorm = (forNickname || '').trim().toLowerCase();
+
         pool.forEach(p => {
-            if (!p) return;
-            if (p.tag) usedTags.add(String(p.tag).trim().padStart(4, '0'));
-            if (p.fullTag && p.fullTag.includes('#')) {
-                const parts = p.fullTag.split('#');
-                if (parts[1]) usedTags.add(parts[1].trim().padStart(4, '0'));
+            if (!p || !p.fullTag) return;
+            const fullNorm = p.fullTag.toLowerCase();
+            const pNick = fullNorm.includes('#') ? fullNorm.split('#')[0].trim() : fullNorm;
+            
+            // If checking for a specific nickname, only track tags used by that nickname!
+            if (!targetNickNorm || pNick === targetNickNorm) {
+                const tagPart = fullNorm.includes('#') ? fullNorm.split('#')[1].trim().replace(/[^0-9]/g, '') : (p.tag || '');
+                if (tagPart) {
+                    usedTags.add(tagPart.padStart(4, '0'));
+                }
             }
         });
-        if (typeof DEFAULT_LEADERBOARD_SEED !== 'undefined' && Array.isArray(DEFAULT_LEADERBOARD_SEED)) {
-            DEFAULT_LEADERBOARD_SEED.forEach(p => {
-                if (p && p.tag) usedTags.add(String(p.tag).trim().padStart(4, '0'));
-            });
-        }
 
         let attempts = 0;
         let tag = '';
@@ -7016,8 +6995,6 @@ class TileMatchingGame {
 
                 // Never display the player's own previous names!
                 if (myPrevTags.includes(cpKey)) continue;
-                if (cp.tag === myTag && cpKey !== myKey) continue;
-
                 if (myKey && cpKey === myKey) {
                     // Update self player with any higher cloud numbers or verified puzzle count
                     const selfItem = list[0];
@@ -7058,11 +7035,10 @@ class TileMatchingGame {
                     placedPiecesCount: (typeof cp.placedPiecesCount === 'number' && cp.placedPiecesCount >= 0) ? cp.placedPiecesCount : ((cp.puzzles || 0) * 12),
                     inventoryCount: (typeof cp.inventoryCount === 'number' && cp.inventoryCount >= 0) ? cp.inventoryCount : 0
                 };
-                // DEDUPLICATION BY TAG: If another entry with the same 4-digit tag exists, keep the higher score!
-                const existingByTagIdx = list.findIndex(item => !item.isSelf && item.tag === cloudPlayer.tag);
-                if (existingByTagIdx !== -1) {
-                    if (cloudPlayer.overallScore > list[existingByTagIdx].overallScore) {
-                        list[existingByTagIdx] = cloudPlayer;
+                // Deduplication by FullTag (keeps higher score if same player fullTag appears twice)
+                if (existingIdx > 0) {
+                    if (cloudPlayer.overallScore > list[existingIdx].overallScore) {
+                        list[existingIdx] = cloudPlayer;
                     }
                     continue;
                 }
