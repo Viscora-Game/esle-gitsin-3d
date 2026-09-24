@@ -3800,9 +3800,32 @@ class TileMatchingGame {
                 isInSlot: false
             };
 
-            tileEl.addEventListener('click', (e) => {
-                e.stopPropagation();
+            tileEl.style.touchAction = 'none';
+
+            let lastTileTapTime = 0;
+            const handleTileTap = (e) => {
+                const now = Date.now();
+                // Prevent synthetic duplicate click events after pointerdown (within 400ms)
+                if (now - lastTileTapTime < 400) {
+                    return;
+                }
+                lastTileTapTime = now;
+                if (e && e.cancelable && e.type !== 'pointerdown') {
+                    e.preventDefault();
+                }
+                if (e && e.stopPropagation) {
+                    e.stopPropagation();
+                }
                 this.onTileClick(tileObj);
+            };
+
+            tileEl.addEventListener('pointerdown', (e) => {
+                if (e.button !== undefined && e.button !== 0) return;
+                handleTileTap(e);
+            }, { passive: true });
+
+            tileEl.addEventListener('click', (e) => {
+                handleTileTap(e);
             });
             
             this.boardTiles.push(tileObj);
@@ -4409,12 +4432,6 @@ class TileMatchingGame {
 
     onTileClick(tile) {
         if (this.isLevelWon || this.isLevelTransitioning || tile.isInSlot || tile.isProcessingClick) return;
-
-        const now = Date.now();
-        if (this.lastTileClickTime && (now - this.lastTileClickTime < 50)) {
-            return; // Fast tap throttle (50ms)
-        }
-        this.lastTileClickTime = now;
 
         tile.isProcessingClick = true;
         setTimeout(() => { tile.isProcessingClick = false; }, 100);
