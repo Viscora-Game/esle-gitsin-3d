@@ -2876,12 +2876,39 @@ class TileMatchingGame {
                 const targetFullTag = `${rawNick}#${rawTag}`;
                 const targetLower = targetFullTag.toLowerCase();
                 const myCurrentFullTag = (this.playerProfile && this.playerProfile.fullTag) ? this.playerProfile.fullTag.toLowerCase() : '';
+                const myCurrentTag = (this.playerProfile && this.playerProfile.tag) ? String(this.playerProfile.tag).trim().padStart(4, '0') : '';
 
                 // Instant 0ms conflict check against loaded local community pool
                 const pool = (this.latestCloudDataset && Array.isArray(this.latestCloudDataset) && this.latestCloudDataset.length > 0)
                     ? this.latestCloudDataset
                     : (DEFAULT_LEADERBOARD_SEED || []);
 
+                // 1. Strict 4-digit unique tag validation: NO TWO PLAYERS MAY HAVE THE SAME TAG!
+                const isTagTaken = pool.some(p => {
+                    if (!p) return false;
+                    const pFull = (p.fullTag || '').toLowerCase();
+                    if (myCurrentFullTag && pFull === myCurrentFullTag) return false;
+                    const pTag = p.tag || (p.fullTag && p.fullTag.includes('#') ? p.fullTag.split('#')[1] : null);
+                    if (!pTag) return false;
+                    const cleanPTag = String(pTag).trim().padStart(4, '0');
+                    if (myCurrentTag && cleanPTag === myCurrentTag) {
+                        return false; // Player keeping their own verified tag
+                    }
+                    return cleanPTag === rawTag;
+                });
+
+                if (isTagTaken) {
+                    const newTag = this.getRandomTagSuggestion();
+                    if (inputTag) inputTag.value = newTag;
+                    if (errMsg) {
+                        errMsg.innerText = `⚠️ ETİKET DOLU: "#${rawTag}" etiketi başka bir oyuncuya ait! Her oyuncunun etiketi benzersizdir. Size yeni bir etiket (#${newTag}) atandı, tekrar kaydet butonuna basabilirsiniz!`;
+                        errMsg.classList.remove('hidden');
+                    }
+                    this.sound.playLockThud();
+                    return;
+                }
+
+                // 2. Full tag conflict check (safety redundancy)
                 const isTaken = pool.some(p => {
                     if (!p || !p.fullTag) return false;
                     if (myCurrentFullTag && p.fullTag.toLowerCase() === myCurrentFullTag) return false;
@@ -6822,7 +6849,31 @@ class TileMatchingGame {
     }
 
     getRandomTagSuggestion() {
-        return Math.floor(1000 + Math.random() * 9000).toString();
+        const usedTags = new Set();
+        const pool = (this.latestCloudDataset && Array.isArray(this.latestCloudDataset))
+            ? this.latestCloudDataset
+            : (DEFAULT_LEADERBOARD_SEED || []);
+        pool.forEach(p => {
+            if (!p) return;
+            if (p.tag) usedTags.add(String(p.tag).trim().padStart(4, '0'));
+            if (p.fullTag && p.fullTag.includes('#')) {
+                const parts = p.fullTag.split('#');
+                if (parts[1]) usedTags.add(parts[1].trim().padStart(4, '0'));
+            }
+        });
+        if (typeof DEFAULT_LEADERBOARD_SEED !== 'undefined' && Array.isArray(DEFAULT_LEADERBOARD_SEED)) {
+            DEFAULT_LEADERBOARD_SEED.forEach(p => {
+                if (p && p.tag) usedTags.add(String(p.tag).trim().padStart(4, '0'));
+            });
+        }
+
+        let attempts = 0;
+        let tag = '';
+        do {
+            tag = Math.floor(1000 + Math.random() * 9000).toString();
+            attempts++;
+        } while (usedTags.has(tag) && attempts < 10000);
+        return tag;
     }
 
     getNameChangeCost() {
