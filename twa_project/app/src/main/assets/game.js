@@ -754,13 +754,13 @@ class TileMatchingGame {
             'HOURGLASS', 'H_LETTER', 'HEART', 'CIRCLE', 'TRIANGLE', 'FLOWER', 'DIAMOND', 'HELIX', 'TWIN_PEAKS', 'S_LETTER', 'ROYAL_PYRAMID', 'STAR'
         ];
 
-        // Settings State
+        // Settings State with Automatic Locale / Location Detection
         this.settings = {
             volume: 80,
             musicVolume: 35,
             bgmTrack: 'carefree',
             vibration: true,
-            lang: 'tr'
+            lang: this.detectDefaultLanguage()
         };
 
         // Full 7-Language i18n Translations Dictionary (TR, EN, DE, FR, IT, ES, PT)
@@ -3428,6 +3428,31 @@ class TileMatchingGame {
         this.applyLanguage();
         this.updateMainMenuButtons();
         this.startWheelTimerLoop();
+    }
+
+    detectDefaultLanguage() {
+        try {
+            const sys = (typeof navigator !== 'undefined' && (navigator.language || (navigator.languages && navigator.languages[0])) || '').toLowerCase();
+            if (sys.startsWith('tr')) return 'tr';
+            if (sys.startsWith('de')) return 'de';
+            if (sys.startsWith('fr')) return 'fr';
+            if (sys.startsWith('it')) return 'it';
+            if (sys.startsWith('es')) return 'es';
+            if (sys.startsWith('pt')) return 'pt';
+            if (sys.startsWith('en')) return 'en';
+
+            const tz = (typeof Intl !== 'undefined' && Intl.DateTimeFormat && Intl.DateTimeFormat().resolvedOptions().timeZone) || '';
+            if (tz.includes('Istanbul')) return 'tr';
+            if (tz.includes('Berlin') || tz.includes('Vienna') || tz.includes('Zurich')) return 'de';
+            if (tz.includes('Paris')) return 'fr';
+            if (tz.includes('Rome')) return 'it';
+            if (tz.includes('Madrid')) return 'es';
+            if (tz.includes('Lisbon') || tz.includes('Sao_Paulo')) return 'pt';
+
+            return 'en';
+        } catch (e) {
+            return 'en';
+        }
     }
 
     applyLanguage() {
