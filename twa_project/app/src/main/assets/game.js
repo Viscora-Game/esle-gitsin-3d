@@ -3805,14 +3805,17 @@ class TileMatchingGame {
             let lastTileTapTime = 0;
             const handleTileTap = (e) => {
                 const now = Date.now();
-                // Prevent synthetic duplicate click events after pointerdown (within 400ms)
-                if (now - lastTileTapTime < 400) {
+                // Prevent synthetic duplicate click events after pointerdown across the board
+                if (e && e.type === 'click' && this.lastBoardPointerTime && (now - this.lastBoardPointerTime < 450)) {
+                    return;
+                }
+                if (e && e.type === 'pointerdown') {
+                    this.lastBoardPointerTime = now;
+                }
+                if (now - lastTileTapTime < 350) {
                     return;
                 }
                 lastTileTapTime = now;
-                if (e && e.cancelable && e.type !== 'pointerdown') {
-                    e.preventDefault();
-                }
                 if (e && e.stopPropagation) {
                     e.stopPropagation();
                 }
@@ -3821,8 +3824,9 @@ class TileMatchingGame {
 
             tileEl.addEventListener('pointerdown', (e) => {
                 if (e.button !== undefined && e.button !== 0) return;
+                if (e.cancelable) e.preventDefault();
                 handleTileTap(e);
-            }, { passive: true });
+            });
 
             tileEl.addEventListener('click', (e) => {
                 handleTileTap(e);
@@ -4164,7 +4168,11 @@ class TileMatchingGame {
             // A tile is LOCKED if more than 28% of its surface is covered by upper cards!
             const isLocked = coveredRatio > 0.28;
 
+            const wasLocked = tile.isLocked;
             tile.isLocked = isLocked;
+            if (wasLocked && !isLocked) {
+                tile.unlockedAt = Date.now();
+            }
             if (isLocked) {
                 tile.element.classList.add('locked');
                 tile.element.classList.remove('unlocked-pop');
@@ -4432,6 +4440,11 @@ class TileMatchingGame {
 
     onTileClick(tile) {
         if (this.isLevelWon || this.isLevelTransitioning || tile.isInSlot || tile.isProcessingClick) return;
+
+        // Prevent ghost click / touch follow-through on cards that were literally just uncovered beneath another tile (< 220ms)
+        if (tile.unlockedAt && (Date.now() - tile.unlockedAt < 220)) {
+            return;
+        }
 
         tile.isProcessingClick = true;
         setTimeout(() => { tile.isProcessingClick = false; }, 100);
