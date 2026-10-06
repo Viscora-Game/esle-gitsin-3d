@@ -6607,7 +6607,7 @@ class TileMatchingGame {
                     const parsedPlayers = [];
                     for (const u of debugUsers) {
                         if (!u) continue;
-                        const hasEsleId = typeof u.userId === 'string' && u.userId.startsWith('esle_');
+                        const hasEsleId = typeof u.userId === 'string' && (u.userId.startsWith('esle_') || u.userId.startsWith('gpg_'));
                         // STRICT: Only genuine Eşle Gitsin players starting with esle_ prefix
                         if (!hasEsleId) continue;
 
