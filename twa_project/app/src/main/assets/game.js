@@ -6822,15 +6822,39 @@ class TileMatchingGame {
     }
 
     isProfaneOrInappropriate(text) {
-        if (!text) return true;
-        const normalized = text.toLowerCase().trim();
-        
-        const blacklist = [
-            'amk', 'amq', 'yarrak', 'orospu', 'göt', 'ibne', 'yavsak', 'yavşak',
-            'fuck', 'bitch', 'asshole', 'cunt', 'dick', 'bastard', 'pussy', 'nigger', 'nigga'
+        if (!text) return false;
+        const nameOnly = String(text).includes('#') ? String(text).split('#')[0] : String(text);
+        const raw = nameOnly.toLowerCase().trim();
+        if (!raw) return false;
+
+        const profanitySubstrings = [
+            'amk', 'amq', 'orospu', 'yarrak', 'yarak', 'yavsak', 'yavşak', 'amcik', 'amcık',
+            'kahpe', 'puşt', 'pust', 'fahişe', 'fahise', 'dalyarak', 'gavat', 'kaltak', 'taşak', 'tasak',
+            'fuck', 'bitch', 'asshole', 'cunt', 'dick', 'bastard', 'pussy', 'nigger', 'nigga', 'whore',
+            'slut', 'faggot', 'porno', 'porn'
         ];
 
-        return blacklist.some(badWord => normalized === badWord || normalized.includes(badWord));
+        for (const bad of profanitySubstrings) {
+            if (raw.includes(bad)) return true;
+        }
+
+        const exactOrBoundary = ['sik', 'piç', 'pic', 'oç', 'oc', 'aq', 'göt', 'got', 'ibne', 'meme'];
+        const tokens = raw.split(/[\s_\-.\d]+/);
+        for (const bad of exactOrBoundary) {
+            if (raw === bad || tokens.includes(bad)) return true;
+        }
+
+        if (raw.includes('sik') || raw.includes('sık')) {
+            const innocent = ['klasik', 'eksik', 'fizik', 'müzik', 'kesik', 'biscuit', 'sıkı', 'sıkıcı', 'ışık'];
+            const isKnownInnocent = innocent.some(inn => raw.includes(inn));
+            if (!isKnownInnocent) return true;
+        }
+
+        if (raw.includes('göt') || raw.includes('gotveren') || raw.includes('götl')) {
+            return true;
+        }
+
+        return false;
     }
 
     getRandomNicknameSuggestion() {
@@ -7430,7 +7454,12 @@ class TileMatchingGame {
             // STRICT ZERO-SCORE BOT FILTER: Never render 0-point bots/inactive accounts (unless it's self viewing their own status)
             if (!player.isSelf && displayScore <= 0) continue;
 
-            const safeTag = String(player.fullTag).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+            let displayName = player.fullTag;
+            if (this.isProfaneOrInappropriate(player.fullTag)) {
+                const tagPart = (player.fullTag && player.fullTag.includes('#')) ? player.fullTag.split('#')[1] : (player.tag || '0001');
+                displayName = `Oyuncu#${tagPart}`;
+            }
+            const safeTag = String(displayName).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
             const safeTitle = String(tierInfo.title).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
             let rankBadgeHtml = `<div class="lb-rank-num">#${player.rank}</div>`;
@@ -7521,7 +7550,12 @@ class TileMatchingGame {
             else if (player.rank === 3) avatarFrame.classList.add('bronze-avatar-glow');
             else if (player.rank <= 10) avatarFrame.classList.add('diamond-avatar-glow');
         }
-        if (nameTag) nameTag.innerText = player.fullTag;
+        let displayProfileTag = player.fullTag;
+        if (this.isProfaneOrInappropriate(player.fullTag)) {
+            const tagPart = (player.fullTag && player.fullTag.includes('#')) ? player.fullTag.split('#')[1] : (player.tag || '0001');
+            displayProfileTag = `Oyuncu#${tagPart}`;
+        }
+        if (nameTag) nameTag.innerText = displayProfileTag;
         if (titleBadge) titleBadge.innerText = tierInfo.title;
         if (rankText) rankText.innerText = `Küresel Sıralama: #${player.rank || 1}`;
 
