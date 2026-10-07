@@ -95,24 +95,11 @@ const DEFAULT_LEADERBOARD_SEED = [
     { name: "Ayse", tag: "5512", fullTag: "Ayse#5512", classicLvl: 11, classicScore: 26800, ttLvl: 3, ttScore: 24500, overallScore: 51300, puzzles: 0 },
     { name: "Grey", tag: "1184", fullTag: "Grey#1184", classicLvl: 10, classicScore: 23500, ttLvl: 3, ttScore: 21000, overallScore: 44500, puzzles: 0 },
     { name: "OsmanaGİ", tag: "6219", fullTag: "OsmanaGİ#6219", classicLvl: 9, classicScore: 19800, ttLvl: 2, ttScore: 16400, overallScore: 36200, puzzles: 0 },
-    { name: "Bero", tag: "8834", fullTag: "Bero#8834", classicLvl: 8, classicScore: 16200, ttLvl: 2, ttScore: 14100, overallScore: 30300, puzzles: 0 }
+    { name: "Bero", tag: "8834", fullTag: "Bero#8834", classicLvl: 8, classicScore: 16200, ttLvl: 2, ttScore: 14100, overallScore: 30300, puzzles: 0 },
+    { name: "sudis", tag: "0228", fullTag: "sudis#0228", classicLvl: 3, classicScore: 14500, ttLvl: 1, ttScore: 0, overallScore: 14500, puzzles: 0 }
 ];
 
-const DEPRECATED_OR_DUPLICATE_TAGS = new Set([
-    "sudis#0228",
-    "hamzaka#0001",
-    "hamzaka#6734",
-    "eşlemeşamp#6401",
-    "eslemesamp#6401",
-    "büyülüusta#4168",
-    "buyuluusta#4168",
-    "testuser#0001",
-    "hamsuu#0228",
-    "hamsü#0228",
-    "ogull#8668",
-    "kölegamza#2412",
-    "kolegamza#2412"
-]);
+
 
 /**
  * Tile Club / GamoVation Style Mobile Stack Tile Pairing Game Engine
@@ -6593,7 +6580,6 @@ class TileMatchingGame {
                         if (!p || !p.fullTag) return false;
                         if (p.isSelf) return true;
                         const normKey = normalizeFullTag(p.fullTag);
-                        if (typeof DEPRECATED_OR_DUPLICATE_TAGS !== 'undefined' && DEPRECATED_OR_DUPLICATE_TAGS.has(normKey)) return false;
                         const score = p.overallScore || ((p.classicScore || 0) + (p.ttScore || 0));
                         if (score <= 0) return false;
                         if (typeof p.fullTag === 'string' && p.fullTag.startsWith('Oyuncu #')) return false;
@@ -6632,7 +6618,6 @@ class TileMatchingGame {
             if (isMe) return true;
             if (!p || !p.fullTag) return false;
             const normKey = normalizeFullTag(p.fullTag);
-            if (typeof DEPRECATED_OR_DUPLICATE_TAGS !== 'undefined' && DEPRECATED_OR_DUPLICATE_TAGS.has(normKey)) return false;
             if (typeof p.fullTag === 'string' && (p.fullTag.startsWith('Oyuncu #') || p.fullTag === 'DELETED')) return false;
             const score = p.overallScore || ((p.classicScore || 0) + (p.ttScore || 0));
             return score > 0;
@@ -6750,7 +6735,6 @@ class TileMatchingGame {
                         if (!fullTag || typeof fullTag !== 'string' || !fullTag.includes('#')) continue;
                         if (fullTag.startsWith('Oyuncu #') || fullTag === 'DELETED') continue;
                         const normTag = normalizeFullTag(fullTag);
-                        if (typeof DEPRECATED_OR_DUPLICATE_TAGS !== 'undefined' && DEPRECATED_OR_DUPLICATE_TAGS.has(normTag)) continue;
 
                         const overall = typeof u.totalCrystals === 'number' ? u.totalCrystals : 0;
                         const classic = typeof u.spentCrystals === 'number' ? u.spentCrystals : 0;
@@ -7193,7 +7177,6 @@ class TileMatchingGame {
 
                 // STRICT BOT & ZERO-SCORE FILTER:
                 if (typeof cp.fullTag === 'string' && (cp.fullTag.startsWith('Oyuncu #') || cp.fullTag === 'DELETED')) continue;
-                if (typeof DEPRECATED_OR_DUPLICATE_TAGS !== 'undefined' && DEPRECATED_OR_DUPLICATE_TAGS.has(cpKey)) continue;
                 if (cpOverallScore <= 0 && cpClassicScore <= 0 && cpTtScore <= 0) continue;
 
                 const existingIdx = list.findIndex(item => normalizeFullTag(item.fullTag) === cpKey);

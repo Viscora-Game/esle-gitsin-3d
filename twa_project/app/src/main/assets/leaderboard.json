@@ -143,6 +143,28 @@
       "ttScore": 14100,
       "overallScore": 30300,
       "puzzles": 0
+    },
+    {
+      "name": "sudis",
+      "tag": "0228",
+      "fullTag": "sudis#0228",
+      "classicLvl": 3,
+      "classicScore": 14500,
+      "ttLvl": 1,
+      "ttScore": 0,
+      "overallScore": 14500,
+      "puzzles": 0
+    },
+    {
+      "name": "TestUser",
+      "tag": "0001",
+      "fullTag": "TestUser#0001",
+      "classicLvl": 2,
+      "classicScore": 50,
+      "ttLvl": 1,
+      "ttScore": 50,
+      "overallScore": 100,
+      "puzzles": 1
     }
   ]
 }
