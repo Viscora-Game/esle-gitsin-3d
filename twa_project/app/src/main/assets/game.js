@@ -6904,7 +6904,7 @@ class TileMatchingGame {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
                         userId: oldSafeUserId,
-                        saveData: { authorName: oldFullTag, totalCrystals: 0, spentCrystals: 0, avatar: '0_1_1_0_0_0', goldCoins: 0 },
+                        saveData: { authorName: 'DELETED', totalCrystals: 0, spentCrystals: 0, avatar: '0_1_1_0_0_0', goldCoins: 0 },
                         force: true
                     })
                 }, 3000).catch(() => {});
@@ -7203,9 +7203,16 @@ class TileMatchingGame {
                     continue;
                 }
 
-                if (existingIdx > 0) {
-                    list[existingIdx] = cloudPlayer;
-                } else if (existingIdx === -1) {
+                // Deduplication by same 4-digit Tag (when player renames themselves e.g. HamzaKa#6734 -> HamzaXd#6734)
+                const sameTagIdx = list.findIndex(item => !item.isSelf && item.tag && item.tag === cloudPlayer.tag && item.tag !== '0000' && item.tag !== '0001');
+                if (sameTagIdx > 0) {
+                    if (cloudPlayer.overallScore >= list[sameTagIdx].overallScore) {
+                        list[sameTagIdx] = cloudPlayer;
+                    }
+                    continue;
+                }
+
+                if (existingIdx === -1) {
                     list.push(cloudPlayer);
                 }
             }
