@@ -873,6 +873,9 @@ class TileMatchingGame {
                 journalBtnText: "YAPBOZ GÜNLÜĞÜ",
                 howToPlayBtnText: "NASIL OYNANIR? (REHBER)",
                 privacyPolicyBtnText: "GİZLİLİK POLİTİKASI",
+                playGamesBtnText: "GOOGLE PLAY GAMES",
+                playGamesConnect: "BAĞLA",
+                playGamesConnected: "BAĞLANDI",
                 editProfileBtnText: "KULLANICI ADINI DEĞİŞTİR",
                 newGameBtn: "SIFIRLA VE YENİ OYUN BAŞLAT",
                 settingsTitle: "AYARLAR",
@@ -1032,6 +1035,9 @@ class TileMatchingGame {
                 journalBtnText: "PUZZLE JOURNAL",
                 howToPlayBtnText: "HOW TO PLAY (GUIDE)",
                 privacyPolicyBtnText: "PRIVACY POLICY",
+                playGamesBtnText: "GOOGLE PLAY GAMES",
+                playGamesConnect: "CONNECT",
+                playGamesConnected: "CONNECTED",
                 editProfileBtnText: "CHANGE USERNAME",
                 newGameBtn: "RESET & START NEW GAME",
                 settingsTitle: "SETTINGS",
@@ -1191,6 +1197,9 @@ class TileMatchingGame {
                 journalBtnText: "PUZZLE-TAGEBUCH",
                 howToPlayBtnText: "ANLEITUNG (HILFE)",
                 privacyPolicyBtnText: "DATENSCHUTZRICHTLINIE",
+                playGamesBtnText: "GOOGLE PLAY GAMES",
+                playGamesConnect: "VERBINDEN",
+                playGamesConnected: "VERBUNDEN",
                 editProfileBtnText: "BENUTZERNAME ÄNDERN",
                 newGameBtn: "NEUES SPIEL STARTEN",
                 settingsTitle: "EINSTELLUNGEN",
@@ -1350,6 +1359,9 @@ class TileMatchingGame {
                 journalBtnText: "JOURNAL DE PUZZLE",
                 howToPlayBtnText: "COMMENT JOUER (GUIDE)",
                 privacyPolicyBtnText: "POLITIQUE DE CONFIDENTIALITÉ",
+                playGamesBtnText: "GOOGLE PLAY GAMES",
+                playGamesConnect: "CONNECTER",
+                playGamesConnected: "CONNECTÉ",
                 editProfileBtnText: "MODIFIER LE NOM D'UTILISATEUR",
                 newGameBtn: "NOUVELLE PARTIE",
                 settingsTitle: "PARAMÈTRES",
@@ -1509,6 +1521,9 @@ class TileMatchingGame {
                 journalBtnText: "DIARIO DI PUZZLE",
                 howToPlayBtnText: "COME GIOCARE (GUIDA)",
                 privacyPolicyBtnText: "INFORMATIVA SULLA PRIVACY",
+                playGamesBtnText: "GOOGLE PLAY GAMES",
+                playGamesConnect: "COLLEGA",
+                playGamesConnected: "COLLEGATO",
                 editProfileBtnText: "MODIFICA NOME UTENTE",
                 newGameBtn: "NUOVA PARTITA",
                 settingsTitle: "IMPOSTAZIONI",
@@ -1621,6 +1636,9 @@ class TileMatchingGame {
                 journalBtnText: "DIARIO DE PUZZLE",
                 howToPlayBtnText: "CÓMO JUGAR (GUÍA)",
                 privacyPolicyBtnText: "POLÍTICA DE PRIVACIDAD",
+                playGamesBtnText: "GOOGLE PLAY GAMES",
+                playGamesConnect: "CONECTAR",
+                playGamesConnected: "CONECTADO",
                 editProfileBtnText: "CAMBIAR NOMBRE DE USUARIO",
                 newGameBtn: "REINICIAR Y NUEVO JUEGO",
                 settingsTitle: "AJUSTES",
@@ -1780,6 +1798,9 @@ class TileMatchingGame {
                 journalBtnText: "DIÁRIO DE PUZZLE",
                 howToPlayBtnText: "COMO JOGAR (GUIA)",
                 privacyPolicyBtnText: "POLÍTICA DE PRIVACIDADE",
+                playGamesBtnText: "GOOGLE PLAY GAMES",
+                playGamesConnect: "CONECTAR",
+                playGamesConnected: "CONECTADO",
                 editProfileBtnText: "ALTERAR NOME DE USUÁRIO",
                 newGameBtn: "REINICIAR E NOVO JOGO",
                 settingsTitle: "CONFIGURAÇÕES",
@@ -1859,6 +1880,7 @@ class TileMatchingGame {
         this.loadSettings();
         this.loadGameProgress();
         this.loadPlayerProfile();
+        this.updatePlayGamesUI();
         if (typeof window !== 'undefined' && window._pendingPlayGamesAuth) {
             const auth = window._pendingPlayGamesAuth;
             window._pendingPlayGamesAuth = null;
@@ -1983,11 +2005,49 @@ class TileMatchingGame {
             this.registerSelfIntoCloudDataset();
         }
 
+        try {
+            localStorage.setItem('tile_game_playgames_linked', 'true');
+            if (displayName) localStorage.setItem('tile_game_playgames_name', displayName);
+        } catch (e) {}
+
+        this.updatePlayGamesUI(displayName || playerId);
+
         // Trigger cloud restore using permanent Google Play ID
         setTimeout(() => {
             this.restoreCloudPuzzleData(true);
             this.syncCloudLeaderboard();
         }, 500);
+    }
+
+    updatePlayGamesUI(displayName) {
+        const btn = document.getElementById('btn-settings-playgames');
+        const badge = document.getElementById('playgames-status-badge');
+        const text = document.getElementById('playgames-btn-text');
+        const dict = (this.i18n && this.i18n[this.settings.lang]) ? this.i18n[this.settings.lang] : (this.i18n ? this.i18n.tr : {});
+
+        if (btn && badge) {
+            let savedName = displayName;
+            if (!savedName) {
+                try {
+                    savedName = localStorage.getItem('tile_game_playgames_name');
+                    if (!savedName && this.playerProfile && this.playerProfile.googleDisplayName) {
+                        savedName = this.playerProfile.googleDisplayName;
+                    }
+                } catch (e) {}
+            }
+            const isLinked = savedName || (this.playerProfile && this.playerProfile.googlePlayerId);
+            if (isLinked) {
+                btn.classList.add('connected');
+                badge.className = 'playgames-status-badge badge-connected';
+                badge.innerText = savedName ? `✔ ${savedName}` : (dict.playGamesConnected || 'BAĞLANDI');
+                if (text) text.innerText = dict.playGamesConnected || 'GOOGLE PLAY GAMES';
+            } else {
+                btn.classList.remove('connected');
+                badge.className = 'playgames-status-badge badge-connect';
+                badge.innerText = dict.playGamesConnect || 'BAĞLA';
+                if (text) text.innerText = dict.playGamesBtnText || 'GOOGLE PLAY GAMES';
+            }
+        }
     }
 
     loadGameProgress() {
@@ -2677,6 +2737,20 @@ class TileMatchingGame {
                     }, true);
                 } else {
                     this.openLeaderboardModal('overall');
+                }
+            });
+        }
+
+        const btnSettingsPlayGames = document.getElementById('btn-settings-playgames');
+        if (btnSettingsPlayGames) {
+            btnSettingsPlayGames.addEventListener('click', () => {
+                this.sound.playClick();
+                if (window.AndroidPlayGames && typeof window.AndroidPlayGames.signIn === 'function') {
+                    this.showToast('Google Play Games bağlantısı açılıyor...');
+                    window.AndroidPlayGames.signIn();
+                } else {
+                    const dict = (this.i18n && this.i18n[this.settings.lang]) ? this.i18n[this.settings.lang] : (this.i18n ? this.i18n.tr : {});
+                    this.showToast(dict.playGamesAndroidOnly || 'Google Play Games girişi Android uygulamasında kullanılabilir.');
                 }
             });
         }
@@ -3402,6 +3476,7 @@ class TileMatchingGame {
         document.getElementById('vol-val-text').innerText = `${this.settings.volume}%`;
         this.updateVibBtnUI();
         this.updateLanguageUI();
+        this.updatePlayGamesUI();
         document.getElementById('modal-settings').classList.remove('hidden');
     }
 

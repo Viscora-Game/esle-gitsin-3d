@@ -1075,6 +1075,61 @@ body {
     transform: scale(0.98);
 }
 
+.settings-list-btn.btn-playgames {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.15) 0%, rgba(6, 95, 70, 0.12) 100%);
+    border-color: rgba(16, 185, 129, 0.4);
+    color: #6ee7b7;
+}
+
+.settings-list-btn.btn-playgames:hover {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.25) 0%, rgba(6, 95, 70, 0.22) 100%);
+    border-color: #34d399;
+}
+
+.settings-list-btn.btn-playgames.connected {
+    background: linear-gradient(135deg, rgba(5, 150, 105, 0.22) 0%, rgba(4, 120, 87, 0.16) 100%);
+    border-color: rgba(52, 211, 153, 0.6);
+    color: #a7f3d0;
+}
+
+.playgames-btn-content {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.playgames-icon {
+    font-size: 15px;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+.playgames-status-badge {
+    padding: 3px 10px;
+    border-radius: 9px;
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 0.6px;
+    text-transform: uppercase;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+}
+
+.playgames-status-badge.badge-connect {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: #ffffff;
+    box-shadow: 0 2px 6px rgba(16, 185, 129, 0.35);
+}
+
+.playgames-status-badge.badge-connected {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    color: #ecfdf5;
+    border: 1px solid rgba(52, 211, 153, 0.5);
+    max-width: 140px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
 .settings-list-btn.btn-profile {
     background: rgba(245, 158, 11, 0.12);
     border-color: rgba(245, 158, 11, 0.35);

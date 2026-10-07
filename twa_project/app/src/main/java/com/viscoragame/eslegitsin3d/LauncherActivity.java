@@ -166,8 +166,8 @@ public class LauncherActivity extends android.app.Activity {
             @Override
             public void onPageFinished(WebView view, String url) {
                 super.onPageFinished(view, url);
-                // Trigger Google Play Games silent sign-in once page is loaded
-                initPlayGamesSignIn();
+                // Purely silent sign-in check; NEVER shows an interactive dialog!
+                checkSilentPlayGamesSignIn();
             }
         });
 
@@ -248,28 +248,44 @@ public class LauncherActivity extends android.app.Activity {
     // GOOGLE PLAY GAMES SERVICES (PGS v2) INTEGRATION
     // =========================================================
 
-    private void initPlayGamesSignIn() {
+    private boolean mIsPlayGamesAuthenticated = false;
+    private boolean mSilentCheckDone = false;
+
+    private void checkSilentPlayGamesSignIn() {
+        if (mSilentCheckDone || mIsPlayGamesAuthenticated) return;
+        mSilentCheckDone = true;
+
         try {
             GamesSignInClient signInClient = PlayGames.getGamesSignInClient(this);
             signInClient.isAuthenticated().addOnCompleteListener(authTask -> {
                 try {
                     boolean authenticated = authTask.isSuccessful() && authTask.getResult().isAuthenticated();
                     if (authenticated) {
+                        mIsPlayGamesAuthenticated = true;
                         fetchPlayGamesPlayer();
-                    } else {
-                        // Attempt silent / automatic sign-in
-                        signInClient.signIn().addOnCompleteListener(signInTask -> {
-                            try {
-                                if (signInTask.isSuccessful() && signInTask.getResult().isAuthenticated()) {
-                                    fetchPlayGamesPlayer();
-                                }
-                            } catch (Throwable ignored) {}
-                        });
+                    }
+                    // If not authenticated, do NOTHING silently. NEVER prompt the user automatically!
+                } catch (Throwable ignored) {}
+            });
+        } catch (Throwable t) {
+            Log.w(TAG, "Play Games silent check skipped/failed: " + t.getMessage());
+        }
+    }
+
+    private void requestInteractivePlayGamesSignIn() {
+        try {
+            GamesSignInClient signInClient = PlayGames.getGamesSignInClient(this);
+            // Explicit user action from Settings -> Trigger interactive account picker dialog!
+            signInClient.signIn().addOnCompleteListener(signInTask -> {
+                try {
+                    if (signInTask.isSuccessful() && signInTask.getResult().isAuthenticated()) {
+                        mIsPlayGamesAuthenticated = true;
+                        fetchPlayGamesPlayer();
                     }
                 } catch (Throwable ignored) {}
             });
         } catch (Throwable t) {
-            Log.w(TAG, "Play Games initialization skipped/failed: " + t.getMessage());
+            Log.w(TAG, "Play Games interactive sign-in error: " + t.getMessage());
         }
     }
 
@@ -303,7 +319,13 @@ public class LauncherActivity extends android.app.Activity {
     public class PlayGamesJavaScriptInterface {
         @JavascriptInterface
         public void signIn() {
-            runOnUiThread(() -> initPlayGamesSignIn());
+            // Triggered solely when user explicitly clicks the 'Google Play Games' button in Settings!
+            runOnUiThread(() -> requestInteractivePlayGamesSignIn());
+        }
+
+        @JavascriptInterface
+        public void checkSilent() {
+            runOnUiThread(() -> checkSilentPlayGamesSignIn());
         }
     }
 
