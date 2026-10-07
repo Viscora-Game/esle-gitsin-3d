@@ -95,9 +95,24 @@ const DEFAULT_LEADERBOARD_SEED = [
     { name: "Ayse", tag: "5512", fullTag: "Ayse#5512", classicLvl: 11, classicScore: 26800, ttLvl: 3, ttScore: 24500, overallScore: 51300, puzzles: 0 },
     { name: "Grey", tag: "1184", fullTag: "Grey#1184", classicLvl: 10, classicScore: 23500, ttLvl: 3, ttScore: 21000, overallScore: 44500, puzzles: 0 },
     { name: "OsmanaGİ", tag: "6219", fullTag: "OsmanaGİ#6219", classicLvl: 9, classicScore: 19800, ttLvl: 2, ttScore: 16400, overallScore: 36200, puzzles: 0 },
-    { name: "Bero", tag: "8834", fullTag: "Bero#8834", classicLvl: 8, classicScore: 16200, ttLvl: 2, ttScore: 14100, overallScore: 30300, puzzles: 0 },
-    { name: "sudis", tag: "0228", fullTag: "sudis#0228", classicLvl: 3, classicScore: 14500, ttLvl: 1, ttScore: 0, overallScore: 14500, puzzles: 0 }
+    { name: "Bero", tag: "8834", fullTag: "Bero#8834", classicLvl: 8, classicScore: 16200, ttLvl: 2, ttScore: 14100, overallScore: 30300, puzzles: 0 }
 ];
+
+const DEPRECATED_OR_DUPLICATE_TAGS = new Set([
+    "sudis#0228",
+    "hamzaka#0001",
+    "hamzaka#6734",
+    "eşlemeşamp#6401",
+    "eslemesamp#6401",
+    "büyülüusta#4168",
+    "buyuluusta#4168",
+    "testuser#0001",
+    "hamsuu#0228",
+    "hamsü#0228",
+    "ogull#8668",
+    "kölegamza#2412",
+    "kolegamza#2412"
+]);
 
 /**
  * Tile Club / GamoVation Style Mobile Stack Tile Pairing Game Engine
@@ -6577,6 +6592,8 @@ class TileMatchingGame {
                     const cleaned = parsed.filter(p => {
                         if (!p || !p.fullTag) return false;
                         if (p.isSelf) return true;
+                        const normKey = normalizeFullTag(p.fullTag);
+                        if (typeof DEPRECATED_OR_DUPLICATE_TAGS !== 'undefined' && DEPRECATED_OR_DUPLICATE_TAGS.has(normKey)) return false;
                         const score = p.overallScore || ((p.classicScore || 0) + (p.ttScore || 0));
                         if (score <= 0) return false;
                         if (typeof p.fullTag === 'string' && p.fullTag.startsWith('Oyuncu #')) return false;
@@ -6614,7 +6631,9 @@ class TileMatchingGame {
         const isLegitPlayer = (p, isMe) => {
             if (isMe) return true;
             if (!p || !p.fullTag) return false;
-            if (typeof p.fullTag === 'string' && p.fullTag.startsWith('Oyuncu #')) return false;
+            const normKey = normalizeFullTag(p.fullTag);
+            if (typeof DEPRECATED_OR_DUPLICATE_TAGS !== 'undefined' && DEPRECATED_OR_DUPLICATE_TAGS.has(normKey)) return false;
+            if (typeof p.fullTag === 'string' && (p.fullTag.startsWith('Oyuncu #') || p.fullTag === 'DELETED')) return false;
             const score = p.overallScore || ((p.classicScore || 0) + (p.ttScore || 0));
             return score > 0;
         };
@@ -6729,7 +6748,9 @@ class TileMatchingGame {
                             fullTag = u.userId.replace('esle_', '').replace(/_/g, '#');
                         }
                         if (!fullTag || typeof fullTag !== 'string' || !fullTag.includes('#')) continue;
-                        if (fullTag.startsWith('Oyuncu #')) continue;
+                        if (fullTag.startsWith('Oyuncu #') || fullTag === 'DELETED') continue;
+                        const normTag = normalizeFullTag(fullTag);
+                        if (typeof DEPRECATED_OR_DUPLICATE_TAGS !== 'undefined' && DEPRECATED_OR_DUPLICATE_TAGS.has(normTag)) continue;
 
                         const overall = typeof u.totalCrystals === 'number' ? u.totalCrystals : 0;
                         const classic = typeof u.spentCrystals === 'number' ? u.spentCrystals : 0;
@@ -6972,10 +6993,11 @@ class TileMatchingGame {
 
     getRandomNicknameSuggestion() {
         const prefixes = ['Kozmik', 'Eşleme', 'Ejder', 'Mistik', 'Panda', 'Tilki', 'Büyülü', 'Zafer', 'Turbo', 'Alfa'];
-        const suffixes = ['Ustası', 'Avcısı', 'Kralı', 'Şampiyonu', 'Oyuncu', 'Kaplanı', 'Fırtınası', 'Yıldızı', 'Kahramanı'];
+        const suffixes = ['Kral', 'Usta', 'Avcı', 'Şamp', 'Star', 'Kurt', 'Aslan', 'Lider', 'Kaplan', 'Kartal'];
         const p = prefixes[Math.floor(Math.random() * prefixes.length)];
         const s = suffixes[Math.floor(Math.random() * suffixes.length)];
-        return `${p}${s}`.substring(0, 10);
+        const combined = `${p}${s}`;
+        return combined.length <= 10 ? combined : combined.substring(0, 10);
     }
 
     getRandomTagSuggestion(forNickname = '') {
@@ -7170,7 +7192,8 @@ class TileMatchingGame {
                 const cpOverallScore = (typeof cp.overallScore === 'number' && cp.overallScore >= 0) ? cp.overallScore : (cpClassicScore + cpTtScore);
 
                 // STRICT BOT & ZERO-SCORE FILTER:
-                if (typeof cp.fullTag === 'string' && cp.fullTag.startsWith('Oyuncu #')) continue;
+                if (typeof cp.fullTag === 'string' && (cp.fullTag.startsWith('Oyuncu #') || cp.fullTag === 'DELETED')) continue;
+                if (typeof DEPRECATED_OR_DUPLICATE_TAGS !== 'undefined' && DEPRECATED_OR_DUPLICATE_TAGS.has(cpKey)) continue;
                 if (cpOverallScore <= 0 && cpClassicScore <= 0 && cpTtScore <= 0) continue;
 
                 const existingIdx = list.findIndex(item => normalizeFullTag(item.fullTag) === cpKey);
@@ -7567,12 +7590,24 @@ class TileMatchingGame {
             // STRICT ZERO-SCORE BOT FILTER: Never render 0-point bots/inactive accounts (unless it's self viewing their own status)
             if (!player.isSelf && displayScore <= 0) continue;
 
-            let displayName = player.fullTag;
-            if (this.isProfaneOrInappropriate(player.fullTag)) {
-                const tagPart = (player.fullTag && player.fullTag.includes('#')) ? player.fullTag.split('#')[1] : (player.tag || '0001');
-                displayName = `Oyuncu#${tagPart}`;
+            let rawNick = player.name;
+            let rawTag = player.tag;
+            if (!rawNick || rawNick === 'Siz') {
+                if (player.fullTag && player.fullTag.includes('#')) {
+                    const parts = player.fullTag.split('#');
+                    rawNick = parts[0];
+                    rawTag = parts[1];
+                }
             }
-            const safeTag = String(displayName).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+            if (!rawNick || rawNick.trim() === '') rawNick = 'Oyuncu';
+            if (!rawTag || rawTag.trim() === '') rawTag = '0001';
+
+            if (this.isProfaneOrInappropriate(player.fullTag || rawNick)) {
+                rawNick = 'Oyuncu';
+            }
+
+            const safeNick = String(rawNick).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+            const safeTag = String(rawTag).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
             const safeTitle = String(tierInfo.title).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
             let rankBadgeHtml = `<div class="lb-rank-num">#${player.rank}</div>`;
@@ -7592,7 +7627,9 @@ class TileMatchingGame {
             rowEl.innerHTML = `
                 ${rankBadgeHtml}
                 <div class="lb-player-info">
-                    <span class="lb-name-tag">${safeTag} ${player.isSelf ? '(Siz)' : ''} ${nameTagExtra}</span>
+                    <span class="lb-name-tag">
+                        <span class="lb-name-text">${safeNick}</span><span class="lb-tag-pill">#${safeTag}</span> ${player.isSelf ? '(Siz)' : ''} ${nameTagExtra}
+                    </span>
                     <span class="lb-tier-badge">${safeTitle}</span>
                 </div>
                 <div class="lb-score-val">${displayScore.toLocaleString()} Puan</div>

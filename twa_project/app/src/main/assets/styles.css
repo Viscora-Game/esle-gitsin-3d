@@ -2713,6 +2713,18 @@ body {
     line-height: 1.25;
 }
 
+.lb-name-text {
+    font-weight: 800;
+    color: inherit;
+}
+
+.lb-tag-pill {
+    font-size: 11px;
+    font-weight: 600;
+    color: rgba(255, 255, 255, 0.45);
+    margin-left: 3px;
+}
+
 .lb-tier-badge {
     font-size: 10px;
     font-weight: 600;
