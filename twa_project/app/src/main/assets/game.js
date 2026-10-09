@@ -3353,7 +3353,9 @@ class TileMatchingGame {
                         this.applyLiveAutoUpdate(this.hasPendingUpdate);
                         return;
                     }
-                    this.startLevel(this.level + 1, false, this.currentMode);
+                    this.checkAndTriggerInterstitialAd(() => {
+                        this.startLevel(this.level + 1, false, this.currentMode);
+                    });
                 } else if (this.hasPendingUpdate) {
                     this.applyLiveAutoUpdate(this.hasPendingUpdate);
                 }
@@ -3370,7 +3372,9 @@ class TileMatchingGame {
                 this.applyLiveAutoUpdate(this.hasPendingUpdate);
                 return;
             }
-            this.startLevel(this.level + 1, false, this.currentMode);
+            this.checkAndTriggerInterstitialAd(() => {
+                this.startLevel(this.level + 1, false, this.currentMode);
+            });
         });
 
         // RETRY BUTTON LOGIC (RESET TO LEVEL START SCORE WITHOUT HARSH PENALTY)
@@ -4963,6 +4967,7 @@ class TileMatchingGame {
 
                 // Save next unlocked level for active mode (Victory Unlock = true)
                 this.saveGameProgress(true);
+                this.incrementCompletedLevelAdCount();
 
                 const vicModal = document.getElementById('modal-victory');
                 if (vicModal) vicModal.classList.add('hidden');
@@ -6191,6 +6196,85 @@ class TileMatchingGame {
                 }, 300);
             }
         }, 1000);
+    }
+
+    incrementCompletedLevelAdCount() {
+        try {
+            let count = parseInt(localStorage.getItem('tile_game_completed_levels_for_ad') || '0', 10);
+            if (isNaN(count)) count = 0;
+            count += 1;
+            localStorage.setItem('tile_game_completed_levels_for_ad', count.toString());
+            console.log(`[AdMob] Completed levels count for interstitial ad: ${count}/4`);
+        } catch (e) {
+            console.warn('[AdMob] Ad counter increment failed', e);
+        }
+    }
+
+    checkAndTriggerInterstitialAd(onComplete) {
+        let count = 0;
+        try {
+            count = parseInt(localStorage.getItem('tile_game_completed_levels_for_ad') || '0', 10);
+            if (isNaN(count)) count = 0;
+        } catch (e) {
+            count = 0;
+        }
+
+        // Trigger interstitial ad every 4 completed levels, or at multiples of 4 if at least 2 levels completed
+        if (count >= 4 || (this.level > 0 && this.level % 4 === 0 && count >= 2)) {
+            try {
+                localStorage.setItem('tile_game_completed_levels_for_ad', '0');
+            } catch (e) {}
+            console.log(`[AdMob] Triggering interstitial ad after level ${this.level} (count was ${count})`);
+            this.showInterstitialAd(onComplete);
+        } else {
+            if (typeof onComplete === 'function') {
+                onComplete();
+            }
+        }
+    }
+
+    showInterstitialAd(onComplete) {
+        let isDone = false;
+        let safetyTimeout = null;
+
+        const finish = () => {
+            if (isDone) return;
+            isDone = true;
+            if (safetyTimeout) {
+                clearTimeout(safetyTimeout);
+                safetyTimeout = null;
+            }
+            window.onInterstitialAdClosed = null;
+            if (typeof onComplete === 'function') {
+                try {
+                    onComplete();
+                } catch (err) {
+                    console.error('[AdMob] Error in interstitial onComplete callback:', err);
+                }
+            }
+        };
+
+        safetyTimeout = setTimeout(() => {
+            console.log('[AdMob] Interstitial ad safety timeout (4s) fired.');
+            finish();
+        }, 4000);
+
+        window.onInterstitialAdClosed = () => {
+            console.log('[AdMob] Native interstitial ad closed callback received.');
+            finish();
+        };
+
+        if (window.AndroidAdMob && typeof window.AndroidAdMob.showInterstitialAd === 'function') {
+            try {
+                window.AndroidAdMob.showInterstitialAd();
+            } catch (e) {
+                console.warn('[AdMob] Exception calling window.AndroidAdMob.showInterstitialAd:', e);
+                finish();
+            }
+        } else {
+            console.log('[AdMob] No native AndroidAdMob interface available for interstitial ad.');
+            finish();
+        }
     }
 
     // -------------------------------------------------------------

@@ -504,16 +504,33 @@ public class LauncherActivity extends android.app.Activity {
                                 mInterstitialAd = null;
                                 hideSystemUI();
                                 loadInterstitialAd();
+                                notifyInterstitialClosed();
+                            }
+
+                            @Override
+                            public void onAdFailedToShowFullScreenContent(@NonNull AdError adError) {
+                                mInterstitialAd = null;
+                                hideSystemUI();
+                                loadInterstitialAd();
+                                notifyInterstitialClosed();
                             }
                         });
                         mInterstitialAd.show(LauncherActivity.this);
                     } else {
                         loadInterstitialAd();
+                        notifyInterstitialClosed();
                     }
                 } catch (Throwable t) {
                     Log.w(TAG, "Error showing interstitial ad: " + t.getMessage());
+                    notifyInterstitialClosed();
                 }
             });
+        }
+
+        private void notifyInterstitialClosed() {
+            if (mWebView != null) {
+                mWebView.evaluateJavascript("window.onInterstitialAdClosed && window.onInterstitialAdClosed();", null);
+            }
         }
     }
 
